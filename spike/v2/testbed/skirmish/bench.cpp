@@ -14,6 +14,7 @@
 #endif
 
 #include "sim.hpp"
+#include "runners.hpp"
 #include "worlds.hpp"
 
 using namespace skirmish;
@@ -23,13 +24,14 @@ namespace
     constexpr int kWarmup = 150;
     constexpr int kTimedTicks = 200;
 
-    template <typename W, bool Fused>
+    template <typename W, bool Fused, typename Runner = void>
     void BM_Tick(benchmark::State& state)
     {
         Config cfg;
         cfg.unitsPerTeam = static_cast<int>(state.range(0));
         auto world = std::make_unique<W>();
-        Sim<W, Fused> sim(*world, cfg);
+        auto simPtr = std::make_unique<Sim<W, Fused, Runner>>(*world, cfg);
+        auto& sim = *simPtr;
         for (int i = 0; i < kWarmup; ++i) sim.tick();
         sim.enableTimings(true);
         const auto start = sim.stats();
@@ -42,12 +44,12 @@ namespace
             state.counters[std::string("us_") + kSystemNames[i]] = 1e6 * sim.timings()[i] / ticks;
     }
 
-    template <typename W, bool Fused = false>
+    template <typename W, bool Fused = false, typename Runner = void>
     void reg(const char* name, int unitsPerTeam)
     {
         // Fixed window (ticks kWarmup..kWarmup+kTimedTicks): every design times the
         // *same* game states (armies shrink as the battle goes on).
-        benchmark::RegisterBenchmark((std::string("Tick/") + name).c_str(), BM_Tick<W, Fused>)
+        benchmark::RegisterBenchmark((std::string("Tick/") + name).c_str(), BM_Tick<W, Fused, Runner>)
             ->Arg(unitsPerTeam)
             ->Iterations(kTimedTicks)
             ->Unit(benchmark::kMillisecond);
@@ -67,6 +69,11 @@ int main(int argc, char** argv)
         reg<QueryPartWorld, true>("QueryPartFused", upt);
         reg<QPartHintedWorld>("QPartHinted", upt);
         reg<QPartHintedWorld, true>("QPartHintedFused", upt);
+        // fusion extension points on the real game (movement group)
+        reg<QPartHintedWorld, false, PlannedRunner<fz::NeverFuse>>("QPH+NeverFuse", upt);
+        reg<QPartHintedWorld, false, PlannedRunner<fz::ShareColumns, fz::Parallel>>("QPH+Parallel", upt);
+        reg<QPartHintedWorld, false, OffloadRunner<>>("QPH+Offload", upt);
+        reg<QPartHintedWorld, false, AutoTunedRunner>("QPH+AutoTuned", upt);
         if (upt <= 250) reg<StaticWorld<(1 << 13)>>("StaticBitmask", upt);
         else if (upt <= 2500) reg<StaticWorld<(1 << 16)>>("StaticBitmask", upt);
         else reg<StaticWorld<(1 << 18)>>("StaticBitmask", upt);

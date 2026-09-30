@@ -40,6 +40,7 @@
 #include "../common/components.hpp"
 #include "../common/entity.hpp"
 #include "../common/query.hpp"
+#include "../fusion/executors.hpp"
 
 namespace spike::qpart
 {
@@ -321,6 +322,16 @@ namespace spike::qpart
         template <typename... Systems>
         void runFused(const Systems&... systems)
         {
+            fusion::Inline exec;
+            runFusedOn(exec, systems...);
+        }
+
+        /** Fusion with a pluggable executor (fusion/executors.hpp): the store
+         *  supplies per-partition columns + the fused kernel; the executor
+         *  decides how rows are run (inline, tiled, threads, offload). */
+        template <typename Exec, typename... Systems>
+        void runFusedOn(Exec& exec, const Systems&... systems)
+        {
             constexpr std::size_t k = sizeof...(Systems);
             static_assert(k >= 1 && k <= 6, "spike: 2^k loop specialisations");
             static_assert(((indexOf<typename Systems::Query, Qs...>() < kQueries) && ...),
@@ -337,7 +348,7 @@ namespace spike::qpart
                 {
                     if (p.signature & (1u << qidx[j])) subset |= 1u << j;
                 }
-                if (subset != 0) dispatchSubset<0>(subset, p, n, systems...);
+                if (subset != 0) dispatchSubset<0>(exec, subset, p, n, systems...);
             }
         }
 
@@ -345,13 +356,13 @@ namespace spike::qpart
 
     private:
         // ---- fusion helpers ----
-        template <unsigned M, typename... Systems>
-        void dispatchSubset(unsigned subset, Partition& p, std::size_t n, const Systems&... systems)
+        template <unsigned M, typename Exec, typename... Systems>
+        void dispatchSubset(Exec& exec, unsigned subset, Partition& p, std::size_t n, const Systems&... systems)
         {
             if constexpr (M < (1u << sizeof...(Systems)))
             {
-                if (subset == M) fusedLoop<M>(p, n, std::index_sequence_for<Systems...>{}, systems...);
-                else dispatchSubset<M + 1>(subset, p, n, systems...);
+                if (subset == M) fusedLoop<M>(exec, p, n, std::index_sequence_for<Systems...>{}, systems...);
+                else dispatchSubset<M + 1>(exec, subset, p, n, systems...);
             }
         }
 
@@ -399,18 +410,23 @@ namespace spike::qpart
         // (then the compiler sees a single merged kernel). Left to heuristics,
         // GCC stopped inlining in large TUs (spike_bench) and the fused loop ran
         // at unfused speed, so force it: flatten = inline everything called here.
-        template <unsigned M, std::size_t... J, typename... Systems>
+        template <unsigned M, typename Exec, std::size_t... J, typename... Systems>
 #if defined(__GNUC__)
         __attribute__((flatten))
 #endif
-        void fusedLoop(Partition& p, std::size_t n, std::index_sequence<J...>, const Systems&... systems)
+        void fusedLoop(Exec& exec, Partition& p, std::size_t n, std::index_sequence<J...>, const Systems&... systems)
         {
             using Types = typename UnionOf<TypeList<>, typename Systems::Query...>::type;
             const auto cols = bindUnion(p, Types{});
-            for (std::size_t i = 0; i < n; ++i)
-            {
-                (step<((M >> J) & 1u) != 0>(systems, cols, i, typename Systems::Query{}), ...);
-            }
+            // The fused kernel over rows [0, count) of whatever column pointers
+            // the executor passes (original, offset tile, or device-staged copy).
+            auto kernel = [&](const auto& c, std::size_t count) {
+                for (std::size_t i = 0; i < count; ++i)
+                {
+                    (step<((M >> J) & 1u) != 0>(systems, c, i, typename Systems::Query{}), ...);
+                }
+            };
+            exec.template run<fusion::GroupInfo<Systems...>>(n, cols, kernel);
         }
 
         struct Record   // 16 bytes

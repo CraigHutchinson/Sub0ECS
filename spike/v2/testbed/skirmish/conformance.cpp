@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "sim.hpp"
+#include "runners.hpp"
 #include "worlds.hpp"
 
 using namespace skirmish;
@@ -25,11 +26,11 @@ namespace
         Stats final;
     };
 
-    template <typename W, bool Fused>
+    template <typename W, bool Fused, typename Runner = void>
     Trace play(Config cfg)
     {
         auto world = std::make_unique<W>();
-        Sim<W, Fused> sim(*world, cfg);
+        Sim<W, Fused, Runner> sim(*world, cfg);
         Trace tr;
         for (int t = 1; t <= kTicks; ++t)
         {
@@ -88,6 +89,12 @@ int main()
     compare("QueryPart (fused)", ref, play<QueryPartWorld, true>(cfg));
     compare("QPartHinted", ref, play<QPartHintedWorld, false>(cfg));
     compare("QPartHinted (fused)", ref, play<QPartHintedWorld, true>(cfg));
+
+    // Fusion extension points on the real game
+    compare("planner NeverFuse", ref, play<QPartHintedWorld, false, PlannedRunner<fz::NeverFuse>>(cfg));
+    compare("ShareColumns+Parallel", ref, play<QPartHintedWorld, false, PlannedRunner<fz::ShareColumns, fz::Parallel>>(cfg));
+    compare("DeviceAware+Offload", ref, play<QPartHintedWorld, false, OffloadRunner<>>(cfg));
+    compare("AutoTuned", ref, play<QPartHintedWorld, false, AutoTunedRunner>(cfg));
 
     std::printf(failures ? "\n%d FAILURE(S)\n" : "\nALL DESIGNS PLAY THE IDENTICAL GAME\n", failures);
     return failures ? EXIT_FAILURE : EXIT_SUCCESS;

@@ -16,14 +16,17 @@
 #include <cmath>
 #include <cstdint>
 #include <limits>
+#include <type_traits>
 #include <vector>
 
 #include "../../common/query.hpp"
+#include "../../fusion/access.hpp"
 #include "components.hpp"
 
 namespace skirmish
 {
     using spike::Query;
+    namespace fusion = spike::fusion;
 
     inline constexpr int kMaxTeams = 4;
 
@@ -112,6 +115,8 @@ namespace skirmish
     struct Seek
     {
         using Query = spike::Query<MoveOrder, Position, Velocity, UnitType>;
+        using Access = fusion::Access<fusion::Read<MoveOrder>, fusion::Read<Position>, fusion::Write<Velocity>, fusion::Read<UnitType>>;
+        static constexpr bool kDeviceSafe = true;
         void operator()(MoveOrder& m, Position& p, Velocity& v, UnitType& t) const
         {
             const float dx = m.tx - p.x, dy = m.ty - p.y;
@@ -130,6 +135,8 @@ namespace skirmish
     {
         const Grid* grid;
         using Query = spike::Query<Id, Position, Velocity, Team>;
+        using Access = fusion::Access<fusion::Read<Id>, fusion::Read<Position>, fusion::Write<Velocity>, fusion::Read<Team>>;
+        // not device-safe: reads the host-side Grid snapshot through a pointer
         void operator()(Id& id, Position& p, Velocity& v, Team&) const
         {
             float fx = 0.0f, fy = 0.0f;
@@ -153,12 +160,16 @@ namespace skirmish
     struct StunFreeze
     {
         using Query = spike::Query<Stunned, Velocity>;
+        using Access = fusion::Access<fusion::Read<Stunned>, fusion::Write<Velocity>>;
+        static constexpr bool kDeviceSafe = true;
         void operator()(Stunned&, Velocity& v) const { v.x = 0.0f; v.y = 0.0f; }
     };
 
     struct Integrate
     {
         using Query = spike::Query<Position, Velocity>;
+        using Access = fusion::Access<fusion::Write<Position>, fusion::Read<Velocity>>;
+        static constexpr bool kDeviceSafe = true;
         void operator()(Position& p, Velocity& v) const
         {
             p.x += v.x * kDt;
@@ -169,6 +180,8 @@ namespace skirmish
     struct Friction
     {
         using Query = spike::Query<Velocity, UnitType>;
+        using Access = fusion::Access<fusion::Write<Velocity>, fusion::Read<UnitType>>;
+        static constexpr bool kDeviceSafe = true;
         void operator()(Velocity& v, UnitType& t) const
         {
             v.x *= 0.92f;
@@ -188,6 +201,8 @@ namespace skirmish
     {
         float size;
         using Query = spike::Query<Position, Velocity>;
+        using Access = fusion::Access<fusion::Write<Position>, fusion::Write<Velocity>>;
+        static constexpr bool kDeviceSafe = true;
         void operator()(Position& p, Velocity& v) const
         {
             if (p.x < 0.0f) { p.x = 0.0f; v.x = -v.x * 0.5f; }
@@ -232,7 +247,9 @@ namespace skirmish
                                                              "commander", "workers", "movement", "arrive", "combat",
                                                              "projectiles", "status", "death", "regen" };
 
-    template <typename W, bool Fused = false>
+    /** Movement may be run by a pluggable runner (fusion planner + executor):
+     *  Runner::run(world, systems...). void = built-in (sequential / fused). */
+    template <typename W, bool Fused = false, typename Runner = void>
     class Sim
     {
     public:
@@ -536,7 +553,11 @@ namespace skirmish
             const Integrate integrate{};
             const Friction friction{};
             const Bounds bounds{ mapSize_ };
-            if constexpr (Fused && requires { w_.runFused(integrate); })
+            if constexpr (!std::is_void_v<Runner>)
+            {
+                runner_.run(w_, seek, separation, freeze, integrate, friction, bounds);
+            }
+            else if constexpr (Fused && requires { w_.runFused(integrate); })
             {
                 w_.runFused(seek, separation, freeze, integrate, friction, bounds);
             }
@@ -767,6 +788,7 @@ namespace skirmish
         struct Sel { std::uint32_t id; float x, y; };
 
         W& w_;
+        std::conditional_t<std::is_void_v<Runner>, char, Runner> runner_{};
         Config cfg_;
         float mapSize_ = 0.0f;
         std::int64_t tick_ = 0;

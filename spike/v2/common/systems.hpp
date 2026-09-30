@@ -8,6 +8,7 @@
  * design-review-pre-h2.md, fusion.md).
  */
 
+#include "../fusion/access.hpp"
 #include "components.hpp"
 #include "query.hpp"
 #include "scenarios.hpp"
@@ -21,6 +22,8 @@ namespace spike
     struct Integrate
     {
         using Query = spike::Query<Position, Velocity>;
+        using Access = fusion::Access<fusion::Write<Position>, fusion::Read<Velocity>>;
+        static constexpr bool kDeviceSafe = true;
         void operator()(Position& p, Velocity& v) const
         {
             p.x += v.dx * kDeltaTime;
@@ -31,6 +34,8 @@ namespace spike
     struct Forces
     {
         using Query = spike::Query<Position, Velocity>;
+        using Access = fusion::Access<fusion::Read<Position>, fusion::Write<Velocity>>;
+        static constexpr bool kDeviceSafe = true;
         void operator()(Position&, Velocity& v) const
         {
             v.dy += 9.8f * kDeltaTime;
@@ -42,6 +47,8 @@ namespace spike
     struct Wrap
     {
         using Query = spike::Query<Position, Velocity>;
+        using Access = fusion::Access<fusion::Write<Position>, fusion::Read<Velocity>>;
+        static constexpr bool kDeviceSafe = true;
         void operator()(Position& p, Velocity&) const
         {
             if (p.x < 0.0f) p.x += 1000.0f;
@@ -56,18 +63,24 @@ namespace spike
     struct PhysicsSys
     {
         using Query = spike::Query<Position, Velocity>;
+        using Access = fusion::Access<fusion::Write<Position>, fusion::Write<Velocity>>;
+        static constexpr bool kDeviceSafe = true;
         void operator()(Position& p, Velocity& v) const { kernel::updatePosition(p, v, kDeltaTime); }
     };
 
     struct RotHealthSys
     {
         using Query = spike::Query<Health, Rotation>;
+        using Access = fusion::Access<fusion::Write<Health>, fusion::Write<Rotation>>;
+        static constexpr bool kDeviceSafe = true;
         void operator()(Health& h, Rotation& r) const { kernel::updateRotationHealth(h, r, kDeltaTime); }
     };
 
     struct PulseSys
     {
         using Query = spike::Query<Scale, Color>;
+        using Access = fusion::Access<fusion::Write<Scale>, fusion::Write<Color>>;
+        static constexpr bool kDeviceSafe = true;
         void operator()(Scale& s, Color& c) const { kernel::pulseScale(s, c, kDeltaTime); }
     };
 

@@ -21,6 +21,8 @@
 #include "../designs/static_bitmask.hpp"
 #include "../designs/v1_adapter.hpp"
 #include "../common/systems.hpp"
+#include "../fusion/executors.hpp"
+#include "../fusion/planner.hpp"
 
 #if defined(__SSE__) || defined(_M_X64)
 #    include <xmmintrin.h>
@@ -265,8 +267,73 @@ namespace
             [](benchmark::State& s, Pattern pp) { BM_System<W, systemFrame3Fused<W>>(s, pp, false); });
     }
 
+    // ---- Fusion extension points: planner x executor (QPartHinted) ----------
+    template <int Frame, typename Planner, typename Exec, typename Host>
+    void runFrame(qpart::HintedWorld& w, Exec& exec, Host& host)
+    {
+        if constexpr (Frame == 0)
+            fusion::runPlanned<Planner>(w, exec, host, Integrate{}, Forces{}, Wrap{}, RotHealthSys{});
+        else
+            fusion::runPlanned<Planner>(w, exec, host, PhysicsSys{}, RotHealthSys{}, PulseSys{});
+    }
+
+    template <int Frame, typename Planner, typename Exec>
+    void BM_Planned(benchmark::State& state, Pattern pattern)
+    {
+        const std::int64_t n = state.range(0);
+        auto w = std::make_unique<qpart::HintedWorld>();
+        auto es = populate(*w, n, pattern);
+        static Exec exec{};   // persistent (thread pool)
+        fusion::Inline host;
+        for (auto _ : state)
+        {
+            runFrame<Frame, Planner>(*w, exec, host);
+            benchmark::ClobberMemory();
+        }
+        state.SetItemsProcessed(state.iterations() * n);
+    }
+
+    template <int Frame>
+    void BM_AutoTuned(benchmark::State& state, Pattern pattern)
+    {
+        const std::int64_t n = state.range(0);
+        auto w = std::make_unique<qpart::HintedWorld>();
+        auto es = populate(*w, n, pattern);
+        fusion::AutoTuner<fusion::NeverFuse, fusion::ShareColumns, fusion::AlwaysFuse> tuner;
+        fusion::Inline e;
+        auto frame = [&] {
+            if constexpr (Frame == 0) tuner.run(*w, e, e, Integrate{}, Forces{}, Wrap{}, RotHealthSys{});
+            else tuner.run(*w, e, e, PhysicsSys{}, RotHealthSys{}, PulseSys{});
+        };
+        while (!tuner.decided()) frame();   // "measure" phase before timing
+        for (auto _ : state)
+        {
+            frame();
+            benchmark::ClobberMemory();
+        }
+        state.SetItemsProcessed(state.iterations() * n);
+        state.SetLabel(std::string("chose ") + tuner.names()[tuner.chosen()]);
+    }
+
+    template <int Frame>
+    void registerFusionExec(std::int64_t n, const char* scenario)
+    {
+        const Pattern f = Pattern::Fragmented;
+        using fusion::AlwaysFuse, fusion::NeverFuse, fusion::ShareColumns;
+        reg(scenario, f, "NeverFuse", n, BM_Planned<Frame, NeverFuse, fusion::Inline>);
+        reg(scenario, f, "AlwaysFuse", n, BM_Planned<Frame, AlwaysFuse, fusion::Inline>);
+        reg(scenario, f, "ShareColumns", n, BM_Planned<Frame, ShareColumns, fusion::Inline>);
+        reg(scenario, f, "AutoTuned", n, BM_AutoTuned<Frame>);
+        reg(scenario, f, "ShareColumns+Tiled4K", n, BM_Planned<Frame, ShareColumns, fusion::Tiled<4096>>);
+        reg(scenario, f, "ShareColumns+Parallel", n, BM_Planned<Frame, ShareColumns, fusion::Parallel>);
+        reg(scenario, f, "DeviceAware+Offload1K", n,
+            BM_Planned<Frame, fusion::DeviceAware<ShareColumns>, fusion::Offload<fusion::EmulatedDevice, 1024>>);
+    }
+
     void registerFusion(std::int64_t n)
     {
+        registerFusionExec<0>(n, "FusionExec");
+        registerFusionExec<1>(n, "Frame3Exec");
         registerFusionFor<qpart::HintedWorld>(n, "QPartHinted");
         // Sequential on the other designs for context
         for (Pattern p : { Pattern::Coherent, Pattern::Fragmented })
