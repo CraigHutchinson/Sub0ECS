@@ -14,7 +14,8 @@ Typical use on dedicated hardware:
     python3 tools/bench/run.py --profile reference --pin 2-15 --label ref-box
     python3 tools/bench/compare.py <runA> <runB>
 
-Only the Python standard library is used.
+Linux, macOS and Windows (MSVC: run from a VS developer prompt so the
+Ninja presets find cl.exe). Only the Python standard library is used.
 """
 import argparse
 import datetime as dt
@@ -31,6 +32,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 SPIKE = HERE.parent.parent            # spike/v2
 REPO = SPIKE.parent.parent            # repository root
+WINDOWS = sys.platform == "win32"
+EXE = ".exe" if WINDOWS else ""
 
 
 def sh(cmd, **kw):
@@ -39,6 +42,36 @@ def sh(cmd, **kw):
         return subprocess.run(cmd, capture_output=True, text=True, check=False, **kw).stdout.strip()
     except (OSError, ValueError):
         return ""
+
+
+def powershell(expr):
+    """Evaluate a PowerShell expression and parse its output as JSON (Windows fingerprinting)."""
+    out = sh(["powershell", "-NoProfile", "-NonInteractive", "-Command", f"{expr} | ConvertTo-Json -Compress"])
+    try:
+        return json.loads(out) if out else None
+    except ValueError:
+        return None
+
+
+def parse_cpulist(text):
+    """'0-3,8,10-11' -> [0, 1, 2, 3, 8, 10, 11] (taskset syntax)."""
+    cpus = []
+    for part in filter(None, text.split(",")):
+        lo, _, hi = part.partition("-")
+        cpus.extend(range(int(lo), int(hi or lo) + 1))
+    return cpus
+
+
+def cpulist(cpus):
+    """[0, 1, 2, 3, 8] -> '0-3,8'."""
+    runs, start = [], None
+    for i, c in enumerate(cpus):
+        if start is None:
+            start = c
+        if i + 1 == len(cpus) or cpus[i + 1] != c + 1:
+            runs.append(f"{start}" if start == c else f"{start}-{c}")
+            start = None
+    return ",".join(runs)
 
 
 def read(path):
@@ -67,7 +100,62 @@ def cpu_info():
             pass
     elif sys.platform == "darwin":
         info["Model name"] = sh(["sysctl", "-n", "machdep.cpu.brand_string"])
+    elif WINDOWS:
+        info.update(windows_cpu_info())
     return info
+
+
+def windows_cpu_info():
+    import ctypes
+    info = {}
+    cpu = powershell("Get-CimInstance Win32_Processor | Select-Object Name,NumberOfCores,"
+                     "NumberOfLogicalProcessors,MaxClockSpeed,L2CacheSize,L3CacheSize")
+    if isinstance(cpu, list):
+        info["Socket(s)"] = len(cpu)
+        cpu = cpu[0]
+    if cpu:
+        info.update({"Model name": cpu["Name"].strip(), "Core(s) per socket": cpu["NumberOfCores"],
+                     "CPU(s)": cpu["NumberOfLogicalProcessors"], "CPU max MHz": cpu["MaxClockSpeed"],
+                     "L2 cache": f"{cpu['L2CacheSize']} KiB", "L3 cache": f"{cpu['L3CacheSize']} KiB",
+                     "Thread(s) per core": cpu["NumberOfLogicalProcessors"] // max(1, cpu["NumberOfCores"])})
+    present = ctypes.windll.kernel32.IsProcessorFeaturePresent
+    features = {"sse4_2": 38, "avx": 39, "avx2": 40, "avx512f": 41}   # PF_*_INSTRUCTIONS_AVAILABLE
+    info["Flags"] = " ".join(name for name, pf in features.items() if present(pf))
+    info.update(windows_core_classes())
+    system = powershell("Get-CimInstance Win32_ComputerSystem | Select-Object Manufacturer,Model")
+    if system and any(v in f"{system['Manufacturer']} {system['Model']}"
+                      for v in ("Virtual", "VMware", "QEMU", "KVM", "Xen", "Parallels")):
+        info["Hypervisor vendor"] = f"{system['Manufacturer']} {system['Model']}"
+    return info
+
+
+def windows_core_classes():
+    """Logical CPUs per efficiency class on a hybrid CPU; the highest class is the P-cores.
+
+    GetLogicalProcessorInformationEx(RelationProcessorCore) returns one record per
+    physical core: {DWORD Relationship, DWORD Size}, then PROCESSOR_RELATIONSHIP
+    {BYTE Flags, BYTE EfficiencyClass, BYTE Reserved[20], WORD GroupCount,
+    GROUP_AFFINITY GroupMask[]} with GROUP_AFFINITY {KAFFINITY Mask, WORD Group, ...}
+    starting at record offset 32 (8-byte aligned).
+    """
+    import ctypes
+    k32 = ctypes.windll.kernel32
+    size = ctypes.c_ulong(0)
+    k32.GetLogicalProcessorInformationEx(0, None, ctypes.byref(size))   # 0 = RelationProcessorCore
+    buf = ctypes.create_string_buffer(size.value)
+    if not size.value or not k32.GetLogicalProcessorInformationEx(0, buf, ctypes.byref(size)):
+        return {}
+    raw, off, classes = buf.raw, 0, {}
+    while off < size.value:
+        record_size = int.from_bytes(raw[off + 4:off + 8], "little")
+        mask = int.from_bytes(raw[off + 32:off + 40], "little")
+        group = int.from_bytes(raw[off + 40:off + 42], "little")
+        classes.setdefault(raw[off + 9], []).extend(group * 64 + b for b in range(64) if mask >> b & 1)
+        off += record_size
+    if len(classes) < 2:
+        return {}
+    top = max(classes)
+    return {"hybrid": {("P" if c == top else f"E{c}"): cpulist(sorted(v)) for c, v in sorted(classes.items(), reverse=True)}}
 
 
 def power_state():
@@ -90,8 +178,31 @@ def power_state():
         state["aslr"] = aslr
     try:
         state["loadavg"] = list(os.getloadavg())
-    except OSError:
+    except (AttributeError, OSError):   # AttributeError: not provided on Windows
         pass
+    if WINDOWS:
+        state.update(windows_power_state())
+    return state
+
+
+def windows_power_state():
+    """Power plan, AC/battery and CPU load: the Windows counterparts of governor, turbo and loadavg."""
+    import ctypes
+
+    class SystemPowerStatus(ctypes.Structure):
+        _fields_ = [("ACLineStatus", ctypes.c_ubyte), ("BatteryFlag", ctypes.c_ubyte),
+                    ("BatteryLifePercent", ctypes.c_ubyte), ("SystemStatusFlag", ctypes.c_ubyte),
+                    ("BatteryLifeTime", ctypes.c_ulong), ("BatteryFullLifeTime", ctypes.c_ulong)]
+    state = {}
+    m = re.search(r"\((.+)\)\s*$", sh(["powercfg", "/getactivescheme"]))
+    if m:
+        state["power_plan"] = m.group(1)
+    status = SystemPowerStatus()
+    if ctypes.windll.kernel32.GetSystemPowerStatus(ctypes.byref(status)):
+        state["on_ac_power"] = {0: False, 1: True}.get(status.ACLineStatus)
+    load = powershell("(Get-CimInstance Win32_Processor | Measure-Object -Property LoadPercentage -Average).Average")
+    if load is not None:
+        state["cpu_load_percent"] = load
     return state
 
 
@@ -101,6 +212,10 @@ def memory_info():
         m = re.search(r"MemTotal:\s+(\d+) kB", mem)
         if m:
             return {"total_gib": round(int(m.group(1)) / 1024 / 1024, 1)}
+    if WINDOWS:
+        total = powershell("(Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory")
+        if total:
+            return {"total_gib": round(total / 1024 ** 3, 1)}
     return {}
 
 
@@ -116,9 +231,15 @@ def build_info(build_dir):
     def var(name):
         m = re.search(rf"^{name}(?::\w+)?=(.*)$", cache, re.M)
         return m.group(1) if m else None
-    cxx = var("CMAKE_CXX_COMPILER")
-    return {"build_dir": str(build_dir), "build_type": var("CMAKE_BUILD_TYPE"), "cxx": cxx,
-            "cxx_version": sh([cxx, "--version"]).splitlines()[0] if cxx else None,
+    # CMake's own compiler detection: exact, and portable (cl.exe has no --version).
+    detected = next(iter(sorted(Path(build_dir).glob("CMakeFiles/*/CMakeCXXCompiler.cmake"))), None)
+    ident = (read(detected) or "") if detected else ""
+    def ident_var(name):
+        m = re.search(rf'^set\({name} "([^"]*)"\)', ident, re.M)
+        return m.group(1) if m else ""
+    version = f"{ident_var('CMAKE_CXX_COMPILER_ID')} {ident_var('CMAKE_CXX_COMPILER_VERSION')}".strip()
+    return {"build_dir": str(build_dir), "build_type": var("CMAKE_BUILD_TYPE"), "cxx": var("CMAKE_CXX_COMPILER"),
+            "cxx_version": version or None,
             "cxx_flags": var("CMAKE_CXX_FLAGS"), "cxx_flags_release": var("CMAKE_CXX_FLAGS_RELEASE"),
             "spike_native": var("SPIKE_NATIVE"), "generator": var("CMAKE_GENERATOR")}
 
@@ -136,6 +257,14 @@ def warnings_for(meta):
         w.append("ASLR enabled: small run-to-run layout noise")
     if "loadavg" in p and meta["cpu"].get("logical_cpus") and p["loadavg"][0] > 0.25 * meta["cpu"]["logical_cpus"]:
         w.append(f"system load {p['loadavg'][0]:.1f} before the run: other work may perturb results")
+    if p.get("on_ac_power") is False:
+        w.append("running on battery: the CPU is power-limited and throttles")
+    if "power_plan" in p and not re.search(r"high performance|ultimate", p["power_plan"], re.I):
+        w.append(f"power plan is '{p['power_plan']}' (High performance / Best performance gives steadier clocks)")
+    if p.get("cpu_load_percent", 0) > 10:
+        w.append(f"CPU load {p['cpu_load_percent']}% before the run: other work may perturb results")
+    if "hybrid" in meta["cpu"] and not meta["run"].get("pin"):
+        w.append(f"hybrid CPU {meta['cpu']['hybrid']} and no --pin: threads migrate between core types")
     if meta["cpu"].get("Hypervisor vendor"):
         w.append(f"virtualised host ({meta['cpu']['Hypervisor vendor']}): expect noisy neighbours")
     if meta["git"].get("dirty"):
@@ -152,7 +281,7 @@ def build(preset):
 
 
 def run_suite(name, suite, profile, build_dir, run_dir, pin, extra_env, no_aslr=False):
-    exe = Path(build_dir) / suite["exe"]
+    exe = Path(build_dir) / (suite["exe"] + EXE)
     if not exe.exists():
         print(f"  ! {name}: {exe} not built, skipped")
         return {"status": "missing"}
@@ -177,11 +306,26 @@ def run_suite(name, suite, profile, build_dir, run_dir, pin, extra_env, no_aslr=
     print(f"  > {name}: {' '.join(cmd[-8:])}")
     t0 = dt.datetime.now()
     with open(run_dir / f"{name}.log", "w") as log:
-        rc = subprocess.run(cmd, env=env, stdout=log, stderr=subprocess.STDOUT).returncode
+        proc = subprocess.Popen(cmd, env=env, stdout=log, stderr=subprocess.STDOUT)
+        if pin and WINDOWS:
+            pin_process(proc, pin)
+        rc = proc.wait()
     secs = (dt.datetime.now() - t0).total_seconds()
     print(f"    {'ok' if rc == 0 else f'FAILED rc={rc}'} in {secs:.0f}s")
     return {"status": "ok" if rc == 0 else "failed", "returncode": rc, "seconds": round(secs, 1),
             "command": cmd, "env": {k: env[k] for k in {**profile.get("env", {}), **suite.get("env", {}), **extra_env}}}
+
+
+def pin_process(proc, pin):
+    """Windows counterpart of taskset: restrict a just-started process to the CPUs in `pin`.
+
+    A process affinity mask also moves threads that already exist, and the
+    benchmark binaries spend far longer in startup and registration than this
+    call takes, so no measured work runs unpinned."""
+    import ctypes
+    mask = sum(1 << c for c in parse_cpulist(pin))
+    if not ctypes.windll.kernel32.SetProcessAffinityMask(ctypes.c_void_p(int(proc._handle)), ctypes.c_size_t(mask)):
+        print(f"    ! could not pin to {pin}")
 
 
 def summarize(run_dir, results):
@@ -226,7 +370,8 @@ def main():
     ap.add_argument("--skip-build", action="store_true")
     ap.add_argument("--out", default=str(SPIKE / "results" / "runs"))
     ap.add_argument("--label", default="")
-    ap.add_argument("--pin", default="", help="taskset CPU list, e.g. 2-15 (Linux)")
+    ap.add_argument("--pin", default="", help="CPU list, e.g. 2-15 (taskset on Linux, affinity mask on Windows); "
+                    "'P' = the performance cores of a hybrid CPU (Windows)")
     ap.add_argument("--no-aslr", action="store_true", help="run benchmarks under 'setarch -R' (Linux)")
     ap.add_argument("--repetitions", type=int, default=None, help="override the profile")
     ap.add_argument("--env", action="append", default=[], help="extra KEY=VALUE for the benchmark processes")
@@ -265,6 +410,12 @@ def main():
                 "no_aslr": args.no_aslr,
                 "extra_env": args.env},
     }
+    if args.pin == "P":
+        args.pin = meta["run"]["pin"] = meta["cpu"].get("hybrid", {}).get("P", "")
+        if not args.pin:
+            ap.error("--pin P needs a hybrid CPU with detectable performance cores")
+    if WINDOWS and not (args.build_dir or args.skip_build) and not shutil.which("cl"):
+        ap.error("cl.exe is not on PATH: run from a VS developer prompt so the Ninja presets find MSVC")
     meta["warnings"] = warnings_for(meta)
 
     host = re.sub(r"[^A-Za-z0-9_.-]", "_", meta["host"])[:40]
