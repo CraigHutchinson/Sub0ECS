@@ -63,6 +63,12 @@ so rows are comparable across designs within a scenario.
 - v1 is compiled from `source/` unmodified; its warnings are silenced as
   SYSTEM headers only.
 
+## Benchmark harness
+
+For reproducible runs (and dedicated hardware) use the harness rather than
+invoking binaries by hand: see [BENCHMARKING.md](BENCHMARKING.md)
+(`tools/bench/run.py`, `tools/bench/compare.py`, CMake presets).
+
 ## Build & run
 
 ```bash

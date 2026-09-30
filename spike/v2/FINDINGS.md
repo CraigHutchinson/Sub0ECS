@@ -290,3 +290,19 @@ At 1M entities (500K promoted): a stall is one **149 ms** frame, while
 in 30 frames. The degraded path costs 14–22× the full path, so it is a
 transition mechanism, not a steady state. Next: time-budgeted and bulk
 row-slice migration.
+
+## Benchmark harness
+
+[BENCHMARKING.md](BENCHMARKING.md) codifies how to reproduce every result
+above on other hardware:
+- CMake presets (`bench-native` / `bench-portable` / `sanitize`);
+- a suite catalogue with quick / standard / reference profiles;
+- `run.py`: builds, fingerprints the machine (CPU, caches, SIMD, governor,
+  turbo, SMT, ASLR, load, compiler flags, git state), runs the suites with
+  pinning or no-ASLR options, and writes a self-describing result
+  directory;
+- `compare.py`: A/B verdicts that account for measured noise and list
+  environment differences first.
+
+Sizes and thread ladders scale automatically to the machine
+(`SPIKE_SIZES`, `SKIRMISH_UPT`, `SKIRMISH_THREADS`).

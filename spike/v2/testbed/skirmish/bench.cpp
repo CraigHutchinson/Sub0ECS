@@ -13,6 +13,7 @@
 #    include <xmmintrin.h>
 #endif
 
+#include "../../common/env.hpp"
 #include "sim.hpp"
 #include "runners.hpp"
 #include "worlds.hpp"
@@ -81,8 +82,10 @@ int main(int argc, char** argv)
 #if defined(__SSE__) || defined(_M_X64)
     _mm_setcsr(_mm_getcsr() | 0x8040u);
 #endif
-    for (int upt : { 250, 2500, 12500 })   // 1K, 10K, 50K units (+ projectiles, buildings)
+    // SKIRMISH_UPT: units per team (4 teams); default 1K / 10K / 50K units.
+    for (std::int64_t uptL : spike::env::list("SKIRMISH_UPT", { 250, 2500, 12500 }))
     {
+        const int upt = static_cast<int>(uptL);
         reg<SparseSetWorld>("SparseSet", upt);
         reg<ArchetypeWorld>("Archetype", upt);
         reg<QueryPartWorld>("QueryPart", upt);
@@ -96,11 +99,13 @@ int main(int argc, char** argv)
         reg<QPartHintedWorld, false, AutoTunedRunner>("QPH+AutoTuned", upt);
         if (upt <= 250) reg<StaticWorld<(1 << 13)>>("StaticBitmask", upt);
         else if (upt <= 2500) reg<StaticWorld<(1 << 16)>>("StaticBitmask", upt);
-        else reg<StaticWorld<(1 << 18)>>("StaticBitmask", upt);
+        else if (upt <= 12500) reg<StaticWorld<(1 << 18)>>("StaticBitmask", upt);
+        else if (upt <= 50000) reg<StaticWorld<(1 << 20)>>("StaticBitmask", upt);
         if (upt <= 250) reg<SortedWorld>("SortedSoA", upt);   // O(n) flushes per structural batch: small N only
     }
-    for (int upt : { 2500, 12500 })
-        for (int threads : { 1, 2, 4 })
+    // SKIRMISH_THREADS: thread counts; default 1, 2, 4, ... up to hardware concurrency.
+    for (std::int64_t upt : spike::env::list("SKIRMISH_THREADS_UPT", { 2500, 12500 }))
+        for (std::int64_t threads : spike::env::list("SKIRMISH_THREADS", spike::env::threadLadder()))
             for (int fuse : { 0, 1 })
                 for (int affinity : { 0, 1 })
                 {

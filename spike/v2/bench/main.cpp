@@ -13,6 +13,7 @@
 #include <new>
 #include <string>
 
+#include "../common/env.hpp"
 #include "../common/scenarios.hpp"
 #include "../designs/archetype.hpp"
 #include "../designs/query_partition.hpp"
@@ -360,7 +361,8 @@ namespace
         // Static design must be sized at compile time for each N.
         if (n <= 1024) registerDesign<fixed::World<1024>>(n);
         else if (n <= (1 << 17)) registerDesign<fixed::World<(1 << 17)>>(n);
-        else registerDesign<fixed::World<(1 << 20)>>(n);
+        else if (n <= (1 << 20)) registerDesign<fixed::World<(1 << 20)>>(n);
+        // larger N: no static-capacity instantiation (skipped)
     }
 } // namespace
 
@@ -372,14 +374,12 @@ int main(int argc, char** argv)
 #if defined(__SSE__) || defined(_M_X64)
     _mm_setcsr(_mm_getcsr() | 0x8040u);
 #endif
-    std::int64_t sizes[] = { 1'000, 100'000, 1'000'000 };
-    if (const char* env = std::getenv("SPIKE_SIZES"); env && std::string(env) == "small")
-    {
-        sizes[1] = sizes[2] = 0;
-    }
+    // SPIKE_SIZES: comma list of entity counts ("small" = 1000 only); default 1K, 100K, 1M.
+    std::vector<std::int64_t> sizes = env::list("SPIKE_SIZES", { 1'000, 100'000, 1'000'000 });
+    if (const char* e = std::getenv("SPIKE_SIZES"); e && std::string(e) == "small") sizes = { 1'000 };
     for (std::int64_t n : sizes)
     {
-        if (n) registerAll(n);
+        if (n > 0) registerAll(n);
     }
     benchmark::Initialize(&argc, argv);
     if (benchmark::ReportUnrecognizedArguments(argc, argv)) return 1;

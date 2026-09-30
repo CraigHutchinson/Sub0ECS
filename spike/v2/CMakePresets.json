@@ -1,0 +1,40 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 25, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "bench-base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/../../build/spike-${presetName}",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release", "CMAKE_EXPORT_COMPILE_COMMANDS": "ON" }
+    },
+    {
+      "name": "bench-native",
+      "inherits": "bench-base",
+      "displayName": "Benchmark build tuned for THIS machine (-march=native)",
+      "cacheVariables": { "SPIKE_NATIVE": "ON" }
+    },
+    {
+      "name": "bench-portable",
+      "inherits": "bench-base",
+      "displayName": "Benchmark build without -march=native (cross-machine comparable)",
+      "cacheVariables": { "SPIKE_NATIVE": "OFF" }
+    },
+    {
+      "name": "sanitize",
+      "inherits": "bench-base",
+      "displayName": "Debug + ASan/UBSan for the conformance suites",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug", "SPIKE_SANITIZE": "ON", "SPIKE_NATIVE": "OFF" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "bench-native", "configurePreset": "bench-native" },
+    { "name": "bench-portable", "configurePreset": "bench-portable" },
+    { "name": "sanitize", "configurePreset": "sanitize" }
+  ],
+  "testPresets": [
+    { "name": "bench-native", "configurePreset": "bench-native", "output": { "outputOnFailure": true } },
+    { "name": "sanitize", "configurePreset": "sanitize", "output": { "outputOnFailure": true } }
+  ]
+}
