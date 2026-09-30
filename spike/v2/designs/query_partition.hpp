@@ -32,6 +32,7 @@
 #include <cassert>
 #include <cstring>
 #include <memory>
+#include <new>
 #include <tuple>
 #include <type_traits>
 #include <unordered_map>
@@ -54,14 +55,17 @@ namespace spike::qpart
     template <typename T>
     Mask bit() { return Mask{ 1 } << typeId<T>(); }
 
-    /** Type-erased dense column (one per hot component in a partition). */
+    /** Type-erased dense column (one per hot component in a partition).
+     *  Storage is owned by the Partition (raw, 64-byte aligned, grown
+     *  geometrically, never zero-filled): pushRow/swapRemove touch no bytes
+     *  beyond the row itself. */
     struct Column
     {
         std::uint32_t type = 0;
         std::size_t stride = 0;
-        std::vector<std::byte> bytes;
+        std::byte* data = nullptr;
 
-        std::byte* at(std::size_t row) { return bytes.data() + row * stride; }
+        std::byte* at(std::size_t row) const { return data + row * stride; }
     };
 
     /** Side storage: sparse set for components that are not columns.
@@ -142,18 +146,48 @@ namespace spike::qpart
 
     struct Partition
     {
+        static constexpr std::size_t kAlign = 64;
+
         Mask columnsMask = 0;
         std::uint32_t signature = 0;   // bit i set = matches declared query i
         std::vector<Column> columns;
         std::array<std::int8_t, kMaxTypes> columnOf{};
+        /** Column base pointer per component type (nullptr = not a column):
+         *  find()/each() resolve a column with one load instead of
+         *  columnOf -> columns[] -> data. Kept in sync on growth. */
+        std::array<std::byte*, kMaxTypes> base{};
         std::vector<Entity> entities;
+        std::size_t capacity = 0;      // rows allocated in every column
+        /** Transition cache: last destination seen when adding/removing a
+         *  fragmenting type from this partition. Keyed by the destination
+         *  column mask too, so it is exact even when two entities in this
+         *  partition carry different non-column fragmenting components. */
+        struct Edge { Mask cols = ~Mask{ 0 }; std::uint32_t index = 0; };
+        std::array<Edge, kMaxTypes> addEdge{}, removeEdge{};
+
+        Partition() = default;
+        Partition(const Partition&) = delete;
+        Partition& operator=(const Partition&) = delete;
+        ~Partition()
+        {
+            for (auto& c : columns) ::operator delete(c.data, std::align_val_t{ kAlign });
+        }
+
+        template <typename C>
+        C* col() const { return reinterpret_cast<C*>(base[typeId<C>()]); }
 
         std::size_t size() const { return entities.size(); }
 
+        void addColumn(std::uint32_t type, std::size_t stride)
+        {
+            columnOf[type] = static_cast<std::int8_t>(columns.size());
+            columns.push_back(Column{ type, stride, nullptr });
+        }
+
         std::uint32_t pushRow(Entity e)
         {
+            if (entities.size() == capacity) grow(capacity ? capacity * 2u : 64u);
             entities.push_back(e);
-            for (auto& c : columns) c.bytes.resize(c.bytes.size() + c.stride);
             return static_cast<std::uint32_t>(entities.size() - 1u);
         }
 
@@ -169,8 +203,24 @@ namespace spike::qpart
                 moved = entities[row];
             }
             entities.pop_back();
-            for (auto& c : columns) c.bytes.resize(c.bytes.size() - c.stride);
             return moved;
+        }
+
+    private:
+        void grow(std::size_t rows)
+        {
+            for (auto& c : columns)
+            {
+                auto* fresh = static_cast<std::byte*>(::operator new(rows * c.stride, std::align_val_t{ kAlign }));
+                if (c.data)
+                {
+                    std::memcpy(fresh, c.data, entities.size() * c.stride);
+                    ::operator delete(c.data, std::align_val_t{ kAlign });
+                }
+                c.data = fresh;
+                base[c.type] = fresh;
+            }
+            capacity = rows;
         }
     };
 
@@ -233,7 +283,7 @@ namespace spike::qpart
             {
                 const std::size_t n = p->size();
                 if (n == 0) continue;
-                std::tuple<Cs*...> cols{ reinterpret_cast<Cs*>(p->columns[p->columnOf[typeId<Cs>()]].bytes.data())... };
+                std::tuple<Cs*...> cols{ p->template col<Cs>()... };
                 for (std::size_t i = 0; i < n; ++i) f(std::get<Cs*>(cols)[i]...);
             }
         }
@@ -248,12 +298,9 @@ namespace spike::qpart
                 return pool ? static_cast<SidePool<C>*>(pool)->find(e) : nullptr;
             }
             const Record& r = records_[e.index()];
-            const std::uint32_t t = typeId<C>();
             if (!(r.has & bit<C>()))   // H9: not yet migrated entities still hold it in side storage
                 return (migrating_ & bit<C>()) ? side<C>().find(e) : nullptr;
-            Partition& p = *partitions_[r.partition];
-            const std::int8_t c = p.columnOf[t];
-            if (c != kNoColumn) return reinterpret_cast<C*>(p.columns[c].at(r.row));
+            if (C* col = partitions_[r.partition]->template col<C>()) return col + r.row;
             return side<C>().find(e);
         }
 
@@ -271,7 +318,7 @@ namespace spike::qpart
             const Mask newCols = columnsFor(newHas);
             if (newCols != part(r).columnsMask)
             {
-                moveTo(e, r, newCols, newHas);
+                moveTo(e, r, newCols, newHas, part(r).addEdge[typeId<C>()]);
             }
             r.has = newHas;
             store(part(r), r.row, e, std::move(value));
@@ -301,7 +348,7 @@ namespace spike::qpart
             else
             {
                 if (part(r).columnOf[t] == kNoColumn) side<C>().remove(e);
-                moveTo(e, r, newCols, newHas);
+                moveTo(e, r, newCols, newHas, part(r).removeEdge[t]);
             }
             r.has = newHas;
         }
@@ -433,14 +480,14 @@ namespace spike::qpart
             {
                 for (Partition* p : byQuery_[qi])
                 {
-                    std::tuple<Cs*...> cols{ reinterpret_cast<Cs*>(p->columns[p->columnOf[typeId<Cs>()]].bytes.data())... };
+                    std::tuple<Cs*...> cols{ p->template col<Cs>()... };
                     for (std::size_t i = 0, n = p->size(); i < n; ++i) f(0u, std::get<Cs*>(cols)[i]...);
                 }
                 return;
             }
             auto body = [&](std::size_t item, unsigned worker) {
                 const Chunk& c = chunks_[item];
-                std::tuple<Cs*...> cols{ reinterpret_cast<Cs*>(c.p->columns[c.p->columnOf[typeId<Cs>()]].bytes.data())... };
+                std::tuple<Cs*...> cols{ c.p->template col<Cs>()... };
                 for (std::uint32_t i = c.begin; i < c.end; ++i) f(worker, std::get<Cs*>(cols)[i]...);
             };
             pool.parallelFor(chunks_.size(), body);
@@ -524,7 +571,7 @@ namespace spike::qpart
             {
                 const std::size_t n = p->size();
                 if (n == 0) continue;
-                std::tuple<Cs*...> cols{ reinterpret_cast<Cs*>(p->columns[p->columnOf[typeId<Cs>()]].bytes.data())... };
+                std::tuple<Cs*...> cols{ p->template col<Cs>()... };
                 for (std::size_t i = 0; i < n; ++i) f(std::get<Cs*>(cols)[i]...);
             }
             if (q.pending)                      // degraded path: sparse join over unmigrated holders
@@ -574,9 +621,7 @@ namespace spike::qpart
         {
             if (r.has & bit<C>())
             {
-                Partition& p = *partitions_[r.partition];
-                const std::int8_t c = p.columnOf[typeId<C>()];
-                if (c != kNoColumn) return *reinterpret_cast<C*>(p.columns[c].at(r.row));
+                if (C* col = partitions_[r.partition]->template col<C>()) return col[r.row];
             }
             return *side<C>().find(e);
         }
@@ -610,8 +655,9 @@ namespace spike::qpart
                     pend |= Mask{ 1 } << t;
                 }
             }
+            assert(pend != 0);   // e was taken from a migrating pool
             const Mask newHas = r.has | pend;
-            moveTo(e, r, columnsFor(newHas), newHas);
+            moveTo(e, r, columnsFor(newHas), newHas, part(r).addEdge[std::countr_zero(pend)]);
             r.has = newHas;
             Partition& p = part(r);
             for (Mask m = pend; m; m &= m - 1u)
@@ -661,9 +707,7 @@ namespace spike::qpart
         template <typename... Ts>
         static std::tuple<Ts*...> bindUnion(Partition& p, TypeList<Ts...>)
         {
-            return { (p.columnOf[typeId<Ts>()] != kNoColumn
-                          ? reinterpret_cast<Ts*>(p.columns[p.columnOf[typeId<Ts>()]].bytes.data())
-                          : nullptr)... };
+            return { p.template col<Ts>()... };   // nullptr when not a column
         }
 
         template <bool Active, typename S, typename Cols, typename... Cs>
@@ -763,7 +807,23 @@ namespace spike::qpart
         /** Move e to the partition for newCols; values migrate column<->side as needed. */
         void moveTo(Entity e, Record& r, Mask newCols, Mask newHas)
         {
-            const std::uint32_t di = partitionFor(newCols);
+            moveTo(e, r, newHas, partitionFor(newCols));
+        }
+
+        /** Single-type transition: resolve the destination through the source
+         *  partition's edge cache (hit = no hash lookup). */
+        void moveTo(Entity e, Record& r, Mask newCols, Mask newHas, Partition::Edge& edge)
+        {
+            if (edge.cols != newCols)
+            {
+                const std::uint32_t di = partitionFor(newCols);   // may grow partitions_, edge stays valid (Partition is heap-pinned)
+                edge = Partition::Edge{ newCols, di };
+            }
+            moveTo(e, r, newHas, edge.index);
+        }
+
+        void moveTo(Entity e, Record& r, Mask newHas, std::uint32_t di)
+        {
             Partition& src = part(r);
             Partition& dst = *partitions_[di];
             const std::uint32_t srcRow = r.row;
@@ -810,11 +870,7 @@ namespace spike::qpart
             p->columnOf.fill(kNoColumn);
             for (std::uint32_t t = 0; t < kMaxTypes; ++t)
             {
-                if (cols & (Mask{ 1 } << t))
-                {
-                    p->columnOf[t] = static_cast<std::int8_t>(p->columns.size());
-                    p->columns.push_back(Column{ t, strides_[t], {} });
-                }
+                if (cols & (Mask{ 1 } << t)) p->addColumn(t, strides_[t]);
             }
             for (std::size_t i = 0; i < kQueries; ++i)
             {
