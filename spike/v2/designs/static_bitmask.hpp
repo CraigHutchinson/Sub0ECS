@@ -14,6 +14,7 @@
 
 #include <array>
 #include <cstdint>
+#include <cstdlib>
 #include <tuple>
 #include <type_traits>
 
@@ -59,7 +60,7 @@ namespace spike::fixed
             std::uint32_t slot;
             if (freeCount_ > 0) slot = free_[--freeCount_];
             else slot = highWater_++;
-            // Capacity overflow is a precondition violation in the spike.
+            if (slot >= Capacity) std::abort();   // fixed capacity exceeded: fail loudly, never corrupt
             mask_[slot] = kAlive | (bit<Cs>() | ... | Signature{ 0 });
             ((column<Cs>()[slot] = std::move(cs)), ...);
             return Entity::make(slot, version_[slot]);
