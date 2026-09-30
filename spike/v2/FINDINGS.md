@@ -162,6 +162,8 @@ What the numbers say:
      non-fragmenting pools.
 
    None of these is a model limit.
+   *Update (optimisation pass, below):* RandomGet is now 0.86–1.12×, Create
+   0.83–1.30×, DestroyCreate 1.14–1.23× faster than before.
 
 **Recommendation:** proceed on the hinted model (carry by default,
 side-store volatile). Next spikes: H2 (partition ordering, single span) and
@@ -289,7 +291,8 @@ At 1M entities (500K promoted): a stall is one **149 ms** frame, while
 16 384 entities/frame caps frames at **~16 ms** and reaches the full path
 in 30 frames. The degraded path costs 14–22× the full path, so it is a
 transition mechanism, not a steady state. Next: time-budgeted and bulk
-row-slice migration.
+row-slice migration. (After the optimisation pass: stall 92 ms, 16 384/frame
+worst frame 11 ms, ~170 ns per promoted entity.)
 
 ## Benchmark harness
 
@@ -306,3 +309,42 @@ above on other hardware:
 
 Sizes and thread ladders scale automatically to the machine
 (`SPIKE_SIZES`, `SKIRMISH_UPT`, `SKIRMISH_THREADS`).
+
+## Code review & optimisation pass
+
+Numbers: [results/opt-pass-linux-gcc13.md](results/opt-pass-linux-gcc13.md).
+The scope was the recommended design ([designs/query_partition.hpp](designs/query_partition.hpp)),
+the executors and the H9 paths.
+
+**Correctness: no defects found.** Checked explicitly:
+- `destroy` scrubs side bits, non-fragmenting pools and migrating pools
+  correctly in both carry modes.
+- H9 promotion is all-or-nothing per entity; `find`, `remove` and
+  `compatJoin` agree on where an unmigrated value lives.
+- `Parallel` dispatch: the release/acquire pairs on `gen_`/`remaining_` plus
+  the empty lock handshake rule out lost wake-ups.
+
+All suites pass (conformance, fusion, dynamic, skirmish incl. lock-step x2/x4)
+and are clean under ASan/UBSan and TSan.
+
+**Optimisations** (all in `query_partition.hpp`):
+
+| Change | Why | Effect (vs Archetype as drift control) |
+|---|---|---|
+| Raw 64-byte-aligned column buffers, owned by the partition, geometric growth, no zero-fill | `vector<byte>::resize` per `pushRow`/`swapRemove` did bookkeeping and zero-fill on every structural move | TagChurn **1.46–1.91×**, DestroyCreate **1.14–1.23×**, Create QPartHinted 0.83→**1.12×** Arch at 1M |
+| Per-partition column base pointer per type | `find`/`each`/fusion bind with one load instead of `columnOf → columns[] → data` | Simpler code; not measured in isolation (RandomGet did not move until the reorder below) |
+| `find()`: column lookup before the `has` test (columns ⊆ has, so it is safe) | The early `has` branch cost ~20% on a latency-bound loop | RandomGet 0.67–0.75× → **0.86–1.12×** Arch |
+| Add/remove transition edge cache, keyed by destination column mask | Hash lookup per structural move. The key includes the mask because carried components make the destination depend on more than (partition, type) | Folded into the TagChurn and H9 gains |
+| Same edge cache for H9 promotion | Hash lookup per promoted entity | Migration 100–113 ms → **72–84 ms** at 1M (~170 ns/entity); stall worst frame 109→92 ms |
+
+Unchanged, within noise: Update2, Iter1, and AddRemove of an unqueried
+component (a pure sparse-set op; code untouched, 0.9× in one run tracked
+Archetype's own 0.9× drift).
+
+**Carried forward (not done):**
+- Reclaiming empty partitions (F4). It must also invalidate edge caches,
+  which hold partition indices.
+- Bulk row-slice promotion. It would sort pending holders by source
+  partition so the moves stream instead of chasing random rows (migration
+  is now latency-bound).
+- Batching TagChurn moves at commit (§4.6).

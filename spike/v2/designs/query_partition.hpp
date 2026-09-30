@@ -298,9 +298,12 @@ namespace spike::qpart
                 return pool ? static_cast<SidePool<C>*>(pool)->find(e) : nullptr;
             }
             const Record& r = records_[e.index()];
+            // Column first: columnsFor(has) is a subset of has, so a column
+            // implies membership. Checking r.has before this dependent load cost
+            // RandomGet ~20% (measured), hence the order.
+            if (C* col = partitions_[r.partition]->template col<C>()) return col + r.row;
             if (!(r.has & bit<C>()))   // H9: not yet migrated entities still hold it in side storage
                 return (migrating_ & bit<C>()) ? side<C>().find(e) : nullptr;
-            if (C* col = partitions_[r.partition]->template col<C>()) return col + r.row;
             return side<C>().find(e);
         }
 
