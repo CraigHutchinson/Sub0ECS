@@ -72,6 +72,15 @@ if(SPIKE_SANITIZE AND NOT MSVC)
 endif()
 add_test(NAME spike_fusion_test COMMAND spike_fusion_test)
 
+# ---- H9 dynamic system lifetimes ----
+add_executable(spike_dynamic_test test/dynamic_test.cpp)
+target_link_libraries(spike_dynamic_test PRIVATE spike_flags Threads::Threads)
+if(SPIKE_SANITIZE AND NOT MSVC)
+    target_compile_options(spike_dynamic_test PRIVATE -fsanitize=address,undefined -fno-omit-frame-pointer)
+    target_link_options(spike_dynamic_test PRIVATE -fsanitize=address,undefined)
+endif()
+add_test(NAME spike_dynamic_test COMMAND spike_dynamic_test)
+
 # ---- Skirmish testbed: an RTS simulation driving every storage design ----
 add_executable(skirmish_demo testbed/skirmish/demo.cpp)
 target_link_libraries(skirmish_demo PRIVATE spike_flags Threads::Threads)
@@ -88,3 +97,7 @@ target_link_libraries(skirmish_bench PRIVATE spike_flags benchmark::benchmark Th
 # Micro-benchmark: span-count cost (design review evidence)
 add_executable(spike_spans_micro bench/spans_micro.cpp)
 target_link_libraries(spike_spans_micro PRIVATE spike_flags benchmark::benchmark)
+
+# H9 timeline: cost of paging a system in (degraded path, bounded migration, stall)
+add_executable(spike_dynamic_timeline bench/dynamic_timeline.cpp)
+target_link_libraries(spike_dynamic_timeline PRIVATE spike_flags Threads::Threads)

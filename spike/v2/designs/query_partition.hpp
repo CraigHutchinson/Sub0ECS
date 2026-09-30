@@ -76,6 +76,9 @@ namespace spike::qpart
         virtual void emplaceRaw(Entity e, const void* src) = 0;
         virtual void remove(Entity e) = 0;
         virtual void removeIfPresent(Entity e) = 0;
+        virtual const void* tryFindRaw(Entity e) const = 0;
+        virtual std::size_t size() const = 0;
+        virtual Entity entityAt(std::size_t i) const = 0;
     };
 
     template <typename T>
@@ -116,6 +119,13 @@ namespace spike::qpart
         }
 
         const void* findRaw(Entity e) const override { return &data_[sparse_[e.index()]]; }
+        const void* tryFindRaw(Entity e) const override
+        {
+            const std::uint32_t i = e.index();
+            return (i < sparse_.size() && sparse_[i] != kNull) ? &data_[sparse_[i]] : nullptr;
+        }
+        std::size_t size() const override { return dense_.size(); }
+        Entity entityAt(std::size_t i) const override { return dense_[i]; }
 
         void emplaceRaw(Entity e, const void* src) override
         {
@@ -239,7 +249,8 @@ namespace spike::qpart
             }
             const Record& r = records_[e.index()];
             const std::uint32_t t = typeId<C>();
-            if (!(r.has & bit<C>())) return nullptr;
+            if (!(r.has & bit<C>()))   // H9: not yet migrated entities still hold it in side storage
+                return (migrating_ & bit<C>()) ? side<C>().find(e) : nullptr;
             Partition& p = *partitions_[r.partition];
             const std::int8_t c = p.columnOf[t];
             if (c != kNoColumn) return reinterpret_cast<C*>(p.columns[c].at(r.row));
@@ -276,6 +287,11 @@ namespace spike::qpart
             }
             Record& r = records_[e.index()];
             const std::uint32_t t = typeId<C>();
+            if (!(r.has & bit<C>()) && (migrating_ & bit<C>()))
+            {
+                side<C>().remove(e);           // H9: unmigrated holder, still side-stored
+                return;
+            }
             const Mask newHas = r.has & ~bit<C>();
             const Mask newCols = columnsFor(newHas);
             if (newCols == part(r).columnsMask)
@@ -302,6 +318,7 @@ namespace spike::qpart
                 sideBits &= sideBits - 1u;
             }
             for (std::uint32_t t : nonFragmentingTypes_) side_[t]->removeIfPresent(e);
+            for (Mask m = migrating_; m; m &= m - 1u) side_[std::countr_zero(m)]->removeIfPresent(e);
             const Entity moved = p.swapRemove(r.row);
             if (!(moved == kNullEntity)) records_[moved.index()].row = r.row;
             r = Record{};
@@ -332,6 +349,14 @@ namespace spike::qpart
         template <typename Exec, typename... Systems>
         void runFusedOn(Exec& exec, const Systems&... systems)
         {
+            runFusedOnMasked(exec, ~0u, systems...);
+        }
+
+        /** H9: runtime enable mask over the group's members (bit j = systems[j]).
+         *  A disabled member simply drops out of every partition's subset. */
+        template <typename Exec, typename... Systems>
+        void runFusedOnMasked(Exec& exec, unsigned enabled, const Systems&... systems)
+        {
             constexpr std::size_t k = sizeof...(Systems);
             static_assert(k >= 1 && k <= 6, "spike: 2^k loop specialisations");
             static_assert(((indexOf<typename Systems::Query, Qs...>() < kQueries) && ...),
@@ -348,6 +373,7 @@ namespace spike::qpart
                 {
                     if (p.signature & (1u << qidx[j])) subset |= 1u << j;
                 }
+                subset &= enabled;
                 if (subset != 0) dispatchSubset<0>(exec, subset, p, n, systems...);
             }
         }
@@ -420,9 +446,181 @@ namespace spike::qpart
             pool.parallelFor(chunks_.size(), body);
         }
 
+        // ---- H9: dynamic system lifetimes ------------------------------------
+        //
+        // A system registered at runtime (e.g. paged in with a new world region)
+        // declares its query here. Components it requires that are currently in
+        // side storage (Volatile) are PROMOTED to dense columns: a relayout.
+        //   - the query is usable immediately in a DEGRADED mode: fast path over
+        //     already-matching partitions + a sparse join over the side pool for
+        //     entities not yet migrated (each entity visited exactly once);
+        //   - migrateStep(budget) moves at most `budget` entities (all their
+        //     pending components at once) per call — bounded, incremental;
+        //   - when the side pools drain, the query flips to the full fast path.
+        // migrateStep(SIZE_MAX) is the "stall acceptable" (level load) relayout.
+
+        template <typename... Cs>
+        std::size_t addQuery()
+        {
+            static_assert(Carry, "dynamic queries are designed for the hinted (carry) layout");
+            (registerType<Cs>(), ...);
+            const Mask req = (Mask{ 0 } | ... | bit<Cs>());
+            const Mask promote = req & volatile_;
+            if (promote)
+            {
+                volatile_ &= ~promote;
+                fragmenting_ |= promote;
+                migrating_ |= promote;
+                std::erase_if(nonFragmentingTypes_, [&](std::uint32_t t) { return (promote >> t) & 1u; });
+            }
+            DynQuery q{ req, promote, {}, true };
+            for (auto& p : partitions_)
+                if ((p->columnsMask & req) == req) q.partitions.push_back(p.get());
+            dyn_.push_back(std::move(q));
+            refreshPending();
+            return dyn_.size() - 1u;
+        }
+
+        /** Scheduler-level enable/disable: no layout change (demotion back to side
+         *  storage is only done at stall points). */
+        void setQueryEnabled(std::size_t id, bool on) { dyn_[id].enabled = on; }
+
+        bool queryDegraded(std::size_t id) const { return dyn_[id].pending != 0; }
+
+        /** Entities still waiting to be migrated (upper bound: side-pool sizes). */
+        std::size_t pendingMigration() const
+        {
+            std::size_t n = 0;
+            for (Mask m = migrating_; m; m &= m - 1u) n += side_[std::countr_zero(m)]->size();
+            return n;
+        }
+
+        /** Migrate up to `budget` entities; returns entities still pending. */
+        std::size_t migrateStep(std::size_t budget)
+        {
+            std::size_t moved = 0;
+            while (migrating_ && moved < budget)
+            {
+                const auto t = static_cast<std::uint32_t>(std::countr_zero(migrating_));
+                SidePoolBase& pool = *side_[t];
+                if (pool.size() == 0)
+                {
+                    migrating_ &= ~(Mask{ 1 } << t);
+                    refreshPending();
+                    continue;
+                }
+                promoteEntity(pool.entityAt(pool.size() - 1u));
+                ++moved;
+            }
+            return pendingMigration();
+        }
+
+        template <typename... Cs, typename F>
+        void eachDyn(std::size_t id, F&& f)
+        {
+            const DynQuery& q = dyn_[id];
+            if (!q.enabled) return;
+            for (Partition* p : q.partitions)   // full path: dense columns
+            {
+                const std::size_t n = p->size();
+                if (n == 0) continue;
+                std::tuple<Cs*...> cols{ reinterpret_cast<Cs*>(p->columns[p->columnOf[typeId<Cs>()]].bytes.data())... };
+                for (std::size_t i = 0; i < n; ++i) f(std::get<Cs*>(cols)[i]...);
+            }
+            if (q.pending)                      // degraded path: sparse join over unmigrated holders
+            {
+                const auto d = static_cast<std::uint32_t>(std::countr_zero(q.pending));
+                (void)((typeId<Cs>() == d ? (compatJoin<Cs, Cs...>(f), true) : false) || ...);
+            }
+        }
+
         std::size_t partitionCount() const { return partitions_.size(); }
 
     private:
+        // ---- H9 helpers ----
+        struct Record   // 16 bytes
+        {
+            std::uint32_t partition = 0;   // index into partitions_
+            std::uint32_t row = 0;
+            Mask has = 0;                  // the entity's *fragmenting* components only
+        };
+        static_assert(sizeof(Record) == 16);
+
+        Partition& part(const Record& r) { return *partitions_[r.partition]; }
+
+        struct DynQuery
+        {
+            Mask required = 0;
+            Mask pending = 0;          // required components still being promoted
+            std::vector<Partition*> partitions;
+            bool enabled = true;
+        };
+
+        void refreshPending()
+        {
+            for (auto& q : dyn_) q.pending = q.required & migrating_;
+        }
+
+        template <typename C>
+        bool holds(Entity e, const Record& r)
+        {
+            if (r.has & bit<C>()) return true;
+            auto* pool = side_[typeId<C>()].get();
+            return pool && pool->tryFindRaw(e) != nullptr;
+        }
+
+        template <typename C>
+        C& refOf(Entity e, const Record& r)
+        {
+            if (r.has & bit<C>())
+            {
+                Partition& p = *partitions_[r.partition];
+                const std::int8_t c = p.columnOf[typeId<C>()];
+                if (c != kNoColumn) return *reinterpret_cast<C*>(p.columns[c].at(r.row));
+            }
+            return *side<C>().find(e);
+        }
+
+        /** Driver = side pool of one pending component; every holder there is unmigrated. */
+        template <typename D, typename... Cs, typename F>
+        void compatJoin(F& f)
+        {
+            SidePool<D>& pool = side<D>();
+            for (std::size_t i = 0, n = pool.size(); i < n; ++i)
+            {
+                const Entity e = pool.entityAt(i);
+                const Record& r = records_[e.index()];
+                if ((holds<Cs>(e, r) && ...)) f(refOf<Cs>(e, r)...);
+            }
+        }
+
+        /** Move one entity's pending components from side storage into columns
+         *  (all at once, so an entity is never half-migrated). */
+        void promoteEntity(Entity e)
+        {
+            Record& r = records_[e.index()];
+            Mask pend = 0;
+            for (Mask m = migrating_; m; m &= m - 1u)
+            {
+                const auto t = static_cast<std::uint32_t>(std::countr_zero(m));
+                if (const void* src = side_[t]->tryFindRaw(e))
+                {
+                    std::memcpy(stash_[t].data(), src, strides_[t]);
+                    side_[t]->remove(e);
+                    pend |= Mask{ 1 } << t;
+                }
+            }
+            const Mask newHas = r.has | pend;
+            moveTo(e, r, columnsFor(newHas), newHas);
+            r.has = newHas;
+            Partition& p = part(r);
+            for (Mask m = pend; m; m &= m - 1u)
+            {
+                const auto t = static_cast<std::uint32_t>(std::countr_zero(m));
+                std::memcpy(p.columns[p.columnOf[t]].at(r.row), stash_[t].data(), strides_[t]);
+            }
+        }
+
         // ---- fusion helpers ----
         template <unsigned M, typename Exec, typename... Systems>
         void dispatchSubset(Exec& exec, unsigned subset, Partition& p, std::size_t n, const Systems&... systems)
@@ -497,15 +695,6 @@ namespace spike::qpart
             exec.template run<fusion::GroupInfo<Systems...>>(n, cols, kernel);
         }
 
-        struct Record   // 16 bytes
-        {
-            std::uint32_t partition = 0;   // index into partitions_
-            std::uint32_t row = 0;
-            Mask has = 0;                  // the entity's *fragmenting* components only
-        };
-        static_assert(sizeof(Record) == 16);
-
-        Partition& part(const Record& r) { return *partitions_[r.partition]; }
 
         template <typename... Cs>
         static Mask requiredMask(Query<Cs...>) { return (Mask{ 0 } | ... | bit<Cs>()); }
@@ -543,6 +732,7 @@ namespace spike::qpart
         void registerType()
         {
             static_assert(std::is_trivially_copyable_v<T>, "query-partition spike requires trivially copyable components");
+            static_assert(sizeof(T) <= 64, "H9 promotion scratch holds components up to 64 bytes");
             const std::uint32_t t = typeId<T>();
             assert(t < kMaxTypes);
             if (strides_[t] == 0)
@@ -630,6 +820,10 @@ namespace spike::qpart
             {
                 if (p->signature & (1u << i)) byQuery_[i].push_back(p.get());
             }
+            for (auto& q : dyn_)
+            {
+                if ((p->columnsMask & q.required) == q.required) q.partitions.push_back(p.get());
+            }
             const auto index = static_cast<std::uint32_t>(partitions_.size());
             byColumns_.emplace(cols, index);
             partitions_.push_back(std::move(p));
@@ -640,6 +834,9 @@ namespace spike::qpart
         Mask queried_ = 0;
         Mask volatile_ = 0;
         Mask fragmenting_ = 0;
+        Mask migrating_ = 0;                          // H9: components being promoted to columns
+        std::vector<DynQuery> dyn_;                   // H9: runtime-registered queries
+        std::array<std::array<std::byte, 64>, kMaxTypes> stash_{};   // promotion scratch (components <= 64 B)
         std::vector<std::uint32_t> nonFragmentingTypes_;
         std::array<std::size_t, kMaxTypes> strides_{};
         std::array<std::unique_ptr<SidePoolBase>, kMaxTypes> side_{};

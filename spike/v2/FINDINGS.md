@@ -269,3 +269,24 @@ them. Then:
 - pipeline read-only consumers across frames from snapshots.
 
 Reject free-running threads (they break determinism).
+
+## H9 dynamic system lifetimes
+
+[research/dynamic-systems.md](research/dynamic-systems.md). Systems can be
+added at runtime.
+- **No relayout** in the hinted layout when the new system uses components
+  that are already columns (O(#partitions) matching only).
+- **Promotion** when it needs a side-stored component. The new system runs
+  immediately in a **degraded** mode (fast path plus a sparse join over
+  unmigrated holders) while `migrateStep(budget)` restructures boundedly
+  per frame, then **flips to the full path**.
+
+Results are bit-identical for every budget (0 / 100 / 1000 / stall), with
+structural churn during migration and each holder visited exactly once. So
+the budget can be time-driven without affecting determinism.
+
+At 1M entities (500K promoted): a stall is one **149 ms** frame, while
+16 384 entities/frame caps frames at **~16 ms** and reaches the full path
+in 30 frames. The degraded path costs 14–22× the full path, so it is a
+transition mechanism, not a steady state. Next: time-budgeted and bulk
+row-slice migration.
