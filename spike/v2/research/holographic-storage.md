@@ -428,6 +428,14 @@ write" is enforced at compile time rather than by convention.
 The toggle rate is declared (a `churn::high` hint) or measured (adaptive mode).
 The decision can change at a replan.
 
+**H1 evidence.** Unqueried components need their own choice between
+**carry** (dense column riding along as an extra key bit) and **side
+storage**. Side-storing stable, common components (Team, Flags) cost +36%
+memory versus archetypes; carrying them cost +1.4%. Default: carry, and
+side-store only volatile components. Also, non-fragmenting membership must
+live only in the pool, never in the entity record, or churn pays an extra
+cache miss per operation.
+
 ### 4.6 Deferred mutation and commit points
 
 - All structural changes (create, destroy, and any add/remove that flips a key
@@ -579,7 +587,7 @@ These are spikes on the existing harness, compared to
 
 | Spike | Build | Success criterion |
 |---|---|---|
-| **H1** Query-signature partitions | Archetype spike keyed by match signature + side storage | AddRemove (Frozen, unfiltered) ≤ 1.2× SparseSet (~62 µs @100K); Update2/Frame3 within 10% of Archetype; memory ≤ Archetype +10% |
+| **H1** Query-signature partitions — ✅ **done**, see [FINDINGS § H1](../FINDINGS.md#h1-results-query-signature-partitions-automatic-archetypes): passes in hinted mode (carry stable unqueried components, side-store volatile); pure side storage fails memory (+36%) | Archetype spike keyed by match signature + side storage | AddRemove (Frozen, unfiltered) ≤ 1.2× SparseSet (~62 µs @100K); Update2/Frame3 within 10% of Archetype; memory ≤ Archetype +10% |
 | **H2** Partition ordering | Global columns + boundary swaps vs chunked partitions | Each system iterates 1 span (C1P case); tag-churn cost ≤ SparseSet ×2; Frame3 ≥ Archetype |
 | **H6** Reference bindings | Frame with a system needing a non-C1P or reordered projection: (a) reference set, (b) per-entity authority ref, (c) per-partition uniform authority; all through one accessor type | Direct binding identical to the H1 loop (no abstraction cost, verify asm); reference set within 2× direct on Update2-class kernels; uniform authority ≈ direct |
 | **H3** Replica (fallback) | Render-extract replica (sorted, compacted) | Refresh cost < saved iteration cost at 1 refresh/frame; staleness impossible by construction (tests) |

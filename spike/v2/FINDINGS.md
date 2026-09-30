@@ -106,3 +106,64 @@ system-driven ("holographic") storage. Partitions are keyed by which systems
 an entity matches rather than by which components it has; the document covers
 use cases, prior art, the design, a proposed Sub0DataStore library split, reference bindings (no copies by default) and
 validation spikes H1–H5.
+
+## H1 results: query-signature partitions ("automatic archetypes")
+
+Design: [designs/query_partition.hpp](designs/query_partition.hpp). Numbers:
+[results/h1-query-partition-linux-gcc13.md](results/h1-query-partition-linux-gcc13.md)
+(speed-up column is vs Archetype; same host, 5 repetitions, random interleaving).
+
+**Verdict: H1 passes with the hinted variant; the pure automatic variant
+fails on memory.** The core idea works. A partition key derived from the
+declared system set gives archetype-class iteration *and* sparse-set-class
+churn for components no system requires.
+
+| Criterion (100K; 1M in brackets) | Target | QueryPart (pure auto) | QPartHinted (unqueried carried, `Volatile<Frozen>`) |
+|---|---|---|---|
+| Update2 / Frame3 / SparseQuery vs Archetype | within 10% | 1.08× / 1.01× / 1.19× faster ✅ | 1.19× / 0.98× / 1.15× ✅ |
+| AddRemove of an unqueried component vs SparseSet | ≤ 1.2× | 0.99× (1.06×) ✅ | 1.09× (1.10×) ✅ |
+| Heap bytes/entity vs Archetype (fragmented) | ≤ +10% | +36% (+33%) ❌ | +1.4% (+0.3%) ✅ |
+| Physical tables after Frozen churn | fewer | 3 vs 6 ✅ | 3 vs 6 ✅ |
+
+Against Archetype, AddRemove is **15× faster** (80 µs vs 1.19 ms at 100K).
+
+What the numbers say:
+
+1. **Pure side storage is the wrong default for stable unqueried data.**
+   Team, Flags, and Scale on Medium entities are present on a third or more
+   of entities and never churn. Sparse sets cost them 4 B × max-index plus a
+   dense entity id each (the SparseSet memory problem again). Carrying them
+   as dense columns (extra key bits) costs nothing, because they don't
+   change. The planner's per-component choice (research §4.5) is therefore
+   necessary, not optional:
+   - **carry** stable unqueried components;
+   - **side-store** volatile ones;
+   - **key-bit** the queried ones.
+
+   The volatility input has to come from a hint (`Volatile<T>`) or, in
+   adaptive mode, measurement.
+2. **Churn isolation needs one more invariant than planned.** The first cut
+   was still 4.4× SparseSet on AddRemove. Profiling showed the cause:
+   updating the per-entity record on every non-fragmenting add/remove,
+   which touches an extra cache line callgrind doesn't model. Fix: the
+   record tracks only *fragmenting* components. Membership of
+   non-fragmenting components lives solely in their pool, which makes the
+   op literally a sparse-set op.
+3. **Churn on a queried component still moves data.** TagChurn is 0.98×
+   Archetype, as expected: H1 removes needless moves, not necessary ones.
+   Carrying more columns (hinted) makes those moves 21% dearer (0.79×).
+   Mitigations to test next: enable bits for high-toggle queried
+   components (research §4.5) and batched moves at commit (§4.6).
+4. **Regressions to address in the real implementation:**
+   - RandomGet is 0.71× Archetype: `find()` goes record → partition table →
+     column; caching column base pointers per partition would help.
+   - Create is 0.75–0.88×.
+   - DestroyCreate (pure) is 0.84×: destroy also has to scrub the
+     non-fragmenting pools.
+
+   None of these is a model limit.
+
+**Recommendation:** proceed on the hinted model (carry by default,
+side-store volatile). Next spikes: H2 (partition ordering, single span) and
+H6 (reference bindings), then feed volatility automatically in adaptive
+mode.
