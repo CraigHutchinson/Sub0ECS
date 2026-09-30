@@ -5,8 +5,8 @@ points**, each usable at compile time or at runtime. H7 (research/fusion.md)
 proved the mechanism; this note turns it into architecture.
 
 - Prototype: [fusion/access.hpp](../fusion/access.hpp),
-  [fusion/planner.hpp](../fusion/planner.hpp),
-  [fusion/executors.hpp](../fusion/executors.hpp), and `runFusedOn()` in
+  [fusion/planners/](../fusion/planners/),
+  [fusion/executors/](../fusion/executors/) (one header per executor), and `runFusedOn()` in
   [designs/query_partition.hpp](../designs/query_partition.hpp).
 - Tests: [test/fusion_test.cpp](../test/fusion_test.cpp) (compile-time plan
   asserts, equivalence of every combination) and the Skirmish conformance

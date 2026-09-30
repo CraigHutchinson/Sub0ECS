@@ -16,7 +16,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
-option(SPIKE_NATIVE "Compile with -march=native (matches v1 benchmark flags)" ON)
+option(SPIKE_NATIVE "Tune for the build host (-march=native; /arch:AVX2 on MSVC)" ON)
 option(SPIKE_SANITIZE "Build conformance test with ASan/UBSan" OFF)
 
 set(V1_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../..)
@@ -40,7 +40,14 @@ target_include_directories(spike_v1 SYSTEM PUBLIC ${V1_ROOT}/source)
 
 add_library(spike_flags INTERFACE)
 if(MSVC)
-    target_compile_options(spike_flags INTERFACE /W4 /permissive- $<$<CONFIG:Release>:/O2 /Oi /Ot>)
+    # /bigobj: the benchmark TUs instantiate every design x scenario and exceed COFF's section limit.
+    # _CRT_SECURE_NO_WARNINGS: std::getenv/std::fopen are the portable spelling; the _s variants are not.
+    target_compile_options(spike_flags INTERFACE /W4 /permissive- /Zc:__cplusplus /bigobj $<$<CONFIG:Release>:/O2 /Oi /Ot>)
+    target_compile_definitions(spike_flags INTERFACE _CRT_SECURE_NO_WARNINGS)
+    if(SPIKE_NATIVE)
+        # MSVC has no -march=native; AVX2 is the widest ISA every x86-64 bench host here supports.
+        target_compile_options(spike_flags INTERFACE /arch:AVX2)
+    endif()
 else()
     target_compile_options(spike_flags INTERFACE -Wall -Wextra $<$<CONFIG:Release>:-O3>)
     if(SPIKE_NATIVE)

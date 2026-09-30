@@ -8,7 +8,7 @@ Evidence comes from the real workload: the Skirmish RTS
 ([testbed/skirmish](../testbed/skirmish/README.md)) on a 4-core VM
 (1 thread per core), plus the fusion micro-scenarios.
 - Code: `Parallel` pool and `InlineRange` in
-  [fusion/executors.hpp](../fusion/executors.hpp); `eachParallel` and
+  [fusion/executors/parallel.hpp](../fusion/executors/parallel.hpp) and [fusion/executors/inline.hpp](../fusion/executors/inline.hpp); `eachParallel` and
   `runFusedParallel` in [designs/query_partition.hpp](../designs/query_partition.hpp);
   per-worker command buffers in [testbed/skirmish/sim.hpp](../testbed/skirmish/sim.hpp).
 - Numbers: [results/threading-skirmish-linux-gcc13.json](../results/threading-skirmish-linux-gcc13.json).

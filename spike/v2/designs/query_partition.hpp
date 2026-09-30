@@ -726,6 +726,8 @@ namespace spike::qpart
         template <unsigned M, typename Exec, std::size_t... J, typename... Systems>
 #if defined(__GNUC__)
         __attribute__((flatten))
+#elif defined(_MSC_VER)
+        [[msvc::flatten]]
 #endif
         void fusedLoop(Exec& exec, Partition& p, std::size_t n, std::index_sequence<J...>, const Systems&... systems)
         {
