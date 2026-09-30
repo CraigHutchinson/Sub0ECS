@@ -100,6 +100,27 @@ FINDINGS.md.
 `--fail-on-regression` returns exit code 1, so the same script can gate CI
 on a dedicated runner.
 
+## Windows / MSVC
+
+Run from a **VS developer prompt** (`vcvars64.bat`), so the Ninja presets find
+`cl.exe`; the same presets and suites apply. `SPIKE_NATIVE` maps to `/arch:AVX2`
+(MSVC has no `-march=native`).
+
+```bat
+python tools/bench/run.py --profile reference --pin P --label ref-msvc
+```
+
+- The fingerprint records the CPU (CIM), SIMD support, the **hybrid P/E core map**,
+  memory, power plan, AC/battery and CPU load, and warns on each noise source.
+- `--pin` sets the process affinity mask (taskset syntax). On a hybrid CPU,
+  `--pin P` pins to the performance cores. Unpinned threads migrate between core
+  types, which shows up as bimodal timings.
+- There is no ASLR switch (`--no-aslr` is Linux only).
+- Thread scaling (`threads`) should run **unpinned**, so the ladder can reach every
+  core. Run it as a separate invocation from the pinned single-threaded suites.
+- Checklist equivalents: plug in AC power, choose the *Best performance* power mode
+  or the *High performance* plan, close background apps, and keep the machine idle.
+
 ## Dedicated-hardware checklist
 
 | Step | Why | How (Linux) |
@@ -120,9 +141,7 @@ on a dedicated runner.
   Benchmark binaries; `timeline` for tools that take `[args…] <out.json>`
   and write `{"rows": [...]}`).
 - **New machine class:** no code change; the fingerprint and thread ladder
-  adapt to the machine. For MSVC/Windows, add configure presets using the
-  Visual Studio generator; `run.py` works there without `taskset` or
-  `setarch`.
+  adapt to the machine.
 - **Embedded (ESP32-P4, spike H4/H8e):** use a separate runner that
   flashes the device and captures serial output. It should keep the same
   `meta.json` schema (with device fields) so `compare.py` still works.

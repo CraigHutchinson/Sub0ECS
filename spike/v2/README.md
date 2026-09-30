@@ -9,6 +9,11 @@ the storage model is the only variable.
 > recommendation are in [FINDINGS.md](FINDINGS.md), follow-up design research in
 > [research/holographic-storage.md](research/holographic-storage.md); raw numbers in
 > [results/](results/).
+>
+> **Decided (2026-09-30):** v2 is built on the query-partition store
+> ([designs/query_partition.hpp](designs/query_partition.hpp)); the other designs
+> remain as benchmark comparators. The path to landing, including promotion out of
+> `spike/`, is tracked in [BACKLOG.md](BACKLOG.md).
 
 ## Candidates
 

@@ -87,7 +87,10 @@ without forking the query model.
    small N ≤ 4K, SRAM budget). The desktop ranking may not hold on in-order
    cores without SIMD auto-vectorisation.
 4. **MSVC / reference host:** reproduce on the v1 README machine for continuity
-   with published v1 numbers.
+   with published v1 numbers. *Update 2026-09-30:* MSVC 19.51 builds every
+   target clean and passes all four suites; the harness now runs on Windows
+   (see "MSVC validation" below). The original i7-11800H box was not available;
+   the reference capture runs on a Core Ultra 9 275HX.
 5. **Archetype fragmentation stress:** many archetypes with few entities each,
    e.g. 2^k combinations of k optional components, plus query-cache
    invalidation cost.
@@ -106,6 +109,10 @@ system-driven ("holographic") storage. Partitions are keyed by which systems
 an entity matches rather than by which components it has; the document covers
 use cases, prior art, the design, a proposed Sub0DataStore library split, reference bindings (no copies by default) and
 validation spikes H1–H5.
+
+[research/executor-async.md](research/executor-async.md) designs the executor
+contract for accelerators: split-phase `prepare / submit / retire` with a
+completion handle, and column residency tracked by the store (validation spike H10).
 
 ## H1 results: query-signature partitions ("automatic archetypes")
 
@@ -348,3 +355,18 @@ Archetype's own 0.9× drift).
   partition so the moves stream instead of chasing random rows (migration
   is now latency-bound).
 - Batching TagChurn moves at commit (§4.6).
+
+## MSVC validation
+
+MSVC 19.51 (Visual Studio 18), Release, `/W4 /permissive-`, `/arch:AVX2`, Ninja.
+
+- **Builds clean:** every target compiles with zero warnings once `/bigobj` is set.
+  The benchmark TUs instantiate every design × scenario and exceed COFF's section
+  limit without it. `_CRT_SECURE_NO_WARNINGS` covers `getenv`/`fopen`.
+- **All four suites pass:** storage conformance (bit-identical checksums across all
+  designs, including v1), fusion (planners × executors), H9 dynamic, and Skirmish
+  lockstep.
+- **Fusion inlining matches GCC:** `[[msvc::flatten]]` now accompanies GCC's
+  `flatten` on the fused loop and the pool thunk, so MSVC measures fusion with the
+  same forced inlining instead of silently leaving it to heuristics.
+- The harness runs on Windows (see BENCHMARKING.md "Windows / MSVC").
