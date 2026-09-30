@@ -6,7 +6,8 @@ unmodified) are driven through one identical workload and adapter surface, so
 the storage model is the only variable.
 
 > Status: spike. Nothing in `spike/` is public API. Findings and the
-> recommendation are in [FINDINGS.md](FINDINGS.md); raw numbers in
+> recommendation are in [FINDINGS.md](FINDINGS.md), follow-up design research in
+> [research/holographic-storage.md](research/holographic-storage.md); raw numbers in
 > [results/](results/).
 
 ## Candidates

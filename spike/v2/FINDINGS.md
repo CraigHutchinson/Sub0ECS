@@ -98,3 +98,11 @@ without forking the query model.
    implicitly setting FTZ/DAZ. Without it, the kernel runs on denormals after
    ~9K iterations and results depend on iteration count. v1's Linux configure
    is also broken (`find_package(fmt)` vs `FindFmt.cmake` case).
+
+## Follow-up research
+
+[research/holographic-storage.md](research/holographic-storage.md) covers
+system-driven ("holographic") storage. Partitions are keyed by which systems
+an entity matches rather than by which components it has; the document covers
+use cases, prior art, the design, a proposed Sub0Store library split and
+validation spikes H1–H5.
