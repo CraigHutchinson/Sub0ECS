@@ -62,51 +62,70 @@ namespace spike::qpart
         std::byte* at(std::size_t row) { return bytes.data() + row * stride; }
     };
 
-    /** Type-erased sparse set for components that are not columns. */
-    class SidePool
+    /** Side storage: sparse set for components that are not columns.
+     *  Typed (hot add/remove/find paths are inlined); the virtual interface
+     *  is only used when values migrate between side storage and columns. */
+    class SidePoolBase
     {
     public:
         static constexpr std::uint32_t kNull = ~0u;
+        virtual ~SidePoolBase() = default;
+        virtual const void* findRaw(Entity e) const = 0;
+        virtual void emplaceRaw(Entity e, const void* src) = 0;
+        virtual void remove(Entity e) = 0;
+        virtual void removeIfPresent(Entity e) = 0;
+    };
 
-        explicit SidePool(std::size_t stride) : stride_(stride) {}
-
-        std::byte* find(Entity e)
+    template <typename T>
+    class SidePool final : public SidePoolBase
+    {
+    public:
+        T* find(Entity e)
         {
             const std::uint32_t i = e.index();
-            return (i < sparse_.size() && sparse_[i] != kNull) ? bytes_.data() + sparse_[i] * stride_ : nullptr;
+            return (i < sparse_.size() && sparse_[i] != kNull) ? &data_[sparse_[i]] : nullptr;
         }
 
-        void emplace(Entity e, const void* src)
+        void emplace(Entity e, const T& value)
         {
             const std::uint32_t i = e.index();
             if (i >= sparse_.size()) sparse_.resize(i + 1u, kNull);
             sparse_[i] = static_cast<std::uint32_t>(dense_.size());
             dense_.push_back(e);
-            bytes_.resize(bytes_.size() + stride_);
-            std::memcpy(bytes_.data() + (dense_.size() - 1u) * stride_, src, stride_);
+            data_.push_back(value);
         }
 
-        void remove(Entity e)
+        void remove(Entity e) override
         {
             const std::uint32_t i = e.index();
             const std::uint32_t row = sparse_[i];
-            const std::uint32_t last = static_cast<std::uint32_t>(dense_.size() - 1u);
-            if (row != last)
-            {
-                std::memcpy(bytes_.data() + row * stride_, bytes_.data() + last * stride_, stride_);
-                dense_[row] = dense_[last];
-                sparse_[dense_[row].index()] = row;
-            }
-            dense_.pop_back();
-            bytes_.resize(bytes_.size() - stride_);
+            const Entity last = dense_.back();
+            dense_[row] = last;
+            data_[row] = data_.back();
+            sparse_[last.index()] = row;
             sparse_[i] = kNull;
+            dense_.pop_back();
+            data_.pop_back();
+        }
+
+        void removeIfPresent(Entity e) override
+        {
+            if (find(e)) remove(e);
+        }
+
+        const void* findRaw(Entity e) const override { return &data_[sparse_[e.index()]]; }
+
+        void emplaceRaw(Entity e, const void* src) override
+        {
+            T value;
+            std::memcpy(&value, src, sizeof(T));
+            emplace(e, value);
         }
 
     private:
-        std::size_t stride_;
         std::vector<std::uint32_t> sparse_;
         std::vector<Entity> dense_;
-        std::vector<std::byte> bytes_;
+        std::vector<T> data_;
     };
 
     struct Partition
@@ -171,6 +190,9 @@ namespace spike::qpart
         {
             for (Mask m : required_) queried_ |= m;
             volatile_ = (Mask{ 0 } | ... | bit<Vs>()) & ~queried_;   // a queried component is never volatile
+            // Plan-time fact: components outside this mask can never change an
+            // entity's partition, so add/remove of them is a pure side-storage op.
+            fragmenting_ = Carry ? ~volatile_ : queried_;
             strides_.fill(0);
         }
 
@@ -181,10 +203,11 @@ namespace spike::qpart
         {
             (registerType<Cs>(), ...);
             const Entity e = entities_.create();
-            const Mask has = (Mask{ 0 } | ... | bit<Cs>());
-            Partition& p = partitionFor(columnsFor(has));
+            const Mask has = (Mask{ 0 } | ... | bit<Cs>()) & fragmenting_;
+            const std::uint32_t pi = partitionFor(columnsFor(has));
+            Partition& p = *partitions_[pi];
             const std::uint32_t row = p.pushRow(e);
-            setRecord(e, Record{ &p, row, has });
+            setRecord(e, Record{ pi, row, has });
             (store(p, row, e, std::move(cs)), ...);
             return e;
         }
@@ -207,43 +230,59 @@ namespace spike::qpart
         C* find(Entity e)
         {
             if (!entities_.alive(e)) return nullptr;
+            if (!(fragmenting_ & bit<C>()))   // membership lives in the pool (which may not exist yet)
+            {
+                auto* pool = side_[typeId<C>()].get();
+                return pool ? static_cast<SidePool<C>*>(pool)->find(e) : nullptr;
+            }
             const Record& r = records_[e.index()];
             const std::uint32_t t = typeId<C>();
             if (!(r.has & bit<C>())) return nullptr;
-            const std::int8_t c = r.partition->columnOf[t];
-            if (c != kNoColumn) return reinterpret_cast<C*>(r.partition->columns[c].at(r.row));
-            return reinterpret_cast<C*>(side_[t]->find(e));
+            Partition& p = *partitions_[r.partition];
+            const std::int8_t c = p.columnOf[t];
+            if (c != kNoColumn) return reinterpret_cast<C*>(p.columns[c].at(r.row));
+            return side<C>().find(e);
         }
 
         template <typename C>
         void add(Entity e, C value)
         {
             registerType<C>();
+            if (!(fragmenting_ & bit<C>()))
+            {
+                side<C>().emplace(e, value);   // non-fragmenting: exactly a sparse-set op
+                return;
+            }
             Record& r = records_[e.index()];
             const Mask newHas = r.has | bit<C>();
             const Mask newCols = columnsFor(newHas);
-            if (newCols != r.partition->columnsMask)
+            if (newCols != part(r).columnsMask)
             {
                 moveTo(e, r, newCols, newHas);
             }
             r.has = newHas;
-            store(*r.partition, r.row, e, std::move(value));
+            store(part(r), r.row, e, std::move(value));
         }
 
         template <typename C>
         void remove(Entity e)
         {
+            if (!(fragmenting_ & bit<C>()))
+            {
+                side<C>().remove(e);           // non-fragmenting: exactly a sparse-set op
+                return;
+            }
             Record& r = records_[e.index()];
             const std::uint32_t t = typeId<C>();
             const Mask newHas = r.has & ~bit<C>();
             const Mask newCols = columnsFor(newHas);
-            if (newCols == r.partition->columnsMask)
+            if (newCols == part(r).columnsMask)
             {
-                side_[t]->remove(e);   // not a column: pure side-storage op, no data moves
+                side<C>().remove(e);   // not a column: pure side-storage op, no data moves
             }
             else
             {
-                if (r.partition->columnOf[t] == kNoColumn) side_[t]->remove(e);
+                if (part(r).columnOf[t] == kNoColumn) side<C>().remove(e);
                 moveTo(e, r, newCols, newHas);
             }
             r.has = newHas;
@@ -252,14 +291,16 @@ namespace spike::qpart
         void destroy(Entity e)
         {
             Record& r = records_[e.index()];
-            Mask sideBits = r.has & ~r.partition->columnsMask;
+            Partition& p = part(r);
+            Mask sideBits = r.has & ~p.columnsMask;
             while (sideBits)
             {
                 const auto t = static_cast<std::uint32_t>(std::countr_zero(sideBits));
                 side_[t]->remove(e);
                 sideBits &= sideBits - 1u;
             }
-            const Entity moved = r.partition->swapRemove(r.row);
+            for (std::uint32_t t : nonFragmentingTypes_) side_[t]->removeIfPresent(e);
+            const Entity moved = p.swapRemove(r.row);
             if (!(moved == kNullEntity)) records_[moved.index()].row = r.row;
             r = Record{};
             entities_.release(e);
@@ -270,12 +311,15 @@ namespace spike::qpart
         std::size_t partitionCount() const { return partitions_.size(); }
 
     private:
-        struct Record
+        struct Record   // 16 bytes
         {
-            Partition* partition = nullptr;
+            std::uint32_t partition = 0;   // index into partitions_
             std::uint32_t row = 0;
-            Mask has = 0;   // full component set of the entity
+            Mask has = 0;                  // the entity's *fragmenting* components only
         };
+        static_assert(sizeof(Record) == 16);
+
+        Partition& part(const Record& r) { return *partitions_[r.partition]; }
 
         template <typename... Cs>
         static Mask requiredMask(Query<Cs...>) { return (Mask{ 0 } | ... | bit<Cs>()); }
@@ -318,17 +362,20 @@ namespace spike::qpart
             if (strides_[t] == 0)
             {
                 strides_[t] = sizeof(T);
-                side_[t] = std::make_unique<SidePool>(sizeof(T));
+                side_[t] = std::make_unique<SidePool<T>>();
+                if (!(fragmenting_ & (Mask{ 1 } << t))) nonFragmentingTypes_.push_back(t);
             }
         }
 
         template <typename T>
+        SidePool<T>& side() { return static_cast<SidePool<T>&>(*side_[typeId<T>()]); }
+
+        template <typename T>
         void store(Partition& p, std::uint32_t row, Entity e, T value)
         {
-            const std::uint32_t t = typeId<T>();
-            const std::int8_t c = p.columnOf[t];
+            const std::int8_t c = p.columnOf[typeId<T>()];
             if (c != kNoColumn) std::memcpy(p.columns[c].at(row), &value, sizeof(T));
-            else side_[t]->emplace(e, &value);
+            else side<T>().emplace(e, value);
         }
 
         void setRecord(Entity e, Record r)
@@ -340,8 +387,9 @@ namespace spike::qpart
         /** Move e to the partition for newCols; values migrate column<->side as needed. */
         void moveTo(Entity e, Record& r, Mask newCols, Mask newHas)
         {
-            Partition& src = *r.partition;
-            Partition& dst = partitionFor(newCols);
+            const std::uint32_t di = partitionFor(newCols);
+            Partition& src = part(r);
+            Partition& dst = *partitions_[di];
             const std::uint32_t srcRow = r.row;
             const std::uint32_t dstRow = dst.pushRow(e);
 
@@ -355,8 +403,8 @@ namespace spike::qpart
                 else if (r.has & (Mask{ 1 } << col.type))
                 {
                     // promote: side storage -> column
-                    SidePool& pool = *side_[col.type];
-                    std::memcpy(col.at(dstRow), pool.find(e), col.stride);
+                    SidePoolBase& pool = *side_[col.type];
+                    std::memcpy(col.at(dstRow), pool.findRaw(e), col.stride);
                     pool.remove(e);
                 }
                 // else: component being added; caller stores it after the move
@@ -365,20 +413,20 @@ namespace spike::qpart
             {
                 if (dst.columnOf[col.type] == kNoColumn && (newHas & (Mask{ 1 } << col.type)))
                 {
-                    side_[col.type]->emplace(e, col.at(srcRow));   // demote: column -> side storage
+                    side_[col.type]->emplaceRaw(e, col.at(srcRow));   // demote: column -> side storage
                 }
             }
 
             const Entity moved = src.swapRemove(srcRow);
             if (!(moved == kNullEntity)) records_[moved.index()].row = srcRow;
-            r.partition = &dst;
+            r.partition = di;
             r.row = dstRow;
         }
 
-        Partition& partitionFor(Mask cols)
+        std::uint32_t partitionFor(Mask cols)
         {
             auto it = byColumns_.find(cols);
-            if (it != byColumns_.end()) return *it->second;
+            if (it != byColumns_.end()) return it->second;
 
             auto p = std::make_unique<Partition>();
             p->columnsMask = cols;
@@ -396,22 +444,24 @@ namespace spike::qpart
             {
                 if (p->signature & (1u << i)) byQuery_[i].push_back(p.get());
             }
-            Partition& ref = *p;
-            byColumns_.emplace(cols, p.get());
+            const auto index = static_cast<std::uint32_t>(partitions_.size());
+            byColumns_.emplace(cols, index);
             partitions_.push_back(std::move(p));
-            return ref;
+            return index;
         }
 
         std::array<Mask, kQueries> required_;
         Mask queried_ = 0;
         Mask volatile_ = 0;
+        Mask fragmenting_ = 0;
+        std::vector<std::uint32_t> nonFragmentingTypes_;
         std::array<std::size_t, kMaxTypes> strides_{};
-        std::array<std::unique_ptr<SidePool>, kMaxTypes> side_{};
+        std::array<std::unique_ptr<SidePoolBase>, kMaxTypes> side_{};
 
         EntityAllocator entities_;
         std::vector<Record> records_;
         std::vector<std::unique_ptr<Partition>> partitions_;
-        std::unordered_map<Mask, Partition*> byColumns_;
+        std::unordered_map<Mask, std::uint32_t> byColumns_;
         std::array<std::vector<Partition*>, kQueries> byQuery_{};
     };
 
