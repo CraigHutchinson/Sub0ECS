@@ -7,6 +7,15 @@ architecture. It follows the storage-model spike in [../FINDINGS.md](../FINDINGS
 > to be tested by the spikes in [§8](#8-validation-plan) against the baseline
 > in [../results/](../results/).
 
+## Decisions so far
+
+| # | Decision | Date |
+|---|---|---|
+| D1 | Archetype-class iteration is the target; build on system-derived ("automatic") partitions. | 2026-09-30 |
+| D2 | Working title for the storage library: **Sub0DataStore** (`sub0datastore` namespace). | 2026-09-30 |
+| D3 | **Prefer no copies.** Where one arrangement cannot serve every system, bind the column **by reference** first. That means either a partitioned reference set into the home columns, or a per-entity reference to a central authority. Both sit behind one container/accessor type, so system code sees the direct case normally (§4.3). | 2026-09-30 |
+| D4 | Replication stays a **viable fallback**. Only systems with declared write access can mutate a component, so each component has a known single writer per phase, which makes replica coherency tractable (§4.3.4). | 2026-09-30 |
+
 ## TL;DR
 
 - **Idea.** Classic archetypes are keyed by *which components an entity has*.
@@ -16,11 +25,17 @@ architecture. It follows the storage-model spike in [../FINDINGS.md](../FINDINGS
   system iterates only whole partitions of tightly packed columns.
 - **"Holographic" property.** An entity can appear in the views of several
   systems at once. For each system, its data is in a contiguous arrangement for
-  that system. Two ways to get there:
+  that system. In order of preference:
   1. **Arrangement, one copy.** Order the partitions so that each system's
      partitions are adjacent (the consecutive-ones problem).
-  2. **Replication.** Where one copy cannot satisfy every system, keep a
-     system-shaped replica, synchronised at pipeline commit points.
+  2. **Reference binding, still one copy.** Where the arrangement cannot serve
+     a system, bind the column by reference. Either a partitioned *reference
+     set* of row indices into the home columns, or a *per-entity reference*
+     to a central authority (shared/prefab/parent data). One container type
+     hides which binding is in use, and the direct case has zero overhead.
+  3. **Replication (fallback).** Keep a system-shaped copy, synchronised at
+     pipeline commit points. It is tractable because only systems with
+     declared write access can mutate a component.
 - **Prior art exists for every part, separately:**
   - EnTT nested groups, Legion packing groups, Bevy tables vs. archetypes,
     flecs non-fragmenting components and Unity enableable components.
@@ -30,9 +45,10 @@ architecture. It follows the storage-model spike in [../FINDINGS.md](../FINDINGS
     Kokkos.
 
   I found no ECS that derives its physical partitioning *from the declared
-  system set*, and none that replicates for competing layouts.
+  system set*, or that picks direct, reference or replica binding per system
+  from that set.
 - **Proposal.** Put the storage engine in a new domain-agnostic library, working
-  name **Sub0Store**. It takes a schema plus declared access patterns, produces
+  name **Sub0DataStore**. It takes a schema plus declared access patterns, produces
   a *plan*, and serves spans. SubzeroECS v2 becomes a thin ECS vocabulary on
   top: entities→rows, components→columns, systems→access declarations.
   Sub0Pipeline supplies scheduling and commit points, and Sub0Pub supplies
@@ -66,6 +82,8 @@ that are present impose the data arrangement by design.*
 | **Hot column** | A component that is `required` by at least one system matching the partition. Stored densely inside the partition. |
 | **Side storage** | Where every other component of an entity lives (sparse set). Costs nothing for iteration. |
 | **Projection** | The view a system sees: the union of its partitions, restricted to its hot columns. |
+| **Binding** | How a system's projection reaches a column's values in a partition: **direct** (contiguous span), **reference set** (row indices into home columns), **authority reference** (value lives on another row, the central authority), or **replica** (copy). |
+| **Home column** | The single authoritative storage of a component's values. |
 | **Replica** | An optional physical copy of a projection in a different order/layout, kept coherent with the home copy. |
 | **Plan** | Output of the planner: partitions, their order, hot columns per partition, replicas and column grouping. |
 
@@ -257,7 +275,8 @@ When C1P fails (overlapping, non-nested systems), there are three options:
 1. Accept *k* spans for some systems (a few range jumps are cheap).
 2. Split the offending system's projection across partitions (the Legion/flecs
    default).
-3. **Replicate** (§4.3).
+3. **Bind by reference** (a reference set for that system), or, as a last
+   resort, **replicate** (§4.3).
 
 A cost model decides.
 
@@ -266,42 +285,125 @@ O(#partitions) in boundary rotations. Fixed-size chunks per partition (Unity's
 16 KiB, PAX pages) bound this at the price of "span list" iteration. The
 single-span vs chunked trade-off is spike **H2**.
 
-### 4.3 Holographic replication: same data, several shapes
+### 4.3 Holographic access without copies: bindings
 
-"An entity appears in multiple archetypes" has two readings, and the design
-supports both:
+"An entity appears in multiple archetypes" is met *logically* by §4.1–4.2.
+The entity is in the projection of every system it matches, and each
+component value is stored once. The remaining question is what a system gets
+when the single arrangement cannot give it a direct span. The answer is
+**bindings**: the planner chooses, per (system, component, partition), how
+the system reaches the value. **Direct** is the default; **reference** comes
+next; **replica** is the last resort.
 
-- **Logical multi-membership (default, no copies).** Through §4.1–4.2, an
-  entity is simultaneously in the projection of every system it matches.
-  Each system sees its data in its own contiguous arrangement, while each
-  component value is stored exactly once.
-- **Physical replication (opt-in).** When systems want *incompatible* layouts,
-  the planner may materialise a **replica projection**: a subset of columns,
-  possibly with a different order, interleaving (AoSoA) or precision. Two
-  cases:
-  - C1P is infeasible.
-  - A system wants AoS gather while another wants SoA streaming, or a
-    render-extract system wants a compacted, sorted-by-material copy.
+#### 4.3.1 Direct binding (normal case)
 
-  Precedents: Fractured Mirrors, H2O, CopyRight.
+The column is a contiguous `T*` range for the partition, as in §4.1–4.2. The
+kernel compiles to the RawSoA loop that the spike measured at the roofline.
 
-Coherency protocol (must be simple enough to reason about):
+#### 4.3.2 Partitioned reference set (indirection into the home copy)
 
-- **One home, N replicas.** Writes go to the home copy. Replicas are
-  **read-only** for systems.
-- **Refresh at commit points only.** Sub0Pipeline DAG edges are the sync
-  points. A replica is refreshed from dirty-range or change-tick tracking (R7)
-  before any system that reads it starts. This is a snapshot-consistency
-  model, like double buffering.
-- **Budgeted.** Replicas need a declared memory budget (R9) and are never used
-  in static mode unless requested explicitly.
-- Replica cost model: replicate if
+For a system whose partitions cannot be made contiguous, or which needs a
+different *order* (e.g. render extract sorted by material, or a spatial-hash
+order), the store keeps for that system a **reference set**: per partition, an
+array of `uint32_t` row indices into the home columns, in the system's
+preferred order. This is "late materialisation" with position lists from
+column stores ([Abadi et al., ICDE 2007](http://www.cs.umd.edu/~abadi/papers/abadiicde2007.pdf)).
+It is also EnTT's *partial-owning group*, which is direct for owned
+components and indirect for the rest.
+
+- **Cost.** The system does a gather per element, not a copy of the data.
+  Maintenance on migration touches 4 bytes per reference set, not every
+  column.
+- **Mixed binding.** A system can be direct for some components and
+  reference-bound for others. The planner makes the components the system
+  *writes* direct where possible.
+- **Order preservation.** Keeping indices sorted ascending (unless the system
+  asked for a different order) keeps gathers prefetch-friendly.
+
+#### 4.3.3 Per-entity reference to a central authority
+
+Some data is conceptually *one value, many readers*: prefab/archetype
+defaults, material or config blocks, a parent transform, a shared
+calibration table on an embedded device. Here the entity carries a
+**reference** (a generational handle) to the row that owns the value, the
+*authority*, instead of a copy. This is the Flyweight pattern, with direct
+precedents:
+- flecs `IsA` inheritance, where queries match components through
+  `Self|Up` traversal ([flecs Queries](https://www.flecs.dev/flecs/md_docs_2Queries.html),
+  [Prefabs](https://www.flecs.dev/flecs/md_docs_2PrefabsManual.html)).
+- Unity shared components (value stored once, chunks partitioned by value).
+
+Two storage forms:
+
+- **Per-entity reference column.** Each entity stores `Ref<T>`, and access is
+  one indirection. Any entity can point at any authority.
+- **Partitioned by reference.** The reference is a partition key (Unity
+  shared-component style), so every entity in the partition shares one
+  authority. The accessor returns *the same* `T&` for the whole span, which
+  is constant per partition, and the kernel can hoist it out of the loop.
+  The planner chooses this only when the number of distinct authorities is
+  small, because each one creates a partition (the Unity shared-component
+  fragmentation caveat).
+
+**Writes go to the authority only**, and only from the system that holds
+declared write access to that component. Readers never see a torn value,
+because writes land at commit points (§4.6).
+
+#### 4.3.4 Replica (fallback)
+
+When a reader is hot enough that gathers or indirections cost more than a
+copy (measured, or declared with a hint), the planner may materialise a
+replica projection. It can be a subset of columns, possibly in a different
+order, interleaving or precision. Precedents: Fractured Mirrors, H2O,
+CopyRight.
+
+Controlled write access makes this tractable:
+
+- **Single writer per component per phase.** Access declarations mean the
+  scheduler already knows the one system (or the ordered set of systems)
+  that writes each component in a frame. The **home copy lives in that
+  writer's preferred layout**; every other layout is a read-only replica.
+- **Refresh after the writer, before the readers.** The refresh is a job
+  inserted on the Sub0Pipeline edge between the writer and the first replica
+  reader, driven by dirty ranges or change ticks (R7). It is snapshot
+  consistent by construction; no locks.
+- **Ownership can move.** If the dominant writer changes (e.g. a new system
+  is registered), the replan swaps which copy is home. No other semantics
+  change.
+- **Budgeted.** Replicas need a declared memory budget (R9) and are off in
+  static mode unless requested explicitly.
+- **Cost model.** Replicate only if
 
   ```
-  Σ over reader runs (Δ iteration cost) > refresh cost × refresh frequency + memory penalty
+  Σ over reader runs (reference-binding cost − direct cost) > refresh cost × refresh rate + memory penalty
   ```
 
-  This is the same shape as CopyRight's objective.
+  The comparison baseline is the *reference* binding, not the direct one,
+  so replication has to beat indirection rather than an ideal.
+
+#### 4.3.5 One container type for all bindings
+
+Systems never name a binding. They receive a **column view** whose element
+access is a policy, like `std::mdspan`'s `AccessorPolicy`
+([cppreference](https://en.cppreference.com/cpp/container/mdspan)), LLAMA
+mappings or Kokkos layouts:
+
+| Binding | Accessor policy | Element access | Notes |
+|---|---|---|---|
+| Direct | `direct<T>` | `base[i]` | Normal case; vectorises |
+| Reference set | `indexed<T>` | `base[idx[i]]` | Gather; indices sorted unless ordered |
+| Authority (per-entity) | `referenced<T>` | `resolve(ref[i])` | One indirection; read-only unless the system owns writes |
+| Authority (per-partition) | `uniform<T>` | `*value` | Hoistable constant |
+| Replica | `direct<const T>` | `replica[i]` | Read-only by type |
+
+**Dispatch is per partition batch, not per element.** The store iterates a
+system's partitions, and for each batch it invokes the kernel with a
+concretely typed view: a variant resolved once per batch, or a compile-time
+instantiation in static mode. The inner loop therefore has no branches on
+binding kind, and the direct case compiles to exactly the RawSoA loop.
+Constness is part of the type: a system without write access to `T` only
+ever receives `const T&`. That is how "only systems with write access can
+write" is enforced at compile time rather than by convention.
 
 ### 4.4 Inside a partition: column grouping
 
@@ -314,12 +416,13 @@ Coherency protocol (must be simple enough to reason about):
 - **Precision/format per replica** (e.g. `float16` render copies) is a future
   replica property, not a home-copy concern.
 
-### 4.5 Three answers to churn, chosen per component by the planner
+### 4.5 Answers to churn and sharing, chosen per component by the planner
 
 | Mechanism | Precedent | Move cost | Iteration cost | When the planner picks it |
 |---|---|---|---|---|
 | **Side storage** (no key bit) | Bevy SparseSet, flecs DontFragment | none | only if read (random access) | Component is in no system filter |
 | **Enable bit** (key bit replaced by a per-row mask) | Unity enableable components | none | mask test; block-skip when all off | Filter component with high toggle rate |
+| **Authority reference** (value shared, entity holds a ref) | flecs `IsA`, Unity shared components | re-point a 4-byte ref | one indirection or hoisted constant | Many entities read one value (defaults, config, parent) |
 | **Partition key bit** (move) | classic archetypes | row move / boundary swaps | none | Filter component with low toggle rate |
 
 The toggle rate is declared (a `churn::high` hint) or measured (adaptive mode).
@@ -379,9 +482,10 @@ rollback).
  └──────────────┬──────────────┘        Sub0Pub        └─────────────────────┘
                 │ schema + AccessDecls
  ┌──────────────▼────────────────────────────────────────────────────────────┐
- │  Sub0Store  (domain-agnostic "holographic" columnar store)                │
- │  Planner: match signatures → partitions → C1P order → replicas → groups   │
+ │  Sub0DataStore (domain-agnostic "holographic" columnar store)             │
+ │  Planner: match signatures → partitions → C1P order → bindings → groups   │
  │  Storage: hot columns per partition │ side storage │ enable bits          │
+ │  Bindings: direct │ reference sets │ authority refs │ replicas (fallback) │
  │  Mutation: command buffers, batched commit │ Sync: replica refresh        │
  │  Policies: planning mode, capacity/allocator, chunking, replica budget    │
  └───────────────────────────────────────────────────────────────────────────┘
@@ -397,18 +501,14 @@ rollback).
 - It follows the existing family pattern of narrow, composable libraries
   (Sub0Pub for messaging, Sub0Pipeline for scheduling).
 
-**Naming** (your call):
-
-- **Sub0Store** (recommended, because it says what it is).
-- **Sub0Holo** (says the concept).
-- **Sub0Layout** (too narrow once replication and mutation are in scope).
+**Naming:** working title **Sub0DataStore** (D2), namespace `sub0datastore`.
 
 **Illustrative API (non-final, for discussion only).**
 
 ```cpp
-// ---- Sub0Store: no ECS vocabulary -----------------------------------------
-namespace sub0store {
-    using Schema = sub0store::schema<Position, Velocity, Health, Rotation, Tag, Frozen>;
+// ---- Sub0DataStore: no ECS vocabulary -------------------------------------
+namespace sub0datastore {
+    using Schema = sub0datastore::schema<Position, Velocity, Health, Rotation, Tag, Frozen>;
 
     constexpr auto physics  = access<Schema>().write<Position, Velocity>();          // required ⇒ filter + hot
     constexpr auto tagSweep = access<Schema>().write<Position, Velocity>().read<Tag>();
@@ -418,6 +518,11 @@ namespace sub0store {
     auto row = s.insert(Position{}, Velocity{});        // staged
     s.commit();                                         // batched moves
     for (auto [pos, vel] : s.spans(physics)) { /* std::span<Position>, std::span<Velocity> */ }
+
+    // A binding is a property of the plan, never of system code: `mat` below may be
+    // direct, indexed, referenced or uniform depending on the plan; kernel unchanged.
+    s.for_each(renderExtract, [](const Position& p, const Material& mat) { /* ... */ });
+    auto ent = s.insert(Position{}, authority_ref<Material>{sharedMaterialRow});   // per-entity authority ref
 }
 
 // ---- SubzeroECS v2: ECS vocabulary on top ----------------------------------
@@ -433,8 +538,12 @@ world.schedule(pipeline);   // Sub0Pipeline jobs + commit edges derived from acc
 | Pattern | Where | Source / precedent |
 |---|---|---|
 | Algorithm/schedule separation | Systems vs Plan | Halide, Taichi, LLAMA |
-| Query optimiser / planner | Sub0Store planner | DB physical design, Chestnut |
-| Materialised view | Replica projections | Fractured Mirrors, H2O, CopyRight |
+| Query optimiser / planner | Sub0DataStore planner | DB physical design, Chestnut |
+| Accessor / layout policy | One column-view type over direct, indexed, referenced, uniform and replica bindings | `std::mdspan` AccessorPolicy, LLAMA, Kokkos |
+| Late materialisation (position lists) | Partitioned reference sets | Abadi et al. ICDE 2007; EnTT partial-owning groups |
+| Flyweight / central authority | Per-entity authority references | flecs `IsA` prefabs, Unity shared components |
+| Single-writer ownership | Home copy follows the declared writer | Access declarations → Sub0Pipeline DAG |
+| Materialised view | Replica projections (fallback) | Fractured Mirrors, H2O, CopyRight |
 | Policy-based design | Planning mode, capacity, allocator, chunking | Kokkos layouts, Alexandrescu policies |
 | Hot/cold splitting | Hot columns vs side storage | Chilimbi et al. |
 | Unit of work / command buffer | Deferred structural changes | Unity ECB, flecs deferred mode |
@@ -453,7 +562,9 @@ world.schedule(pipeline);   // Sub0Pipeline jobs + commit edges derived from acc
 | Q1 | **Planner complexity and debuggability.** The layout is no longer obvious from the code. | Plan is a printable artifact (`dump_plan()`); deterministic; explainable ("why is X a key bit?"). |
 | Q2 | **Replan cost** when systems are added at runtime (U5). | Refinement is splits only; incremental; background Sub0Pipeline jobs. Measure (H5). |
 | Q3 | **Combinatorial blow-up** of match signatures with many optional-heavy systems. | Bounded by entity diversity; enable bits instead of key bits for high-cardinality filters; warn above a threshold. |
-| Q4 | **Replica write amplification / staleness bugs.** | Read-only replicas, refresh only at barriers, budget, off by default. |
+| Q4 | **Replica write amplification / staleness bugs.** | Reference bindings first (D3); replicas read-only by type, refreshed on the writer→reader edge, budgeted, off by default. |
+| Q11 | **Authority reference lifetime.** What happens when the authority row is destroyed while entities still reference it? | Generational handles detect staleness. Policy choice: forbid (debug assert), cascade, or re-point to a default. Decide with U8 hierarchies. |
+| Q12 | **Gather cost of reference sets** vs direct on real kernels. | Measure in H6; the planner prefers making written components direct. |
 | Q5 | **Component type constraints** (trivially relocatable?). | Required in static mode; type-erased vtables in dynamic mode. Decide after H1. |
 | Q6 | **Systems that write filter components** (a system removes its own filter tag). | Always deferred to commit, so iteration never sees its own moves. |
 | Q7 | **Relationships / hierarchies** (U8). | Out of scope for the first cut; relationships default to non-fragmenting side storage (flecs lesson). |
@@ -470,11 +581,13 @@ These are spikes on the existing harness, compared to
 |---|---|---|
 | **H1** Query-signature partitions | Archetype spike keyed by match signature + side storage | AddRemove (Frozen, unfiltered) ≤ 1.2× SparseSet (~62 µs @100K); Update2/Frame3 within 10% of Archetype; memory ≤ Archetype +10% |
 | **H2** Partition ordering | Global columns + boundary swaps vs chunked partitions | Each system iterates 1 span (C1P case); tag-churn cost ≤ SparseSet ×2; Frame3 ≥ Archetype |
-| **H3** Replica | Render-extract replica (sorted, compacted) | Refresh cost < saved iteration cost at 1 refresh/frame; staleness impossible by construction (tests) |
+| **H6** Reference bindings | Frame with a system needing a non-C1P or reordered projection: (a) reference set, (b) per-entity authority ref, (c) per-partition uniform authority; all through one accessor type | Direct binding identical to the H1 loop (no abstraction cost, verify asm); reference set within 2× direct on Update2-class kernels; uniform authority ≈ direct |
+| **H3** Replica (fallback) | Render-extract replica (sorted, compacted) | Refresh cost < saved iteration cost at 1 refresh/frame; staleness impossible by construction (tests) |
 | **H4** Static mode on ESP32-P4 | constexpr plan, fixed capacity, FreeRTOS executor | Zero heap after init; code size and SRAM reported; Update2 vs StaticBitmask |
 | **H5** Replan / fragmentation stress | 2^k optional-component mixes; add/remove systems at runtime | Partition count bounded as predicted; replan of 100K entities under a frame budget (target to be set) |
 
-Recommended order: **H1 → H2 → H4 → H5 → H3.** H1 is cheap (a variant of an
+Recommended order: **H1 → H2 → H6 → H4 → H5 → H3.** H3 only runs if H6 shows a
+reader where references lose badly. H1 is cheap (a variant of an
 existing spike) and decides whether the core idea is real.
 
 ## References
@@ -484,6 +597,7 @@ ECS
 - *Legion* — [`World` / `WorldOptions`](https://docs.rs/legion/latest/legion/world/struct.World.html), [storage](https://docs.rs/legion/latest/legion/storage/index.html)
 - *Bevy* — [`StorageType`](https://docs.rs/bevy/latest/bevy/ecs/component/enum.StorageType.html), [archetypes](https://docs.rs/bevy_ecs/latest/bevy_ecs/archetype/index.html), [change detection](https://bevy-cheatbook.github.io/programming/change-detection.html), [FilteredAccess PR](https://github.com/bevyengine/bevy/pull/5105)
 - S. Mertens, *flecs* — [v4.1 (DontFragment)](https://ajmmertens.medium.com/flecs-4-1-is-out-fab4f32e36f6), [Building an ECS #2](https://ajmmertens.medium.com/building-an-ecs-2-archetypes-and-vectorization-fe21690805f9), [#3 Storage in pictures](https://ajmmertens.medium.com/building-an-ecs-storage-in-pictures-642b8bfd6e04), [ECS FAQ](https://github.com/SanderMertens/ecs-faq)
+- flecs — [Queries (Self/Up traversal)](https://www.flecs.dev/flecs/md_docs_2Queries.html), [Prefabs / IsA inheritance](https://www.flecs.dev/flecs/md_docs_2PrefabsManual.html)
 - Unity — [Enableable components](https://docs.unity3d.com/Packages/com.unity.entities@6.5/manual/components-enableable-intro.html), [chunk allocations](https://docs.unity3d.com/Packages/com.unity.entities@1.3/manual/performance-chunk-allocations.html), [shared components](https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/components-shared-optimize.html)
 - Our Machinery — [Syncing a data-oriented ECS with a stateful external system](https://ourmachinery.com/post/syncing-a-data-oriented-ecs/)
 - T. Ford, [Overwatch Gameplay Architecture and Netcode, GDC 2017](https://www.gdcvault.com/play/1024001/-Overwatch-Gameplay-Architecture-and)
@@ -499,6 +613,7 @@ Databases
 - I. Alagiannis, S. Idreos, A. Ailamaki, [H2O: A Hands-free Adaptive Store, SIGMOD 2014](https://stratos.seas.harvard.edu/publications/h2o-hands-free-adaptive-store)
 - J. Arulraj, A. Pavlo, P. Menon, [Bridging the Archipelago between Row-Stores and Column-Stores, SIGMOD 2016](https://www.researchgate.net/publication/304021389_Bridging_the_Archipelago_between_Row-Stores_and_Column-Stores_for_Hybrid_Workloads)
 - C. Yan, A. Cheung, [Generating Application-Specific Data Layouts for In-memory Databases (Chestnut), PVLDB 2019](http://www.vldb.org/pvldb/vol12/p1513-yan.pdf)
+- D. Abadi, D. Myers, D. DeWitt, S. Madden, [Materialization Strategies in a Column-Oriented DBMS, ICDE 2007](http://www.cs.umd.edu/~abadi/papers/abadiicde2007.pdf)
 - S. Sudhir, M. Cafarella, S. Madden, [Replicated Layout for In-Memory Database Systems (CopyRight), PVLDB 2021](https://www.vldb.org/pvldb/vol15/p984-sudhir.pdf)
 
 PL / HPC / theory
@@ -506,5 +621,6 @@ PL / HPC / theory
 - J. Ragan-Kelley et al., [Halide, PLDI 2013](https://dl.acm.org/doi/10.1145/2491956.2462176)
 - Y. Hu et al., [Taichi, SIGGRAPH Asia 2019](https://yuanming.taichi.graphics/publication/2019-taichi/)
 - B. Gruber et al., [LLAMA: The Low-Level Abstraction for Memory Access](https://arxiv.org/abs/2106.04284), [updates 2023](https://arxiv.org/abs/2302.08251)
+- [`std::mdspan` and AccessorPolicy](https://en.cppreference.com/cpp/container/mdspan), [P2604 (data_handle rename)](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2604r0.html)
 - [Kokkos View layouts](https://kokkos.org/kokkos-core-wiki/ProgrammingGuide/View.html)
 - K. Booth, G. Lueker, [Testing for the Consecutive Ones Property … Using PQ-Tree Algorithms, JCSS 1976](https://www.ic.unicamp.br/~meidanis/courses/mo640/2015s1/texts/Booth-Lueker-1976.pdf)

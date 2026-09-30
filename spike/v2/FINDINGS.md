@@ -104,5 +104,5 @@ without forking the query model.
 [research/holographic-storage.md](research/holographic-storage.md) covers
 system-driven ("holographic") storage. Partitions are keyed by which systems
 an entity matches rather than by which components it has; the document covers
-use cases, prior art, the design, a proposed Sub0Store library split and
+use cases, prior art, the design, a proposed Sub0DataStore library split, reference bindings (no copies by default) and
 validation spikes H1–H5.
