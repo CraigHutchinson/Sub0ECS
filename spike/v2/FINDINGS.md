@@ -201,3 +201,33 @@ Two constraints came out of the prototype:
    inlining in the large benchmark translation unit and fused ran at
    sequential speed. Production code needs forced inlining per compiler
    plus a benchmark guard that fused ≈ hand-merged.
+
+## Skirmish RTS testbed: first results
+
+Testbed: [testbed/skirmish/](testbed/skirmish/README.md). Numbers:
+[results/skirmish-linux-gcc13.md](results/skirmish-linux-gcc13.md).
+All seven storage/execution variants play the bit-identical game.
+
+| ms per tick | 1K units | 10K units | 50K units |
+|---|---:|---:|---:|
+| SparseSet (reference) | 0.144 | 2.40 | 14.4 |
+| Archetype | 1.03× | 1.08× | 1.18× |
+| QPartHinted | 1.04× | 1.06× | 1.16× |
+| **QPartHinted + fused movement** | **1.10×** | 1.07× | **1.23×** |
+| StaticBitmask | 1.02× | 1.09× | 1.25× |
+
+**The real game compresses the micro-benchmark gaps.** Update2 differs 6×
+between designs, but a whole RTS tick differs only 1.0–1.25×. At 50K units
+about 80% of the tick is **spatial neighbour work**: Separation inside
+movement (5.4–6.7 ms) and target acquisition (≈4.2 ms). Both are bound by
+the grid scans, not by the storage layout. The storage choice still
+matters at the edges:
+- combat, projectiles, arrive and death are 1.5–4× cheaper on table-based
+  designs than on SparseSet;
+- fusion trims movement by ~9%.
+
+The big remaining lever, though, is spatial indexing: the grid build and
+neighbour queries. That argues for making spatial queries a first-class
+v2 citizen (a grid/partition index maintained by the store, with neighbour
+iteration that can itself be fused and offloaded), and it is exactly the
+kind of priority a real testbed exposes and micro-benchmarks hide.
