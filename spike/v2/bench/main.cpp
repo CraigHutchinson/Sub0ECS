@@ -15,6 +15,7 @@
 
 #include "../common/scenarios.hpp"
 #include "../designs/archetype.hpp"
+#include "../designs/query_partition.hpp"
 #include "../designs/sorted_soa.hpp"
 #include "../designs/sparse_set.hpp"
 #include "../designs/static_bitmask.hpp"
@@ -79,6 +80,14 @@ namespace
         return false;
     }
 
+    /** Physical table count, for designs that have one (fragmentation evidence). */
+    template <typename W>
+    void reportTables(benchmark::State& state, W& w)
+    {
+        if constexpr (requires { w.partitionCount(); }) state.counters["tables"] = static_cast<double>(w.partitionCount());
+        else if constexpr (requires { w.archetypeCount(); }) state.counters["tables"] = static_cast<double>(w.archetypeCount());
+    }
+
     // ---- Scenarios ----------------------------------------------------------
 
     template <typename W>
@@ -124,6 +133,7 @@ namespace
             benchmark::ClobberMemory();
         }
         state.SetItemsProcessed(state.iterations() * n);
+        reportTables(state, *w);
     }
 
     template <typename W>
@@ -150,6 +160,20 @@ namespace
         auto w = std::make_unique<W>();
         auto es = populate(*w, n, pattern);
         for (auto _ : state) churnAddRemove(*w, es);
+        reportTables(state, *w);
+        state.SetItemsProcessed(state.iterations() * n);
+        state.counters["churned"] = static_cast<double>((n + 9) / 10);
+    }
+
+    template <typename W>
+    void BM_TagChurn(benchmark::State& state, Pattern pattern)
+    {
+        if (skipUnsupported<W>(state, true, false)) return;
+        const std::int64_t n = state.range(0);
+        auto w = std::make_unique<W>();
+        auto es = populate(*w, n, pattern);
+        for (auto _ : state) churnTagAddRemove(*w, es);
+        reportTables(state, *w);
         state.SetItemsProcessed(state.iterations() * n);
         state.counters["churned"] = static_cast<double>((n + 9) / 10);
     }
@@ -211,6 +235,7 @@ namespace
         reg("SparseQuery", f, W::kName, n, [](benchmark::State& s, Pattern pp) { BM_System<W, systemSparse<W>>(s, pp, true); });
         reg("RandomGet", f, W::kName, n, BM_RandomGet<W>);
         reg("AddRemove", f, W::kName, n, BM_AddRemove<W>);
+        reg("TagChurn", f, W::kName, n, BM_TagChurn<W>);
         reg("DestroyCreate", f, W::kName, n, BM_DestroyCreate<W>);
     }
 
@@ -221,6 +246,8 @@ namespace
         registerDesign<sorted::World>(n);
         registerDesign<sparse::World>(n);
         registerDesign<archetype::World>(n);
+        registerDesign<qpart::World>(n);
+        registerDesign<qpart::HintedWorld>(n);
         // Static design must be sized at compile time for each N.
         if (n <= 1024) registerDesign<fixed::World<1024>>(n);
         else if (n <= (1 << 17)) registerDesign<fixed::World<(1 << 17)>>(n);

@@ -8,6 +8,7 @@
 
 #include "../common/scenarios.hpp"
 #include "../designs/archetype.hpp"
+#include "../designs/query_partition.hpp"
 #include "../designs/sorted_soa.hpp"
 #include "../designs/sparse_set.hpp"
 #include "../designs/static_bitmask.hpp"
@@ -57,6 +58,25 @@ namespace
 
         if constexpr (W::kSupportsRemove && W::kSupportsDestroy)
         {
+            // Structural edits that change which systems match (move data in
+            // partitioned designs) and that promote/demote side storage:
+            //  - untag every 200th tagged entity (queried component removed)
+            //  - give Medium entities Color => they start matching Pulse, so
+            //    Scale is promoted from side storage to a column (QueryPart)
+            //  - strip Rotation from some Large entities => RotHealth no longer
+            //    matches, so Health is demoted to side storage (QueryPart)
+            for (std::size_t i = 0; i < es.size(); i += 200) w->template remove<Tag>(es[i]);
+            for (std::size_t i = 0; i < es.size(); i += 5)
+            {
+                if (w->template find<Scale>(es[i]) && !w->template find<Color>(es[i]))
+                    w->add(es[i], Color{ 0.25f, 0.5f, 0.75f, 1.0f });
+                else if (i % 7 == 0 && w->template find<Rotation>(es[i]) && w->template find<Color>(es[i]))
+                    w->template remove<Rotation>(es[i]);
+            }
+            w->commit();
+            systemFrame3(*w);
+            systemSparse(*w);
+
             churnAddRemove(*w, es);
             check(w->template find<Frozen>(es[0]) == nullptr, std::string(W::kName) + ": Frozen removed");
 
@@ -105,6 +125,8 @@ int main()
         compare<sorted::World>("SortedSoA", pattern, ref, true);
         compare<archetype::World>("Archetype", pattern, ref, true);
         compare<fixed::World<16384>>("StaticBitmask", pattern, ref, true);
+        compare<qpart::World>("QueryPart", pattern, ref, true);
+        compare<qpart::HintedWorld>("QPartHinted", pattern, ref, true);
     }
     std::printf(failures ? "\n%d FAILURE(S)\n" : "\nALL DESIGNS CONFORM\n", failures);
     return failures ? EXIT_FAILURE : EXIT_SUCCESS;

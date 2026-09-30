@@ -113,6 +113,18 @@ namespace spike
         w.commit();
     }
 
+    /** Add then remove a *queried* component (Tag) on every 10th entity.
+     *  Unlike Frozen, this changes which systems match, so partitioned
+     *  designs must move data. Precondition: no entity is tagged. */
+    template <typename W>
+    void churnTagAddRemove(W& w, const std::vector<typename W::Entity>& es)
+    {
+        for (std::size_t i = 0; i < es.size(); i += 10) w.add(es[i], Tag{});
+        w.commit();
+        for (std::size_t i = 0; i < es.size(); i += 10) w.template remove<Tag>(es[i]);
+        w.commit();
+    }
+
     /** Destroy every 10th entity (offset rotates) and create the same number of Small entities. */
     template <typename W>
     void churnDestroyCreate(W& w, std::vector<typename W::Entity>& es, std::size_t round, Rng& rng)
@@ -135,6 +147,7 @@ namespace spike
             if (auto* p = w.template find<Position>(e)) sum += static_cast<double>(p->x) * 3.0 + p->y;
             if (auto* v = w.template find<Velocity>(e)) sum += static_cast<double>(v->dx) * 5.0 + v->dy * 7.0;
             if (auto* h = w.template find<Health>(e)) sum += h->value * 11.0;
+            if (auto* r = w.template find<Rotation>(e)) sum += r->angle * 29.0;
             if (auto* s = w.template find<Scale>(e)) sum += s->value * 13.0;
             if (auto* c = w.template find<Color>(e)) sum += c->r * 17.0 + c->g * 19.0;
             if (auto* t = w.template find<Tag>(e)) sum += t->value * 23.0;

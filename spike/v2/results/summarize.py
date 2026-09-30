@@ -10,8 +10,8 @@ import json
 import sys
 from collections import defaultdict
 
-DESIGN_ORDER = ["V1", "SortedSoA", "SparseSet", "Archetype", "StaticBitmask", "RawSoA"]
-SCENARIO_ORDER = ["Create", "Iter1", "Update2", "Frame3", "SparseQuery", "RandomGet", "AddRemove", "DestroyCreate"]
+DESIGN_ORDER = ["V1", "SortedSoA", "SparseSet", "Archetype", "QueryPart", "QPartHinted", "StaticBitmask", "RawSoA"]
+SCENARIO_ORDER = ["Create", "Iter1", "Update2", "Frame3", "SparseQuery", "RandomGet", "AddRemove", "TagChurn", "DestroyCreate"]
 
 
 def fmt_time(us):
