@@ -167,3 +167,14 @@ What the numbers say:
 side-store volatile). Next spikes: H2 (partition ordering, single span) and
 H6 (reference bindings), then feed volatility automatically in adaptive
 mode.
+
+## Design review before H2
+
+[research/design-review-pre-h2.md](research/design-review-pre-h2.md).
+Key evidence: iterating one system over K partitions is free above ~1K
+entities per partition and 1.3–3.8× slower below ~200
+(`spike_spans_micro`). So single-span ordering is not worth a PQ-tree;
+controlling partition granularity is. The review ranks composition options
+ahead of references and replicas, re-scopes H2 into H2a (granularity), H2b
+(system tree) and H6′ (parent/child runs), and lists findings F1–F9 to carry
+into implementation.

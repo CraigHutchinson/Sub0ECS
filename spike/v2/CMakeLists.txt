@@ -61,3 +61,7 @@ endif()
 
 enable_testing()
 add_test(NAME spike_conformance COMMAND spike_conformance)
+
+# Micro-benchmark: span-count cost (design review evidence)
+add_executable(spike_spans_micro bench/spans_micro.cpp)
+target_link_libraries(spike_spans_micro PRIVATE spike_flags benchmark::benchmark)

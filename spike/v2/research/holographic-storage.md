@@ -7,6 +7,11 @@ architecture. It follows the storage-model spike in [../FINDINGS.md](../FINDINGS
 > to be tested by the spikes in [§8](#8-validation-plan) against the baseline
 > in [../results/](../results/).
 
+> **Design review before H2:** [design-review-pre-h2.md](design-review-pre-h2.md)
+> reframes the "entity in two systems" problem. The partition model has no
+> duplication. It proposes composition (system tree, parent/child runs, DAG
+> phases, fusion) ahead of reference/replica bindings, and re-scopes H2.
+
 ## Decisions so far
 
 | # | Decision | Date |
