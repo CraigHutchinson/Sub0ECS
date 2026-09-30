@@ -255,7 +255,7 @@ stays bit-identical at 2 and 4 threads (ThreadSanitizer clean).
 - **First cut:** lock-step fork-join per system with a sleeping pool.
   0.84× at 10K units, 1.50× at 50K.
 - **Improved:** spin-then-park pool, grain control, and fused chains run
-  chunk by chunk across all partitions. **1.77× at 10K, 2.18× at 50K**:
+  chunk by chunk across all partitions. **1.45–1.77× at 10K, 2.05–2.18× at 50K** (two runs; VM variance):
   movement 3.50×, target acquisition 3.16×.
 - **Remaining limit:** the serial fraction (grid build, commit, small
   systems) of ~2.4 of 5.5 ms.

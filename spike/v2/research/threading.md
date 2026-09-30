@@ -44,9 +44,14 @@ workload doesn't need.
 |---|---:|---:|
 | 1 thread | 2.25 | 11.99 |
 | **First cut:** lock-step fork-join per system, sleeping pool, per-partition fused split, 4 threads | 2.68 (**0.84×**) | 7.97 (1.50×) |
-| **Improved:** spin-then-park pool, grain control, chunk-level fused parallelism, 4 threads | **1.27 (1.77×)** | **5.51 (2.18×)** |
+| **Improved:** spin-then-park pool, grain control, chunk-level fused parallelism, 4 threads | **1.27–1.50 (1.45–1.77×)** | **5.51–5.92 (2.05–2.18×)** |
 | Same, 2 threads | 1.63 (1.38×) | 7.52 (1.59×) |
 | Static "owner computes" affinity, 4 threads | 2.23 (1.01×) | 8.00 (1.50×) |
+
+The two numbers in the "Improved" row come from two separate runs: the
+first measurement and the archived JSON run. The spread shows
+run-to-run variance on this shared VM, which is largest for the short
+10K ticks.
 
 All threaded variants play the **bit-identical game** at 2 and 4 threads,
 checked by Skirmish conformance. ThreadSanitizer is clean on both the
@@ -64,7 +69,7 @@ game and the fusion tests.
 
 Amdahl view: at 4 threads about 2.4 ms of the 5.5 ms tick is still serial
 (grid finish, commit/apply, small systems). That serial fraction, not the
-systems, caps scaling at ~2.2× here.
+systems, caps scaling at ~2.1–2.2× here.
 
 ### 2.3 Fusion × threads (FusionFrame, fragmented)
 
