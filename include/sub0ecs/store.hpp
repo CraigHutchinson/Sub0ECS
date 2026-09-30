@@ -1,0 +1,971 @@
+#pragma once
+/** The v2 store: query-signature partitions ("automatic archetypes").
+ *
+ * Design and evidence: docs/research/holographic-storage.md §4.1 and
+ * docs/FINDINGS.md (H1, H7-H9). The world is told its system
+ * queries up front. Physical partitions are keyed by the set of declared
+ * queries an entity matches, not by its full component signature.
+ *
+ * Invariant (columns follow queries): in a partition, the dense columns are
+ * the union of the required components of every query the partition
+ * matches. Every other component of an entity lives in type-erased side
+ * storage (sparse set) and costs nothing for iteration.
+ *
+ * Consequences:
+ *   - add/remove of a component no query requires moves no data
+ *   - iteration of a declared query = whole partitions of dense columns
+ *
+ * Two modes:
+ *   Carry = false ("QueryPart")  pure automatic: every unqueried component
+ *                                goes to side storage.
+ *   Carry = true  ("QPartHinted") the recommended model: unqueried components
+ *                                ride along as dense columns (extra key bits)
+ *                                unless declared Volatile<...>; trades churn
+ *                                cost for memory and find() locality.
+ *
+ * Handle semantics: operations on a stale (destroyed) handle are no-ops and
+ * find() returns nullptr; add() of a component the entity already has
+ * overwrites it; remove() of a component it lacks is a no-op.
+ *
+ * Type indices: every World type numbers its own component types densely from
+ * 0, on first use. The limit is therefore 64 component types per World type,
+ * however many other component types the program uses elsewhere; every
+ * instance of one World type shares the same numbering.
+ *
+ * Constraints: trivially copyable components of at most 64 bytes, at most 64
+ * component types per World type (exceeding it terminates), at most 32
+ * declared queries, and each<Cs...> must name a declared Query<Cs...> exactly.
+ */
+
+#include <array>
+#include <atomic>
+#include <bit>
+#include <cassert>
+#include <cstdlib>
+#include <cstring>
+#include <memory>
+#include <new>
+#include <tuple>
+#include <type_traits>
+#include <unordered_map>
+#include <vector>
+
+#include "entity.hpp"
+#include "query.hpp"
+#include "fusion/executors.hpp"
+
+namespace sub0ecs::store
+{
+    using Mask = std::uint64_t;
+    inline constexpr std::uint32_t kMaxTypes = 64;
+    inline constexpr std::int8_t kNoColumn = -1;
+
+    template <typename... Cs> struct Volatile {};
+
+    /** Type-erased dense column (one per hot component in a partition).
+     *  Storage is owned by the Partition (raw, 64-byte aligned, grown
+     *  geometrically, never zero-filled): pushRow/swapRemove touch no bytes
+     *  beyond the row itself. */
+    struct Column
+    {
+        std::uint32_t type = 0;
+        std::size_t stride = 0;
+        std::byte* data = nullptr;
+
+        std::byte* at(std::size_t row) const { return data + row * stride; }
+    };
+
+    /** Side storage: sparse set for components that are not columns.
+     *  Typed (hot add/remove/find paths are inlined); the virtual interface
+     *  is only used when values migrate between side storage and columns. */
+    class SidePoolBase
+    {
+    public:
+        static constexpr std::uint32_t kNull = ~0u;
+        virtual ~SidePoolBase() = default;
+        virtual const void* findRaw(Entity e) const = 0;
+        virtual void emplaceRaw(Entity e, const void* src) = 0;
+        virtual void remove(Entity e) = 0;
+        virtual void removeIfPresent(Entity e) = 0;
+        virtual const void* tryFindRaw(Entity e) const = 0;
+        virtual std::size_t size() const = 0;
+        virtual Entity entityAt(std::size_t i) const = 0;
+    };
+
+    template <typename T>
+    class SidePool final : public SidePoolBase
+    {
+    public:
+        T* find(Entity e)
+        {
+            const std::uint32_t i = e.index();
+            return (i < sparse_.size() && sparse_[i] != kNull) ? &data_[sparse_[i]] : nullptr;
+        }
+
+        /** Insert, or overwrite when e already holds a value (never a second dense entry). */
+        void emplace(Entity e, const T& value)
+        {
+            const std::uint32_t i = e.index();
+            if (i >= sparse_.size()) sparse_.resize(i + 1u, kNull);
+            if (sparse_[i] != kNull)
+            {
+                data_[sparse_[i]] = value;
+                return;
+            }
+            sparse_[i] = static_cast<std::uint32_t>(dense_.size());
+            dense_.push_back(e);
+            data_.push_back(value);
+        }
+
+        /** Precondition: e is present (removeIfPresent otherwise). */
+        void remove(Entity e) override
+        {
+            const std::uint32_t i = e.index();
+            assert(i < sparse_.size() && sparse_[i] != kNull);
+            const std::uint32_t row = sparse_[i];
+            const Entity last = dense_.back();
+            dense_[row] = last;
+            data_[row] = data_.back();
+            sparse_[last.index()] = row;
+            sparse_[i] = kNull;
+            dense_.pop_back();
+            data_.pop_back();
+        }
+
+        void removeIfPresent(Entity e) override
+        {
+            if (find(e)) remove(e);
+        }
+
+        const void* findRaw(Entity e) const override { return &data_[sparse_[e.index()]]; }
+        const void* tryFindRaw(Entity e) const override
+        {
+            const std::uint32_t i = e.index();
+            return (i < sparse_.size() && sparse_[i] != kNull) ? &data_[sparse_[i]] : nullptr;
+        }
+        std::size_t size() const override { return dense_.size(); }
+        Entity entityAt(std::size_t i) const override { return dense_[i]; }
+
+        void emplaceRaw(Entity e, const void* src) override
+        {
+            T value;
+            std::memcpy(&value, src, sizeof(T));
+            emplace(e, value);
+        }
+
+    private:
+        std::vector<std::uint32_t> sparse_;
+        std::vector<Entity> dense_;
+        std::vector<T> data_;
+    };
+
+    struct Partition
+    {
+        static constexpr std::size_t kAlign = 64;
+
+        Mask columnsMask = 0;
+        std::uint32_t signature = 0;   // bit i set = matches declared query i
+        std::vector<Column> columns;
+        std::array<std::int8_t, kMaxTypes> columnOf{};
+        /** Column base pointer per component type (nullptr = not a column):
+         *  find()/each() resolve a column with one load instead of
+         *  columnOf -> columns[] -> data. Kept in sync on growth. */
+        std::array<std::byte*, kMaxTypes> base{};
+        std::vector<Entity> entities;
+        std::size_t capacity = 0;      // rows allocated in every column
+        /** Transition cache: last destination seen when adding/removing a
+         *  fragmenting type from this partition. Keyed by the destination
+         *  column mask too, so it is exact even when two entities in this
+         *  partition carry different non-column fragmenting components. */
+        // Empty = index kNoEdge. (Not a sentinel mask: every 64-bit value, all-ones
+        // included, is the valid column mask of some entity.)
+        static constexpr std::uint32_t kNoEdge = ~0u;
+        struct Edge { Mask cols = 0; std::uint32_t index = kNoEdge; };
+        std::array<Edge, kMaxTypes> addEdge{}, removeEdge{};
+
+        Partition() = default;
+        Partition(const Partition&) = delete;
+        Partition& operator=(const Partition&) = delete;
+        ~Partition()
+        {
+            for (auto& c : columns) ::operator delete(c.data, std::align_val_t{ kAlign });
+        }
+
+        std::size_t size() const { return entities.size(); }
+
+        void addColumn(std::uint32_t type, std::size_t stride)
+        {
+            columnOf[type] = static_cast<std::int8_t>(columns.size());
+            columns.push_back(Column{ type, stride, nullptr });
+        }
+
+        std::uint32_t pushRow(Entity e)
+        {
+            if (entities.size() == capacity) grow(capacity ? capacity * 2u : 64u);
+            entities.push_back(e);
+            return static_cast<std::uint32_t>(entities.size() - 1u);
+        }
+
+        /** Swap-remove; returns the entity moved into `row` (or null). */
+        Entity swapRemove(std::uint32_t row)
+        {
+            const std::uint32_t last = static_cast<std::uint32_t>(entities.size() - 1u);
+            Entity moved = kNullEntity;
+            if (row != last)
+            {
+                for (auto& c : columns) std::memcpy(c.at(row), c.at(last), c.stride);
+                entities[row] = entities[last];
+                moved = entities[row];
+            }
+            entities.pop_back();
+            return moved;
+        }
+
+    private:
+        void grow(std::size_t rows)
+        {
+            for (auto& c : columns)
+            {
+                auto* fresh = static_cast<std::byte*>(::operator new(rows * c.stride, std::align_val_t{ kAlign }));
+                if (c.data)
+                {
+                    std::memcpy(fresh, c.data, entities.size() * c.stride);
+                    ::operator delete(c.data, std::align_val_t{ kAlign });
+                }
+                c.data = fresh;
+                base[c.type] = fresh;
+            }
+            capacity = rows;
+        }
+    };
+
+    template <typename T, typename... Ts>
+    constexpr std::size_t indexOf()
+    {
+        std::size_t i = 0;
+        const bool found = ((std::is_same_v<T, Ts> ? true : (++i, false)) || ...);
+        return found ? i : ~std::size_t{ 0 };
+    }
+
+    template <bool Carry, typename Queries, typename Volatiles = Volatile<>>
+    class BasicWorld;
+
+    template <bool Carry, typename... Qs, typename... Vs>
+    class BasicWorld<Carry, std::tuple<Qs...>, Volatile<Vs...>>
+    {
+        static constexpr std::size_t kQueries = sizeof...(Qs);
+        static_assert(kQueries <= 32, "signature is 32-bit");
+
+        /** Dense per-World-type component index: one function-local static per
+         *  (World type, T), so lookups cost the same single load as a global id. */
+        static std::uint32_t nextTypeIndex()
+        {
+            static std::atomic<std::uint32_t> next{ 0 };   // first uses may race across threads
+            return next.fetch_add(1, std::memory_order_relaxed);
+        }
+
+        template <typename T>
+        static std::uint32_t typeIndex()
+        {
+            static const std::uint32_t index = [] {
+                const std::uint32_t i = nextTypeIndex();
+                if (i >= kMaxTypes) std::abort();   // > 64 component types in one World type: masks are 64-bit
+                return i;
+            }();
+            return index;
+        }
+
+        template <typename T>
+        static Mask bit() { return Mask{ 1 } << typeIndex<T>(); }
+
+        /** Column of C in partition p, or nullptr when C is not a column there. */
+        template <typename C>
+        static C* col(const Partition& p) { return reinterpret_cast<C*>(p.base[typeIndex<C>()]); }
+
+    public:
+        using Entity = sub0ecs::Entity;
+        static constexpr const char* kName = Carry ? "QPartHinted" : "QueryPart";
+        static constexpr bool kSupportsRemove = true;
+        static constexpr bool kSupportsDestroy = true;
+
+        BasicWorld()
+            : required_{ requiredMask(Qs{})... }
+        {
+            for (Mask m : required_) queried_ |= m;
+            volatile_ = (Mask{ 0 } | ... | bit<Vs>()) & ~queried_;   // a queried component is never volatile
+            // Plan-time fact: components outside this mask can never change an
+            // entity's partition, so add/remove of them is a pure side-storage op.
+            fragmenting_ = Carry ? ~volatile_ : queried_;
+            strides_.fill(0);
+        }
+
+        void reserve(std::size_t n) { records_.reserve(n); }
+
+        /** True while e refers to a live entity of this world (false once destroyed). */
+        bool alive(Entity e) const { return entities_.alive(e); }
+
+        /** Live entity count. */
+        std::size_t size() const { return entities_.liveCount(); }
+
+        template <typename C>
+        bool has(Entity e) { return find<C>(e) != nullptr; }
+
+        template <typename... Cs>
+        Entity create(Cs... cs)
+        {
+            (registerType<Cs>(), ...);
+            const Entity e = entities_.create();
+            const Mask has = (Mask{ 0 } | ... | bit<Cs>()) & fragmenting_;
+            const std::uint32_t pi = partitionFor(columnsFor(has));
+            Partition& p = *partitions_[pi];
+            const std::uint32_t row = p.pushRow(e);
+            setRecord(e, Record{ pi, row, has });
+            (store(p, row, e, std::move(cs)), ...);
+            return e;
+        }
+
+        template <typename... Cs, typename F>
+        void each(F&& f)
+        {
+            constexpr std::size_t qi = indexOf<Query<Cs...>, Qs...>();
+            static_assert(qi < kQueries, "each<Cs...> must name a declared Query<Cs...>");
+            for (Partition* p : byQuery_[qi])
+            {
+                const std::size_t n = p->size();
+                if (n == 0) continue;
+                std::tuple<Cs*...> cols{ col<Cs>(*p)... };
+                for (std::size_t i = 0; i < n; ++i) f(std::get<Cs*>(cols)[i]...);
+            }
+        }
+
+        template <typename C>
+        C* find(Entity e)
+        {
+            if (!entities_.alive(e)) return nullptr;
+            if (!(fragmenting_ & bit<C>()))   // membership lives in the pool (which may not exist yet)
+            {
+                auto* pool = side_[typeIndex<C>()].get();
+                return pool ? static_cast<SidePool<C>*>(pool)->find(e) : nullptr;
+            }
+            const Record& r = records_[e.index()];
+            // Column first: columnsFor(has) is a subset of has, so a column
+            // implies membership. Checking r.has before this dependent load cost
+            // RandomGet ~20% (measured), hence the order.
+            if (C* column = col<C>(*partitions_[r.partition])) return column + r.row;
+            if (!(r.has & bit<C>()))   // H9: not yet migrated entities still hold it in side storage
+                return (migrating_ & bit<C>()) ? side<C>().find(e) : nullptr;
+            return side<C>().find(e);
+        }
+
+        template <typename C>
+        void add(Entity e, C value)
+        {
+            if (!entities_.alive(e)) return;
+            registerType<C>();
+            if (!(fragmenting_ & bit<C>()))
+            {
+                side<C>().emplace(e, value);   // non-fragmenting: exactly a sparse-set op
+                return;
+            }
+            Record& r = records_[e.index()];
+            const Mask newHas = r.has | bit<C>();
+            const Mask newCols = columnsFor(newHas);
+            if (newCols != part(r).columnsMask)
+            {
+                moveTo(e, r, newCols, newHas, part(r).addEdge[typeIndex<C>()]);
+            }
+            r.has = newHas;
+            store(part(r), r.row, e, std::move(value));
+        }
+
+        template <typename C>
+        void remove(Entity e)
+        {
+            if (!entities_.alive(e)) return;
+            if (!(fragmenting_ & bit<C>()))
+            {
+                // non-fragmenting: exactly a sparse-set op (the pool may not exist yet)
+                if (auto* pool = static_cast<SidePool<C>*>(side_[typeIndex<C>()].get())) pool->removeIfPresent(e);
+                return;
+            }
+            Record& r = records_[e.index()];
+            const std::uint32_t t = typeIndex<C>();
+            if (!(r.has & bit<C>()))
+            {
+                if (migrating_ & bit<C>()) side<C>().removeIfPresent(e);   // H9: unmigrated holder, still side-stored
+                return;                                                     // otherwise: absent, nothing to do
+            }
+            const Mask newHas = r.has & ~bit<C>();
+            const Mask newCols = columnsFor(newHas);
+            if (newCols == part(r).columnsMask)
+            {
+                side<C>().remove(e);   // not a column: pure side-storage op, no data moves
+            }
+            else
+            {
+                if (part(r).columnOf[t] == kNoColumn) side<C>().remove(e);
+                moveTo(e, r, newCols, newHas, part(r).removeEdge[t]);
+            }
+            r.has = newHas;
+        }
+
+        void destroy(Entity e)
+        {
+            if (!entities_.alive(e)) return;   // stale handle: must not release the slot twice
+            Record& r = records_[e.index()];
+            Partition& p = part(r);
+            Mask sideBits = r.has & ~p.columnsMask;
+            while (sideBits)
+            {
+                const auto t = static_cast<std::uint32_t>(std::countr_zero(sideBits));
+                side_[t]->remove(e);
+                sideBits &= sideBits - 1u;
+            }
+            for (std::uint32_t t : nonFragmentingTypes_) side_[t]->removeIfPresent(e);
+            for (Mask m = migrating_; m; m &= m - 1u) side_[std::countr_zero(m)]->removeIfPresent(e);
+            const Entity moved = p.swapRemove(r.row);
+            if (!(moved == kNullEntity)) records_[moved.index()].row = r.row;
+            r = Record{};
+            entities_.release(e);
+        }
+
+        void commit() {}
+
+        /** H7 system fusion: one pass per partition applying every system that
+         *  matches it, in argument (= schedule) order, row by row.
+         *
+         *  Legal because each system is row-local (touches only the current
+         *  entity's components) and no structural change happens inside the
+         *  group, so per-row interleaving equals running the passes back to back.
+         *  The subset of systems per partition is resolved once per partition
+         *  and dispatched to a compile-time specialised loop, so the inner loop
+         *  has no per-row branches on "does system j apply". */
+        template <typename... Systems>
+        void runFused(const Systems&... systems)
+        {
+            fusion::Inline exec;
+            runFusedOn(exec, systems...);
+        }
+
+        /** Fusion with a pluggable executor (fusion/executors.hpp): the store
+         *  supplies per-partition columns + the fused kernel; the executor
+         *  decides how rows are run (inline, tiled, threads, offload). */
+        template <typename Exec, typename... Systems>
+        void runFusedOn(Exec& exec, const Systems&... systems)
+        {
+            runFusedOnMasked(exec, ~0u, systems...);
+        }
+
+        /** H9: runtime enable mask over the group's members (bit j = systems[j]).
+         *  A disabled member simply drops out of every partition's subset. */
+        template <typename Exec, typename... Systems>
+        void runFusedOnMasked(Exec& exec, unsigned enabled, const Systems&... systems)
+        {
+            constexpr std::size_t k = sizeof...(Systems);
+            static_assert(k >= 1 && k <= 6, "at most 6 systems per fused group (2^k loop specialisations)");
+            static_assert(((indexOf<typename Systems::Query, Qs...>() < kQueries) && ...),
+                          "every fused system must use a declared query");
+            constexpr std::array<std::size_t, k> qidx{ indexOf<typename Systems::Query, Qs...>()... };
+
+            for (auto& up : partitions_)
+            {
+                Partition& p = *up;
+                const std::size_t n = p.size();
+                if (n == 0) continue;
+                unsigned subset = 0;
+                for (std::size_t j = 0; j < k; ++j)
+                {
+                    if (p.signature & (1u << qidx[j])) subset |= 1u << j;
+                }
+                subset &= enabled;
+                if (subset != 0) dispatchSubset<0>(exec, subset, p, n, systems...);
+            }
+        }
+
+        /** H8: fused group, data-parallel at CHUNK granularity across ALL partitions.
+         *  Work items are (partition, system subset, row range); each worker streams
+         *  its chunks through the whole fused chain — no barrier between systems,
+         *  one fork-join per group (vs one per partition in runFusedOn(Parallel)). */
+        template <typename Pool, typename... Systems>
+        void runFusedParallel(Pool& pool, const Systems&... systems)
+        {
+            constexpr std::size_t k = sizeof...(Systems);
+            constexpr std::array<std::size_t, k> qidx{ indexOf<typename Systems::Query, Qs...>()... };
+            constexpr std::size_t kChunk = 2048;
+            fchunks_.clear();
+            for (auto& up : partitions_)
+            {
+                Partition& p = *up;
+                unsigned subset = 0;
+                for (std::size_t j = 0; j < k; ++j)
+                    if (p.signature & (1u << qidx[j])) subset |= 1u << j;
+                if (subset == 0) continue;
+                for (std::size_t b = 0, n = p.size(); b < n; b += kChunk)
+                    fchunks_.push_back(FChunk{ &p, subset, static_cast<std::uint32_t>(b), static_cast<std::uint32_t>(std::min(n, b + kChunk)) });
+            }
+            if (fchunks_.size() < 4)
+            {
+                fusion::Inline exec;
+                runFusedOn(exec, systems...);
+                return;
+            }
+            auto body = [&](std::size_t item, unsigned) {
+                const FChunk& c = fchunks_[item];
+                fusion::InlineRange exec{ c.begin, c.end };
+                dispatchSubset<0>(exec, c.subset, *c.p, c.end - c.begin, systems...);
+            };
+            pool.parallelFor(fchunks_.size(), body);
+        }
+
+        /** H8 data-parallel iteration: fixed-size row chunks across ALL partitions
+         *  matching the query become pool work items (one fork-join per system,
+         *  not per partition). f(worker, Cs&...) — the worker index lets callers
+         *  keep per-thread command buffers / accumulators without locks. */
+        template <typename... Cs, typename Pool, typename F>
+        void eachParallel(Pool& pool, F&& f)
+        {
+            constexpr std::size_t qi = indexOf<Query<Cs...>, Qs...>();
+            static_assert(qi < kQueries, "eachParallel<Cs...> must name a declared Query<Cs...>");
+            constexpr std::size_t kChunk = 1024;
+            chunks_.clear();
+            for (Partition* p : byQuery_[qi])
+            {
+                for (std::size_t b = 0, n = p->size(); b < n; b += kChunk)
+                    chunks_.push_back(Chunk{ p, static_cast<std::uint32_t>(b), static_cast<std::uint32_t>(std::min(n, b + kChunk)) });
+            }
+            if (chunks_.size() < 4)   // grain control: too little work to be worth a fork-join
+            {
+                for (Partition* p : byQuery_[qi])
+                {
+                    std::tuple<Cs*...> cols{ col<Cs>(*p)... };
+                    for (std::size_t i = 0, n = p->size(); i < n; ++i) f(0u, std::get<Cs*>(cols)[i]...);
+                }
+                return;
+            }
+            auto body = [&](std::size_t item, unsigned worker) {
+                const Chunk& c = chunks_[item];
+                std::tuple<Cs*...> cols{ col<Cs>(*c.p)... };
+                for (std::uint32_t i = c.begin; i < c.end; ++i) f(worker, std::get<Cs*>(cols)[i]...);
+            };
+            pool.parallelFor(chunks_.size(), body);
+        }
+
+        // ---- H9: dynamic system lifetimes ------------------------------------
+        //
+        // A system registered at runtime (e.g. paged in with a new world region)
+        // declares its query here. Components it requires that are currently in
+        // side storage (Volatile) are PROMOTED to dense columns: a relayout.
+        //   - the query is usable immediately in a DEGRADED mode: fast path over
+        //     already-matching partitions + a sparse join over the side pool for
+        //     entities not yet migrated (each entity visited exactly once);
+        //   - migrateStep(budget) moves at most `budget` entities (all their
+        //     pending components at once) per call — bounded, incremental;
+        //   - when the side pools drain, the query flips to the full fast path.
+        // migrateStep(SIZE_MAX) is the "stall acceptable" (level load) relayout.
+
+        template <typename... Cs>
+        std::size_t addQuery()
+        {
+            static_assert(Carry, "dynamic queries are designed for the hinted (carry) layout");
+            (registerType<Cs>(), ...);
+            const Mask req = (Mask{ 0 } | ... | bit<Cs>());
+            const Mask promote = req & volatile_;
+            if (promote)
+            {
+                volatile_ &= ~promote;
+                fragmenting_ |= promote;
+                migrating_ |= promote;
+                std::erase_if(nonFragmentingTypes_, [&](std::uint32_t t) { return (promote >> t) & 1u; });
+            }
+            DynQuery q{ req, promote, {}, true };
+            for (auto& p : partitions_)
+                if ((p->columnsMask & req) == req) q.partitions.push_back(p.get());
+            dyn_.push_back(std::move(q));
+            refreshPending();
+            return dyn_.size() - 1u;
+        }
+
+        /** Scheduler-level enable/disable: no layout change (demotion back to side
+         *  storage is only done at stall points). */
+        void setQueryEnabled(std::size_t id, bool on) { dyn_[id].enabled = on; }
+
+        bool queryDegraded(std::size_t id) const { return dyn_[id].pending != 0; }
+
+        /** Entities still waiting to be migrated (upper bound: side-pool sizes). */
+        std::size_t pendingMigration() const
+        {
+            std::size_t n = 0;
+            for (Mask m = migrating_; m; m &= m - 1u) n += side_[std::countr_zero(m)]->size();
+            return n;
+        }
+
+        /** Migrate up to `budget` entities; returns entities still pending. */
+        std::size_t migrateStep(std::size_t budget)
+        {
+            std::size_t moved = 0;
+            while (migrating_ && moved < budget)
+            {
+                const auto t = static_cast<std::uint32_t>(std::countr_zero(migrating_));
+                SidePoolBase& pool = *side_[t];
+                if (pool.size() == 0)
+                {
+                    migrating_ &= ~(Mask{ 1 } << t);
+                    refreshPending();
+                    continue;
+                }
+                promoteEntity(pool.entityAt(pool.size() - 1u));
+                ++moved;
+            }
+            return pendingMigration();
+        }
+
+        template <typename... Cs, typename F>
+        void eachDyn(std::size_t id, F&& f)
+        {
+            const DynQuery& q = dyn_[id];
+            if (!q.enabled) return;
+            for (Partition* p : q.partitions)   // full path: dense columns
+            {
+                const std::size_t n = p->size();
+                if (n == 0) continue;
+                std::tuple<Cs*...> cols{ col<Cs>(*p)... };
+                for (std::size_t i = 0; i < n; ++i) f(std::get<Cs*>(cols)[i]...);
+            }
+            if (q.pending)                      // degraded path: sparse join over unmigrated holders
+            {
+                const auto d = static_cast<std::uint32_t>(std::countr_zero(q.pending));
+                (void)((typeIndex<Cs>() == d ? (compatJoin<Cs, Cs...>(f), true) : false) || ...);
+            }
+        }
+
+        std::size_t partitionCount() const { return partitions_.size(); }
+
+    private:
+        // ---- H9 helpers ----
+        struct Record   // 16 bytes
+        {
+            std::uint32_t partition = 0;   // index into partitions_
+            std::uint32_t row = 0;
+            Mask has = 0;                  // the entity's *fragmenting* components only
+        };
+        static_assert(sizeof(Record) == 16);
+
+        Partition& part(const Record& r) { return *partitions_[r.partition]; }
+
+        struct DynQuery
+        {
+            Mask required = 0;
+            Mask pending = 0;          // required components still being promoted
+            std::vector<Partition*> partitions;
+            bool enabled = true;
+        };
+
+        void refreshPending()
+        {
+            for (auto& q : dyn_) q.pending = q.required & migrating_;
+        }
+
+        template <typename C>
+        bool holds(Entity e, const Record& r)
+        {
+            if (r.has & bit<C>()) return true;
+            auto* pool = side_[typeIndex<C>()].get();
+            return pool && pool->tryFindRaw(e) != nullptr;
+        }
+
+        template <typename C>
+        C& refOf(Entity e, const Record& r)
+        {
+            if (r.has & bit<C>())
+            {
+                if (C* column = col<C>(*partitions_[r.partition])) return column[r.row];
+            }
+            return *side<C>().find(e);
+        }
+
+        /** Driver = side pool of one pending component; every holder there is unmigrated. */
+        template <typename D, typename... Cs, typename F>
+        void compatJoin(F& f)
+        {
+            SidePool<D>& pool = side<D>();
+            for (std::size_t i = 0, n = pool.size(); i < n; ++i)
+            {
+                const Entity e = pool.entityAt(i);
+                const Record& r = records_[e.index()];
+                if ((holds<Cs>(e, r) && ...)) f(refOf<Cs>(e, r)...);
+            }
+        }
+
+        /** Move one entity's pending components from side storage into columns
+         *  (all at once, so an entity is never half-migrated). */
+        void promoteEntity(Entity e)
+        {
+            Record& r = records_[e.index()];
+            Mask pend = 0;
+            for (Mask m = migrating_; m; m &= m - 1u)
+            {
+                const auto t = static_cast<std::uint32_t>(std::countr_zero(m));
+                if (const void* src = side_[t]->tryFindRaw(e))
+                {
+                    std::memcpy(stash_[t].data(), src, strides_[t]);
+                    side_[t]->remove(e);
+                    pend |= Mask{ 1 } << t;
+                }
+            }
+            assert(pend != 0);   // e was taken from a migrating pool
+            const Mask newHas = r.has | pend;
+            moveTo(e, r, columnsFor(newHas), newHas, part(r).addEdge[std::countr_zero(pend)]);
+            r.has = newHas;
+            Partition& p = part(r);
+            for (Mask m = pend; m; m &= m - 1u)
+            {
+                const auto t = static_cast<std::uint32_t>(std::countr_zero(m));
+                std::memcpy(p.columns[p.columnOf[t]].at(r.row), stash_[t].data(), strides_[t]);
+            }
+        }
+
+        // ---- fusion helpers ----
+        template <unsigned M, typename Exec, typename... Systems>
+        void dispatchSubset(Exec& exec, unsigned subset, Partition& p, std::size_t n, const Systems&... systems)
+        {
+            if constexpr (M < (1u << sizeof...(Systems)))
+            {
+                if (subset == M) fusedLoop<M>(exec, p, n, std::index_sequence_for<Systems...>{}, systems...);
+                else dispatchSubset<M + 1>(exec, subset, p, n, systems...);
+            }
+        }
+
+        // Union of all component types used by the fused systems (deduplicated).
+        template <typename... Ts> struct TypeList {};
+        template <typename L, typename T> struct Append;
+        template <typename... Ts, typename T>
+        struct Append<TypeList<Ts...>, T>
+        {
+            using type = std::conditional_t<(std::is_same_v<T, Ts> || ...), TypeList<Ts...>, TypeList<Ts..., T>>;
+        };
+        template <typename L, typename Q> struct AppendQuery { using type = L; };
+        template <typename L, typename C, typename... Cs>
+        struct AppendQuery<L, Query<C, Cs...>>
+        {
+            using type = typename AppendQuery<typename Append<L, C>::type, Query<Cs...>>::type;
+        };
+        template <typename L, typename... Qs2> struct UnionOf { using type = L; };
+        template <typename L, typename Q, typename... Rest>
+        struct UnionOf<L, Q, Rest...>
+        {
+            using type = typename UnionOf<typename AppendQuery<L, Q>::type, Rest...>::type;
+        };
+
+        /** ONE pointer per component type for the whole fused group. Systems that
+         *  share a component therefore share the same pointer, so after inlining
+         *  the compiler sees a single merged kernel (no false aliasing between
+         *  per-system copies of the same column). Types only used by systems that
+         *  are inactive for this partition may have no column: nullptr, never read. */
+        template <typename... Ts>
+        static std::tuple<Ts*...> bindUnion(Partition& p, TypeList<Ts...>)
+        {
+            return { col<Ts>(p)... };   // nullptr when not a column
+        }
+
+        template <bool Active, typename S, typename Cols, typename... Cs>
+        static void step(const S& s, const Cols& cols, std::size_t i, Query<Cs...>)
+        {
+            if constexpr (Active) s(std::get<Cs*>(cols)[i]...);
+        }
+
+        // Fusion only pays if every system body is inlined into one loop body
+        // (then the compiler sees a single merged kernel). Left to heuristics,
+        // GCC stopped inlining in large TUs (sub0ecs_bench) and the fused loop ran
+        // at unfused speed, so force it: flatten = inline everything called here.
+        template <unsigned M, typename Exec, std::size_t... J, typename... Systems>
+#if defined(__GNUC__)
+        __attribute__((flatten))
+#elif defined(_MSC_VER)
+        [[msvc::flatten]]
+#endif
+        void fusedLoop(Exec& exec, Partition& p, std::size_t n, std::index_sequence<J...>, const Systems&... systems)
+        {
+            using Types = typename UnionOf<TypeList<>, typename Systems::Query...>::type;
+            const auto cols = bindUnion(p, Types{});
+            // The fused kernel over rows [0, count) of whatever column pointers
+            // the executor passes (original, offset tile, or device-staged copy).
+            auto kernel = [&](const auto& c, std::size_t count) {
+                for (std::size_t i = 0; i < count; ++i)
+                {
+                    (step<((M >> J) & 1u) != 0>(systems, c, i, typename Systems::Query{}), ...);
+                }
+            };
+            exec.template run<fusion::GroupInfo<Systems...>>(n, cols, kernel);
+        }
+
+
+        template <typename... Cs>
+        static Mask requiredMask(Query<Cs...>) { return (Mask{ 0 } | ... | bit<Cs>()); }
+
+        /** Plan function: which components are dense columns for an entity with `has`. */
+        Mask columnsFor(Mask has) const
+        {
+            if constexpr (Carry)
+            {
+                return has & ~volatile_;
+            }
+            else
+            {
+                Mask cols = 0;
+                for (Mask req : required_)
+                {
+                    if ((has & req) == req) cols |= req;
+                }
+                return cols;
+            }
+        }
+
+        std::uint32_t signatureOf(Mask cols) const
+        {
+            // A query matches iff its required set ⊆ columns (see §4.1 proof).
+            std::uint32_t sig = 0;
+            for (std::size_t i = 0; i < kQueries; ++i)
+            {
+                if ((cols & required_[i]) == required_[i]) sig |= 1u << i;
+            }
+            return sig;
+        }
+
+        template <typename T>
+        void registerType()
+        {
+            static_assert(std::is_trivially_copyable_v<T>, "sub0ecs::store requires trivially copyable components");
+            static_assert(sizeof(T) <= 64, "H9 promotion scratch holds components up to 64 bytes");
+            const std::uint32_t t = typeIndex<T>();
+            assert(t < kMaxTypes);
+            if (strides_[t] == 0)
+            {
+                strides_[t] = sizeof(T);
+                side_[t] = std::make_unique<SidePool<T>>();
+                if (!(fragmenting_ & (Mask{ 1 } << t))) nonFragmentingTypes_.push_back(t);
+            }
+        }
+
+        template <typename T>
+        SidePool<T>& side() { return static_cast<SidePool<T>&>(*side_[typeIndex<T>()]); }
+
+        template <typename T>
+        void store(Partition& p, std::uint32_t row, Entity e, T value)
+        {
+            const std::int8_t c = p.columnOf[typeIndex<T>()];
+            if (c != kNoColumn) std::memcpy(p.columns[c].at(row), &value, sizeof(T));
+            else side<T>().emplace(e, value);
+        }
+
+        void setRecord(Entity e, Record r)
+        {
+            if (e.index() >= records_.size()) records_.resize(e.index() + 1u);
+            records_[e.index()] = r;
+        }
+
+        /** Move e to the partition for newCols; values migrate column<->side as needed. */
+        void moveTo(Entity e, Record& r, Mask newCols, Mask newHas)
+        {
+            moveTo(e, r, newHas, partitionFor(newCols));
+        }
+
+        /** Single-type transition: resolve the destination through the source
+         *  partition's edge cache (hit = no hash lookup). */
+        void moveTo(Entity e, Record& r, Mask newCols, Mask newHas, Partition::Edge& edge)
+        {
+            if (edge.index == Partition::kNoEdge || edge.cols != newCols)
+            {
+                const std::uint32_t di = partitionFor(newCols);   // may grow partitions_, edge stays valid (Partition is heap-pinned)
+                edge = Partition::Edge{ newCols, di };
+            }
+            moveTo(e, r, newHas, edge.index);
+        }
+
+        void moveTo(Entity e, Record& r, Mask newHas, std::uint32_t di)
+        {
+            Partition& src = part(r);
+            Partition& dst = *partitions_[di];
+            const std::uint32_t srcRow = r.row;
+            const std::uint32_t dstRow = dst.pushRow(e);
+
+            for (auto& col : dst.columns)
+            {
+                const std::int8_t s = src.columnOf[col.type];
+                if (s != kNoColumn)
+                {
+                    std::memcpy(col.at(dstRow), src.columns[s].at(srcRow), col.stride);
+                }
+                else if (r.has & (Mask{ 1 } << col.type))
+                {
+                    // promote: side storage -> column
+                    SidePoolBase& pool = *side_[col.type];
+                    std::memcpy(col.at(dstRow), pool.findRaw(e), col.stride);
+                    pool.remove(e);
+                }
+                // else: component being added; caller stores it after the move
+            }
+            for (auto& col : src.columns)
+            {
+                if (dst.columnOf[col.type] == kNoColumn && (newHas & (Mask{ 1 } << col.type)))
+                {
+                    side_[col.type]->emplaceRaw(e, col.at(srcRow));   // demote: column -> side storage
+                }
+            }
+
+            const Entity moved = src.swapRemove(srcRow);
+            if (!(moved == kNullEntity)) records_[moved.index()].row = srcRow;
+            r.partition = di;
+            r.row = dstRow;
+        }
+
+        std::uint32_t partitionFor(Mask cols)
+        {
+            auto it = byColumns_.find(cols);
+            if (it != byColumns_.end()) return it->second;
+
+            auto p = std::make_unique<Partition>();
+            p->columnsMask = cols;
+            p->signature = signatureOf(cols);
+            p->columnOf.fill(kNoColumn);
+            for (std::uint32_t t = 0; t < kMaxTypes; ++t)
+            {
+                if (cols & (Mask{ 1 } << t)) p->addColumn(t, strides_[t]);
+            }
+            for (std::size_t i = 0; i < kQueries; ++i)
+            {
+                if (p->signature & (1u << i)) byQuery_[i].push_back(p.get());
+            }
+            for (auto& q : dyn_)
+            {
+                if ((p->columnsMask & q.required) == q.required) q.partitions.push_back(p.get());
+            }
+            const auto index = static_cast<std::uint32_t>(partitions_.size());
+            byColumns_.emplace(cols, index);
+            partitions_.push_back(std::move(p));
+            return index;
+        }
+
+        std::array<Mask, kQueries> required_;
+        Mask queried_ = 0;
+        Mask volatile_ = 0;
+        Mask fragmenting_ = 0;
+        Mask migrating_ = 0;                          // H9: components being promoted to columns
+        std::vector<DynQuery> dyn_;                   // H9: runtime-registered queries
+        std::array<std::array<std::byte, 64>, kMaxTypes> stash_{};   // promotion scratch (components <= 64 B)
+        std::vector<std::uint32_t> nonFragmentingTypes_;
+        std::array<std::size_t, kMaxTypes> strides_{};
+        std::array<std::unique_ptr<SidePoolBase>, kMaxTypes> side_{};
+
+        EntityAllocator entities_;
+        std::vector<Record> records_;
+        std::vector<std::unique_ptr<Partition>> partitions_;
+        std::unordered_map<Mask, std::uint32_t> byColumns_;
+
+        struct Chunk { Partition* p; std::uint32_t begin, end; };
+        std::vector<Chunk> chunks_;   // eachParallel scratch
+        struct FChunk { Partition* p; unsigned subset; std::uint32_t begin, end; };
+        std::vector<FChunk> fchunks_; // runFusedParallel scratch
+        std::array<std::vector<Partition*>, kQueries> byQuery_{};
+    };
+
+} // namespace sub0ecs::store

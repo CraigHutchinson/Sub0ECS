@@ -1,107 +1,66 @@
-# @note >=3.20 required for `GENERATED` attribute to be project-wide i.e. Version.h
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.21)
 
-# Register repository module paths
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-
-include(CPM)
-
-# Import build optimization tools (ccache, linkers, etc.)
-include(tools)
-
-# Version.cmake automates our sematic build versioning
-include(Version)
-
-project( SubzeroECS VERSION ${VERSION_SEMANTIC}
-  LANGUAGES CXX
-)
-set (CMAKE_CXX_STANDARD 20)
-
-if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
-  message(
-    FATAL_ERROR
-      "Generating & building from within source is not allowed. Please configure git into a 'build' folder to run CMake from there."
-  )
+# Detect if Sub0ECS is being included inside another project
+if(DEFINED PROJECT_NAME)
+    set(IS_SUBPROJECT ON)
 endif()
 
-# PackageProject.cmake will be used to make our target installable
-CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.11.0")
+project(Sub0ECS VERSION 2.0.0 LANGUAGES CXX)
 
-find_package(fmt REQUIRED)
+option(SUB0ECS_BUILD_TESTING    "Build unit tests"                                              ON)
+option(SUB0ECS_BUILD_BENCHMARKS "Build the comparison benchmarks (fetches Google Benchmark)"   OFF)
+option(SUB0ECS_NATIVE           "Tune tests/benchmarks for the build host (-march=native; /arch:AVX2 on MSVC)" OFF)
+option(SUB0ECS_SANITIZE         "Build tests with sanitizers (ASan+UBSan; ASan on MSVC)"        OFF)
 
-add_library(${PROJECT_NAME})
-target_sources(${PROJECT_NAME}
-  PRIVATE
-    ${PROJECT_SOURCE_DIR}/source/SubzeroECS/Collection.hpp
-    ${PROJECT_SOURCE_DIR}/source/SubzeroECS/Collection.hpp
-    ${PROJECT_SOURCE_DIR}/source/SubzeroECS/CollectionRegistry.hpp
-    ${PROJECT_SOURCE_DIR}/source/SubzeroECS/Entity.hpp
-    ${PROJECT_SOURCE_DIR}/source/SubzeroECS/EntityId.hpp
-    ${PROJECT_SOURCE_DIR}/source/SubzeroECS/FreeIndexList32.hpp 
-    ${PROJECT_SOURCE_DIR}/source/SubzeroECS/UniqueIndex32.hpp 
-    ${PROJECT_SOURCE_DIR}/source/SubzeroECS/Has.hpp 
-    ${PROJECT_SOURCE_DIR}/source/SubzeroECS/Logical.hpp
-    ${PROJECT_SOURCE_DIR}/source/SubzeroECS/Query.hpp
-    ${PROJECT_SOURCE_DIR}/source/SubzeroECS/SubzeroECS.hpp
-    ${PROJECT_SOURCE_DIR}/source/SubzeroECS/System.hpp 
-    ${PROJECT_SOURCE_DIR}/source/SubzeroECS/Utility/StructOfVector.hpp
-    ${PROJECT_SOURCE_DIR}/source/SubzeroECS/View.hpp
-    ${PROJECT_SOURCE_DIR}/source/SubzeroECS/World.hpp
-  PRIVATE 
-    ${PROJECT_SOURCE_DIR}/source/SubzeroECS/CollectionRegistry.cpp
-    ${PROJECT_SOURCE_DIR}/source/SubzeroECS/UniqueIndex32.cpp
-    )
+# ── Core library (header-only) ───────────────────────────────────────────────
 
-set_target_properties(${PROJECT_NAME} 
-  PROPERTIES 
-    CXX_STANDARD 20)
+add_library(Sub0ECS INTERFACE)
+add_library(Sub0ECS::Sub0ECS ALIAS Sub0ECS)
+target_compile_features(Sub0ECS INTERFACE cxx_std_20)
+target_include_directories(Sub0ECS INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>)
 
-target_compile_options(${PROJECT_NAME} 
-PUBLIC 
-  # Enforce standards conformance on MSVC
-  "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive->"
-)
+if(IS_SUBPROJECT OR NOT (SUB0ECS_BUILD_TESTING OR SUB0ECS_BUILD_BENCHMARKS))
+    return()
+endif()
 
-# Link dependencies
-# target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
+# ── Flags for this repository's own tests and benchmarks (never consumers) ───
 
-target_include_directories(
-  ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/source>
-                         $<INSTALL_INTERFACE:include/${PROJECT_NAME}-${PROJECT_VERSION}>
-)
+add_library(sub0ecs_dev_flags INTERFACE)
+if(MSVC)
+    # /bigobj: the benchmark TUs instantiate every design x scenario and exceed COFF's section limit.
+    # _CRT_SECURE_NO_WARNINGS: std::getenv/std::fopen are the portable spelling; the _s variants are not.
+    target_compile_options(sub0ecs_dev_flags INTERFACE /W4 /permissive- /Zc:__cplusplus /bigobj)
+    target_compile_definitions(sub0ecs_dev_flags INTERFACE _CRT_SECURE_NO_WARNINGS)
+    if(SUB0ECS_NATIVE)
+        # MSVC has no -march=native; AVX2 is the widest ISA every x86-64 bench host here supports.
+        target_compile_options(sub0ecs_dev_flags INTERFACE /arch:AVX2)
+    endif()
+else()
+    target_compile_options(sub0ecs_dev_flags INTERFACE -Wall -Wextra $<$<CONFIG:Release>:-O3>)
+    if(SUB0ECS_NATIVE)
+        target_compile_options(sub0ecs_dev_flags INTERFACE -march=native)
+    endif()
+endif()
 
-# ---- Precompiled Headers for faster builds ----
-# Note: C++20 modules would provide even better build times (50-80% faster) but the
-# ecosystem is not yet production-ready as of 2026. See documentation/pages/CPP20_MODULES_FUTURE.md
-# for details on future migration plans when tooling matures (estimated 2027-2028).
-target_precompile_headers(${PROJECT_NAME} 
-  PRIVATE
-    <vector>
-    <unordered_map>
-    <memory>
-    <algorithm>
-    <cstdint>
-    <type_traits>
-    <utility>
-)
+if(SUB0ECS_SANITIZE)
+    # On the shared flags, not just the test binary: MSVC's ASan annotates STL
+    # containers and refuses to link objects built without it (the v1 baseline).
+    if(MSVC)
+        target_compile_options(sub0ecs_dev_flags INTERFACE /fsanitize=address)
+    else()
+        target_compile_options(sub0ecs_dev_flags INTERFACE -fsanitize=address,undefined -fno-omit-frame-pointer)
+        target_link_options(sub0ecs_dev_flags INTERFACE -fsanitize=address,undefined)
+    endif()
+endif()
 
-# ---- Create an installable target ----
-string(TOLOWER ${PROJECT_NAME}/version.h VERSION_HEADER_LOCATION)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
+find_package(Threads REQUIRED)
 
-packageProject(
-  NAME ${PROJECT_NAME}
-  VERSION ${PROJECT_VERSION}
-  NAMESPACE ${PROJECT_NAME}
-  BINARY_DIR ${PROJECT_BINARY_DIR}
-  INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include
-  INCLUDE_DESTINATION include/${PROJECT_NAME}-${PROJECT_VERSION}
-  VERSION_HEADER "${VERSION_HEADER_LOCATION}"
-  COMPATIBILITY SameMajorVersion
-  DEPENDENCIES "fmt 9.1.0"
-)
+# bench/ also provides the comparator designs and the frozen v1 baseline the
+# conformance tests check against, so it is added whenever tests are built.
+add_subdirectory(bench)
 
-# Build tests, samples, and benchmarks by default
-# (previously EXCLUDE_FROM_ALL - now included for better development workflow)
-add_subdirectory(test)
-add_subdirectory(samples)
-add_subdirectory(benchmarks)
+if(SUB0ECS_BUILD_TESTING)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
