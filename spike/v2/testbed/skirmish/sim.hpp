@@ -21,6 +21,7 @@
 
 #include "../../common/query.hpp"
 #include "../../fusion/access.hpp"
+#include "../../fusion/executors.hpp"
 #include "components.hpp"
 
 namespace skirmish
@@ -58,17 +59,20 @@ namespace skirmish
             float x, y;
         };
 
-        void reset(float size)
+        void reset(float size, unsigned workers = 1)
         {
             cells_ = std::max(1, static_cast<int>(std::ceil(size / kCellSize)));
-            staging_.clear();
+            perWorker_.resize(workers);
+            for (auto& v : perWorker_) v.clear();
         }
 
-        void add(const Entry& e) { staging_.push_back(e); }
+        void add(unsigned worker, const Entry& e) { perWorker_[worker].push_back(e); }
 
         /** Counting sort into cells, then Id order within each cell (determinism). */
         void finish()
         {
+            staging_.clear();
+            for (auto& v : perWorker_) staging_.insert(staging_.end(), v.begin(), v.end());
             const std::size_t n = static_cast<std::size_t>(cells_) * static_cast<std::size_t>(cells_);
             start_.assign(n + 1u, 0u);
             for (const Entry& e : staging_) ++start_[cellOf(e.x, e.y) + 1u];
@@ -107,6 +111,7 @@ namespace skirmish
 
         int cells_ = 1;
         std::vector<Entry> staging_, entries_;
+        std::vector<std::vector<Entry>> perWorker_;
         std::vector<std::uint32_t> start_, cursor_;
     };
 
@@ -224,6 +229,10 @@ namespace skirmish
     {
         int teams = 4;
         int unitsPerTeam = 500;
+        /** H8 threading: when set (and the world supports eachParallel), every
+         *  system runs data-parallel on this pool with lock-step commit points. */
+        spike::fusion::Parallel* pool = nullptr;
+        bool fuseMovement = true;   ///< with a pool: one fused parallel pass vs one parallel pass per system
     };
 
     struct Stats
@@ -433,20 +442,41 @@ namespace skirmish
             }
         }
 
+        // ---- threading helpers (H8) ------------------------------------------
+        unsigned workerCount() const { return cfg_.pool ? cfg_.pool->concurrency() : 1u; }
+
+        /** Iterate a query; data-parallel on the pool when configured. f(worker, Cs&...). */
+        template <typename... Cs, typename F>
+        void forEach(F&& f)
+        {
+            if constexpr (requires { w_.template eachParallel<Cs...>(*cfg_.pool, f); })
+            {
+                if (cfg_.pool)
+                {
+                    w_.template eachParallel<Cs...>(*cfg_.pool, f);
+                    return;
+                }
+            }
+            w_.template each<Cs...>([&](Cs&... cs) { f(0u, cs...); });
+        }
+
         // ---- systems -------------------------------------------------------------
         void population()
         {
+            for (auto& p : popW_) p = {};
+            forEach<Id, Team, UnitType>([&](unsigned tw, Id&, Team& t, UnitType& k) {
+                ++popW_[tw].units[t.value];
+                if (k.kind == kWorker) ++popW_[tw].workers[t.value];
+            });
             workers_.fill(0);
             unitCount_.fill(0);
-            w_.template each<Id, Team, UnitType>([&](Id&, Team& t, UnitType& k) {
-                ++unitCount_[t.value];
-                if (k.kind == kWorker) ++workers_[t.value];
-            });
+            for (const auto& p : popW_)
+                for (int t = 0; t < kMaxTeams; ++t) { unitCount_[t] += p.units[t]; workers_[t] += p.workers[t]; }
         }
 
         void production()
         {
-            w_.template each<Id, Building, Producer, Team, Position>([&](Id& id, Building& b, Producer& pr, Team& t, Position& p) {
+            forEach<Id, Building, Producer, Team, Position>([&](unsigned tw, Id& id, Building& b, Producer& pr, Team& t, Position& p) {
                 pr.progress += (b.kind == 0 ? 0.5f : 1.0f) * kDt;
                 if (pr.progress < 1.0f) return;
                 pr.progress -= 1.0f;
@@ -454,15 +484,15 @@ namespace skirmish
                 if (b.kind == 0) kind = (workers_[t.value] < cfg_.unitsPerTeam / 8) ? kWorker : kind;
                 ++pr.counter;
                 const float a = hashUnit(id.value, pr.counter, 7) * 6.2831f;
-                c_.spawn.push_back({ id.value, t.value, kind, p.x + 30.f * std::cos(a), p.y + 30.f * std::sin(a) });
+                cmds_[tw].spawn.push_back({ id.value, t.value, kind, p.x + 30.f * std::cos(a), p.y + 30.f * std::sin(a) });
             });
         }
 
         void buildGrid()
         {
-            grid_.reset(mapSize_);
-            w_.template each<Id, Position, Team, Health>([&](Id& id, Position& p, Team& t, Health&) {
-                grid_.add({ id.value, t.value, p.x, p.y });
+            grid_.reset(mapSize_, workerCount());
+            forEach<Id, Position, Team, Health>([&](unsigned tw, Id& id, Position& p, Team& t, Health&) {
+                grid_.add(tw, { id.value, t.value, p.x, p.y });
             });
             grid_.finish();
         }
@@ -470,8 +500,10 @@ namespace skirmish
         /** Rare-component reduction every tick; reselect ~1% every 128 ticks. */
         void selection()
         {
+            for (auto& v : selW_) v.clear();
+            forEach<Id, Selected, Position>([&](unsigned tw, Id& id, Selected&, Position& p) { selW_[tw].push_back({ id.value, p.x, p.y }); });
             sel_.clear();
-            w_.template each<Id, Selected, Position>([&](Id& id, Selected&, Position& p) { sel_.push_back({ id.value, p.x, p.y }); });
+            for (const auto& v : selW_) sel_.insert(sel_.end(), v.begin(), v.end());
             std::sort(sel_.begin(), sel_.end(), [](const Sel& a, const Sel& b) { return a.id < b.id; });
             double sx = 0.0, sy = 0.0;
             for (const Sel& s : sel_) { sx += s.x; sy += s.y; }
@@ -479,16 +511,16 @@ namespace skirmish
             selectedCx_ = sel_.empty() ? 0.f : static_cast<float>(sx / sel_.size());
             selectedCy_ = sel_.empty() ? 0.f : static_cast<float>(sy / sel_.size());
             if (tick_ % 128 != 0) return;
-            for (const Sel& s : sel_) c_.removeSelected.push_back(s.id);
-            w_.template each<Id, Team, UnitType>([&](Id& id, Team&, UnitType&) {
-                if (hash3(id.value, static_cast<std::uint32_t>(tick_), 8) % 100u == 0u) c_.addSelected.push_back(id.value);
+            for (const Sel& s : sel_) cmds_[0].removeSelected.push_back(s.id);   // sequential: buffer 0
+            forEach<Id, Team, UnitType>([&](unsigned tw, Id& id, Team&, UnitType&) {
+                if (hash3(id.value, static_cast<std::uint32_t>(tick_), 8) % 100u == 0u) cmds_[tw].addSelected.push_back(id.value);
             });
         }
 
         /** Non-row-local: spatial search over the grid; 1/8 of units per tick. */
         void acquire()
         {
-            w_.template each<Id, Position, Team, Weapon, UnitType>([&](Id& id, Position& p, Team& t, Weapon&, UnitType& k) {
+            forEach<Id, Position, Team, Weapon, UnitType>([&](unsigned tw, Id& id, Position& p, Team& t, Weapon&, UnitType& k) {
                 if ((id.value + static_cast<std::uint32_t>(tick_)) % 8u != 0u) return;
                 if (w_.template find<Target>(handle(id.value))) return;
                 const float r = kUnitStats[k.kind].range + kAcquireExtra;
@@ -499,7 +531,7 @@ namespace skirmish
                     const float dx = e.x - p.x, dy = e.y - p.y, d2 = dx * dx + dy * dy;
                     if (d2 < bestD2 || (d2 == bestD2 && best != 0 && e.id < best)) { bestD2 = d2; best = e.id; }
                 });
-                if (best != 0) c_.addTarget.push_back({ id.value, best });
+                if (best != 0) cmds_[tw].addTarget.push_back({ id.value, best });
             });
         }
 
@@ -507,7 +539,7 @@ namespace skirmish
         void commander()
         {
             if (tick_ % 64 != 0) return;
-            w_.template each<Id, Position, Team, Weapon, UnitType>([&](Id& id, Position&, Team& t, Weapon&, UnitType&) {
+            forEach<Id, Position, Team, Weapon, UnitType>([&](unsigned tw, Id& id, Position&, Team& t, Weapon&, UnitType&) {
                 const Entity e = handle(id.value);
                 if (w_.template find<Target>(e) || w_.template find<MoveOrder>(e)) return;
                 const int enemy = (t.value + 1 + static_cast<int>(hash3(id.value, static_cast<std::uint32_t>(tick_), 9) % (cfg_.teams - 1))) % cfg_.teams;
@@ -519,14 +551,14 @@ namespace skirmish
                 }
                 tx += (hashUnit(id.value, static_cast<std::uint32_t>(tick_), 10) - 0.5f) * 120.f;
                 ty += (hashUnit(id.value, static_cast<std::uint32_t>(tick_), 11) - 0.5f) * 120.f;
-                c_.setMove.push_back({ id.value, tx, ty });
+                cmds_[tw].setMove.push_back({ id.value, tx, ty });
             });
         }
 
         /** Harvest loop: random access to mine/HQ positions; Carrying add/remove churn. */
         void workers()
         {
-            w_.template each<Id, Worker, Position>([&](Id& id, Worker& wk, Position& p) {
+            forEach<Id, Worker, Position>([&](unsigned tw, Id& id, Worker& wk, Position& p) {
                 if (!alive(wk.mineId) || !alive(wk.homeId)) return;
                 const Entity e = handle(id.value);
                 const bool carrying = w_.template find<Carrying>(e) != nullptr;
@@ -535,12 +567,12 @@ namespace skirmish
                 const float reach = carrying ? 40.f : 16.f;
                 if (d2 < reach * reach)
                 {
-                    if (carrying) c_.deposit.push_back({ id.value, wk.team, w_.template find<Carrying>(e)->amount });
-                    else c_.extract.push_back({ wk.mineId, id.value });
+                    if (carrying) cmds_[tw].deposit.push_back({ id.value, wk.team, w_.template find<Carrying>(e)->amount });
+                    else cmds_[tw].extract.push_back({ wk.mineId, id.value });
                 }
                 else if (!w_.template find<MoveOrder>(e))
                 {
-                    c_.setMove.push_back({ id.value, goal.x, goal.y });
+                    cmds_[tw].setMove.push_back({ id.value, goal.x, goal.y });
                 }
             });
         }
@@ -553,6 +585,24 @@ namespace skirmish
             const Integrate integrate{};
             const Friction friction{};
             const Bounds bounds{ mapSize_ };
+            if constexpr (requires { w_.runFusedParallel(*cfg_.pool, integrate); })
+            {
+                if (cfg_.pool)
+                {
+                    if (cfg_.fuseMovement)
+                        w_.runFusedParallel(*cfg_.pool, seek, separation, freeze, integrate, friction, bounds);
+                    else
+                    {
+                        w_.runFusedParallel(*cfg_.pool, seek);
+                        w_.runFusedParallel(*cfg_.pool, separation);
+                        w_.runFusedParallel(*cfg_.pool, freeze);
+                        w_.runFusedParallel(*cfg_.pool, integrate);
+                        w_.runFusedParallel(*cfg_.pool, friction);
+                        w_.runFusedParallel(*cfg_.pool, bounds);
+                    }
+                    return;
+                }
+            }
             if constexpr (!std::is_void_v<Runner>)
             {
                 runner_.run(w_, seek, separation, freeze, integrate, friction, bounds);
@@ -574,46 +624,46 @@ namespace skirmish
 
         void arrive()
         {
-            w_.template each<Id, MoveOrder, Position>([&](Id& id, MoveOrder& m, Position& p) {
+            forEach<Id, MoveOrder, Position>([&](unsigned tw, Id& id, MoveOrder& m, Position& p) {
                 const float dx = m.tx - p.x, dy = m.ty - p.y;
-                if (dx * dx + dy * dy < 64.f) c_.removeMove.push_back(id.value);
+                if (dx * dx + dy * dy < 64.f) cmds_[tw].removeMove.push_back(id.value);
             });
         }
 
         void combat()
         {
-            w_.template each<Id, Position, Weapon, Target, Team, UnitType>(
-                [&](Id& id, Position& p, Weapon& wp, Target& tg, Team&, UnitType& k) {
+            forEach<Id, Position, Weapon, Target, Team, UnitType>(
+                [&](unsigned tw, Id& id, Position& p, Weapon& wp, Target& tg, Team&, UnitType& k) {
                     const UnitStats& st = kUnitStats[k.kind];
                     wp.cooldown = std::max(0.0f, wp.cooldown - kDt);
-                    if (!alive(tg.id)) { c_.removeTarget.push_back(id.value); return; }
+                    if (!alive(tg.id)) { cmds_[tw].removeTarget.push_back(id.value); return; }
                     const Position& tp = *w_.template find<Position>(handle(tg.id));
                     const float dx = tp.x - p.x, dy = tp.y - p.y;
                     const float d = std::sqrt(dx * dx + dy * dy);
-                    if (d > st.range + kAcquireExtra * 1.5f) { c_.removeTarget.push_back(id.value); return; }
-                    if (d > st.range) { c_.setMove.push_back({ id.value, tp.x, tp.y }); return; }
-                    if (w_.template find<MoveOrder>(handle(id.value))) c_.removeMove.push_back(id.value);   // stand and fight
+                    if (d > st.range + kAcquireExtra * 1.5f) { cmds_[tw].removeTarget.push_back(id.value); return; }
+                    if (d > st.range) { cmds_[tw].setMove.push_back({ id.value, tp.x, tp.y }); return; }
+                    if (w_.template find<MoveOrder>(handle(id.value))) cmds_[tw].removeMove.push_back(id.value);   // stand and fight
                     if (wp.cooldown > 0.0f || d < 1e-3f) return;
                     wp.cooldown = st.reload;
                     ++wp.shots;
                     const std::int32_t effect = (st.effect != kNoEffect && wp.shots % st.effectEvery == 0) ? st.effect : kNoEffect;
                     const float s = st.projectileSpeed / d;
-                    c_.shoot.push_back({ id.value, tg.id, effect, p.x, p.y, dx * s, dy * s, st.damage });
+                    cmds_[tw].shoot.push_back({ id.value, tg.id, effect, p.x, p.y, dx * s, dy * s, st.damage });
                 });
         }
 
         /** High churn: projectiles home on a (randomly accessed) target, hit or expire. */
         void projectiles()
         {
-            w_.template each<Id, Projectile, Position, Velocity>([&](Id& id, Projectile& pr, Position& p, Velocity& v) {
-                if (--pr.ttl <= 0) { c_.destroy.push_back(id.value); return; }
+            forEach<Id, Projectile, Position, Velocity>([&](unsigned tw, Id& id, Projectile& pr, Position& p, Velocity& v) {
+                if (--pr.ttl <= 0) { cmds_[tw].destroy.push_back(id.value); return; }
                 if (!alive(pr.targetId)) return;
                 const Position& tp = *w_.template find<Position>(handle(pr.targetId));
                 const float dx = tp.x - p.x, dy = tp.y - p.y, d2 = dx * dx + dy * dy;
                 if (d2 < 36.f)
                 {
-                    c_.damage.push_back({ pr.targetId, id.value, pr.ownerId, pr.damage, pr.effect });
-                    c_.destroy.push_back(id.value);
+                    cmds_[tw].damage.push_back({ pr.targetId, id.value, pr.ownerId, pr.damage, pr.effect });
+                    cmds_[tw].destroy.push_back(id.value);
                     return;
                 }
                 const float speed = std::sqrt(v.x * v.x + v.y * v.y);
@@ -625,25 +675,25 @@ namespace skirmish
 
         void status()
         {
-            w_.template each<Id, Stunned>([&](Id& id, Stunned& s) {
-                if (--s.ticks <= 0) c_.removeStunned.push_back(id.value);
+            forEach<Id, Stunned>([&](unsigned tw, Id& id, Stunned& s) {
+                if (--s.ticks <= 0) cmds_[tw].removeStunned.push_back(id.value);
             });
-            w_.template each<Id, Burning, Health>([&](Id& id, Burning& b, Health& h) {
+            forEach<Id, Burning, Health>([&](unsigned tw, Id& id, Burning& b, Health& h) {
                 h.hp -= 0.1f;
-                if (--b.ticks <= 0) c_.removeBurning.push_back(id.value);
+                if (--b.ticks <= 0) cmds_[tw].removeBurning.push_back(id.value);
             });
         }
 
         void death()
         {
-            w_.template each<Id, Health, Team>([&](Id& id, Health& h, Team&) {
-                if (h.hp <= 0.0f) c_.kill.push_back({ id.value, h.lastHitBy });
+            forEach<Id, Health, Team>([&](unsigned tw, Id& id, Health& h, Team&) {
+                if (h.hp <= 0.0f) cmds_[tw].kill.push_back({ id.value, h.lastHitBy });
             });
         }
 
         void regen()
         {
-            w_.template each<Health, UnitType>([&](Health& h, UnitType& k) {
+            forEach<Health, UnitType>([&](unsigned, Health& h, UnitType& k) {
                 h.hp = std::min(h.maxHp, h.hp + kUnitStats[k.kind].regen * kDt);
             });
         }
@@ -670,6 +720,8 @@ namespace skirmish
 
         void apply()
         {
+            mergeCommands();
+            Commands& c_ = cmds_[0];
             auto byU32 = [](std::uint32_t x) { return x; };
 
             sortBy(c_.spawn, [](const Spawn& s) { return s.key; });
@@ -773,11 +825,28 @@ namespace skirmish
             sortBy(c_.destroy, byU32);
             for (std::uint32_t id : c_.destroy) kill(id);
 
-            clearKeepCapacity();
+            clearKeepCapacity(c_);
             w_.commit();
         }
 
-        void clearKeepCapacity()
+        /** Concatenate per-worker buffers into buffer 0. Every command key is
+         *  unique within a system, so the later Id sort makes merge order irrelevant. */
+        void mergeCommands()
+        {
+            Commands& d = cmds_[0];
+            for (std::size_t w = 1; w < cmds_.size(); ++w)
+            {
+                Commands& s = cmds_[w];
+                auto cat = [](auto& to, auto& from) { to.insert(to.end(), from.begin(), from.end()); from.clear(); };
+                cat(d.spawn, s.spawn); cat(d.extract, s.extract); cat(d.deposit, s.deposit); cat(d.addTarget, s.addTarget);
+                cat(d.removeTarget, s.removeTarget); cat(d.removeMove, s.removeMove); cat(d.addSelected, s.addSelected);
+                cat(d.removeSelected, s.removeSelected); cat(d.removeStunned, s.removeStunned);
+                cat(d.removeBurning, s.removeBurning); cat(d.destroy, s.destroy); cat(d.setMove, s.setMove);
+                cat(d.shoot, s.shoot); cat(d.damage, s.damage); cat(d.kill, s.kill);
+            }
+        }
+
+        static void clearKeepCapacity(Commands& c_)
         {
             c_.spawn.clear(); c_.extract.clear(); c_.deposit.clear(); c_.addTarget.clear(); c_.removeTarget.clear();
             c_.removeMove.clear(); c_.addSelected.clear(); c_.removeSelected.clear(); c_.removeStunned.clear();
@@ -803,7 +872,10 @@ namespace skirmish
         float selectedCx_ = 0.0f, selectedCy_ = 0.0f;
         std::vector<Sel> sel_;
         Grid grid_;
-        Commands c_;
+        struct PopCount { std::array<std::int32_t, kMaxTeams> units{}, workers{}; };
+        std::vector<Commands> cmds_ = std::vector<Commands>(workerCount());
+        std::vector<PopCount> popW_ = std::vector<PopCount>(workerCount());
+        std::vector<std::vector<Sel>> selW_ = std::vector<std::vector<Sel>>(workerCount());
         bool timing_ = false;
         std::array<double, kSysCount> seconds_{};
     };

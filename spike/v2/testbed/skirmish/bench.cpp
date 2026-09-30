@@ -44,6 +44,26 @@ namespace
             state.counters[std::string("us_") + kSystemNames[i]] = 1e6 * sim.timings()[i] / ticks;
     }
 
+    /** H8 thread scaling: args (unitsPerTeam, threads, fuseMovement). threads=1 → no pool. */
+    void BM_Threads(benchmark::State& state)
+    {
+        const auto threads = static_cast<unsigned>(state.range(1));
+        std::unique_ptr<fz::Parallel> pool = threads > 1 ? std::make_unique<fz::Parallel>(threads, state.range(3) != 0) : nullptr;
+        Config cfg;
+        cfg.unitsPerTeam = static_cast<int>(state.range(0));
+        cfg.pool = pool.get();
+        cfg.fuseMovement = state.range(2) != 0;
+        auto world = std::make_unique<QPartHintedWorld>();
+        auto sim = std::make_unique<Sim<QPartHintedWorld, true>>(*world, cfg);
+        for (int i = 0; i < kWarmup; ++i) sim->tick();
+        sim->enableTimings(true);
+        const auto start = sim->stats();
+        for (auto _ : state) sim->tick();
+        const double ticks = static_cast<double>(sim->stats().tick - start.tick);
+        for (int i = 0; i < kSysCount; ++i)
+            state.counters[std::string("us_") + kSystemNames[i]] = 1e6 * sim->timings()[i] / ticks;
+    }
+
     template <typename W, bool Fused = false, typename Runner = void>
     void reg(const char* name, int unitsPerTeam)
     {
@@ -79,6 +99,18 @@ int main(int argc, char** argv)
         else reg<StaticWorld<(1 << 18)>>("StaticBitmask", upt);
         if (upt <= 250) reg<SortedWorld>("SortedSoA", upt);   // O(n) flushes per structural batch: small N only
     }
+    for (int upt : { 2500, 12500 })
+        for (int threads : { 1, 2, 4 })
+            for (int fuse : { 0, 1 })
+                for (int affinity : { 0, 1 })
+                {
+                    if (affinity && (threads == 1 || !fuse)) continue;
+                benchmark::RegisterBenchmark("Threads/QPartHinted", BM_Threads)
+                    ->Args({ upt, threads, fuse, affinity })
+                    ->ArgNames({ "upt", "threads", "fused", "affinity" })
+                    ->Iterations(kTimedTicks)
+                    ->Unit(benchmark::kMillisecond);
+                }
     benchmark::Initialize(&argc, argv);
     if (benchmark::ReportUnrecognizedArguments(argc, argv)) return 1;
     benchmark::RunSpecifiedBenchmarks();

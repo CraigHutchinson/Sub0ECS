@@ -231,3 +231,41 @@ neighbour queries. That argues for making spatial queries a first-class
 v2 citizen (a grid/partition index maintained by the store, with neighbour
 iteration that can itself be fused and offloaded), and it is exactly the
 kind of priority a real testbed exposes and micro-benchmarks hide.
+
+## Fusion extension points (planners × executors)
+
+[research/fusion-extension-points.md](research/fusion-extension-points.md).
+Fusion is pluggable along two axes: `constexpr` planners and runtime
+auto-tuning, and executors (inline, tiled, thread pool, emulated offload).
+
+- Every combination is bit-identical to sequential execution, including an
+  auto-tuner that switches plans mid-run and the real game with four
+  runners.
+- `ShareColumns` fuses FusionFrame (3.6×) and declines Frame3 (where
+  `AlwaysFuse` costs 17–20%). `AutoTuned` lands on or near the best plan
+  everywhere.
+- Fusion + 4 threads = 6.0× at 1M rows.
+- Offload copies back only the columns a group writes.
+
+## H8 threading
+
+[research/threading.md](research/threading.md). The real game on 4 cores
+stays bit-identical at 2 and 4 threads (ThreadSanitizer clean).
+
+- **First cut:** lock-step fork-join per system with a sleeping pool.
+  0.84× at 10K units, 1.50× at 50K.
+- **Improved:** spin-then-park pool, grain control, and fused chains run
+  chunk by chunk across all partitions. **1.77× at 10K, 2.18× at 50K**:
+  movement 3.50×, target acquisition 3.16×.
+- **Remaining limit:** the serial fraction (grid build, commit, small
+  systems) of ~2.4 of 5.5 ms.
+- **Affinity:** static "owner computes" scheduling lost to dynamic
+  balancing (chunk costs vary by an order of magnitude).
+
+Recommendation: lock-step phases with independent chunk-level work inside
+them. Then:
+- batch small systems into one task-parallel dispatch;
+- make the commit and spatial-index build parallel;
+- pipeline read-only consumers across frames from snapshots.
+
+Reject free-running threads (they break determinism).

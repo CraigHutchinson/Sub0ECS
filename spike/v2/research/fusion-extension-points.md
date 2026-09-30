@@ -179,7 +179,61 @@ GPU or DSP generally is not. The design therefore needs:
 
 ## 6. Evidence
 
-*(filled from results/fusion-extension-points-linux-gcc13.md)*
+Raw data:
+- [results/fusion-extension-points-linux-gcc13.json](../results/fusion-extension-points-linux-gcc13.json)
+- [results/fusion-extension-points-skirmish-linux-gcc13.json](../results/fusion-extension-points-skirmish-linux-gcc13.json)
+
+Median of 5, random interleaving. Speed-up is relative to `NeverFuse`.
+
+| FusionFrame (shares Position/Velocity) | 100K | 1M |
+|---|---:|---:|
+| NeverFuse | 236 µs | 3.03 ms |
+| ShareColumns (Inline) | 66 µs (3.59×) | 0.91 ms (3.33×) |
+| AlwaysFuse | 65 µs (3.66×) | 0.91 ms (3.34×) |
+| **AutoTuned** (measure mode) | 62 µs (3.82×), chose AlwaysFuse | 0.94 ms (3.22×) |
+| ShareColumns + Tiled4K | 65 µs (3.63×) | 0.95 ms (3.18×) |
+| ShareColumns + Parallel (4 threads) | 234 µs (1.01×) | **0.51 ms (6.00×)** |
+| DeviceAware + Offload1K (emulated) | 121 µs (1.95×) | 1.80 ms (1.68×) |
+
+| Frame3 (no shared columns) | 100K | 1M |
+|---|---:|---:|
+| NeverFuse | 119 µs | 1.44 ms |
+| ShareColumns (declines to fuse) | 1.01× | 1.00× |
+| AlwaysFuse | **0.83×** | **0.80×** |
+| AutoTuned | 1.05× | 1.02× |
+| ShareColumns + Parallel | 0.42× | 2.14× |
+
+Observations:
+- **The static planner gets it right, and the measuring planner never
+  loses.** `ShareColumns` fuses FusionFrame and declines Frame3.
+  `AlwaysFuse` would cost 17–20% on Frame3. `AutoTuned` lands on or near
+  the best plan in every row, which is the safety net for workloads the
+  static rule misjudges.
+- **Executors compose with fusion.** Threads multiply the fusion gain at
+  1M (6.0×). At 100K the first-cut pool, which forked per partition and
+  slept between jobs, erased it. That motivated the chunk-level,
+  spin-then-park pool in [threading.md](threading.md).
+- **Offload's cost is data movement.** The emulated device still keeps
+  about half of the fusion gain after staging every tile in and out.
+  Access-driven write-back already halves the return traffic for
+  read-only columns (verified in the tests). On real hardware, DMA overlap
+  (double-buffered `Tiled`) and unified memory decide whether offload
+  wins.
+- **Real game (Skirmish, 50K units, movement µs per tick):**
+
+  | Runner | Movement |
+  |---|---:|
+  | Unfused | 6 069 |
+  | NeverFuse | 5 509 |
+  | Offload (DeviceAware) | 5 529 |
+  | Built-in fused | 5 374 |
+  | AutoTuned | 5 370 |
+  | ShareColumns + Parallel (first-cut pool) | 3 742 |
+
+  Capability splitting keeps Offload correct, but isolating Separation
+  costs most of the fusion benefit. The fix is kernel variants that make
+  Separation device-safe (e.g. the grid view as an input column), not a
+  weaker planner.
 
 ## 7. Risks and next steps
 

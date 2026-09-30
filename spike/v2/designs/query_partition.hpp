@@ -352,6 +352,74 @@ namespace spike::qpart
             }
         }
 
+        /** H8: fused group, data-parallel at CHUNK granularity across ALL partitions.
+         *  Work items are (partition, system subset, row range); each worker streams
+         *  its chunks through the whole fused chain — no barrier between systems,
+         *  one fork-join per group (vs one per partition in runFusedOn(Parallel)). */
+        template <typename Pool, typename... Systems>
+        void runFusedParallel(Pool& pool, const Systems&... systems)
+        {
+            constexpr std::size_t k = sizeof...(Systems);
+            constexpr std::array<std::size_t, k> qidx{ indexOf<typename Systems::Query, Qs...>()... };
+            constexpr std::size_t kChunk = 2048;
+            fchunks_.clear();
+            for (auto& up : partitions_)
+            {
+                Partition& p = *up;
+                unsigned subset = 0;
+                for (std::size_t j = 0; j < k; ++j)
+                    if (p.signature & (1u << qidx[j])) subset |= 1u << j;
+                if (subset == 0) continue;
+                for (std::size_t b = 0, n = p.size(); b < n; b += kChunk)
+                    fchunks_.push_back(FChunk{ &p, subset, static_cast<std::uint32_t>(b), static_cast<std::uint32_t>(std::min(n, b + kChunk)) });
+            }
+            if (fchunks_.size() < 4)
+            {
+                fusion::Inline exec;
+                runFusedOn(exec, systems...);
+                return;
+            }
+            auto body = [&](std::size_t item, unsigned) {
+                const FChunk& c = fchunks_[item];
+                fusion::InlineRange exec{ c.begin, c.end };
+                dispatchSubset<0>(exec, c.subset, *c.p, c.end - c.begin, systems...);
+            };
+            pool.parallelFor(fchunks_.size(), body);
+        }
+
+        /** H8 data-parallel iteration: fixed-size row chunks across ALL partitions
+         *  matching the query become pool work items (one fork-join per system,
+         *  not per partition). f(worker, Cs&...) — the worker index lets callers
+         *  keep per-thread command buffers / accumulators without locks. */
+        template <typename... Cs, typename Pool, typename F>
+        void eachParallel(Pool& pool, F&& f)
+        {
+            constexpr std::size_t qi = indexOf<Query<Cs...>, Qs...>();
+            static_assert(qi < kQueries, "eachParallel<Cs...> must name a declared Query<Cs...>");
+            constexpr std::size_t kChunk = 1024;
+            chunks_.clear();
+            for (Partition* p : byQuery_[qi])
+            {
+                for (std::size_t b = 0, n = p->size(); b < n; b += kChunk)
+                    chunks_.push_back(Chunk{ p, static_cast<std::uint32_t>(b), static_cast<std::uint32_t>(std::min(n, b + kChunk)) });
+            }
+            if (chunks_.size() < 4)   // grain control: too little work to be worth a fork-join
+            {
+                for (Partition* p : byQuery_[qi])
+                {
+                    std::tuple<Cs*...> cols{ reinterpret_cast<Cs*>(p->columns[p->columnOf[typeId<Cs>()]].bytes.data())... };
+                    for (std::size_t i = 0, n = p->size(); i < n; ++i) f(0u, std::get<Cs*>(cols)[i]...);
+                }
+                return;
+            }
+            auto body = [&](std::size_t item, unsigned worker) {
+                const Chunk& c = chunks_[item];
+                std::tuple<Cs*...> cols{ reinterpret_cast<Cs*>(c.p->columns[c.p->columnOf[typeId<Cs>()]].bytes.data())... };
+                for (std::uint32_t i = c.begin; i < c.end; ++i) f(worker, std::get<Cs*>(cols)[i]...);
+            };
+            pool.parallelFor(chunks_.size(), body);
+        }
+
         std::size_t partitionCount() const { return partitions_.size(); }
 
     private:
@@ -580,6 +648,11 @@ namespace spike::qpart
         std::vector<Record> records_;
         std::vector<std::unique_ptr<Partition>> partitions_;
         std::unordered_map<Mask, std::uint32_t> byColumns_;
+
+        struct Chunk { Partition* p; std::uint32_t begin, end; };
+        std::vector<Chunk> chunks_;   // eachParallel scratch
+        struct FChunk { Partition* p; unsigned subset; std::uint32_t begin, end; };
+        std::vector<FChunk> fchunks_; // runFusedParallel scratch
         std::array<std::vector<Partition*>, kQueries> byQuery_{};
     };
 

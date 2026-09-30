@@ -96,6 +96,18 @@ int main()
     compare("DeviceAware+Offload", ref, play<QPartHintedWorld, false, OffloadRunner<>>(cfg));
     compare("AutoTuned", ref, play<QPartHintedWorld, false, AutoTunedRunner>(cfg));
 
+    // H8 threading: data-parallel systems with per-worker command buffers
+    for (unsigned threads : { 2u, 4u })
+    {
+        fz::Parallel pool(threads);
+        Config t = cfg;
+        t.pool = &pool;
+        t.fuseMovement = false;
+        compare((std::string("Lockstep x") + std::to_string(threads)).c_str(), ref, play<QPartHintedWorld, false>(t));
+        t.fuseMovement = true;
+        compare((std::string("Lockstep+fused x") + std::to_string(threads)).c_str(), ref, play<QPartHintedWorld, false>(t));
+    }
+
     std::printf(failures ? "\n%d FAILURE(S)\n" : "\nALL DESIGNS PLAY THE IDENTICAL GAME\n", failures);
     return failures ? EXIT_FAILURE : EXIT_SUCCESS;
 }
