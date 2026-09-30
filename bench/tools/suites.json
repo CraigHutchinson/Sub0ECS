@@ -1,48 +1,51 @@
 {
-  "_comment": "Benchmark suites for tools/bench/run.py. kind=gbench runs a Google Benchmark binary with the profile's repetition settings; kind=timeline runs a custom tool that writes its own JSON. env values are passed through (\"auto\" = the binary's own default, e.g. thread ladder up to hardware concurrency).",
+  "_comment": "Benchmark suites for bench/tools/run.py. kind=harness runs a bench/harness binary (nanobench; --filter/--epochs/--min-epoch-ms/--out); kind=timeline runs a custom tool that writes its own JSON. env values are passed through (\"auto\" = the binary's own default, e.g. thread ladder up to hardware concurrency).",
   "suites": {
     "baseline": {
       "description": "Storage-model baseline: all designs, micro scenarios (FINDINGS: baseline, H1)",
-      "kind": "gbench",
+      "kind": "harness",
       "exe": "bench/sub0ecs_bench",
       "filter": "^(Create|Iter1|Update2|Frame3|SparseQuery|RandomGet|AddRemove|TagChurn|DestroyCreate)/"
     },
     "fusion": {
       "description": "H7 fusion: sequential vs fused vs hand-merged",
-      "kind": "gbench",
+      "kind": "harness",
       "exe": "bench/sub0ecs_bench",
       "filter": "^(FusionFrame|Frame3Sys)/"
     },
     "fusion-exec": {
       "description": "Fusion extension points: planners x executors",
-      "kind": "gbench",
+      "kind": "harness",
       "exe": "bench/sub0ecs_bench",
       "filter": "^(FusionExec|Frame3Exec)/"
     },
     "skirmish": {
       "description": "Skirmish RTS: ms/tick per design with per-system counters",
-      "kind": "gbench",
+      "kind": "harness",
       "exe": "bench/sub0ecs_skirmish_bench",
-      "filter": "^Tick/",
-      "fixed_iterations": true
+      "filter": "^Tick/"
     },
     "threads": {
       "description": "H8 thread scaling on Skirmish (thread ladder up to hardware concurrency)",
-      "kind": "gbench",
+      "kind": "harness",
       "exe": "bench/sub0ecs_skirmish_bench",
       "filter": "^Threads/",
-      "fixed_iterations": true,
-      "env": { "SKIRMISH_THREADS": "auto" }
+      "env": {
+        "SKIRMISH_THREADS": "auto"
+      }
     },
     "dynamic": {
       "description": "H9 dynamic system timeline (stall vs incremental relayout)",
       "kind": "timeline",
       "exe": "bench/sub0ecs_dynamic_timeline",
-      "args": ["1000000", "60"]
+      "args": [
+        "1000000",
+        "60"
+      ]
     },
     "spans": {
       "description": "Span-count micro-benchmark (design review evidence)",
-      "kind": "gbench",
+      "kind": "harness",
       "exe": "bench/sub0ecs_spans_bench",
       "filter": ".*"
     }
@@ -50,28 +53,54 @@
   "profiles": {
     "quick": {
       "description": "Smoke run: correctness of the harness, not numbers",
-      "repetitions": 1,
-      "min_time": "0.05s",
-      "env": { "BENCH_SIZES": "1000", "SKIRMISH_UPT": "250", "SKIRMISH_THREADS_UPT": "250" },
-      "suites": ["baseline", "fusion", "skirmish", "threads", "spans"]
+      "env": {
+        "BENCH_SIZES": "1000",
+        "SKIRMISH_UPT": "250",
+        "SKIRMISH_THREADS_UPT": "250"
+      },
+      "suites": [
+        "baseline",
+        "fusion",
+        "skirmish",
+        "threads",
+        "spans"
+      ],
+      "epochs": 5,
+      "min_epoch_ms": 0
     },
     "standard": {
-      "description": "What the spike results were produced with (shared VM)",
-      "repetitions": 5,
-      "min_time": "0.5s",
+      "description": "Everyday comparisons: every suite at the default sizes",
       "env": {},
-      "suites": ["baseline", "fusion", "fusion-exec", "skirmish", "threads", "dynamic", "spans"]
+      "suites": [
+        "baseline",
+        "fusion",
+        "fusion-exec",
+        "skirmish",
+        "threads",
+        "dynamic",
+        "spans"
+      ],
+      "epochs": 22,
+      "min_epoch_ms": 1
     },
     "reference": {
-      "description": "Dedicated hardware: more repetitions, longer runs, larger sizes",
-      "repetitions": 10,
-      "min_time": "1s",
+      "description": "Dedicated hardware: more paired rounds, longer epochs, larger sizes",
       "env": {
         "BENCH_SIZES": "1000,100000,1000000,10000000",
         "SKIRMISH_UPT": "250,2500,12500,50000",
         "SKIRMISH_THREADS_UPT": "2500,12500,50000"
       },
-      "suites": ["baseline", "fusion", "fusion-exec", "skirmish", "threads", "dynamic", "spans"]
+      "suites": [
+        "baseline",
+        "fusion",
+        "fusion-exec",
+        "skirmish",
+        "threads",
+        "dynamic",
+        "spans"
+      ],
+      "epochs": 52,
+      "min_epoch_ms": 5
     }
   }
 }

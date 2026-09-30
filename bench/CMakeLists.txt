@@ -38,26 +38,35 @@ endif()
 
 include(CPM)
 CPMAddPackage(
-    NAME benchmark
-    GITHUB_REPOSITORY google/benchmark
-    VERSION 1.9.4
-    OPTIONS "BENCHMARK_ENABLE_TESTING OFF" "BENCHMARK_ENABLE_GTEST_TESTS OFF" "BENCHMARK_ENABLE_WERROR OFF"
+    NAME nanobench
+    GITHUB_REPOSITORY martinus/nanobench
+    GIT_TAG v4.6.0
 )
+
+# The harness: nanobench plus names, --filter, paired group comparisons and the
+# results JSON that tools/*.py read (see harness/harness.hpp).
+add_library(sub0ecs_bench_harness STATIC
+    harness/entry.cpp
+    harness/options.cpp
+    harness/report.cpp
+    harness/runner.cpp
+)
+target_link_libraries(sub0ecs_bench_harness PUBLIC sub0ecs_bench_support nanobench::nanobench)
 
 # Storage designs on micro scenarios, fusion, planners x executors
 add_executable(sub0ecs_bench scenarios_bench.cpp)
-target_link_libraries(sub0ecs_bench PRIVATE sub0ecs_bench_support benchmark::benchmark)
+target_link_libraries(sub0ecs_bench PRIVATE sub0ecs_bench_harness)
 
 # Partition-count (span) overhead
 add_executable(sub0ecs_spans_bench spans_bench.cpp)
-target_link_libraries(sub0ecs_spans_bench PRIVATE sub0ecs_bench_support benchmark::benchmark)
+target_link_libraries(sub0ecs_spans_bench PRIVATE sub0ecs_bench_harness)
 
 # H9 timeline: cost of paging a system in (degraded path, bounded migration, stall)
 add_executable(sub0ecs_dynamic_timeline dynamic_timeline.cpp)
 target_link_libraries(sub0ecs_dynamic_timeline PRIVATE sub0ecs_bench_support)
 
-# Skirmish RTS testbed: ms/tick per design, thread scaling, and an interactive demo
+# Skirmish RTS testbed: time per tick per design, thread scaling, and an interactive demo
 add_executable(sub0ecs_skirmish_bench skirmish/bench.cpp)
-target_link_libraries(sub0ecs_skirmish_bench PRIVATE sub0ecs_bench_support benchmark::benchmark)
+target_link_libraries(sub0ecs_skirmish_bench PRIVATE sub0ecs_bench_harness)
 add_executable(sub0ecs_skirmish_demo skirmish/demo.cpp)
 target_link_libraries(sub0ecs_skirmish_demo PRIVATE sub0ecs_bench_support)

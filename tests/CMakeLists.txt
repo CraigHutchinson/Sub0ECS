@@ -1,15 +1,12 @@
 # Unit tests (doctest). One executable, registered with ctest.
 
 include(CPM)
-# Header-only: fetched, not configured (its CMakeLists predates what CMake 4 accepts).
 CPMAddPackage(
     NAME doctest
     GITHUB_REPOSITORY doctest/doctest
-    VERSION 2.4.11
-    DOWNLOAD_ONLY YES
+    GIT_TAG v2.5.3
+    OPTIONS "DOCTEST_WITH_TESTS OFF" "DOCTEST_NO_INSTALL ON"
 )
-add_library(sub0ecs_doctest INTERFACE)
-target_include_directories(sub0ecs_doctest SYSTEM INTERFACE ${doctest_SOURCE_DIR})
 
 add_executable(sub0ecs_tests
     test_main.cpp
@@ -23,6 +20,13 @@ add_executable(sub0ecs_tests
 )
 # Include the real std headers instead of forward-declaring std (MSVC C5285)
 target_compile_definitions(sub0ecs_tests PRIVATE DOCTEST_CONFIG_USE_STD_HEADERS)
-target_link_libraries(sub0ecs_tests PRIVATE sub0ecs_bench_support sub0ecs_doctest)
+target_link_libraries(sub0ecs_tests PRIVATE sub0ecs_bench_support doctest::doctest)
 
-add_test(NAME sub0ecs_tests COMMAND sub0ecs_tests)
+# Tiers: the gate runs on every build and must stay fast (budget: ~5 s Release,
+# ~60 s under sanitizers); heavier variants go in the "exhaustive" doctest suite,
+# run on demand (ctest -L exhaustive, the `exhaustive` test preset, nightly CI)
+# while a small sample of each stays in the gate.
+add_test(NAME sub0ecs_tests COMMAND sub0ecs_tests --test-suite-exclude=exhaustive)
+add_test(NAME sub0ecs_tests_exhaustive COMMAND sub0ecs_tests --test-suite=exhaustive)
+set_tests_properties(sub0ecs_tests PROPERTIES LABELS gate)
+set_tests_properties(sub0ecs_tests_exhaustive PROPERTIES LABELS exhaustive)

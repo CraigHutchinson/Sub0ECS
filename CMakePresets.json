@@ -78,9 +78,26 @@
         { "name": "ci-msvc", "configurePreset": "ci-msvc", "configuration": "Release" }
     ],
     "testPresets": [
-        { "name": "default", "configurePreset": "default", "output": { "outputOnFailure": true } },
-        { "name": "debug", "configurePreset": "debug", "output": { "outputOnFailure": true } },
-        { "name": "sanitize", "configurePreset": "sanitize", "output": { "outputOnFailure": true } },
-        { "name": "ci-msvc", "configurePreset": "ci-msvc", "configuration": "Release", "output": { "outputOnFailure": true } }
+        {
+            "name": "gate",
+            "hidden": true,
+            "output": { "outputOnFailure": true },
+            "filter": { "exclude": { "label": "exhaustive" } }
+        },
+        { "name": "default", "inherits": "gate", "configurePreset": "default" },
+        { "name": "debug", "inherits": "gate", "configurePreset": "debug" },
+        { "name": "sanitize", "inherits": "gate", "configurePreset": "sanitize" },
+        { "name": "ci-msvc", "inherits": "gate", "configurePreset": "ci-msvc", "configuration": "Release" },
+        {
+            "name": "exhaustive",
+            "displayName": "Every test tier, including the on-demand exhaustive suite",
+            "configurePreset": "default",
+            "output": { "outputOnFailure": true }
+        },
+        {
+            "name": "sanitize-exhaustive",
+            "configurePreset": "sanitize",
+            "output": { "outputOnFailure": true }
+        }
     ]
 }

@@ -81,11 +81,12 @@ From the repository root (on Windows, in a VS developer prompt):
 cmake --preset bench-native
 cmake --build --preset bench-native
 ctest --preset default                                   # or: build/bench-native/tests/sub0ecs_tests
-build/bench-native/bench/sub0ecs_bench --benchmark_filter='Update2/.*/(V1|QPartHinted)'
+build/bench-native/bench/sub0ecs_bench --filter='^Update2/Fragmented/' --epochs=22
 python3 bench/tools/summarize.py <run>.json > <run>.md
 ```
 
-Handy filters: `--benchmark_filter='Update2/.*/(V1|Archetype)'`,
+Options: `--filter=REGEX` (on case names; `--list` shows them), `--epochs=N`,
+`--min-epoch-ms=X`, `--out=FILE`; environment:
 `BENCH_SIZES=small` (N=1000 only, fast smoke run).
 
 ## Adding a candidate

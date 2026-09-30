@@ -96,4 +96,6 @@ Design: [research/executor-async.md](research/executor-async.md).
 | ☑ | Benchmark harness runs on Windows (fingerprint, hybrid P/E map, `--pin P`) |
 | ◐ | Reference capture on the Core Ultra 9 275HX (MSVC, P-cores pinned + thread ladder to 24) |
 | ☑ | Promoted layout: `default`, `ci-msvc` and `sanitize` (MSVC ASan) presets pass; tests converted to doctest |
-| ☐ | Linux GCC/Clang and ASan/UBSan in CI (`ci.yml`); a TSan job for the executors |
+| ☑ | CI green on Linux GCC/Clang, macOS arm64 and ASan/UBSan; gate/exhaustive test tiers; nightly exhaustive workflow (active once on the default branch) |
+| ☑ | Benchmarks on nanobench 4.6 (paired, interleaved design comparisons with CIs); tests on doctest 2.5.3; both fetched, matching Sub0Log |
+| ☐ | A TSan job for the executors and the parallel store paths |

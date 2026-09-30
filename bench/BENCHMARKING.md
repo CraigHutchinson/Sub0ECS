@@ -7,14 +7,34 @@ same suites can run on dedicated hardware with more cores (and later on
 embedded targets).
 
 ```
+bench/harness/            nanobench + names, --filter, paired group comparisons, results JSON
 bench/tools/suites.json   what can be run (suites) and how (profiles)
 bench/tools/run.py        build → fingerprint machine → run suites → result directory
 bench/tools/compare.py    A/B comparison with noise-aware verdicts
 CMakePresets.json         bench-native | bench-portable | sanitize
 ```
 
-Everything uses only CMake, Ninja, a C++20 compiler and the Python 3
-standard library.
+Everything uses CMake, Ninja, a C++20 compiler, [nanobench](https://github.com/martinus/nanobench)
+(fetched) and the Python 3 standard library.
+
+## How a measurement works
+
+Cases are named `<Scenario>/<Pattern>/<Design>/<N>`; one operation is one pass
+over the world (or one Skirmish tick). Cases sharing scenario, pattern and N form
+a **group**, and a group's designs are measured **against each other, paired**
+(nanobench `Bench::compare`):
+
+- one iteration count for every design, epochs interleaved in rotating order,
+  so frequency ramps, thermal drift and noisy neighbours hit every design alike
+  and cancel out of the ratios;
+- each design gets a ratio to the group's **baseline** (the first registered: v1
+  wherever v1 supports the scenario, SparseSet for Skirmish, 1 thread for
+  thread scaling) with a 95% interval corrected for the group's size;
+- Skirmish runs one tick per epoch with no calibration, so every design plays
+  exactly the same ticks and ends in the same state.
+
+Cases that cannot repeat their operation as-is (Create: it needs a fresh world)
+are measured alone, one call per epoch, with an untimed setup before each.
 
 ## Quick start
 
@@ -28,11 +48,14 @@ python3 bench/tools/compare.py bench/results/runs/<host>/<runA> bench/results/ru
 
 ## Profiles
 
-| Profile | Repetitions | Min time | Sizes | Use |
+| Profile | Epochs (paired rounds) | Min epoch | Sizes | Use |
 |---|---:|---:|---|---|
-| `quick` | 1 | 0.05 s | 1K entities, 1K units | Check the harness works, not numbers |
-| `standard` | 5 | 0.5 s | 1K / 100K / 1M; 1K / 10K / 50K units | What FINDINGS.md was measured with |
-| `reference` | 10 | 1 s | + 10M entities, + 200K units, thread ladder to all cores | Dedicated hardware |
+| `quick` | 5 | default | 1K entities, 1K units | Check the harness works (seconds), not numbers |
+| `standard` | 22 | 1 ms | 1K / 100K / 1M; 1K / 10K / 50K units | Everyday comparisons |
+| `reference` | 52 | 5 ms | + 10M entities, + 200K units, thread ladder to all cores | Dedicated hardware |
+
+Every design of a group is alive at once during its comparison, so the largest
+group's memory is the sum of its worlds (about 8 worlds at the largest N).
 
 ## Suites
 
@@ -64,9 +87,9 @@ compiled in (1M entities / 200K units); larger sizes skip them.
 ```
 bench/results/runs/<host>/<YYYYmmdd-HHMMSS>-<sha>[-label]/
     meta.json      schema "sub0ecs-bench/1"
-    <suite>.json   raw Google Benchmark JSON (or timeline JSON)
-    <suite>.log    console output
-    summary.md     median + CV per benchmark
+    <suite>.json   results, schema "sub0ecs-bench-results/1" (or a timeline tool's rows)
+    <suite>.log    console output (nanobench's tables)
+    summary.md     per group: time/op, err%, paired ratio vs baseline [95% CI], counters
 ```
 
 `meta.json` records:
@@ -92,9 +115,12 @@ FINDINGS.md.
 1. **Environment differences first** (CPU, compiler, flags, SHA,
    profile), so a cross-machine difference is never mistaken for a code
    change.
-2. Per benchmark: the medians, B-vs-A speed-up, and a verdict. A change
+2. Per case: the medians, B-vs-A speed-up, and a verdict. A change
    is significant only if it exceeds **both** `--threshold` (default 5%)
-   **and** twice the larger coefficient of variation of the two runs.
+   **and** twice the larger err% of the two runs.
+
+Within one run, the paired ratios in `summary.md` are the sharper instrument:
+they cancel drift, which a comparison across runs cannot.
 
 `--fail-on-regression` returns exit code 1, so the same script can gate CI
 on a dedicated runner.
@@ -131,13 +157,13 @@ python bench/tools/run.py --profile reference --pin P --label ref-msvc
 | Isolate and pin CPUs | Scheduler noise | Boot with `isolcpus=2-15 nohz_full=2-15`, then `--pin 2-15` |
 | No ASLR | Layout noise | `--no-aslr` (uses `setarch -R`) |
 | Same build flavour for cross-machine comparisons | `-march=native` differs per CPU | `--preset bench-portable` |
-| ≥ 10 repetitions, random interleaving | Robust medians, drift spread across benchmarks | `--profile reference` (default in all profiles) |
+| Paired, interleaved rounds (≥ 52) | Drift cancels out of the design ratios | `--profile reference` (default in all profiles) |
 | Commit the curated run | Reproducibility | Copy to `results/reference/<host>/`, note it in FINDINGS |
 
 ## Extending
 
-- **New suite:** add an entry to `suites.json` (`gbench` for Google
-  Benchmark binaries; `timeline` for tools that take `[args…] <out.json>`
+- **New suite:** add an entry to `suites.json` (`harness` for
+  bench/harness binaries; `timeline` for tools that take `[args…] <out.json>`
   and write `{"rows": [...]}`).
 - **New machine class:** no code change; the fingerprint and thread ladder
   adapt to the machine.

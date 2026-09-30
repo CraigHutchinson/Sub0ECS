@@ -9,3 +9,6 @@ CMakeUserPresets.json
 .vscode/settings.json
 
 # Ad-hoc benchmark runs are ignored via bench/results/.gitignore
+
+# Python bytecode (bench/tools)
+__pycache__/

@@ -293,14 +293,9 @@ def run_suite(name, suite, profile, build_dir, run_dir, pin, extra_env, no_aslr=
     if no_aslr and shutil.which("setarch"):
         prefix = ["setarch", platform.machine(), "-R", *prefix]
     out = run_dir / f"{name}.json"
-    if suite["kind"] == "gbench":
-        cmd = prefix + [str(exe), f"--benchmark_filter={suite['filter']}",
-                        f"--benchmark_repetitions={profile['repetitions']}",
-                        "--benchmark_enable_random_interleaving=true",
-                        "--benchmark_report_aggregates_only=true",
-                        f"--benchmark_out={out}", "--benchmark_out_format=json"]
-        if not suite.get("fixed_iterations"):
-            cmd.append(f"--benchmark_min_time={profile['min_time']}")
+    if suite["kind"] == "harness":   # bench/harness: nanobench, paired group comparisons
+        cmd = prefix + [str(exe), f"--filter={suite['filter']}", f"--epochs={profile['epochs']}",
+                        f"--min-epoch-ms={profile['min_epoch_ms']}", f"--out={out}"]
     else:
         cmd = prefix + [str(exe), *suite.get("args", []), str(out)]
     print(f"  > {name}: {' '.join(cmd[-8:])}")
@@ -329,35 +324,24 @@ def pin_process(proc, pin):
 
 
 def summarize(run_dir, results):
-    lines = [f"# Benchmark run {run_dir.name}\n"]
+    """summary.md: per-suite status, then summarize.py's per-group tables."""
+    sys.path.insert(0, str(HERE))
+    import summarize as summary   # bench/tools/summarize.py
+    lines = [f"# Benchmark run {run_dir.name}", ""]
     for name, res in results.items():
+        lines.append(f"- {name}: {res['status']}" + (f" in {res['seconds']:.0f} s" if "seconds" in res else ""))
+    records = summary.load([run_dir])
+    lines += ["", summary.summarize(records) if records else "(no harness results)"]
+    for name, res in results.items():   # timeline tools write their own {"rows": [...]}
         path = run_dir / f"{name}.json"
-        lines.append(f"\n## {name} ({res['status']})\n")
         if res["status"] != "ok" or not path.exists():
             continue
-        data = json.loads(path.read_text())
-        if "benchmarks" not in data:   # timeline tool
-            rows = data.get("rows", [])
-            if rows:
-                keys = list(rows[0].keys())
-                lines.append("| " + " | ".join(keys) + " |")
-                lines.append("|" + "---|" * len(keys))
-                for r in rows:
-                    lines.append("| " + " | ".join(str(r[k]) for k in keys) + " |")
-            continue
-        med, cv = {}, {}
-        has_aggregates = any(b.get("aggregate_name") for b in data["benchmarks"])
-        for b in data["benchmarks"]:
-            if b.get("aggregate_name") == "median" or (not has_aggregates and b.get("run_type") == "iteration"):
-                med[b.get("run_name", b["name"])] = (b["real_time"], b.get("time_unit", "ns"))
-            elif b.get("aggregate_name") == "cv":
-                cv[b["run_name"]] = b["real_time"]
-        lines.append("| Benchmark | Median | CV |")
-        lines.append("|---|---:|---:|")
-        for k, (t, u) in med.items():
-            c = cv.get(k)
-            lines.append(f"| {k} | {t:.4g} {u} | {'' if c is None else f'{100 * c:.1f}%'} |")
-    (run_dir / "summary.md").write_text("\n".join(lines) + "\n")
+        rows = json.loads(path.read_text()).get("rows")
+        if rows:
+            keys = list(rows[0].keys())
+            lines += [f"## {name}", "", "| " + " | ".join(keys) + " |", "|" + "---|" * len(keys)]
+            lines += ["| " + " | ".join(str(r[k]) for k in keys) + " |" for r in rows] + [""]
+    (run_dir / "summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def main():
@@ -373,7 +357,7 @@ def main():
     ap.add_argument("--pin", default="", help="CPU list, e.g. 2-15 (taskset on Linux, affinity mask on Windows); "
                     "'P' = the performance cores of a hybrid CPU (Windows)")
     ap.add_argument("--no-aslr", action="store_true", help="run benchmarks under 'setarch -R' (Linux)")
-    ap.add_argument("--repetitions", type=int, default=None, help="override the profile")
+    ap.add_argument("--epochs", type=int, default=None, help="override the profile's epochs (paired rounds)")
     ap.add_argument("--env", action="append", default=[], help="extra KEY=VALUE for the benchmark processes")
     args = ap.parse_args()
 
@@ -383,8 +367,8 @@ def main():
         return 0
 
     profile = dict(cfg["profiles"][args.profile])
-    if args.repetitions:
-        profile["repetitions"] = args.repetitions
+    if args.epochs:
+        profile["epochs"] = args.epochs
     suites = [s for s in (args.suites.split(",") if args.suites else profile["suites"]) if s]
     unknown = [s for s in suites if s not in cfg["suites"]]
     if unknown:

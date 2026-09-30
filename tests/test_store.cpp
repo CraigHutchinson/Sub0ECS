@@ -325,7 +325,9 @@ namespace
         W w;
         std::vector<Entity> handles;            // every handle ever created (live or stale)
         std::vector<std::optional<Expected>> model;   // parallel to handles; nullopt = destroyed
-        std::mt19937 rng{ 12345 };
+        std::mt19937 rng;
+
+        explicit Harness(std::uint32_t seed = 12345) : rng(seed) {}
 
         std::uint32_t pick(std::uint32_t n) { return static_cast<std::uint32_t>(rng() % n); }
         float value() { return static_cast<float>(pick(1000)); }   // exact in float
@@ -434,15 +436,36 @@ namespace
     };
 } // namespace
 
+namespace
+{
+    /** `batches` x 250 random operations from `seed`, every observable checked after each batch. */
+    template <typename W>
+    void randomWalk(std::uint32_t seed, int batches)
+    {
+        CAPTURE(seed);
+        Harness<W> h(seed);
+        for (int batch = 0; batch < batches; ++batch)
+        {
+            for (int i = 0; i < 250; ++i) h.step();
+            h.verify();
+        }
+        CHECK(h.w.size() > 100);   // the walk really built up a population (growth beyond first capacity)
+    }
+} // namespace
+
+// Gated sample: one seed, 10,000 operations per storage mode.
 TEST_CASE_TEMPLATE("store: random structural churn matches a reference model", W, WORLDS)
 {
-    Harness<W> h;
-    for (int batch = 0; batch < 40; ++batch)
+    randomWalk<W>(12345, 40);
+}
+
+// On demand (ctest -L exhaustive): many seeds, longer walks.
+TEST_SUITE("exhaustive")
+{
+    TEST_CASE_TEMPLATE("store: random structural churn, many seeds and long walks", W, WORLDS)
     {
-        for (int i = 0; i < 250; ++i) h.step();
-        h.verify();
+        for (std::uint32_t seed = 1; seed <= 24; ++seed) randomWalk<W>(seed, 200);
     }
-    CHECK(h.w.size() > 100);   // the walk really built up a population (growth beyond first capacity)
 }
 
 // ---- per-World-type component indices ------------------------------------------

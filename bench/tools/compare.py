@@ -3,19 +3,24 @@
 
     python3 bench/tools/compare.py <runA> <runB> [--threshold 0.05] [--fail-on-regression]
 
-For every benchmark present in both runs the median times are compared.
+For every case present in both runs the median times per operation are compared.
 A change counts as significant only if it exceeds both the threshold and the
-measured noise (2 x the larger coefficient of variation of the two runs).
-Machine differences between the runs (CPU, compiler, flags, git) are listed
-first, so cross-machine comparisons are never mistaken for code changes.
+measured noise (2 x the larger err% of the two runs). Machine differences between
+the runs (CPU, compiler, flags, git) are listed first, so cross-machine comparisons
+are never mistaken for code changes. (Within one run, the paired ratios in
+summary.md are the sharper instrument: they cancel drift, which a cross-run
+comparison cannot.)
 """
 import argparse
 import json
 import sys
 from pathlib import Path
 
+SCHEMA = "sub0ecs-bench-results/1"
+
 
 def load_run(d):
+    """(meta, {suite: {case name: record}}) for a run directory."""
     d = Path(d)
     meta = json.loads((d / "meta.json").read_text())
     suites = {}
@@ -23,17 +28,8 @@ def load_run(d):
         if f.name == "meta.json":
             continue
         data = json.loads(f.read_text())
-        if "benchmarks" not in data:
-            continue
-        rows = {}
-        has_aggregates = any(b.get("aggregate_name") for b in data["benchmarks"])
-        for b in data["benchmarks"]:
-            agg = b.get("aggregate_name")
-            if agg in ("median", "cv"):
-                rows.setdefault(b["run_name"], {})[agg] = b["real_time"]
-            elif not has_aggregates and b.get("run_type") == "iteration":   # repetitions=1: single sample
-                rows.setdefault(b.get("run_name", b["name"]), {})["median"] = b["real_time"]
-        suites[f.stem] = rows
+        if data.get("schema") == SCHEMA:
+            suites[f.stem] = {r["name"]: r for r in data["results"]}
     return meta, suites
 
 
@@ -67,14 +63,14 @@ def main():
     regressions = 0
     for suite in sorted(set(sa) & set(sb)):
         ra, rb = sa[suite], sb[suite]
-        common = [k for k in ra if k in rb and "median" in ra[k] and "median" in rb[k]]
+        common = [k for k in ra if k in rb]
         if not common:
             continue
-        print(f"## {suite}\n\n| Benchmark | A | B | B vs A | Verdict |\n|---|---:|---:|---:|---|")
+        print(f"## {suite}\n\n| Case | A (ns) | B (ns) | B vs A | Verdict |\n|---|---:|---:|---:|---|")
         for k in common:
-            ta, tb = ra[k]["median"], rb[k]["median"]
+            ta, tb = ra[k]["median_ns"], rb[k]["median_ns"]
             speedup = ta / tb if tb else float("inf")
-            noise = 2 * max(ra[k].get("cv", 0.0), rb[k].get("cv", 0.0))
+            noise = 2 * max(ra[k]["err_pct"], rb[k]["err_pct"]) / 100.0
             change = abs(speedup - 1.0)
             if change <= max(args.threshold, noise):
                 verdict = "≈ (within noise)"

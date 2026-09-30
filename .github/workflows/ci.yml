@@ -1,5 +1,11 @@
 name: CI
 
+# Gate: every push and pull request. Keep it fast; heavier checks live in nightly.yml.
+#   - tests: the gate tier only (ctest presets exclude the "exhaustive" label)
+#   - benchmarks: compiled where compilers have caught platform-specific breakage
+#     (GCC, MSVC, macOS/ARM), skipped on Clang and sanitizer jobs to save build time;
+#     one quick harness run proves the benchmark tooling end to end.
+
 on:
   push:
     branches: [master, v2]
@@ -7,45 +13,37 @@ on:
     branches: [master, v2]
 
 jobs:
-  build-linux:
+  linux-gcc:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - compiler: gcc
-            cc: gcc
-            cxx: g++
-          - compiler: clang
-            cc: clang
-            cxx: clang++
-    name: linux-${{ matrix.compiler }}
     steps:
       - uses: actions/checkout@v4
       - name: Install Ninja
         run: sudo apt-get update && sudo apt-get install -y ninja-build
       - name: Configure
         run: cmake --preset default
-        env:
-          CC: ${{ matrix.cc }}
-          CXX: ${{ matrix.cxx }}
+        env: { CC: gcc, CXX: g++ }
       - name: Build (tests + benchmarks)
         run: cmake --build --preset default
-      - name: Test
+      - name: Test (gate)
         run: ctest --preset default
+      - name: Benchmark harness smoke (quick profile)
+        run: python3 bench/tools/run.py --profile quick --build-dir build/default --label ci
 
-  build-windows:
-    runs-on: windows-latest
+  linux-clang:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Configure
-        run: cmake --preset ci-msvc
-      - name: Build (tests + benchmarks)
-        # The benchmark TUs instantiate every design x scenario: several GB per cl.exe
-        run: cmake --build --preset ci-msvc --parallel 2
-      - name: Test
-        run: ctest --preset ci-msvc
+      - name: Install Ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: Configure (tests only)
+        run: cmake --preset default -DSUB0ECS_BUILD_BENCHMARKS=OFF
+        env: { CC: clang, CXX: clang++ }
+      - name: Build
+        run: cmake --build --preset default
+      - name: Test (gate)
+        run: ctest --preset default
 
-  build-macos:
+  macos:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -55,8 +53,20 @@ jobs:
         run: cmake --preset default
       - name: Build (tests + benchmarks)
         run: cmake --build --preset default
-      - name: Test
+      - name: Test (gate)
         run: ctest --preset default
+
+  windows-msvc:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake --preset ci-msvc
+      - name: Build (tests + benchmarks)
+        # The benchmark TUs instantiate every design x scenario: keep concurrent cl.exe count low
+        run: cmake --build --preset ci-msvc --parallel 2
+      - name: Test (gate)
+        run: ctest --preset ci-msvc
 
   sanitizers:
     runs-on: ubuntu-latest
@@ -66,10 +76,8 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y ninja-build
       - name: Configure (ASan + UBSan)
         run: cmake --preset sanitize
-        env:
-          CC: gcc
-          CXX: g++
+        env: { CC: gcc, CXX: g++ }
       - name: Build
         run: cmake --build --preset sanitize
-      - name: Test
+      - name: Test (gate)
         run: ctest --preset sanitize

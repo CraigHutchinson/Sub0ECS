@@ -114,7 +114,11 @@ namespace bench::fixed
         std::array<std::uint32_t, Capacity> free_{};
         std::uint32_t freeCount_ = 0;
         std::uint32_t highWater_ = 0;
-        std::tuple<std::array<Components, Capacity>...> columns_{};
+        // Default-initialised, not `{}`: value-initialising Capacity components made MSVC
+        // materialise every element at compile time (~48 KB of compiler memory per slot,
+        // 50 GB at 1M). The slots need no initial value: create/add write a slot before
+        // the mask lets find/each see it.
+        std::tuple<std::array<Components, Capacity>...> columns_;
     };
 
     template <std::size_t Capacity>

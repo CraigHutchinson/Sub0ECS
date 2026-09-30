@@ -1,0 +1,39 @@
+name: Nightly
+
+# The on-demand tier: every test, including the "exhaustive" doctest suite (many
+# seeds, long random walks), plain and under sanitizers. Also runnable by hand.
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  exhaustive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: v2 }
+      - name: Install Ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: Configure (tests only)
+        run: cmake --preset default -DSUB0ECS_BUILD_BENCHMARKS=OFF
+      - name: Build
+        run: cmake --build --preset default
+      - name: Test (every tier)
+        run: ctest --preset exhaustive
+
+  exhaustive-sanitizers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: v2 }
+      - name: Install Ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: Configure (ASan + UBSan)
+        run: cmake --preset sanitize
+        env: { CC: gcc, CXX: g++ }
+      - name: Build
+        run: cmake --build --preset sanitize
+      - name: Test (every tier)
+        run: ctest --preset sanitize-exhaustive

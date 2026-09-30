@@ -1,113 +1,90 @@
 #!/usr/bin/env python3
-"""Summarise benchmark JSON into markdown tables.
+"""Summarise benchmark results (schema sub0ecs-bench-results/1) as markdown.
 
-Usage: summarize.py results.json [baseline_design=V1] > RESULTS.md
+    summarize.py <results.json | run-dir> [...] > SUMMARY.md
 
-Rows: <Scenario>/<Pattern>/<N>; columns: designs. Cells show median time per
-iteration and speed-up vs the baseline design (>1.00x = faster than baseline).
+One table per group (<Scenario>/<Pattern>/<N>). "vs baseline" is nanobench's
+paired comparison: t_baseline / t_design, >1.00x = faster than the group's
+baseline, with a 95% interval corrected for the group's comparisons; bold when
+the interval excludes 1. Only the Python standard library is used.
 """
 import json
 import sys
-from collections import defaultdict
+from pathlib import Path
 
-DESIGN_ORDER = ["V1", "SortedSoA", "SparseSet", "Archetype", "QueryPart", "QPartHinted", "StaticBitmask", "RawSoA"]
-SCENARIO_ORDER = ["Create", "Iter1", "Update2", "Frame3", "SparseQuery", "RandomGet", "AddRemove", "TagChurn", "DestroyCreate"]
+SCHEMA = "sub0ecs-bench-results/1"
 
 
-def fmt_time(us):
-    if us >= 1000.0:
-        return f"{us / 1000.0:.2f} ms"
-    return f"{us:.2f} µs"
+def load(paths):
+    """Records from result files and/or run directories, in file order."""
+    files = []
+    for p in map(Path, paths):
+        files += sorted(f for f in p.glob("*.json") if f.name != "meta.json") if p.is_dir() else [p]
+    records = []
+    for f in files:
+        data = json.loads(f.read_text())
+        if data.get("schema") == SCHEMA:
+            records += data["results"]
+    return records
+
+
+def fmt_time(ns):
+    for unit, scale in (("s", 1e9), ("ms", 1e6), ("µs", 1e3)):
+        if ns >= scale:
+            return f"{ns / scale:.3g} {unit}"
+    return f"{ns:.3g} ns"
+
+
+def fmt_rate(per_second):
+    for unit, scale in (("G", 1e9), ("M", 1e6), ("k", 1e3)):
+        if per_second >= scale:
+            return f"{per_second / scale:.3g} {unit}"
+    return f"{per_second:.3g}"
+
+
+def paired_cell(r):
+    p = r.get("paired")
+    if not p:
+        return ""
+    if p["baseline"] == r["design"]:
+        return "baseline"
+    cell = f"{p['ratio']:.2f}× [{p['low']:.2f}–{p['high']:.2f}]"
+    return f"**{cell}**" if p["significant"] else cell
+
+
+def extras(r):
+    parts = [f"{k}={v:.4g}" for k, v in r.get("counters", {}).items()]
+    parts += [f"{k}: {v}" for k, v in r.get("notes", {}).items()]
+    return ", ".join(parts)
+
+
+def summarize(records):
+    lines = []
+    groups = {}
+    for r in records:
+        groups.setdefault(r["group"], []).append(r)
+    for group, rows in groups.items():
+        unit = rows[0].get("unit", "op")
+        lines += [f"## {group}", "", f"| Design | time/{unit} | err% | vs baseline | items/s | notes |",
+                  "|---|---:|---:|---:|---:|---|"]
+        for r in rows:
+            lines.append(f"| {r['design']} | {fmt_time(r['median_ns'])} | {r['err_pct']:.1f}% | {paired_cell(r)} | "
+                         f"{fmt_rate(r['items_per_second'])} | {extras(r)} |")
+        lines.append("")
+    return "\n".join(lines)
 
 
 def main():
-    path = sys.argv[1]
-    baseline = sys.argv[2] if len(sys.argv) > 2 else "V1"
-    data = json.load(open(path))
-
-    medians = {}
-    cv = {}
-    counters = defaultdict(dict)
-    skipped = set()
-    for b in data["benchmarks"]:
-        name = b.get("run_name", b["name"])
-        parts = name.split("/")
-        if len(parts) < 4:
-            continue
-        scenario, pattern, design, n = parts[0], parts[1], parts[2], int(parts[3])
-        key = (scenario, pattern, n)
-        if b.get("error_occurred"):
-            skipped.add((key, design))
-            continue
-        agg = b.get("aggregate_name")
-        if agg == "median":
-            t = b["real_time"]
-            unit = b.get("time_unit", "us")
-            t_us = t * {"ns": 1e-3, "us": 1.0, "ms": 1e3, "s": 1e6}[unit]
-            medians[(key, design)] = t_us
-            for c in ("bytes_per_entity", "allocs_per_entity"):
-                if c in b:
-                    counters[(key, design)][c] = b[c]
-        elif agg == "cv":
-            cv[(key, design)] = b["real_time"]
-
-    ctx = data.get("context", {})
-    print("# SubzeroECS v2 benchmark results\n")
-    print(f"- Host: {ctx.get('num_cpus')} × {ctx.get('mhz_per_cpu')} MHz, "
-          f"caches: " + ", ".join(f"L{c['level']} {c['type'][0]} {c['size'] // 1024} KiB" for c in ctx.get("caches", [])))
-    print(f"- Date: {ctx.get('date')}  |  Build: {ctx.get('library_build_type')}  |  "
-          f"Statistic: median of repetitions; cell = time/iteration (speed-up vs {baseline})")
-    print("- `—` = unsupported by that design; `n/a` = not run for that design\n")
-
-    keys = sorted({k for (k, _) in list(medians) + list(skipped)},
-                  key=lambda k: (SCENARIO_ORDER.index(k[0]) if k[0] in SCENARIO_ORDER else 99, k[1], k[2]))
-    designs = [d for d in DESIGN_ORDER if any(dd == d for (_, dd) in list(medians) + list(skipped))]
-
-    current = None
-    for key in keys:
-        scenario = key[0]
-        if scenario != current:
-            current = scenario
-            print(f"\n## {scenario}\n")
-            print("| Pattern | N | " + " | ".join(designs) + " |")
-            print("|---|---:|" + "---:|" * len(designs))
-        base = medians.get((key, baseline))
-        cells = []
-        for d in designs:
-            if (key, d) in skipped:
-                cells.append("—")
-                continue
-            t = medians.get((key, d))
-            if t is None:
-                cells.append("n/a")
-                continue
-            s = fmt_time(t)
-            if base and d != baseline:
-                s += f" ({base / t:.2f}×)"
-            noisy = cv.get((key, d), 0.0)
-            if noisy > 0.10:
-                s += " ⚠"
-            cells.append(s)
-        print(f"| {key[1]} | {key[2]:,} | " + " | ".join(cells) + " |")
-
-    # Memory table from Create
-    print("\n## Memory (from Create)\n")
-    print("Live heap bytes per entity after populate (world only, excludes handle list), "
-          "and heap allocations per entity.\n")
-    print("| Pattern | N | " + " | ".join(d for d in designs if d != "RawSoA") + " |")
-    print("|---|---:|" + "---:|" * len([d for d in designs if d != "RawSoA"]))
-    for key in keys:
-        if key[0] != "Create":
-            continue
-        cells = []
-        for d in designs:
-            if d == "RawSoA":
-                continue
-            c = counters.get((key, d))
-            cells.append(f"{c['bytes_per_entity']:.1f} B / {c['allocs_per_entity']:.3f}" if c else "n/a")
-        print(f"| {key[1]} | {key[2]:,} | " + " | ".join(cells) + " |")
-    print("\n⚠ = coefficient of variation > 10% across repetitions (noisy host).")
+    if len(sys.argv) < 2:
+        print(__doc__, file=sys.stderr)
+        return 2
+    records = load(sys.argv[1:])
+    if not records:
+        print(f"no {SCHEMA} results found", file=sys.stderr)
+        return 1
+    print(summarize(records))
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

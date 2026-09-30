@@ -1,33 +1,36 @@
-/** SubzeroECS v2 design spike — performance baseline.
+/** Storage designs on micro scenarios, H7 fusion, and planners x executors.
  *
- * Benchmark names: <Scenario>/<Pattern>/<Design>/<N>
- * items_per_second is always "world entities per second" (N per iteration) so
- * rows are comparable across designs within a scenario.
+ * Case names: <Scenario>/<Pattern>/<Design>/<N>. One operation is one pass over
+ * the whole world, so items_per_second is world entities per second and rows are
+ * comparable across designs within a scenario. Designs of a group are measured
+ * with a paired comparison against the first registered: v1 wherever v1 supports
+ * the scenario (see bench/harness/runner.hpp).
  */
-#include <benchmark/benchmark.h>
-
+#include <algorithm>
 #include <atomic>
-#include <chrono>
 #include <cstdlib>
 #include <memory>
 #include <new>
+#include <random>
 #include <string>
+#include <vector>
 
-#include "common/denormals.hpp"
+#include <nanobench.h>
+#include <sub0ecs/fusion/executors.hpp>
+#include <sub0ecs/fusion/planner.hpp>
+
 #include "common/env.hpp"
 #include "common/scenarios.hpp"
+#include "common/systems.hpp"
 #include "designs/archetype.hpp"
 #include "designs/query_partition.hpp"
 #include "designs/sorted_soa.hpp"
 #include "designs/sparse_set.hpp"
 #include "designs/static_bitmask.hpp"
+#include "harness/harness.hpp"
 #if SUB0ECS_HAS_V1_BASELINE
 #    include "designs/v1_adapter.hpp"
 #endif
-#include "common/systems.hpp"
-#include <sub0ecs/fusion/executors.hpp>
-#include <sub0ecs/fusion/planner.hpp>
-
 
 // ---- Heap accounting (glibc) ----------------------------------------------
 #if defined(__GLIBC__)
@@ -63,166 +66,121 @@ void operator delete(void* p) noexcept
 void operator delete(void* p, std::size_t) noexcept { operator delete(p); }
 void operator delete(void* p, std::align_val_t) noexcept { operator delete(p); }
 void operator delete(void* p, std::size_t, std::align_val_t) noexcept { operator delete(p); }
-#    define SPIKE_HEAP_TRACKING 1
+#    define BENCH_HEAP_TRACKING 1
 #else
-#    define SPIKE_HEAP_TRACKING 0
+#    define BENCH_HEAP_TRACKING 0
 #endif
 
 namespace
 {
     using namespace bench;
-    using Clock = std::chrono::steady_clock;
+    using harness::Case;
+    using harness::Prepared;
+    using harness::Record;
+
+    harness::Registry registry;
+
+    /** A world populated with n entities of the pattern, plus their handles. */
+    template <typename W>
+    struct WorldFixture
+    {
+        std::unique_ptr<W> world = std::make_unique<W>();
+        std::vector<typename W::Entity> entities;
+    };
 
     template <typename W>
-    bool skipUnsupported(benchmark::State& state, bool needRemove, bool needDestroy)
+    std::shared_ptr<WorldFixture<W>> populated(std::int64_t n, Pattern p, bool tagged = false)
     {
-        if ((needRemove && !W::kSupportsRemove) || (needDestroy && !W::kSupportsDestroy))
-        {
-            state.SkipWithError("unsupported by design");
-            return true;
-        }
-        return false;
+        auto fx = std::make_shared<WorldFixture<W>>();
+        fx->entities = populate(*fx->world, n, p);
+        if (tagged) tagEveryHundredth(*fx->world, fx->entities);
+        return fx;
     }
 
     /** Physical table count, for designs that have one (fragmentation evidence). */
     template <typename W>
-    void reportTables(benchmark::State& state, W& w)
+    void reportTables(W& w, Record& r)
     {
-        if constexpr (requires { w.partitionCount(); }) state.counters["tables"] = static_cast<double>(w.partitionCount());
-        else if constexpr (requires { w.archetypeCount(); }) state.counters["tables"] = static_cast<double>(w.archetypeCount());
+        if constexpr (requires { w.partitionCount(); }) r.counter("tables", static_cast<double>(w.partitionCount()));
+        else if constexpr (requires { w.archetypeCount(); }) r.counter("tables", static_cast<double>(w.archetypeCount()));
+    }
+
+    /** Registers a steady-state case: `make()` builds the fixture once, `op(fixture)`
+     *  is one timed pass, `finish(fixture, record)` adds counters afterwards. */
+    template <typename Make, typename Op, typename Finish>
+    void add(std::string scenario, Pattern p, std::string design, std::int64_t n, Make make, Op op, Finish finish)
+    {
+        registry.add(Case{ std::move(scenario), toString(p), std::move(design), n, static_cast<double>(n), "pass", false, 0,
+                           [=]() {
+                               auto fx = make();
+                               Prepared prep;
+                               prep.op = [fx, op] { op(*fx); };
+                               prep.finish = [fx, finish](Record& r) { finish(*fx, r); };
+                               prep.fixture = fx;
+                               return prep;
+                           } });
+    }
+
+    template <typename Make, typename Op>
+    void add(std::string scenario, Pattern p, std::string design, std::int64_t n, Make make, Op op)
+    {
+        add(std::move(scenario), p, std::move(design), n, make, op, [](auto&, Record&) {});
     }
 
     // ---- Scenarios ----------------------------------------------------------
 
+    /** Create: populate a fresh world. The world's construction is untimed (setup);
+     *  heap bytes and allocations per entity are measured once, untimed (glibc only). */
     template <typename W>
-    void BM_Create(benchmark::State& state, Pattern pattern)
+    void addCreate(Pattern p, std::int64_t n)
     {
-        const std::int64_t n = state.range(0);
-        double bytesPerEntity = 0.0, allocsPerEntity = 0.0;
-        for (auto _ : state)
+        struct Fixture
         {
-#if SPIKE_HEAP_TRACKING
-            const std::int64_t bytes0 = heap::liveBytes.load();
+            std::unique_ptr<W> world;
+            std::vector<typename W::Entity> entities;
+        };
+        registry.add(Case{ "Create", toString(p), W::kName, n, static_cast<double>(n), "pass", true, 0, [p, n]() {
+                              double bytesPerEntity = 0.0, allocsPerEntity = 0.0;
+#if BENCH_HEAP_TRACKING
+                              {
+                                  const std::int64_t bytes0 = heap::liveBytes.load();
+                                  auto w = std::make_unique<W>();
+                                  const std::int64_t allocs0 = heap::allocations.load();
+                                  auto es = populate(*w, n, p);
+                                  const auto handleBytes = static_cast<std::int64_t>(malloc_usable_size(es.data()));
+                                  bytesPerEntity = static_cast<double>(heap::liveBytes.load() - bytes0 - handleBytes) / static_cast<double>(n);
+                                  allocsPerEntity = static_cast<double>(heap::allocations.load() - allocs0 - 1) / static_cast<double>(n);
+                              }
 #endif
-            auto w = std::make_unique<W>();
-#if SPIKE_HEAP_TRACKING
-            const std::int64_t allocs0 = heap::allocations.load();
-#endif
-            const auto t0 = Clock::now();
-            auto es = populate(*w, n, pattern);
-            const auto t1 = Clock::now();
-            benchmark::DoNotOptimize(es.data());
-#if SPIKE_HEAP_TRACKING
-            const auto handleBytes = static_cast<std::int64_t>(malloc_usable_size(es.data()));
-            bytesPerEntity = static_cast<double>(heap::liveBytes.load() - bytes0 - handleBytes) / static_cast<double>(n);
-            allocsPerEntity = static_cast<double>(heap::allocations.load() - allocs0 - 1) / static_cast<double>(n);
-#endif
-            state.SetIterationTime(std::chrono::duration<double>(t1 - t0).count());
-        }
-        state.SetItemsProcessed(state.iterations() * n);
-        state.counters["bytes_per_entity"] = bytesPerEntity;
-        state.counters["allocs_per_entity"] = allocsPerEntity;
+                              auto fx = std::make_shared<Fixture>();
+                              Prepared prep;
+                              // Untimed: drop the previous world and handles, build an empty world.
+                              prep.setup = [fx] {
+                                  fx->entities = {};
+                                  fx->world = std::make_unique<W>();
+                              };
+                              prep.op = [fx, p, n] {
+                                  fx->entities = populate(*fx->world, n, p);
+                                  ankerl::nanobench::doNotOptimizeAway(fx->entities.data());
+                              };
+                              prep.finish = [bytesPerEntity, allocsPerEntity](Record& r) {
+                                  if (BENCH_HEAP_TRACKING)
+                                  {
+                                      r.counter("bytes_per_entity", bytesPerEntity);
+                                      r.counter("allocs_per_entity", allocsPerEntity);
+                                  }
+                              };
+                              prep.fixture = fx;
+                              return prep;
+                          } });
     }
 
     template <typename W, void (*System)(W&)>
-    void BM_System(benchmark::State& state, Pattern pattern, bool tagged)
+    void addSystem(const char* scenario, Pattern p, std::string design, std::int64_t n, bool tagged = false)
     {
-        const std::int64_t n = state.range(0);
-        auto w = std::make_unique<W>();
-        auto es = populate(*w, n, pattern);
-        if (tagged) tagEveryHundredth(*w, es);
-        for (auto _ : state)
-        {
-            System(*w);
-            benchmark::ClobberMemory();
-        }
-        state.SetItemsProcessed(state.iterations() * n);
-        reportTables(state, *w);
-    }
-
-    template <typename W>
-    void BM_RandomGet(benchmark::State& state, Pattern pattern)
-    {
-        const std::int64_t n = state.range(0);
-        auto w = std::make_unique<W>();
-        auto es = populate(*w, n, pattern);
-        std::shuffle(es.begin(), es.end(), std::mt19937(123));
-        for (auto _ : state)
-        {
-            float sum = 0.0f;
-            for (const auto& e : es) sum += w->template find<Velocity>(e)->dx;
-            benchmark::DoNotOptimize(sum);
-        }
-        state.SetItemsProcessed(state.iterations() * n);
-    }
-
-    template <typename W>
-    void BM_AddRemove(benchmark::State& state, Pattern pattern)
-    {
-        if (skipUnsupported<W>(state, true, false)) return;
-        const std::int64_t n = state.range(0);
-        auto w = std::make_unique<W>();
-        auto es = populate(*w, n, pattern);
-        for (auto _ : state) churnAddRemove(*w, es);
-        reportTables(state, *w);
-        state.SetItemsProcessed(state.iterations() * n);
-        state.counters["churned"] = static_cast<double>((n + 9) / 10);
-    }
-
-    template <typename W>
-    void BM_TagChurn(benchmark::State& state, Pattern pattern)
-    {
-        if (skipUnsupported<W>(state, true, false)) return;
-        const std::int64_t n = state.range(0);
-        auto w = std::make_unique<W>();
-        auto es = populate(*w, n, pattern);
-        for (auto _ : state) churnTagAddRemove(*w, es);
-        reportTables(state, *w);
-        state.SetItemsProcessed(state.iterations() * n);
-        state.counters["churned"] = static_cast<double>((n + 9) / 10);
-    }
-
-    template <typename W>
-    void BM_DestroyCreate(benchmark::State& state, Pattern pattern)
-    {
-        if (skipUnsupported<W>(state, false, true)) return;
-        const std::int64_t n = state.range(0);
-        auto w = std::make_unique<W>();
-        auto es = populate(*w, n, pattern);
-        Rng rng(7);
-        std::size_t round = 0;
-        for (auto _ : state) churnDestroyCreate(*w, es, round++, rng);
-        state.SetItemsProcessed(state.iterations() * n);
-    }
-
-    /** Hand-written SoA upper bound for Update2 (every entity has Position+Velocity). */
-    void BM_Update2_Reference(benchmark::State& state, Pattern)
-    {
-        const std::int64_t n = state.range(0);
-        std::vector<Position> pos(static_cast<std::size_t>(n));
-        std::vector<Velocity> vel(static_cast<std::size_t>(n));
-        Rng rng;
-        for (std::int64_t i = 0; i < n; ++i)
-        {
-            pos[i] = { rng.next(), rng.next() };
-            vel[i] = { rng.next(), rng.next() };
-        }
-        for (auto _ : state)
-        {
-            for (std::size_t i = 0; i < pos.size(); ++i) kernel::updatePosition(pos[i], vel[i], kDeltaTime);
-            benchmark::ClobberMemory();
-        }
-        state.SetItemsProcessed(state.iterations() * n);
-    }
-
-    // ---- Registration -------------------------------------------------------
-
-    template <typename F>
-    void reg(const std::string& scenario, Pattern p, const char* design, std::int64_t n, F fn, bool manualTime = false)
-    {
-        auto* b = benchmark::RegisterBenchmark((scenario + "/" + toString(p) + "/" + design).c_str(), fn, p);
-        b->Arg(n)->Unit(benchmark::kMicrosecond);
-        if (manualTime) b->UseManualTime();
+        add(scenario, p, std::move(design), n, [=] { return populated<W>(n, p, tagged); },
+            [](WorldFixture<W>& fx) { System(*fx.world); },
+            [](WorldFixture<W>& fx, Record& r) { reportTables(*fx.world, r); });
     }
 
     template <typename W>
@@ -230,17 +188,78 @@ namespace
     {
         for (Pattern p : { Pattern::Coherent, Pattern::Fragmented })
         {
-            reg("Create", p, W::kName, n, BM_Create<W>, true);
-            reg("Iter1", p, W::kName, n, [](benchmark::State& s, Pattern pp) { BM_System<W, systemIter1<W>>(s, pp, false); });
-            reg("Update2", p, W::kName, n, [](benchmark::State& s, Pattern pp) { BM_System<W, systemPhysics<W>>(s, pp, false); });
+            addCreate<W>(p, n);
+            addSystem<W, systemIter1<W>>("Iter1", p, W::kName, n);
+            addSystem<W, systemPhysics<W>>("Update2", p, W::kName, n);
         }
         const Pattern f = Pattern::Fragmented;
-        reg("Frame3", f, W::kName, n, [](benchmark::State& s, Pattern pp) { BM_System<W, systemFrame3<W>>(s, pp, false); });
-        reg("SparseQuery", f, W::kName, n, [](benchmark::State& s, Pattern pp) { BM_System<W, systemSparse<W>>(s, pp, true); });
-        reg("RandomGet", f, W::kName, n, BM_RandomGet<W>);
-        reg("AddRemove", f, W::kName, n, BM_AddRemove<W>);
-        reg("TagChurn", f, W::kName, n, BM_TagChurn<W>);
-        reg("DestroyCreate", f, W::kName, n, BM_DestroyCreate<W>);
+        addSystem<W, systemFrame3<W>>("Frame3", f, W::kName, n);
+        addSystem<W, systemSparse<W>>("SparseQuery", f, W::kName, n, true);
+
+        add("RandomGet", f, W::kName, n,
+            [=] {
+                auto fx = populated<W>(n, f);
+                std::shuffle(fx->entities.begin(), fx->entities.end(), std::mt19937(123));
+                return fx;
+            },
+            [](WorldFixture<W>& fx) {
+                float sum = 0.0f;
+                for (const auto& e : fx.entities) sum += fx.world->template find<Velocity>(e)->dx;
+                ankerl::nanobench::doNotOptimizeAway(sum);
+            });
+
+        if constexpr (W::kSupportsRemove)
+        {
+            auto churned = [n](auto&, Record& r) { r.counter("churned", static_cast<double>((n + 9) / 10)); };
+            add("AddRemove", f, W::kName, n, [=] { return populated<W>(n, f); },
+                [](WorldFixture<W>& fx) { churnAddRemove(*fx.world, fx.entities); },
+                [churned](WorldFixture<W>& fx, Record& r) { reportTables(*fx.world, r); churned(fx, r); });
+            add("TagChurn", f, W::kName, n, [=] { return populated<W>(n, f); },
+                [](WorldFixture<W>& fx) { churnTagAddRemove(*fx.world, fx.entities); },
+                [churned](WorldFixture<W>& fx, Record& r) { reportTables(*fx.world, r); churned(fx, r); });
+        }
+        if constexpr (W::kSupportsDestroy)
+        {
+            struct Churn : WorldFixture<W>
+            {
+                Rng rng{ 7 };
+                std::size_t round = 0;
+            };
+            add("DestroyCreate", f, W::kName, n,
+                [=] {
+                    auto fx = std::make_shared<Churn>();
+                    fx->entities = populate(*fx->world, n, f);
+                    return fx;
+                },
+                [](Churn& fx) { churnDestroyCreate(*fx.world, fx.entities, fx.round++, fx.rng); });
+        }
+    }
+
+    /** Hand-written SoA upper bound for Update2 (every entity has Position+Velocity). */
+    void registerRawSoA(std::int64_t n)
+    {
+        struct Soa
+        {
+            std::vector<Position> pos;
+            std::vector<Velocity> vel;
+        };
+        for (Pattern p : { Pattern::Coherent, Pattern::Fragmented })
+            add("Update2", p, "RawSoA", n,
+                [=] {
+                    auto fx = std::make_shared<Soa>();
+                    fx->pos.resize(static_cast<std::size_t>(n));
+                    fx->vel.resize(static_cast<std::size_t>(n));
+                    Rng rng;
+                    for (std::size_t i = 0; i < fx->pos.size(); ++i)
+                    {
+                        fx->pos[i] = { rng.next(), rng.next() };
+                        fx->vel[i] = { rng.next(), rng.next() };
+                    }
+                    return fx;
+                },
+                [](Soa& fx) {
+                    for (std::size_t i = 0; i < fx.pos.size(); ++i) kernel::updatePosition(fx.pos[i], fx.vel[i], kDeltaTime);
+                });
     }
 
     /** H7 fusion. Same world, same systems; only the execution strategy differs.
@@ -253,22 +272,17 @@ namespace
     {
         for (Pattern p : { Pattern::Coherent, Pattern::Fragmented })
         {
-            reg("FusionFrame", p, (name + "Seq").c_str(), n,
-                [](benchmark::State& s, Pattern pp) { BM_System<W, systemFusionFrame<W>>(s, pp, false); });
-            reg("FusionFrame", p, (name + "Fused").c_str(), n,
-                [](benchmark::State& s, Pattern pp) { BM_System<W, systemFusionFrameFused<W>>(s, pp, false); });
-            reg("FusionFrame", p, (name + "FusedGrouped").c_str(), n,
-                [](benchmark::State& s, Pattern pp) { BM_System<W, systemFusionFrameGrouped<W>>(s, pp, false); });
-            reg("FusionFrame", p, (name + "HandFused").c_str(), n,
-                [](benchmark::State& s, Pattern pp) { BM_System<W, systemFusionFrameHand<W>>(s, pp, false); });
+            addSystem<W, systemFusionFrame<W>>("FusionFrame", p, name + "Seq", n);
+            addSystem<W, systemFusionFrameFused<W>>("FusionFrame", p, name + "Fused", n);
+            addSystem<W, systemFusionFrameGrouped<W>>("FusionFrame", p, name + "FusedGrouped", n);
+            addSystem<W, systemFusionFrameHand<W>>("FusionFrame", p, name + "HandFused", n);
         }
-        reg("Frame3Sys", Pattern::Fragmented, (name + "Seq").c_str(), n,
-            [](benchmark::State& s, Pattern pp) { BM_System<W, systemFrame3Seq<W>>(s, pp, false); });
-        reg("Frame3Sys", Pattern::Fragmented, (name + "Fused").c_str(), n,
-            [](benchmark::State& s, Pattern pp) { BM_System<W, systemFrame3Fused<W>>(s, pp, false); });
+        addSystem<W, systemFrame3Seq<W>>("Frame3Sys", Pattern::Fragmented, name + "Seq", n);
+        addSystem<W, systemFrame3Fused<W>>("Frame3Sys", Pattern::Fragmented, name + "Fused", n);
     }
 
     // ---- Fusion extension points: planner x executor (QPartHinted) ----------
+
     template <int Frame, typename Planner, typename Exec, typename Host>
     void runFrame(qpart::HintedWorld& w, Exec& exec, Host& host)
     {
@@ -279,56 +293,61 @@ namespace
     }
 
     template <int Frame, typename Planner, typename Exec>
-    void BM_Planned(benchmark::State& state, Pattern pattern)
+    void addPlanned(const char* scenario, const char* design, std::int64_t n)
     {
-        const std::int64_t n = state.range(0);
-        auto w = std::make_unique<qpart::HintedWorld>();
-        auto es = populate(*w, n, pattern);
-        static Exec exec{};   // persistent (thread pool)
-        fusion::Inline host;
-        for (auto _ : state)
+        struct Fixture : WorldFixture<qpart::HintedWorld>
         {
-            runFrame<Frame, Planner>(*w, exec, host);
-            benchmark::ClobberMemory();
-        }
-        state.SetItemsProcessed(state.iterations() * n);
+            Exec exec{};   // owns its thread pool, if any
+            fusion::Inline host;
+        };
+        const Pattern f = Pattern::Fragmented;
+        add(scenario, f, design, n,
+            [=] {
+                auto fx = std::make_shared<Fixture>();
+                fx->entities = populate(*fx->world, n, f);
+                return fx;
+            },
+            [](Fixture& fx) { runFrame<Frame, Planner>(*fx.world, fx.exec, fx.host); });
     }
 
     template <int Frame>
-    void BM_AutoTuned(benchmark::State& state, Pattern pattern)
+    void addAutoTuned(const char* scenario, std::int64_t n)
     {
-        const std::int64_t n = state.range(0);
-        auto w = std::make_unique<qpart::HintedWorld>();
-        auto es = populate(*w, n, pattern);
-        fusion::AutoTuner<fusion::NeverFuse, fusion::ShareColumns, fusion::AlwaysFuse> tuner;
-        fusion::Inline e;
-        auto frame = [&] {
-            if constexpr (Frame == 0) tuner.run(*w, e, e, Integrate{}, Forces{}, Wrap{}, RotHealthSys{});
-            else tuner.run(*w, e, e, PhysicsSys{}, RotHealthSys{}, PulseSys{});
-        };
-        while (!tuner.decided()) frame();   // "measure" phase before timing
-        for (auto _ : state)
+        using Tuner = fusion::AutoTuner<fusion::NeverFuse, fusion::ShareColumns, fusion::AlwaysFuse>;
+        struct Fixture : WorldFixture<qpart::HintedWorld>
         {
-            frame();
-            benchmark::ClobberMemory();
-        }
-        state.SetItemsProcessed(state.iterations() * n);
-        state.SetLabel(std::string("chose ") + tuner.names()[tuner.chosen()]);
+            Tuner tuner;
+            fusion::Inline exec;
+            void frame()
+            {
+                if constexpr (Frame == 0) tuner.run(*world, exec, exec, Integrate{}, Forces{}, Wrap{}, RotHealthSys{});
+                else tuner.run(*world, exec, exec, PhysicsSys{}, RotHealthSys{}, PulseSys{});
+            }
+        };
+        const Pattern f = Pattern::Fragmented;
+        add(scenario, f, "AutoTuned", n,
+            [=] {
+                auto fx = std::make_shared<Fixture>();
+                fx->entities = populate(*fx->world, n, f);
+                while (!fx->tuner.decided()) fx->frame();   // the "measure" phase happens before timing
+                return fx;
+            },
+            [](Fixture& fx) { fx.frame(); },
+            [](Fixture& fx, Record& r) { r.note("chose", Tuner::names()[fx.tuner.chosen()]); });
     }
 
     template <int Frame>
     void registerFusionExec(std::int64_t n, const char* scenario)
     {
-        const Pattern f = Pattern::Fragmented;
         using fusion::AlwaysFuse, fusion::NeverFuse, fusion::ShareColumns;
-        reg(scenario, f, "NeverFuse", n, BM_Planned<Frame, NeverFuse, fusion::Inline>);
-        reg(scenario, f, "AlwaysFuse", n, BM_Planned<Frame, AlwaysFuse, fusion::Inline>);
-        reg(scenario, f, "ShareColumns", n, BM_Planned<Frame, ShareColumns, fusion::Inline>);
-        reg(scenario, f, "AutoTuned", n, BM_AutoTuned<Frame>);
-        reg(scenario, f, "ShareColumns+Tiled4K", n, BM_Planned<Frame, ShareColumns, fusion::Tiled<4096>>);
-        reg(scenario, f, "ShareColumns+Parallel", n, BM_Planned<Frame, ShareColumns, fusion::Parallel>);
-        reg(scenario, f, "DeviceAware+Offload1K", n,
-            BM_Planned<Frame, fusion::DeviceAware<ShareColumns>, fusion::Offload<fusion::EmulatedDevice, 1024>>);
+        addPlanned<Frame, NeverFuse, fusion::Inline>(scenario, "NeverFuse", n);
+        addPlanned<Frame, AlwaysFuse, fusion::Inline>(scenario, "AlwaysFuse", n);
+        addPlanned<Frame, ShareColumns, fusion::Inline>(scenario, "ShareColumns", n);
+        addAutoTuned<Frame>(scenario, n);
+        addPlanned<Frame, ShareColumns, fusion::Tiled<4096>>(scenario, "ShareColumns+Tiled4K", n);
+        addPlanned<Frame, ShareColumns, fusion::Parallel>(scenario, "ShareColumns+Parallel", n);
+        addPlanned<Frame, fusion::DeviceAware<ShareColumns>, fusion::Offload<fusion::EmulatedDevice, 1024>>(
+            scenario, "DeviceAware+Offload1K", n);
     }
 
     void registerFusion(std::int64_t n)
@@ -339,51 +358,36 @@ namespace
         // Sequential on the other designs for context
         for (Pattern p : { Pattern::Coherent, Pattern::Fragmented })
         {
-            reg("FusionFrame", p, "ArchetypeSeq", n, [](benchmark::State& s, Pattern pp) {
-                BM_System<archetype::World, systemFusionFrame<archetype::World>>(s, pp, false);
-            });
-            reg("FusionFrame", p, "SparseSetSeq", n, [](benchmark::State& s, Pattern pp) {
-                BM_System<sparse::World, systemFusionFrame<sparse::World>>(s, pp, false);
-            });
+            addSystem<archetype::World, systemFusionFrame<archetype::World>>("FusionFrame", p, "ArchetypeSeq", n);
+            addSystem<sparse::World, systemFusionFrame<sparse::World>>("FusionFrame", p, "SparseSetSeq", n);
         }
     }
 
     void registerAll(std::int64_t n)
     {
-        for (Pattern p : { Pattern::Coherent, Pattern::Fragmented }) reg("Update2", p, "RawSoA", n, BM_Update2_Reference);
 #if SUB0ECS_HAS_V1_BASELINE
-        registerDesign<v1::World>(n);
+        registerDesign<v1::World>(n);   // first: the paired baseline wherever v1 supports the scenario
 #endif
         registerDesign<sorted::World>(n);
         registerDesign<sparse::World>(n);
         registerDesign<archetype::World>(n);
         registerDesign<qpart::World>(n);
         registerDesign<qpart::HintedWorld>(n);
-        registerFusion(n);
-        // Static design must be sized at compile time for each N.
+        // Static design must be sized at compile time for each N; larger N has no instantiation.
         if (n <= 1024) registerDesign<fixed::World<1024>>(n);
         else if (n <= (1 << 17)) registerDesign<fixed::World<(1 << 17)>>(n);
         else if (n <= (1 << 20)) registerDesign<fixed::World<(1 << 20)>>(n);
-        // larger N: no static-capacity instantiation (skipped)
+        registerRawSoA(n);
+        registerFusion(n);
     }
 } // namespace
 
 int main(int argc, char** argv)
 {
-    // Flush denormals to zero (as the v1 benchmark gets implicitly via -ffast-math).
-    // The physics kernel damps velocity every step, so without FTZ/DAZ long-running
-    // benchmarks drift into denormal arithmetic and measure the FPU, not the ECS.
-    bench::flushDenormals();
     // BENCH_SIZES: comma list of entity counts ("small" = 1000 only); default 1K, 100K, 1M.
     std::vector<std::int64_t> sizes = env::list("BENCH_SIZES", { 1'000, 100'000, 1'000'000 });
     if (const char* e = std::getenv("BENCH_SIZES"); e && std::string(e) == "small") sizes = { 1'000 };
     for (std::int64_t n : sizes)
-    {
         if (n > 0) registerAll(n);
-    }
-    benchmark::Initialize(&argc, argv);
-    if (benchmark::ReportUnrecognizedArguments(argc, argv)) return 1;
-    benchmark::RunSpecifiedBenchmarks();
-    benchmark::Shutdown();
-    return 0;
+    return harness::benchMain(argc, argv, registry, "sub0ecs_bench");
 }
