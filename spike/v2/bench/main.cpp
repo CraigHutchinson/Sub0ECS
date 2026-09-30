@@ -20,6 +20,7 @@
 #include "../designs/sparse_set.hpp"
 #include "../designs/static_bitmask.hpp"
 #include "../designs/v1_adapter.hpp"
+#include "../common/systems.hpp"
 
 #if defined(__SSE__) || defined(_M_X64)
 #    include <xmmintrin.h>
@@ -239,6 +240,46 @@ namespace
         reg("DestroyCreate", f, W::kName, n, BM_DestroyCreate<W>);
     }
 
+    /** H7 fusion. Same world, same systems; only the execution strategy differs.
+     *  FusionFrame = Integrate, Forces, Wrap (share Position/Velocity) + RotHealth.
+     *  Frame3Sys   = Physics, RotHealth, Pulse (disjoint columns).
+     *  "HandFused" = the single hand-written Update2 kernel + RotHealth pass:
+     *  the upper bound automatic fusion should approach for FusionFrame. */
+    template <typename W>
+    void registerFusionFor(std::int64_t n, const std::string& name)
+    {
+        for (Pattern p : { Pattern::Coherent, Pattern::Fragmented })
+        {
+            reg("FusionFrame", p, (name + "Seq").c_str(), n,
+                [](benchmark::State& s, Pattern pp) { BM_System<W, systemFusionFrame<W>>(s, pp, false); });
+            reg("FusionFrame", p, (name + "Fused").c_str(), n,
+                [](benchmark::State& s, Pattern pp) { BM_System<W, systemFusionFrameFused<W>>(s, pp, false); });
+            reg("FusionFrame", p, (name + "FusedGrouped").c_str(), n,
+                [](benchmark::State& s, Pattern pp) { BM_System<W, systemFusionFrameGrouped<W>>(s, pp, false); });
+            reg("FusionFrame", p, (name + "HandFused").c_str(), n,
+                [](benchmark::State& s, Pattern pp) { BM_System<W, systemFusionFrameHand<W>>(s, pp, false); });
+        }
+        reg("Frame3Sys", Pattern::Fragmented, (name + "Seq").c_str(), n,
+            [](benchmark::State& s, Pattern pp) { BM_System<W, systemFrame3Seq<W>>(s, pp, false); });
+        reg("Frame3Sys", Pattern::Fragmented, (name + "Fused").c_str(), n,
+            [](benchmark::State& s, Pattern pp) { BM_System<W, systemFrame3Fused<W>>(s, pp, false); });
+    }
+
+    void registerFusion(std::int64_t n)
+    {
+        registerFusionFor<qpart::HintedWorld>(n, "QPartHinted");
+        // Sequential on the other designs for context
+        for (Pattern p : { Pattern::Coherent, Pattern::Fragmented })
+        {
+            reg("FusionFrame", p, "ArchetypeSeq", n, [](benchmark::State& s, Pattern pp) {
+                BM_System<archetype::World, systemFusionFrame<archetype::World>>(s, pp, false);
+            });
+            reg("FusionFrame", p, "SparseSetSeq", n, [](benchmark::State& s, Pattern pp) {
+                BM_System<sparse::World, systemFusionFrame<sparse::World>>(s, pp, false);
+            });
+        }
+    }
+
     void registerAll(std::int64_t n)
     {
         for (Pattern p : { Pattern::Coherent, Pattern::Fragmented }) reg("Update2", p, "RawSoA", n, BM_Update2_Reference);
@@ -248,6 +289,7 @@ namespace
         registerDesign<archetype::World>(n);
         registerDesign<qpart::World>(n);
         registerDesign<qpart::HintedWorld>(n);
+        registerFusion(n);
         // Static design must be sized at compile time for each N.
         if (n <= 1024) registerDesign<fixed::World<1024>>(n);
         else if (n <= (1 << 17)) registerDesign<fixed::World<(1 << 17)>>(n);

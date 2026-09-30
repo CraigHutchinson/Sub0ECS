@@ -224,7 +224,8 @@ applied to systems ([Halide](https://dl.acm.org/doi/10.1145/2491956.2462176)).
 5. **C3 phases for order conflicts (P2).** Reference sets stay as the
    alternative when the permute cost is higher (few columns touched, large
    partitions). Replicas remain last resort, as before.
-6. **C4 fusion later**, once systems are scheduled through Sub0Pipeline.
+6. **C4 fusion, prototyped early (H7) at your request:** 3.5–5.3× on
+   column-sharing systems, a loss on disjoint ones. See [fusion.md](fusion.md).
 7. The binding abstraction (research §4.3.5, one column-view type) **still
    stands**. C2 adds a `per_run` accessor (the value is constant per run)
    next to `direct`, `indexed`, `referenced` and `uniform`.

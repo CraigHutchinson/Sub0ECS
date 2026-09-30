@@ -178,3 +178,26 @@ controlling partition granularity is. The review ranks composition options
 ahead of references and replicas, re-scopes H2 into H2a (granularity), H2b
 (system tree) and H6′ (parent/child runs), and lists findings F1–F9 to carry
 into implementation.
+
+## H7 results: system fusion
+
+Design and prototype: [research/fusion.md](research/fusion.md). Numbers:
+[results/h7-fusion-linux-gcc13.md](results/h7-fusion-linux-gcc13.md).
+
+**Verdict: fusion works and is worth designing in now.** Three small systems
+that share Position/Velocity (the Update2 kernel split into Integrate,
+Forces and Wrap) plus one unrelated system run **3.5–5.3× faster fused than
+as sequential passes**, at every size from 1K to 1M. They match or beat the
+hand-merged kernel, and the output is bit-identical to sequential
+execution. Writing many small systems therefore costs nothing once fused.
+
+Two constraints came out of the prototype:
+
+1. **Only fuse systems that share data.** Fusing Frame3's three systems,
+   which touch disjoint columns, is 0.64–0.86× (slower). Planner rule: fuse
+   connected components of the "shares a column" graph; an unrelated
+   member inside a sharing group is neutral.
+2. **Fusion depends on full inlining.** Without `flatten`, GCC stopped
+   inlining in the large benchmark translation unit and fused ran at
+   sequential speed. Production code needs forced inlining per compiler
+   plus a benchmark guard that fused ≈ hand-merged.

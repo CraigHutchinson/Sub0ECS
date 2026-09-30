@@ -7,6 +7,7 @@
 #include <string>
 
 #include "../common/scenarios.hpp"
+#include "../common/systems.hpp"
 #include "../designs/archetype.hpp"
 #include "../designs/query_partition.hpp"
 #include "../designs/sorted_soa.hpp"
@@ -108,6 +109,47 @@ namespace
         check(r.matchedSparse == ref.matchedSparse, tag + ": sparse match count");
         if (structural) check(r.structural == ref.structural, tag + ": structural checksum");
     }
+
+    // ---- H7 fusion: fused passes must equal sequential passes bit-for-bit ----
+
+    enum class Exec { Sequential, Fused, Grouped, Update2Kernel };
+
+    template <typename W>
+    double fusionRun(spike::Pattern pattern, Exec exec)
+    {
+        using namespace spike;
+        auto w = std::make_unique<W>();
+        auto es = populate(*w, kN, pattern);
+        tagEveryHundredth(*w, es);
+        auto frame = [&] {
+            if (exec == Exec::Sequential) { systemFusionFrame(*w); systemFrame3Seq(*w); }
+            else if (exec == Exec::Update2Kernel)
+            {
+                // FusionFrame's split kernels applied in order == kernel::updatePosition
+                systemPhysics(*w);
+                runSequential(*w, RotHealthSys{});
+                systemFrame3Seq(*w);
+            }
+            else if (exec == Exec::Grouped)
+            {
+                if constexpr (requires { w->runFused(Integrate{}); }) { systemFusionFrameGrouped(*w); systemFrame3Seq(*w); }
+            }
+            else
+            {
+                if constexpr (requires { w->runFused(Integrate{}); }) { systemFusionFrameFused(*w); systemFrame3Fused(*w); }
+            }
+        };
+        for (int i = 0; i < 3; ++i) frame();
+        // Structural change between frames: partitions' system subsets change
+        // (Medium entities gain Color -> start matching Pulse).
+        for (std::size_t i = 0; i < es.size(); i += 4)
+        {
+            if (w->template find<Scale>(es[i]) && !w->template find<Color>(es[i])) w->add(es[i], Color{});
+        }
+        w->commit();
+        for (int i = 0; i < 2; ++i) frame();
+        return checksum(*w, es);
+    }
 } // namespace
 
 int main()
@@ -127,6 +169,21 @@ int main()
         compare<fixed::World<16384>>("StaticBitmask", pattern, ref, true);
         compare<qpart::World>("QueryPart", pattern, ref, true);
         compare<qpart::HintedWorld>("QPartHinted", pattern, ref, true);
+
+        // H7 fusion
+        const double fRef = fusionRun<sparse::World>(pattern, Exec::Sequential);
+        const double fKernel = fusionRun<sparse::World>(pattern, Exec::Update2Kernel);
+        const double fSeq = fusionRun<qpart::HintedWorld>(pattern, Exec::Sequential);
+        const double fFused = fusionRun<qpart::HintedWorld>(pattern, Exec::Fused);
+        const double fFusedAuto = fusionRun<qpart::World>(pattern, Exec::Fused);
+        const double fGrouped = fusionRun<qpart::HintedWorld>(pattern, Exec::Grouped);
+        check(fGrouped == fRef, std::string("fusion/") + toString(pattern) + ": grouped fusion == sequential");
+        std::printf("  fusion: seq(SparseSet)=%.6f split==Update2=%s seq(QPartHinted)=%.6f fused(QPartHinted)=%.6f fused(QueryPart)=%.6f\n",
+                    fRef, fRef == fKernel ? "yes" : "no", fSeq, fFused, fFusedAuto);
+        const std::string ft = std::string("fusion/") + toString(pattern);
+        check(fSeq == fRef, ft + ": sequential QPartHinted == SparseSet");
+        check(fFused == fRef, ft + ": fused QPartHinted == sequential");
+        check(fFusedAuto == fRef, ft + ": fused QueryPart == sequential");
     }
     std::printf(failures ? "\n%d FAILURE(S)\n" : "\nALL DESIGNS CONFORM\n", failures);
     return failures ? EXIT_FAILURE : EXIT_SUCCESS;

@@ -39,6 +39,7 @@
 
 #include "../common/components.hpp"
 #include "../common/entity.hpp"
+#include "../common/query.hpp"
 
 namespace spike::qpart
 {
@@ -46,7 +47,7 @@ namespace spike::qpart
     inline constexpr std::uint32_t kMaxTypes = 64;
     inline constexpr std::int8_t kNoColumn = -1;
 
-    template <typename... Cs> struct Query {};
+    using spike::Query;
     template <typename... Cs> struct Volatile {};
 
     template <typename T>
@@ -308,9 +309,110 @@ namespace spike::qpart
 
         void commit() {}
 
+        /** H7 system fusion: one pass per partition applying every system that
+         *  matches it, in argument (= schedule) order, row by row.
+         *
+         *  Legal because each system is row-local (touches only the current
+         *  entity's components) and no structural change happens inside the
+         *  group, so per-row interleaving equals running the passes back to back.
+         *  The subset of systems per partition is resolved once per partition
+         *  and dispatched to a compile-time specialised loop, so the inner loop
+         *  has no per-row branches on "does system j apply". */
+        template <typename... Systems>
+        void runFused(const Systems&... systems)
+        {
+            constexpr std::size_t k = sizeof...(Systems);
+            static_assert(k >= 1 && k <= 6, "spike: 2^k loop specialisations");
+            static_assert(((indexOf<typename Systems::Query, Qs...>() < kQueries) && ...),
+                          "every fused system must use a declared query");
+            constexpr std::array<std::size_t, k> qidx{ indexOf<typename Systems::Query, Qs...>()... };
+
+            for (auto& up : partitions_)
+            {
+                Partition& p = *up;
+                const std::size_t n = p.size();
+                if (n == 0) continue;
+                unsigned subset = 0;
+                for (std::size_t j = 0; j < k; ++j)
+                {
+                    if (p.signature & (1u << qidx[j])) subset |= 1u << j;
+                }
+                if (subset != 0) dispatchSubset<0>(subset, p, n, systems...);
+            }
+        }
+
         std::size_t partitionCount() const { return partitions_.size(); }
 
     private:
+        // ---- fusion helpers ----
+        template <unsigned M, typename... Systems>
+        void dispatchSubset(unsigned subset, Partition& p, std::size_t n, const Systems&... systems)
+        {
+            if constexpr (M < (1u << sizeof...(Systems)))
+            {
+                if (subset == M) fusedLoop<M>(p, n, std::index_sequence_for<Systems...>{}, systems...);
+                else dispatchSubset<M + 1>(subset, p, n, systems...);
+            }
+        }
+
+        // Union of all component types used by the fused systems (deduplicated).
+        template <typename... Ts> struct TypeList {};
+        template <typename L, typename T> struct Append;
+        template <typename... Ts, typename T>
+        struct Append<TypeList<Ts...>, T>
+        {
+            using type = std::conditional_t<(std::is_same_v<T, Ts> || ...), TypeList<Ts...>, TypeList<Ts..., T>>;
+        };
+        template <typename L, typename Q> struct AppendQuery { using type = L; };
+        template <typename L, typename C, typename... Cs>
+        struct AppendQuery<L, Query<C, Cs...>>
+        {
+            using type = typename AppendQuery<typename Append<L, C>::type, Query<Cs...>>::type;
+        };
+        template <typename L, typename... Qs2> struct UnionOf { using type = L; };
+        template <typename L, typename Q, typename... Rest>
+        struct UnionOf<L, Q, Rest...>
+        {
+            using type = typename UnionOf<typename AppendQuery<L, Q>::type, Rest...>::type;
+        };
+
+        /** ONE pointer per component type for the whole fused group. Systems that
+         *  share a component therefore share the same pointer, so after inlining
+         *  the compiler sees a single merged kernel (no false aliasing between
+         *  per-system copies of the same column). Types only used by systems that
+         *  are inactive for this partition may have no column: nullptr, never read. */
+        template <typename... Ts>
+        static std::tuple<Ts*...> bindUnion(Partition& p, TypeList<Ts...>)
+        {
+            return { (p.columnOf[typeId<Ts>()] != kNoColumn
+                          ? reinterpret_cast<Ts*>(p.columns[p.columnOf[typeId<Ts>()]].bytes.data())
+                          : nullptr)... };
+        }
+
+        template <bool Active, typename S, typename Cols, typename... Cs>
+        static void step(const S& s, const Cols& cols, std::size_t i, Query<Cs...>)
+        {
+            if constexpr (Active) s(std::get<Cs*>(cols)[i]...);
+        }
+
+        // Fusion only pays if every system body is inlined into one loop body
+        // (then the compiler sees a single merged kernel). Left to heuristics,
+        // GCC stopped inlining in large TUs (spike_bench) and the fused loop ran
+        // at unfused speed, so force it: flatten = inline everything called here.
+        template <unsigned M, std::size_t... J, typename... Systems>
+#if defined(__GNUC__)
+        __attribute__((flatten))
+#endif
+        void fusedLoop(Partition& p, std::size_t n, std::index_sequence<J...>, const Systems&... systems)
+        {
+            using Types = typename UnionOf<TypeList<>, typename Systems::Query...>::type;
+            const auto cols = bindUnion(p, Types{});
+            for (std::size_t i = 0; i < n; ++i)
+            {
+                (step<((M >> J) & 1u) != 0>(systems, cols, i, typename Systems::Query{}), ...);
+            }
+        }
+
         struct Record   // 16 bytes
         {
             std::uint32_t partition = 0;   // index into partitions_
