@@ -9,10 +9,8 @@
 
 #include <memory>
 #include <string>
-#if defined(__SSE__) || defined(_M_X64)
-#    include <xmmintrin.h>
-#endif
 
+#include "../common/denormals.hpp"
 #include "../common/env.hpp"
 #include "sim.hpp"
 #include "runners.hpp"
@@ -79,9 +77,7 @@ namespace
 
 int main(int argc, char** argv)
 {
-#if defined(__SSE__) || defined(_M_X64)
-    _mm_setcsr(_mm_getcsr() | 0x8040u);
-#endif
+    bench::flushDenormals();
     // SKIRMISH_UPT: units per team (4 teams); default 1K / 10K / 50K units.
     for (std::int64_t uptL : bench::env::list("SKIRMISH_UPT", { 250, 2500, 12500 }))
     {

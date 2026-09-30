@@ -61,6 +61,7 @@
             "name": "ci-msvc",
             "displayName": "CI: MSVC via the Visual Studio generator (no developer prompt needed)",
             "binaryDir": "${sourceDir}/build/${presetName}",
+            "toolset": { "value": "host=x64", "strategy": "set" },
             "cacheVariables": {
                 "SUB0ECS_BUILD_TESTING": "ON",
                 "SUB0ECS_BUILD_BENCHMARKS": "ON"

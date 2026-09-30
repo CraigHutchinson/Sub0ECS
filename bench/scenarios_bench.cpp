@@ -13,6 +13,7 @@
 #include <new>
 #include <string>
 
+#include "common/denormals.hpp"
 #include "common/env.hpp"
 #include "common/scenarios.hpp"
 #include "designs/archetype.hpp"
@@ -20,14 +21,13 @@
 #include "designs/sorted_soa.hpp"
 #include "designs/sparse_set.hpp"
 #include "designs/static_bitmask.hpp"
-#include "designs/v1_adapter.hpp"
+#if SUB0ECS_HAS_V1_BASELINE
+#    include "designs/v1_adapter.hpp"
+#endif
 #include "common/systems.hpp"
 #include <sub0ecs/fusion/executors.hpp>
 #include <sub0ecs/fusion/planner.hpp>
 
-#if defined(__SSE__) || defined(_M_X64)
-#    include <xmmintrin.h>
-#endif
 
 // ---- Heap accounting (glibc) ----------------------------------------------
 #if defined(__GLIBC__)
@@ -351,7 +351,9 @@ namespace
     void registerAll(std::int64_t n)
     {
         for (Pattern p : { Pattern::Coherent, Pattern::Fragmented }) reg("Update2", p, "RawSoA", n, BM_Update2_Reference);
+#if SUB0ECS_HAS_V1_BASELINE
         registerDesign<v1::World>(n);
+#endif
         registerDesign<sorted::World>(n);
         registerDesign<sparse::World>(n);
         registerDesign<archetype::World>(n);
@@ -371,9 +373,7 @@ int main(int argc, char** argv)
     // Flush denormals to zero (as the v1 benchmark gets implicitly via -ffast-math).
     // The physics kernel damps velocity every step, so without FTZ/DAZ long-running
     // benchmarks drift into denormal arithmetic and measure the FPU, not the ECS.
-#if defined(__SSE__) || defined(_M_X64)
-    _mm_setcsr(_mm_getcsr() | 0x8040u);
-#endif
+    bench::flushDenormals();
     // BENCH_SIZES: comma list of entity counts ("small" = 1000 only); default 1K, 100K, 1M.
     std::vector<std::int64_t> sizes = env::list("BENCH_SIZES", { 1'000, 100'000, 1'000'000 });
     if (const char* e = std::getenv("BENCH_SIZES"); e && std::string(e) == "small") sizes = { 1'000 };

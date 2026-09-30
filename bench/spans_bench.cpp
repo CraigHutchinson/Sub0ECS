@@ -2,7 +2,7 @@
 // Evidence for design-review-pre-h2.md §3 (is cross-partition contiguity worth H2?).
 #include <benchmark/benchmark.h>
 #include <vector>
-#include <xmmintrin.h>
+#include "common/denormals.hpp"
 #include "common/components.hpp"
 using namespace bench;
 static void BM_Spans(benchmark::State& st) {
@@ -20,4 +20,4 @@ static void BM_Spans(benchmark::State& st) {
     st.counters["per_span"] = double(n) / double(k);
 }
 BENCHMARK(BM_Spans)->Arg(1)->Arg(6)->Arg(64)->Arg(512)->Arg(4096)->Arg(16384)->Unit(benchmark::kMicrosecond);
-int main(int argc, char** argv) { _mm_setcsr(_mm_getcsr() | 0x8040u); benchmark::Initialize(&argc, argv); benchmark::RunSpecifiedBenchmarks(); }
+int main(int argc, char** argv) { bench::flushDenormals(); benchmark::Initialize(&argc, argv); benchmark::RunSpecifiedBenchmarks(); }

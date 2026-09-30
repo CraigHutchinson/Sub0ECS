@@ -13,7 +13,9 @@
 #include "../bench/designs/sorted_soa.hpp"
 #include "../bench/designs/sparse_set.hpp"
 #include "../bench/designs/static_bitmask.hpp"
-#include "../bench/designs/v1_adapter.hpp"
+#if SUB0ECS_HAS_V1_BASELINE
+#    include "../bench/designs/v1_adapter.hpp"
+#endif
 
 namespace
 {
@@ -150,7 +152,9 @@ TEST_CASE("every design reproduces the reference state bit-for-bit")
         const Result ref = run<sparse::World>(pattern);
         check(ref.matchedSparse == static_cast<std::size_t>((kN + 99) / 100), "reference sparse match count");
 
+#if SUB0ECS_HAS_V1_BASELINE   // v1 does not compile with Clang (bench/CMakeLists.txt)
         compare<v1::World>("V1", pattern, ref, false);
+#endif
         compare<sorted::World>("SortedSoA", pattern, ref, true);
         compare<archetype::World>("Archetype", pattern, ref, true);
         compare<fixed::World<16384>>("StaticBitmask", pattern, ref, true);

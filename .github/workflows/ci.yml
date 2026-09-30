@@ -40,7 +40,8 @@ jobs:
       - name: Configure
         run: cmake --preset ci-msvc
       - name: Build (tests + benchmarks)
-        run: cmake --build --preset ci-msvc
+        # The benchmark TUs instantiate every design x scenario: several GB per cl.exe
+        run: cmake --build --preset ci-msvc --parallel 2
       - name: Test
         run: ctest --preset ci-msvc
 

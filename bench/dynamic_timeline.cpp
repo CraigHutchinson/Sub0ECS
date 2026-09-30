@@ -18,10 +18,8 @@
 #include <memory>
 #include <string>
 #include <vector>
-#if defined(__SSE__) || defined(_M_X64)
-#    include <xmmintrin.h>
-#endif
 
+#include "common/denormals.hpp"
 #include "common/scenarios.hpp"
 #include "designs/query_partition.hpp"
 
@@ -75,9 +73,7 @@ namespace
 
 int main(int argc, char** argv)
 {
-#if defined(__SSE__) || defined(_M_X64)
-    _mm_setcsr(_mm_getcsr() | 0x8040u);
-#endif
+    bench::flushDenormals();
     const std::int64_t n = argc > 1 ? std::atoll(argv[1]) : 1'000'000;
     const int frames = argc > 2 ? std::atoi(argv[2]) : 60;
     const char* out = argc > 3 ? argv[3] : nullptr;

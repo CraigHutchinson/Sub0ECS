@@ -159,7 +159,7 @@ namespace bench::sorted
         void each(F&& f)
         {
             std::tuple<Pool<Cs>*...> pools{ findPool<Cs>()... };
-            if (((std::get<Pool<Cs>*>(pools) == nullptr) || ...)) return;
+            if ((!std::get<Pool<Cs>*>(pools) || ...)) return;
             (flushIfDirty(*std::get<Pool<Cs>*>(pools)), ...);
 
             if constexpr (sizeof...(Cs) == 1)

@@ -105,7 +105,7 @@ namespace bench::sparse
         void each(F&& f)
         {
             std::tuple<Pool<Cs>*...> pools{ findPool<Cs>()... };
-            if (((std::get<Pool<Cs>*>(pools) == nullptr) || ...)) return;
+            if ((!std::get<Pool<Cs>*>(pools) || ...)) return;
 
             if constexpr (sizeof...(Cs) == 1)
             {

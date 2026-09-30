@@ -64,6 +64,8 @@ so rows are comparable across designs within a scenario.
   `/arch:AVX2` with `SUB0ECS_NATIVE=ON` (the `bench-native` preset).
 - v1 is compiled from [`baselines/v1/`](baselines/v1/) unmodified; its warnings are
   silenced as SYSTEM headers only.
+  v1 does not compile with Clang (it calls members of an incomplete type), so
+  Clang builds compare every design except v1 (`SUB0ECS_HAS_V1_BASELINE`).
 
 ## Benchmark harness
 

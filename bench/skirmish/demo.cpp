@@ -9,10 +9,8 @@
 #include <memory>
 #include <string>
 #include <vector>
-#if defined(__SSE__) || defined(_M_X64)
-#    include <xmmintrin.h>
-#endif
 
+#include "../common/denormals.hpp"
 #include "sim.hpp"
 #include "worlds.hpp"
 
@@ -20,9 +18,7 @@ using namespace skirmish;
 
 int main(int argc, char** argv)
 {
-#if defined(__SSE__) || defined(_M_X64)
-    _mm_setcsr(_mm_getcsr() | 0x8040u);
-#endif
+    bench::flushDenormals();
     Config cfg;
     cfg.unitsPerTeam = argc > 1 ? std::atoi(argv[1]) : 1000;
     const int ticks = argc > 2 ? std::atoi(argv[2]) : 900;
