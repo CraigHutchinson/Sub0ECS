@@ -16,9 +16,9 @@ storage design plays the same game**, and the conformance test proves it
 bit for bit.
 
 ```
-skirmish_demo 1000 900      # play 30 s of game time, print stats, a minimap and per-system costs
-skirmish_conformance        # all designs + fused/sequential must produce the identical game
-skirmish_bench              # ms per tick per design at 1K / 10K / 50K units, with per-system counters
+sub0ecs_skirmish_demo 1000 900      # play 30 s of game time, print stats, a minimap and per-system costs
+sub0ecs_tests        # all designs + fused/sequential must produce the identical game
+sub0ecs_skirmish_bench              # ms per tick per design at 1K / 10K / 50K units, with per-system counters
 ```
 
 ## Why an RTS

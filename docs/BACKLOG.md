@@ -2,30 +2,44 @@
 
 Branch: `v2` (holding branch; `claude/sub0ecs-v2-design-spike-ndbal6` is its
 history). Decided: the v2 core is the archetype-class **query-partition store**
-(H1 hinted model, [designs/query_partition.hpp](designs/query_partition.hpp)). The
+(H1 hinted model, [store/world.hpp](../include/sub0ecs/store/world.hpp)). The
 alternative designs and v1 stay **only as benchmark comparators**, so every claim
 stays honest against them.
 
 Status key: ☐ open · ◐ in progress · ☑ done.
 
-## 1. Promote the spike into the library layout (blocking everything below)
+## 1. Promote the spike into the library layout ☑ (2026-09-30)
 
-Target: the Sub0Pipeline shape. Audit of every file outside `spike/`, 2026-09-30:
-everything v1-specific outside `source/` is stale, and the top-level build no longer
-configures.
+Done: header-only `Sub0ECS::Sub0ECS` in `include/sub0ecs/`, split into single-
+responsibility headers (`store/`, `fusion/executors/`, `fusion/planners/`); comparators,
+v1 (byte-identical) and the harness in `bench/`; doctest suites in `tests/`
+(57 cases, 741,669 assertions, versus v1's 114 cases and 339 assertions); findings
+and research in `docs/`; one `ci.yml`; README, CLAUDE.md and STYLE_GUIDE.md. The v1
+tests, samples, benchmarks, workflows and build scaffolding were removed (`master`
+keeps v1). Promoting the code surfaced and fixed three edge-case defects, and an
+edge-cache bug that dropped entities holding 64 column types out of every query.
+Component type indices are now per World type, not process-wide.
 
-| | Item |
-|---|---|
-| ☐ | `include/sub0ecs/`: header-only `INTERFACE` library `Sub0ECS::Sub0ECS`. `store.hpp` (from `designs/query_partition.hpp`, namespace `sub0ecs::store`, which maps 1:1 onto a later Sub0DataStore extraction, D2), `entity.hpp`, `query.hpp`, `fusion/{access,executors/*,planners/*}.hpp`. The spike-workload `World`/`HintedWorld` aliases move to a bench adapter |
-| ☐ | `bench/`: other designs (`archetype`, `sparse_set`, `sorted_soa`, `static_bitmask`, `v1_adapter`), benchmark components/scenarios/systems (namespace `bench`), Skirmish testbed, `tools/` (run/compare/summarize/suites), `results/` |
-| ☐ | `bench/baselines/v1/SubzeroECS/`: `source/SubzeroECS/` moved whole and **byte-identical** (the adapter needs transitive headers such as `Utility/StructOfVector.hpp`) |
-| ☐ | `tests/`: storage conformance, fusion, dynamic, Skirmish lockstep; `docs/`: FINDINGS, research |
-| ☐ | Root `CMakeLists.txt` + `CMakePresets.json` rewritten (default / bench-native / bench-portable / sanitize, plus MSVC). Keep `cmake/CPM.cmake` only |
-| ☐ | Remove v1-only material: `test/` (v1 gtest), `samples/`, `benchmarks/` (superseded by `spike_bench` Update2: same kernels and entity mix, v1 run unmodified), `all/`, `.github/workflows/*` (all target deleted dirs), `cmake/{Version,tools,FindFmt,FindGTest,FindBenchmark}.cmake`, `.cmake-format`, `codecov.yaml`. `master` keeps v1 |
-| ☐ | Keep: `LICENSE`, `NOTICE`, `COMMERCIAL-LICENSE.md`, `.github/ISSUE_TEMPLATE/*` (the licence-request process cross-references them) |
-| ☐ | One `.github/workflows/ci.yml` (GCC, Clang, MSVC + ASan/UBSan job), triggered on `v2` |
-| ☐ | `README.md` rewritten for v2; `CLAUDE.md` (build/test/API-change rules); `STYLE_GUIDE.md` (`CONTRIBUTING.md` already promises one); `.gitignore` additions (`build-*/`, `CMakeUserPresets.json`, `.cache/`) |
-| ☐ | Reword provenance comments that cite `benchmarks/update_patterns` to "v1's published benchmark (see master)" |
+## 1b. Store capability configuration (component-type capacity) ☐
+
+Today: `Mask = std::uint64_t`, `kMaxTypes = 64`, per World type; a 65th type terminates.
+Bits are needed only by **fragmenting** components (queried ones, plus carried ones in
+carry mode). Volatile components and, in pure mode, every unqueried component never
+enter a mask. Options:
+
+| Option | Mechanism | Cost | Notes |
+|---|---|---|---|
+| A | Config as a World template parameter: option tags (`World<Queries, Volatile<...>, MaxTypes<128>>`) or a traits struct | None at runtime | Per World type, like `Volatile`. Order-independent tags extend without breaking signatures |
+| B | Mask type from the requested width: `uint32_t` / `uint64_t` / `WideMask<Words>` (array of words: and/or/test/iterate/hash) | Wider masks cost more per structural move and partition lookup; iteration is unaffected | `unsigned __int128` is not available on MSVC; `std::bitset` lacks bit iteration and a cheap hash |
+| C | Tiered indices: queried types first (compile time known, so a `static_assert` on the query set), carried types next while bits last, overflow types fall back to side storage automatically | None when within budget | Removes the runtime hard limit: overflow degrades locality, never correctness. Runtime `addQuery` of a type without a bit fails cleanly |
+| D | Non-fragmenting types get unbounded indices (growable side-pool table) | None | Pure-mode and Volatile types stop counting against the limit at all |
+| E | Macro (`SUB0ECS_MAX_TYPES`) | None | Process-wide ODR hazard; rejected |
+
+Recommended: **A + C + D**, with B for opt-in widths (default stays one 64-bit word).
+The limit then applies only where it must, to components that decide the layout, and
+it is checked at compile time for declared queries. Per-partition fixed tables sized
+by `kMaxTypes` (`base`, `columnOf`, edge caches) need a sparse form before widths
+beyond 64 are practical. Gate: benchmarks unchanged at the default width.
 
 ## 2. Examples: one per feature and alternative (required for landing)
 
@@ -80,6 +94,6 @@ Design: [research/executor-async.md](research/executor-async.md).
 |---|---|
 | ☑ | MSVC 19.51: all spike targets clean at `/W4 /permissive-`; four suites pass (2026-09-30) |
 | ☑ | Benchmark harness runs on Windows (fingerprint, hybrid P/E map, `--pin P`) |
-| ◐ | Reference capture on the i9 275HX (MSVC, P-cores pinned + thread ladder to 24) |
-| ☐ | Linux GCC/Clang re-run on the promoted layout (CI), plus ASan/UBSan/TSan |
-| ☐ | Convert hand-rolled test mains to doctest (Sub0Pipeline convention) during promotion |
+| ◐ | Reference capture on the Core Ultra 9 275HX (MSVC, P-cores pinned + thread ladder to 24) |
+| ☑ | Promoted layout: `default`, `ci-msvc` and `sanitize` (MSVC ASan) presets pass; tests converted to doctest |
+| ☐ | Linux GCC/Clang and ASan/UBSan in CI (`ci.yml`); a TSan job for the executors |

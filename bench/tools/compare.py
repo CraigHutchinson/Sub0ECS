@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Compare two benchmark runs produced by run.py (A = baseline, B = candidate).
 
-    python3 tools/bench/compare.py <runA> <runB> [--threshold 0.05] [--fail-on-regression]
+    python3 bench/tools/compare.py <runA> <runB> [--threshold 0.05] [--fail-on-regression]
 
 For every benchmark present in both runs the median times are compared.
 A change counts as significant only if it exceeds both the threshold and the
@@ -39,7 +39,7 @@ def load_run(d):
 
 def machine_diff(ma, mb):
     keys = [("cpu", "Model name"), ("cpu", "logical_cpus"), ("build", "cxx_version"), ("build", "cxx_flags_release"),
-            ("build", "spike_native"), ("os", "release"), ("git", "sha"), ("git", "dirty"), ("run", "profile")]
+            ("build", "native"), ("os", "release"), ("git", "sha"), ("git", "dirty"), ("run", "profile")]
     out = []
     for a, b in keys:
         va, vb = ma.get(a, {}).get(b), mb.get(a, {}).get(b)

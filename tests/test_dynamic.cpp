@@ -14,7 +14,7 @@
 #include "../bench/common/systems.hpp"
 #include "../bench/designs/query_partition.hpp"
 #include "../bench/designs/sparse_set.hpp"
-#include "doctest.h"
+#include <doctest/doctest.h>
 
 using namespace bench;
 

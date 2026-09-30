@@ -1,6 +1,6 @@
 /** Skirmish demo: play one game headless and report what happened.
  *
- *   skirmish_demo [unitsPerTeam=1000] [ticks=900]
+ *   sub0ecs_skirmish_demo [unitsPerTeam=1000] [ticks=900]
  *
  * Runs on the recommended design (query partitions, hinted, fused movement).
  */

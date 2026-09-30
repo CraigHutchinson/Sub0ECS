@@ -5,7 +5,7 @@ architecture. It follows the storage-model spike in [../FINDINGS.md](../FINDINGS
 
 > Status: research / proposal, not a decision. Every design claim here is meant
 > to be tested by the spikes in [§8](#8-validation-plan) against the baseline
-> in [../results/](../results/).
+> in [../results/](../../bench/results/).
 
 > **Design review before H2:** [design-review-pre-h2.md](design-review-pre-h2.md)
 > reframes the "entity in two systems" problem. The partition model has no
@@ -588,7 +588,7 @@ world.schedule(pipeline);   // Sub0Pipeline jobs + commit edges derived from acc
 ## 8. Validation plan
 
 These are spikes on the existing harness, compared to
-[baseline-linux-gcc13](../results/baseline-linux-gcc13.md) numbers.
+[baseline-linux-gcc13](../../bench/results/baseline-linux-gcc13.md) numbers.
 
 | Spike | Build | Success criterion |
 |---|---|---|

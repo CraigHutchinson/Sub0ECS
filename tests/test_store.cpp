@@ -16,7 +16,7 @@
 #include <sub0ecs/store.hpp>
 
 #include "../bench/common/components.hpp"
-#include "doctest.h"
+#include <doctest/doctest.h>
 
 using namespace bench;   // components: Position, Velocity, Health, Rotation, Scale, Frozen
 using sub0ecs::Entity;
@@ -31,7 +31,7 @@ namespace
     // column in carry mode, side storage in pure mode), Frozen (Volatile in carry mode).
     using Queries = std::tuple<Query<Position>, Query<Position, Velocity>, Query<Health, Rotation>>;
     using PureWorld = BasicWorld<false, Queries>;
-    using HintedWorld = BasicWorld<true, Queries, Volatile<Frozen>>;
+    using HintedWorld = sub0ecs::store::World<Queries, Volatile<Frozen>>;   // the recommended model
 
     template <typename W, typename... Cs>
     std::size_t count(W& w)

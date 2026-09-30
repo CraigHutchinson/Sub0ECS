@@ -1,6 +1,6 @@
 /** H9 timeline: cost of paging a system in at runtime.
  *
- *   spike_dynamic_timeline [N=1000000] [frames=60] [out.json]
+ *   sub0ecs_dynamic_timeline [N=1000000] [frames=60] [out.json]
  *
  * World: QPartHinted, fragmented, Frozen (Volatile → side storage) on 50% of
  * entities. At frame 0 a system over <Position, Velocity, Frozen> is added,

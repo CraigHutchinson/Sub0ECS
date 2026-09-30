@@ -5,7 +5,7 @@
 
 #include <sub0ecs/entity.hpp>
 
-#include "doctest.h"
+#include <doctest/doctest.h>
 
 using sub0ecs::Entity;
 using sub0ecs::EntityAllocator;

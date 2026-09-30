@@ -5,13 +5,13 @@ threads cooperate on each phase, with barriers) or independent working
 (threads or engines progress without global barriers)?
 
 Evidence comes from the real workload: the Skirmish RTS
-([testbed/skirmish](../testbed/skirmish/README.md)) on a 4-core VM
+([testbed/skirmish](../../bench/skirmish/README.md)) on a 4-core VM
 (1 thread per core), plus the fusion micro-scenarios.
 - Code: `Parallel` pool and `InlineRange` in
-  [fusion/executors/parallel.hpp](../fusion/executors/parallel.hpp) and [fusion/executors/inline.hpp](../fusion/executors/inline.hpp); `eachParallel` and
-  `runFusedParallel` in [designs/query_partition.hpp](../designs/query_partition.hpp);
-  per-worker command buffers in [testbed/skirmish/sim.hpp](../testbed/skirmish/sim.hpp).
-- Numbers: [results/threading-skirmish-linux-gcc13.json](../results/threading-skirmish-linux-gcc13.json).
+  [fusion/executors/parallel.hpp](../../include/sub0ecs/fusion/executors/parallel.hpp) and [fusion/executors/inline.hpp](../../include/sub0ecs/fusion/executors/inline.hpp); `eachParallel` and
+  `runFusedParallel` in [designs/query_partition.hpp](../../include/sub0ecs/store/world.hpp);
+  per-worker command buffers in [testbed/skirmish/sim.hpp](../../bench/skirmish/sim.hpp).
+- Numbers: [results/threading-skirmish-linux-gcc13.json](../../bench/results/threading-skirmish-linux-gcc13.json).
 
 ## 1. Answer in one paragraph
 

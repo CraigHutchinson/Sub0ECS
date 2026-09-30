@@ -1,0 +1,40 @@
+#pragma once
+/** Compile-time helpers for the store: type-list union and index lookup. */
+
+#include <cstddef>
+#include <type_traits>
+
+#include "../../query.hpp"
+
+namespace sub0ecs::store::detail
+{
+    template <typename T, typename... Ts>
+    constexpr std::size_t indexOf()
+    {
+        std::size_t i = 0;
+        const bool found = ((std::is_same_v<T, Ts> ? true : (++i, false)) || ...);
+        return found ? i : ~std::size_t{ 0 };
+    }
+
+    // Union of all component types used by the fused systems (deduplicated).
+    template <typename... Ts> struct TypeList {};
+    template <typename L, typename T> struct Append;
+    template <typename... Ts, typename T>
+    struct Append<TypeList<Ts...>, T>
+    {
+        using type = std::conditional_t<(std::is_same_v<T, Ts> || ...), TypeList<Ts...>, TypeList<Ts..., T>>;
+    };
+    template <typename L, typename Q> struct AppendQuery { using type = L; };
+    template <typename L, typename C, typename... Cs>
+    struct AppendQuery<L, Query<C, Cs...>>
+    {
+        using type = typename AppendQuery<typename Append<L, C>::type, Query<Cs...>>::type;
+    };
+    template <typename L, typename... Qs2> struct UnionOf { using type = L; };
+    template <typename L, typename Q, typename... Rest>
+    struct UnionOf<L, Q, Rest...>
+    {
+        using type = typename UnionOf<typename AppendQuery<L, Q>::type, Rest...>::type;
+    };
+
+} // namespace sub0ecs::store::detail

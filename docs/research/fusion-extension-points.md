@@ -4,11 +4,11 @@ Fusion is a headline v2 feature. This note designs it as **two extension
 points**, each usable at compile time or at runtime. H7 (research/fusion.md)
 proved the mechanism; this note turns it into architecture.
 
-- Prototype: [fusion/access.hpp](../fusion/access.hpp),
-  [fusion/planners/](../fusion/planners/),
-  [fusion/executors/](../fusion/executors/) (one header per executor), and `runFusedOn()` in
-  [designs/query_partition.hpp](../designs/query_partition.hpp).
-- Tests: [test/fusion_test.cpp](../test/fusion_test.cpp) (compile-time plan
+- Prototype: [fusion/access.hpp](../../include/sub0ecs/fusion/access.hpp),
+  [fusion/planners/](../../include/sub0ecs/fusion/planners/),
+  [fusion/executors/](../../include/sub0ecs/fusion/executors/) (one header per executor), and `runFusedOn()` in
+  [designs/query_partition.hpp](../../include/sub0ecs/store/world.hpp).
+- Tests: [test/fusion_test.cpp](../../tests/test_fusion.cpp) (compile-time plan
   asserts, equivalence of every combination) and the Skirmish conformance
   test (the real game with four runners).
 - Evidence: §6.
@@ -180,8 +180,8 @@ GPU or DSP generally is not. The design therefore needs:
 ## 6. Evidence
 
 Raw data:
-- [results/fusion-extension-points-linux-gcc13.json](../results/fusion-extension-points-linux-gcc13.json)
-- [results/fusion-extension-points-skirmish-linux-gcc13.json](../results/fusion-extension-points-skirmish-linux-gcc13.json)
+- [results/fusion-extension-points-linux-gcc13.json](../../bench/results/fusion-extension-points-linux-gcc13.json)
+- [results/fusion-extension-points-skirmish-linux-gcc13.json](../../bench/results/fusion-extension-points-skirmish-linux-gcc13.json)
 
 Median of 5, random interleaving. Speed-up is relative to `NeverFuse`.
 

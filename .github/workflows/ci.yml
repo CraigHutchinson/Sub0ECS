@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+    branches: [master, v2]
+  pull_request:
+    branches: [master, v2]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - compiler: gcc
+            cc: gcc
+            cxx: g++
+          - compiler: clang
+            cc: clang
+            cxx: clang++
+    name: linux-${{ matrix.compiler }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: Configure
+        run: cmake --preset default
+        env:
+          CC: ${{ matrix.cc }}
+          CXX: ${{ matrix.cxx }}
+      - name: Build (tests + benchmarks)
+        run: cmake --build --preset default
+      - name: Test
+        run: ctest --preset default
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake --preset ci-msvc
+      - name: Build (tests + benchmarks)
+        run: cmake --build --preset ci-msvc
+      - name: Test
+        run: ctest --preset ci-msvc
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Ninja
+        run: brew install ninja
+      - name: Configure
+        run: cmake --preset default
+      - name: Build (tests + benchmarks)
+        run: cmake --build --preset default
+      - name: Test
+        run: ctest --preset default
+
+  sanitizers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: Configure (ASan + UBSan)
+        run: cmake --preset sanitize
+        env:
+          CC: gcc
+          CXX: g++
+      - name: Build
+        run: cmake --build --preset sanitize
+      - name: Test
+        run: ctest --preset sanitize

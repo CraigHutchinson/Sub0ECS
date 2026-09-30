@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Summarise spike benchmark JSON into markdown tables.
+"""Summarise benchmark JSON into markdown tables.
 
 Usage: summarize.py results.json [baseline_design=V1] > RESULTS.md
 
@@ -52,7 +52,7 @@ def main():
             cv[(key, design)] = b["real_time"]
 
     ctx = data.get("context", {})
-    print("# SubzeroECS v2 spike — benchmark baseline\n")
+    print("# SubzeroECS v2 benchmark results\n")
     print(f"- Host: {ctx.get('num_cpus')} × {ctx.get('mhz_per_cpu')} MHz, "
           f"caches: " + ", ".join(f"L{c['level']} {c['type'][0]} {c['size'] // 1024} KiB" for c in ctx.get("caches", [])))
     print(f"- Date: {ctx.get('date')}  |  Build: {ctx.get('library_build_type')}  |  "

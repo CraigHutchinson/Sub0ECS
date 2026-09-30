@@ -1,7 +1,7 @@
 # SubzeroECS v2 spike — findings
 
-Baseline: [results/baseline-linux-gcc13.md](results/baseline-linux-gcc13.md)
-(raw: [JSON](results/baseline-linux-gcc13.json)). Host: 4 vCPU Xeon @ 2.1 GHz
+Baseline: [results/baseline-linux-gcc13.md](../bench/results/baseline-linux-gcc13.md)
+(raw: [JSON](../bench/results/baseline-linux-gcc13.json)). Host: 4 vCPU Xeon @ 2.1 GHz
 (shared cloud VM), GCC 13.3, `-O3 -march=native`, FTZ/DAZ, median of 5.
 
 **Noise caveat:** memory-bound rows at N = 1M drift about ±30% between runs on
@@ -116,8 +116,8 @@ completion handle, and column residency tracked by the store (validation spike H
 
 ## H1 results: query-signature partitions ("automatic archetypes")
 
-Design: [designs/query_partition.hpp](designs/query_partition.hpp). Numbers:
-[results/h1-query-partition-linux-gcc13.md](results/h1-query-partition-linux-gcc13.md)
+Design: [designs/query_partition.hpp](../include/sub0ecs/store/world.hpp). Numbers:
+[results/h1-query-partition-linux-gcc13.md](../bench/results/h1-query-partition-linux-gcc13.md)
 (speed-up column is vs Archetype; same host, 5 repetitions, random interleaving).
 
 **Verdict: H1 passes with the hinted variant; the pure automatic variant
@@ -182,7 +182,7 @@ mode.
 [research/design-review-pre-h2.md](research/design-review-pre-h2.md).
 Key evidence: iterating one system over K partitions is free above ~1K
 entities per partition and 1.3–3.8× slower below ~200
-(`spike_spans_micro`). So single-span ordering is not worth a PQ-tree;
+(`sub0ecs_spans_bench`). So single-span ordering is not worth a PQ-tree;
 controlling partition granularity is. The review ranks composition options
 ahead of references and replicas, re-scopes H2 into H2a (granularity), H2b
 (system tree) and H6′ (parent/child runs), and lists findings F1–F9 to carry
@@ -191,7 +191,7 @@ into implementation.
 ## H7 results: system fusion
 
 Design and prototype: [research/fusion.md](research/fusion.md). Numbers:
-[results/h7-fusion-linux-gcc13.md](results/h7-fusion-linux-gcc13.md).
+[results/h7-fusion-linux-gcc13.md](../bench/results/h7-fusion-linux-gcc13.md).
 
 **Verdict: fusion works and is worth designing in now.** Three small systems
 that share Position/Velocity (the Update2 kernel split into Integrate,
@@ -213,8 +213,8 @@ Two constraints came out of the prototype:
 
 ## Skirmish RTS testbed: first results
 
-Testbed: [testbed/skirmish/](testbed/skirmish/README.md). Numbers:
-[results/skirmish-linux-gcc13.md](results/skirmish-linux-gcc13.md).
+Testbed: [testbed/skirmish/](../bench/skirmish/README.md). Numbers:
+[results/skirmish-linux-gcc13.md](../bench/results/skirmish-linux-gcc13.md).
 All seven storage/execution variants play the bit-identical game.
 
 | ms per tick | 1K units | 10K units | 50K units |
@@ -303,7 +303,7 @@ worst frame 11 ms, ~170 ns per promoted entity.)
 
 ## Benchmark harness
 
-[BENCHMARKING.md](BENCHMARKING.md) codifies how to reproduce every result
+[BENCHMARKING.md](../bench/BENCHMARKING.md) codifies how to reproduce every result
 above on other hardware:
 - CMake presets (`bench-native` / `bench-portable` / `sanitize`);
 - a suite catalogue with quick / standard / reference profiles;
@@ -315,12 +315,12 @@ above on other hardware:
   environment differences first.
 
 Sizes and thread ladders scale automatically to the machine
-(`SPIKE_SIZES`, `SKIRMISH_UPT`, `SKIRMISH_THREADS`).
+(`BENCH_SIZES`, `SKIRMISH_UPT`, `SKIRMISH_THREADS`).
 
 ## Code review & optimisation pass
 
-Numbers: [results/opt-pass-linux-gcc13.md](results/opt-pass-linux-gcc13.md).
-The scope was the recommended design ([designs/query_partition.hpp](designs/query_partition.hpp)),
+Numbers: [results/opt-pass-linux-gcc13.md](../bench/results/opt-pass-linux-gcc13.md).
+The scope was the recommended design ([designs/query_partition.hpp](../include/sub0ecs/store/world.hpp)),
 the executors and the H9 paths.
 
 **Correctness: no defects found.** Checked explicitly:
@@ -370,3 +370,21 @@ MSVC 19.51 (Visual Studio 18), Release, `/W4 /permissive-`, `/arch:AVX2`, Ninja.
   `flatten` on the fused loop and the pool thunk, so MSVC measures fusion with the
   same forced inlining instead of silently leaving it to heuristics.
 - The harness runs on Windows (see BENCHMARKING.md "Windows / MSVC").
+
+## Promotion to the library
+
+The query-partition store became `sub0ecs::store` (header-only, `include/sub0ecs/`).
+Writing library-grade tests surfaced defects that the benchmark-driven conformance
+suite never exercised, because it never repeats an operation on the same entity:
+
+| Defect | Effect | Now |
+|---|---|---|
+| `add` of a component already held in side storage | A second dense entry, orphaning the first; the pool corrupts on later swap-removes | Overwrites in place |
+| `remove` of an absent component | UB (indexing with the null slot), or a null-pool dereference for a never-stored type | No-op |
+| `destroy` / `add` / `remove` on a stale handle | `destroy` twice released the slot twice, so two live entities later shared it | No-op |
+| Edge cache sentinel was the all-ones mask | An entity holding 64 column types matched the "empty" sentinel and was moved to the empty partition, dropping out of every query | Separate `kNoEdge` index |
+| Component type ids were process-wide | The 64-type limit covered every type in the program, not one World | Numbered per World type |
+
+Each fix has a test that fails without it. That was verified for the side-pool and
+double-destroy fixes by reintroducing the old code: the model-based churn test
+reported 43 mismatches, and the stale-handle test crashed.

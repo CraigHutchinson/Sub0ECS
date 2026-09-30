@@ -374,9 +374,9 @@ int main(int argc, char** argv)
 #if defined(__SSE__) || defined(_M_X64)
     _mm_setcsr(_mm_getcsr() | 0x8040u);
 #endif
-    // SPIKE_SIZES: comma list of entity counts ("small" = 1000 only); default 1K, 100K, 1M.
-    std::vector<std::int64_t> sizes = env::list("SPIKE_SIZES", { 1'000, 100'000, 1'000'000 });
-    if (const char* e = std::getenv("SPIKE_SIZES"); e && std::string(e) == "small") sizes = { 1'000 };
+    // BENCH_SIZES: comma list of entity counts ("small" = 1000 only); default 1K, 100K, 1M.
+    std::vector<std::int64_t> sizes = env::list("BENCH_SIZES", { 1'000, 100'000, 1'000'000 });
+    if (const char* e = std::getenv("BENCH_SIZES"); e && std::string(e) == "small") sizes = { 1'000 };
     for (std::int64_t n : sizes)
     {
         if (n > 0) registerAll(n);

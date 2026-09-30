@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reproducible benchmark runs for the SubzeroECS v2 spike.
+"""Reproducible benchmark runs for SubzeroECS v2 and its comparators.
 
 Builds the benchmark preset, fingerprints the machine, runs suites from
 suites.json under a profile, and writes a self-describing result directory:
@@ -11,8 +11,8 @@ suites.json under a profile, and writes a self-describing result directory:
         summary.md         median / CV table per suite
 
 Typical use on dedicated hardware:
-    python3 tools/bench/run.py --profile reference --pin 2-15 --label ref-box
-    python3 tools/bench/compare.py <runA> <runB>
+    python3 bench/tools/run.py --profile reference --pin 2-15 --label ref-box
+    python3 bench/tools/compare.py <runA> <runB>
 
 Linux, macOS and Windows (MSVC: run from a VS developer prompt so the
 Ninja presets find cl.exe). Only the Python standard library is used.
@@ -30,8 +30,8 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-SPIKE = HERE.parent.parent            # spike/v2
-REPO = SPIKE.parent.parent            # repository root
+BENCH = HERE.parent                   # bench/
+REPO = BENCH.parent                   # repository root
 WINDOWS = sys.platform == "win32"
 EXE = ".exe" if WINDOWS else ""
 
@@ -241,7 +241,7 @@ def build_info(build_dir):
     return {"build_dir": str(build_dir), "build_type": var("CMAKE_BUILD_TYPE"), "cxx": var("CMAKE_CXX_COMPILER"),
             "cxx_version": version or None,
             "cxx_flags": var("CMAKE_CXX_FLAGS"), "cxx_flags_release": var("CMAKE_CXX_FLAGS_RELEASE"),
-            "spike_native": var("SPIKE_NATIVE"), "generator": var("CMAKE_GENERATOR")}
+            "native": var("SUB0ECS_NATIVE"), "generator": var("CMAKE_GENERATOR")}
 
 
 def warnings_for(meta):
@@ -276,8 +276,8 @@ def warnings_for(meta):
 # Running
 # ---------------------------------------------------------------------------
 def build(preset):
-    subprocess.run(["cmake", "--preset", preset], cwd=SPIKE, check=True)
-    subprocess.run(["cmake", "--build", "--preset", preset], cwd=SPIKE, check=True)
+    subprocess.run(["cmake", "--preset", preset], cwd=REPO, check=True)
+    subprocess.run(["cmake", "--build", "--preset", preset], cwd=REPO, check=True)
 
 
 def run_suite(name, suite, profile, build_dir, run_dir, pin, extra_env, no_aslr=False):
@@ -368,7 +368,7 @@ def main():
     ap.add_argument("--preset", default="bench-native", help="CMake preset (bench-native | bench-portable)")
     ap.add_argument("--build-dir", default=None, help="use an existing build dir (skips building)")
     ap.add_argument("--skip-build", action="store_true")
-    ap.add_argument("--out", default=str(SPIKE / "results" / "runs"))
+    ap.add_argument("--out", default=str(BENCH / "results" / "runs"))
     ap.add_argument("--label", default="")
     ap.add_argument("--pin", default="", help="CPU list, e.g. 2-15 (taskset on Linux, affinity mask on Windows); "
                     "'P' = the performance cores of a hybrid CPU (Windows)")
@@ -390,12 +390,12 @@ def main():
     if unknown:
         ap.error(f"unknown suites: {unknown}")
 
-    build_dir = Path(args.build_dir) if args.build_dir else REPO / "build" / f"spike-{args.preset}"
+    build_dir = Path(args.build_dir) if args.build_dir else REPO / "build" / args.preset
     if not args.build_dir and not args.skip_build:
         build(args.preset)
 
     meta = {
-        "schema": "sub0ecs-spike-bench/1",
+        "schema": "sub0ecs-bench/1",
         "timestamp_utc": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
         "label": args.label,
         "host": socket.gethostname(),

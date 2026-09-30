@@ -1,287 +1,121 @@
 # SubzeroECS
 
-A high-performance, cache-friendly Entity Component System (ECS) framework for modern C++20 applications.
+A header-only C++20 Entity Component System whose storage is laid out by the
+**systems you declare**, not only by the components entities happen to have.
 
-## Features
+> **Branch `v2`.** v2 replaces the v1 API (which remains on `master`). The design
+> record and evidence are in [docs/FINDINGS.md](docs/FINDINGS.md); open work toward
+> the v2 release is in [docs/BACKLOG.md](docs/BACKLOG.md).
 
-- **Modern C++20**: Leverages latest C++ features for type safety and performance
-- **Cache-Friendly Design**: Structure of Arrays (SoA) component storage for optimal cache utilization
-- **Flexible Queries**: Powerful view and query system for efficient entity iteration
-- **Type-Safe Components**: Compile-time type checking for component access
-- **Minimal Fragmentation Impact**: Handles mixed entity compositions efficiently
-- **Zero-Cost Abstractions**: CRTP-based systems with minimal runtime overhead
-- **Header-Only Core**: Easy integration into existing projects
+## Why v2
 
-## Quick Start
+- **Iteration at hand-written-SoA speed.** Every declared query iterates whole
+  partitions of dense, typed columns. The compiler sees a plain loop and
+  vectorises it.
+- **Cheap churn where it matters.** Components no query filters on never move an
+  entity between partitions, so adding and removing them is a sparse-set operation.
+  Declare churn-heavy components `Volatile` and they stay out of the layout.
+- **System fusion.** Small single-purpose systems that share columns run as one
+  pass: planners decide what fuses, executors decide where it runs (inline, tiled,
+  thread pool, offload). Results are bit-identical whichever plan or executor is
+  chosen.
+- **Runtime systems.** Queries added at runtime work immediately, with a bounded
+  per-frame migration budget (no level-load stall).
+
+## Quick start
 
 ```cpp
-#include "SubzeroECS/World.hpp"
-#include "SubzeroECS/System.hpp"
+#include <tuple>
+#include <sub0ecs/sub0ecs.hpp>
 
-// Define components
 struct Position { float x, y; };
 struct Velocity { float dx, dy; };
+struct Selected { int group; };
 
-// Create a system
-class PhysicsSystem : public SubzeroECS::System<PhysicsSystem, Position, Velocity> {
-public:
-    float deltaTime = 0.0f;
-    
-    PhysicsSystem(SubzeroECS::World& world)
-        : SubzeroECS::System<PhysicsSystem, Position, Velocity>(world) {}
+// The systems' queries, declared up front: they decide the storage layout.
+using Queries = std::tuple<sub0ecs::Query<Position, Velocity>>;
+using World = sub0ecs::store::World<Queries, sub0ecs::store::Volatile<Selected>>;
 
-    void processEntity(Iterator iEntity) {
-        Position& pos = iEntity.get<Position>();
-        Velocity& vel = iEntity.get<Velocity>();
-        
-        pos.x += vel.dx * deltaTime;
-        pos.y += vel.dy * deltaTime;
-    }
+struct Integrate
+{
+    using Query = sub0ecs::Query<Position, Velocity>;
+    void operator()(Position& p, Velocity& v) const { p.x += v.dx; p.y += v.dy; }
 };
 
-// Use the ECS
-int main() {
-    SubzeroECS::World world;
-    SubzeroECS::Collection<Position, Velocity> collections(world);
-    PhysicsSystem physics(world);
-    
-    // Create entities
-    world.create(Position{0.0f, 0.0f}, Velocity{1.0f, 1.0f});
-    world.create(Position{10.0f, 5.0f}, Velocity{-0.5f, 2.0f});
-    
-    // Update
-    physics.deltaTime = 1.0f / 60.0f;
-    physics.update();
-    
-    return 0;
+int main()
+{
+    World world;
+    const sub0ecs::Entity e = world.create(Position{ 0, 0 }, Velocity{ 1, 2 });
+    world.add(e, Selected{ 1 });                 // Volatile: no data moves
+
+    world.each<Position, Velocity>([](Position& p, Velocity& v) { p.x += v.dx; });
+    world.runFused(Integrate{});                 // fused pass over matching partitions
+
+    const Position* p = world.find<Position>(e); // nullptr once e is destroyed
+    world.destroy(e);
+    return p && !world.alive(e) ? 0 : 1;
 }
 ```
 
+## Library layout
+
+| Header | Contents |
+|---|---|
+| [`sub0ecs/sub0ecs.hpp`](include/sub0ecs/sub0ecs.hpp) | Everything |
+| [`sub0ecs/store/world.hpp`](include/sub0ecs/store/world.hpp) | `World` / `BasicWorld`: entities, components, queries, fused and parallel iteration, runtime queries |
+| [`sub0ecs/store/`](include/sub0ecs/store/) | Its building blocks: partitions, columns, side pools, type indices, the `Volatile` hint |
+| [`sub0ecs/entity.hpp`](include/sub0ecs/entity.hpp) | Generational 32-bit `Entity` handle and allocator |
+| [`sub0ecs/query.hpp`](include/sub0ecs/query.hpp) | `Query<Cs...>` |
+| [`sub0ecs/fusion/`](include/sub0ecs/fusion/) | `Access` declarations, [planners](include/sub0ecs/fusion/planners/) (what fuses), [executors](include/sub0ecs/fusion/executors/) (where it runs) |
+
+Handle rules: operations on a destroyed entity's handle are no-ops and `find`
+returns `nullptr`; `add` of a component the entity already has overwrites it;
+`remove` of one it lacks does nothing. Components must be trivially copyable, at
+most 64 bytes, and a World type supports up to 64 component types.
+
 ## Performance
 
-SubzeroECS demonstrates excellent performance characteristics, particularly in handling fragmented entity compositions. Benchmark results comparing SubzeroECS against traditional OOP and DOD approaches:
+v2 against v1 at 100K entities of mixed shapes (GCC 13, `-O3 -march=native`,
+median of 5; [full tables](bench/results/h1-query-partition-linux-gcc13.md)):
 
-**Test System:**
-- CPU: Intel Core i7-11800H @ 2.30GHz (8 cores, 16 logical processors)
-- L1 Data Cache: 48 KiB × 8
-- L1 Instruction Cache: 32 KiB × 8
-- L2 Cache: 1280 KiB × 8
-- L3 Cache: 24576 KiB (24 MB)
-- Compiler: MSVC with `/O2` optimization
-- OS: Windows
-- Methodology: Median of 10 repetitions (`--benchmark_repetitions=10`)
+| Scenario | v1 | v2 | |
+|---|---:|---:|---:|
+| Update two components (v1's headline benchmark) | 294 µs | 42.9 µs | **6.9×**, equal to hand-written SoA |
+| Three systems per frame | 459 µs | 118 µs | 3.9× |
+| Query on a tag held by 1% of entities | 79 µs | 0.39 µs | 203× |
+| Random `find` | 11.1 ms | 1.8 ms | 6.1× |
+| Add + remove a component on 10% of entities | unsupported | 89 µs | |
 
-### Update Performance at 100K Entities
+Every number comes from the comparison suite in [bench/](bench/). It runs v2 beside
+the alternatives it was chosen over, and v1 unmodified, and checks they all
+produce bit-identical results first. [bench/BENCHMARKING.md](bench/BENCHMARKING.md)
+explains how to reproduce the numbers on your hardware.
 
-| Implementation | Coherent (M items/s) | Fragmented (M items/s) | Impact |
-|----------------|---------------------|------------------------|--------|
-| **SubzeroECS** | 174.93 (median)     | 188.24 (median)        | **+8%** ✓ |
-| **OOP**        | 248.93 (median)     | 252.80 (median)        | **+2%** ✓ |
-| **DOD (SoA)**  | 487.62 (median)     | 493.57 (median)        | **+1%** ✓ |
-
-### Update Performance at 10M Entities
-
-| Implementation | Coherent (M items/s) | Fragmented (M items/s) | Impact |
-|----------------|---------------------|------------------------|--------|
-| **SubzeroECS** | 157.84 (median)     | 160.00 (median)        | **+1%** ✓ |
-| **OOP**        | 145.85 (median)     | 96.00 (median)         | **-34%** |
-| **DOD (SoA)**  | 219.43 (median)     | 225.88 (median)        | **+3%** ✓ |
-
-**Key Findings:**
-- SubzeroECS shows **minimal performance variation** with mixed entity compositions (fragmentation shows slight improvement, within measurement noise)
-- Traditional OOP suffers **34% slowdown** at 10M scale with heterogeneous entity types
-- Pure DOD Structure-of-Arrays maintains consistent performance across all scenarios with low variance (CV < 3%)
-- The improved N-way intersection algorithm (galloping search with adaptive linear/binary switching) maintains consistent performance across different entity compositions
-- All measurements use median values from 10 repetitions for reliability; coefficient of variation (CV) is low for SubzeroECS (< 3.3%) and DOD (< 3%), confirming stable measurements
-
-See [benchmarks/update_patterns](benchmarks/update_patterns) for detailed benchmark code and methodology.
-
-## Building SubzeroECS
-
-### Using CMake Presets (Recommended)
+## Build
 
 ```bash
-# Configure for release build
-cmake --preset windows-x64-release
-
-# Build the library
-cmake --build --preset windows-x64-release
-
-# Run tests
-ctest --preset windows-x64-release
+cmake --preset default          # Release: tests + benchmarks (Ninja; on Windows use a VS developer prompt)
+cmake --build --preset default
+ctest --preset default
 ```
 
-### Available Presets
+Other presets: `debug`, `sanitize` (ASan/UBSan), `bench-native`, `bench-portable`,
+`ci-msvc` (Visual Studio generator). To use the library from another CMake project,
+`add_subdirectory` (or FetchContent) it and link `Sub0ECS::Sub0ECS`.
 
-- `windows-x64-debug` - Debug build with assertions
-- `windows-x64-release` - Optimized release build
-- `windows-x64-release-benchmark` - Release build with benchmarks enabled
-
-### Building from Source
-
-```bash
-# Clone the repository
-git clone https://github.com/CraigHutchinson/SubzeroECS.git
-cd SubzeroECS
-
-# Configure and build
-cmake -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build
-
-# Run tests
-cd build/test
-ctest --output-on-failure
-```
-
-## Project Structure
+## Repository layout
 
 ```
-SubzeroECS/
-├── source/SubzeroECS/          # Core ECS implementation
-│   ├── World.hpp               # Entity and world management
-│   ├── Collection.hpp          # Component storage (SoA)
-│   ├── System.hpp              # System base class (CRTP)
-│   ├── View.hpp                # Multi-component queries
-│   ├── Entity.hpp              # Entity handle
-│   └── Utility/                # Helper utilities
-├── samples/                    # Example applications
-│   └── rocket/                 # Physics simulation example
-├── benchmarks/                 # Performance benchmarks
-│   └── update_patterns/        # Unified coherent vs fragmented comparison
-└── test/                       # Unit tests
+include/sub0ecs/   the library (header-only)
+tests/             unit and conformance tests (doctest)
+bench/             comparison benchmarks, comparator designs, v1 baseline, harness, results
+docs/              findings, research notes, backlog
 ```
 
-## Usage
+## Related projects
 
-### Running Tests
-
-Use the following commands from the project's root directory to run the test suite.
-
-```bash
-# Using presets
-ctest --preset windows-x64-release
-
-# Or manually
-cmake -S test -B build/test
-cmake --build build/test
-./build/test/SubzeroECSTests
-```
-
-### Running Benchmarks
-
-```bash
-# Build benchmarks
-cmake --preset windows-x64-release-benchmark
-cmake --build --preset windows-x64-release-benchmark
-
-# Run unified update patterns benchmark
-./out/Windows-build/windows-x64-release-benchmark/benchmarks/update_patterns/Release/update_patterns_benchmark.exe
-
-# Filter specific tests
-./update_patterns_benchmark.exe --benchmark_filter="BM_ECS.*"
-./update_patterns_benchmark.exe --benchmark_filter=".*UpdatePositions.*/100000"
-```
-
-### Running Samples
-
-```bash
-# Build and run the rocket physics sample
-cmake --build --preset windows-x64-release --target RocketSample
-./out/Windows-build/windows-x64-release/samples/rocket/Release/RocketSample.exe
-```
-
-## Development
-
-### Code Formatting
-
-Use the following commands from the project's root directory to check and fix C++ and CMake source style.
-This requires _clang-format_, _cmake-format_ and _pyyaml_ to be installed on the current system.
-
-```bash
-cmake -S test -B build/test
-
-# view changes
-cmake --build build/test --target format
-
-# apply changes
-cmake --build build/test --target fix-format
-```
-
-See [Format.cmake](https://github.com/TheLartians/Format.cmake) for details.
-These dependencies can be easily installed using pip.
-
-```bash
-pip install clang-format==14.0.6 cmake_format==0.6.11 pyyaml
-```
-
-### Static Analysis
-
-Static Analyzers can be enabled by setting `-DUSE_STATIC_ANALYZER=<clang-tidy | iwyu | cppcheck>`, or a combination of those in quotation marks, separated by semicolons.
-Additional arguments can be passed to the analyzers by setting the `CLANG_TIDY_ARGS`, `IWYU_ARGS` or `CPPCHECK_ARGS` variables.
-
-### Sanitizers
-
-Sanitizers can be enabled by configuring CMake with `-DUSE_SANITIZER=<Address | Memory | MemoryWithOrigins | Undefined | Thread | Leak | 'Address;Undefined'>`.
-
-## Documentation
-
-The documentation is automatically built and published whenever a GitHub Release is created.
-To manually build documentation, call the following command:
-
-```bash
-cmake -S documentation -B build/doc
-cmake --build build/doc --target GenerateDocs
-# view the docs
-open build/doc/doxygen/html/index.html
-```
-
-To build the documentation locally, you will need Doxygen, jinja2 and Pygments installed on your system.
-
-## Architecture
-
-SubzeroECS uses several key design patterns:
-
-- **CRTP Systems**: Zero-overhead polymorphism for systems via Curiously Recurring Template Pattern
-- **SoA Storage**: Components stored in Structure of Arrays for cache-friendly iteration
-- **Set Intersection Views**: Efficient multi-component queries using sorted entity ID arrays
-- **Type-Safe Collections**: Compile-time component type verification
-- **Entity ID Recycling**: Free-list based entity ID reuse to prevent ID exhaustion
-
-## Contributing
-
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-All contributions are accepted under the dual-license terms (AGPL-3.0 for open source, commercial license available).
-
-## FAQ
-
-### What makes SubzeroECS different from other ECS frameworks?
-
-SubzeroECS prioritizes:
-- Modern C++20 features for clean, type-safe APIs
-- Minimal performance impact from entity composition fragmentation
-- Header-mostly implementation for easy integration
-- Clear, maintainable codebase suitable for learning and modification
-
-### Can I use this for commercial projects?
-
-Yes, SubzeroECS offers dual licensing:
-- Open source projects can use the AGPL-3.0 license
-- Commercial/proprietary projects should request a commercial license (see Licensing section below)
-
-### How does performance compare to raw arrays?
-
-For coherent access patterns (all entities with same components), SubzeroECS achieves ~36% of pure DOD SoA performance (175M vs 488M items/s at 100K entities) while providing significantly better developer ergonomics. The overhead comes from the view iteration and set intersection logic, which enables the flexible query system. At larger scales (10M entities), the gap narrows to ~72% (158M vs 219M items/s) as cache effects dominate and the N-way intersection algorithm's efficiency becomes more apparent.
-
-### What's the entity capacity?
-
-SubzeroECS uses 32-bit entity IDs with generation counters, supporting millions of concurrent entities with ID recycling.
-
-## Related Projects
-
-- [EnTT](https://github.com/skypjack/entt): High-performance ECS framework for C++17
-- [flecs](https://github.com/SanderMertens/flecs): Fast and lightweight ECS with relationship support
-- [EntityX](https://github.com/alecthomas/entityx): Fast, type-safe C++11 ECS
+- [EnTT](https://github.com/skypjack/entt): sparse-set ECS, C++17
+- [flecs](https://github.com/SanderMertens/flecs): archetype ECS with relationships
 
 ## Licensing
 

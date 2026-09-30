@@ -10,7 +10,7 @@
 #include "../bench/skirmish/sim.hpp"
 #include "../bench/skirmish/runners.hpp"
 #include "../bench/skirmish/worlds.hpp"
-#include "doctest.h"
+#include <doctest/doctest.h>
 
 using namespace skirmish;
 

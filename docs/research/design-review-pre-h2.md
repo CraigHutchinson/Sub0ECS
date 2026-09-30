@@ -7,8 +7,8 @@ tree, parenting, DAG) instead of copies or references.
 Inputs:
 - [FINDINGS.md](../FINDINGS.md): baseline and H1 results.
 - [holographic-storage.md](holographic-storage.md): research note.
-- [designs/query_partition.hpp](../designs/query_partition.hpp): H1 PoC.
-- One new micro-benchmark, [bench/spans_micro.cpp](../bench/spans_micro.cpp), run for this review.
+- [designs/query_partition.hpp](../../include/sub0ecs/store/world.hpp): H1 PoC.
+- One new micro-benchmark, [bench/spans_micro.cpp](../../bench/spans_bench.cpp), run for this review.
 
 Outcome: a reframing of the "duplicate" problem, a ranked composition
 strategy, a re-scoped H2, and a list of issues to carry into the real
@@ -55,7 +55,7 @@ duplication problem that does not exist.
 
 ## 3. Evidence: how much does contiguity across partitions matter?
 
-`spike_spans_micro` runs the Update2 kernel over 100K entities split
+`sub0ecs_spans_bench` runs the Update2 kernel over 100K entities split
 evenly into K partitions (spans):
 
 | Entities per span | 100K | 16.7K | 1.56K | 195 | 24 | 6 |

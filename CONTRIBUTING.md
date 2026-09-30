@@ -24,7 +24,7 @@ Open an issue using the “Commercial License Request” template; do not email.
 Code Standards:
 - Keep changes focused.
 - Add tests for new features.
-- Maintain consistent style (add STYLE.md if needed).
+- Follow STYLE_GUIDE.md.
 - Avoid incompatible license dependencies.
 
 Pull Request Checklist:
@@ -34,7 +34,7 @@ Pull Request Checklist:
 - No proprietary third-party code.
 
 Security:
-Report vulnerabilities by opening a “Security Report” issue (or provide private channel later if established). Do not include exploit details publicly until coordinated disclosure is agreed.
+Report vulnerabilities by opening an issue titled “Security Report” (or provide private channel later if established). Do not include exploit details publicly until coordinated disclosure is agreed.
 
 Optional Source Header:
 /*

@@ -1,19 +1,15 @@
-# SubzeroECS v2 — design spike & performance baseline
+# Comparison benchmarks
 
-Throwaway-quality code whose only job is to answer: **which storage/query model
-should SubzeroECS v2 be built on?** Five candidate designs (including v1 itself,
-unmodified) are driven through one identical workload and adapter surface, so
-the storage model is the only variable.
+Keeps the v2 store honest. The v2 store ([`sub0ecs::store`](../include/sub0ecs/store/world.hpp),
+*QueryPart* / *QPartHinted* below) is driven through one workload and adapter surface
+alongside the alternatives it was chosen over, including v1 itself, unmodified. The
+storage model is the only variable.
 
-> Status: spike. Nothing in `spike/` is public API. Findings and the
-> recommendation are in [FINDINGS.md](FINDINGS.md), follow-up design research in
-> [research/holographic-storage.md](research/holographic-storage.md); raw numbers in
-> [results/](results/).
->
-> **Decided (2026-09-30):** v2 is built on the query-partition store
-> ([designs/query_partition.hpp](designs/query_partition.hpp)); the other designs
-> remain as benchmark comparators. The path to landing, including promotion out of
-> `spike/`, is tracked in [BACKLOG.md](BACKLOG.md).
+The comparators are **reference implementations, not library code**:
+[`designs/`](designs/) (archetype, sparse set, sorted SoA, static bitmask) and
+[`baselines/v1/`](baselines/v1/) (v1, frozen byte-identical). Findings and the
+decision record are in [FINDINGS.md](../docs/FINDINGS.md); raw numbers in
+[results/](results/).
 
 ## Candidates
 
@@ -27,7 +23,7 @@ the storage model is the only variable.
 | RawSoA | hand-written `vector<Position>` + `vector<Velocity>` loop | — | — | — | — | roofline for Update2 only |
 
 All generational designs (A, B, D) share the 32-bit handle in
-[`common/entity.hpp`](common/entity.hpp) (24-bit slot + 8-bit version) so stale
+[`common/entity.hpp`](../include/sub0ecs/entity.hpp) (24-bit slot + 8-bit version) so stale
 handles are rejected. C keeps v1's monotonic, never-recycled ids.
 
 ## Workloads
@@ -53,45 +49,42 @@ so rows are comparable across designs within a scenario.
 
 ### Fairness guards
 
-- **Conformance first.** [`test/conformance.cpp`](test/conformance.cpp) runs
+- **Conformance first.** [`tests/test_design_conformance.cpp`](../tests/test_design_conformance.cpp) runs
   the same sequence (systems, tagging, churn, destroy/create, stale-handle
   checks) on every design and requires *bit-identical* checksums against the
   sparse-set reference. It also runs clean under ASan/UBSan
-  (`-DSPIKE_SANITIZE=ON`).
+  (`cmake --preset sanitize`).
 - **Denormals flushed (FTZ/DAZ).** The kernel damps velocity each step, so
   long benchmark runs drift into denormal floats and end up measuring the FPU
   microcode path (10–30× slower, varying with iteration count). v1's own
-  benchmark avoids this only implicitly through `-ffast-math`. The spike sets
+  benchmark avoids this only implicitly through `-ffast-math`. The benchmarks set
   FTZ/DAZ explicitly instead, and builds without `-ffast-math` so conformance
   stays bit-exact.
-- **Same flags for all**: `-O3 -march=native` (toggle `-DSPIKE_NATIVE=OFF`).
-- v1 is compiled from `source/` unmodified; its warnings are silenced as
-  SYSTEM headers only.
+- **Same flags for all**: `-O3` (GCC/Clang) or `/O2` (MSVC), plus `-march=native` /
+  `/arch:AVX2` with `SUB0ECS_NATIVE=ON` (the `bench-native` preset).
+- v1 is compiled from [`baselines/v1/`](baselines/v1/) unmodified; its warnings are
+  silenced as SYSTEM headers only.
 
 ## Benchmark harness
 
 For reproducible runs (and dedicated hardware) use the harness rather than
 invoking binaries by hand: see [BENCHMARKING.md](BENCHMARKING.md)
-(`tools/bench/run.py`, `tools/bench/compare.py`, CMake presets).
+(`tools/run.py`, `tools/compare.py`, CMake presets).
 
 ## Build & run
 
+From the repository root (on Windows, in a VS developer prompt):
+
 ```bash
-cmake -S spike/v2 -B build/spike -G Ninja -DCMAKE_BUILD_TYPE=Release
-cmake --build build/spike
-ctest --test-dir build/spike --output-on-failure        # conformance
-./build/spike/spike_bench --benchmark_repetitions=5 --benchmark_report_aggregates_only=true \
-    --benchmark_out=spike/v2/results/<host>.json --benchmark_out_format=json
-python3 spike/v2/results/summarize.py spike/v2/results/<host>.json > spike/v2/results/<host>.md
+cmake --preset bench-native
+cmake --build --preset bench-native
+ctest --preset default                                   # or: build/bench-native/tests/sub0ecs_tests
+build/bench-native/bench/sub0ecs_bench --benchmark_filter='Update2/.*/(V1|QPartHinted)'
+python3 bench/tools/summarize.py <run>.json > <run>.md
 ```
 
 Handy filters: `--benchmark_filter='Update2/.*/(V1|Archetype)'`,
-`SPIKE_SIZES=small` (N=1000 only, fast smoke run).
-
-The spike is a standalone CMake project (it reuses `cmake/CPM.cmake` for
-Google Benchmark) because the v1 top-level configure currently fails on Linux:
-`find_package(fmt)` does not match the `FindFmt.cmake` module name on
-case-sensitive filesystems.
+`BENCH_SIZES=small` (N=1000 only, fast smoke run).
 
 ## Adding a candidate
 
@@ -99,5 +92,5 @@ Implement the adapter surface (see the top of
 [`common/scenarios.hpp`](common/scenarios.hpp)): `Entity`, `kName`,
 `kSupportsRemove`, `kSupportsDestroy`, `reserve`, `create(Cs...)`,
 `each<Cs...>(f)`, `find<C>(e)`, `add<C>(e, c)`, `remove<C>(e)`, `destroy(e)`,
-`commit()`. Then add it to `registerAll()` in `bench/main.cpp` and to
-`main()` in `test/conformance.cpp`.
+`commit()`. Then add it to `registerAll()` in [`scenarios_bench.cpp`](scenarios_bench.cpp)
+and to the conformance test in [`tests/test_design_conformance.cpp`](../tests/test_design_conformance.cpp).

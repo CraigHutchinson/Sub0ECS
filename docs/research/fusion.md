@@ -7,9 +7,9 @@ order before moving to the next row. The data is loaded once and stays in
 registers for the next system, instead of making one full memory pass per
 system.
 
-- Prototype: `runFused(...)` in [designs/query_partition.hpp](../designs/query_partition.hpp).
-- Systems: [common/systems.hpp](../common/systems.hpp).
-- Results: [results/h7-fusion-linux-gcc13.md](../results/h7-fusion-linux-gcc13.md).
+- Prototype: `runFused(...)` in [designs/query_partition.hpp](../../include/sub0ecs/store/world.hpp).
+- Systems: [common/systems.hpp](../../bench/common/systems.hpp).
+- Results: [results/h7-fusion-linux-gcc13.md](../../bench/results/h7-fusion-linux-gcc13.md).
 
 ## 1. Result
 

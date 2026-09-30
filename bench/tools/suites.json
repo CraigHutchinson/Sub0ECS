@@ -4,32 +4,32 @@
     "baseline": {
       "description": "Storage-model baseline: all designs, micro scenarios (FINDINGS: baseline, H1)",
       "kind": "gbench",
-      "exe": "spike_bench",
+      "exe": "bench/sub0ecs_bench",
       "filter": "^(Create|Iter1|Update2|Frame3|SparseQuery|RandomGet|AddRemove|TagChurn|DestroyCreate)/"
     },
     "fusion": {
       "description": "H7 fusion: sequential vs fused vs hand-merged",
       "kind": "gbench",
-      "exe": "spike_bench",
+      "exe": "bench/sub0ecs_bench",
       "filter": "^(FusionFrame|Frame3Sys)/"
     },
     "fusion-exec": {
       "description": "Fusion extension points: planners x executors",
       "kind": "gbench",
-      "exe": "spike_bench",
+      "exe": "bench/sub0ecs_bench",
       "filter": "^(FusionExec|Frame3Exec)/"
     },
     "skirmish": {
       "description": "Skirmish RTS: ms/tick per design with per-system counters",
       "kind": "gbench",
-      "exe": "skirmish_bench",
+      "exe": "bench/sub0ecs_skirmish_bench",
       "filter": "^Tick/",
       "fixed_iterations": true
     },
     "threads": {
       "description": "H8 thread scaling on Skirmish (thread ladder up to hardware concurrency)",
       "kind": "gbench",
-      "exe": "skirmish_bench",
+      "exe": "bench/sub0ecs_skirmish_bench",
       "filter": "^Threads/",
       "fixed_iterations": true,
       "env": { "SKIRMISH_THREADS": "auto" }
@@ -37,13 +37,13 @@
     "dynamic": {
       "description": "H9 dynamic system timeline (stall vs incremental relayout)",
       "kind": "timeline",
-      "exe": "spike_dynamic_timeline",
+      "exe": "bench/sub0ecs_dynamic_timeline",
       "args": ["1000000", "60"]
     },
     "spans": {
       "description": "Span-count micro-benchmark (design review evidence)",
       "kind": "gbench",
-      "exe": "spike_spans_micro",
+      "exe": "bench/sub0ecs_spans_bench",
       "filter": ".*"
     }
   },
@@ -52,7 +52,7 @@
       "description": "Smoke run: correctness of the harness, not numbers",
       "repetitions": 1,
       "min_time": "0.05s",
-      "env": { "SPIKE_SIZES": "1000", "SKIRMISH_UPT": "250", "SKIRMISH_THREADS_UPT": "250" },
+      "env": { "BENCH_SIZES": "1000", "SKIRMISH_UPT": "250", "SKIRMISH_THREADS_UPT": "250" },
       "suites": ["baseline", "fusion", "skirmish", "threads", "spans"]
     },
     "standard": {
@@ -67,7 +67,7 @@
       "repetitions": 10,
       "min_time": "1s",
       "env": {
-        "SPIKE_SIZES": "1000,100000,1000000,10000000",
+        "BENCH_SIZES": "1000,100000,1000000,10000000",
         "SKIRMISH_UPT": "250,2500,12500,50000",
         "SKIRMISH_THREADS_UPT": "2500,12500,50000"
       },

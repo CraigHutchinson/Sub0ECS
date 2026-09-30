@@ -1,15 +1,15 @@
-# Benchmarking the v2 spike
+# Benchmarking
 
-The spike's numbers so far come from a shared 4-core cloud VM. That was
+The first numbers came from a shared 4-core cloud VM. That was
 good enough to rank designs, but not to publish or to measure scaling. This
 harness makes runs **reproducible, self-describing and comparable**, so the
 same suites can run on dedicated hardware with more cores (and later on
 embedded targets).
 
 ```
-tools/bench/suites.json   what can be run (suites) and how (profiles)
-tools/bench/run.py        build → fingerprint machine → run suites → result directory
-tools/bench/compare.py    A/B comparison with noise-aware verdicts
+bench/tools/suites.json   what can be run (suites) and how (profiles)
+bench/tools/run.py        build → fingerprint machine → run suites → result directory
+bench/tools/compare.py    A/B comparison with noise-aware verdicts
 CMakePresets.json         bench-native | bench-portable | sanitize
 ```
 
@@ -19,12 +19,11 @@ standard library.
 ## Quick start
 
 ```bash
-cd spike/v2
-python3 tools/bench/run.py --suites list                  # what exists
-python3 tools/bench/run.py --profile quick                # smoke test (~4 min, mostly build)
-python3 tools/bench/run.py --profile standard             # the spike's published settings
-python3 tools/bench/run.py --profile reference --pin 2-15 --no-aslr --label ref-box   # dedicated hardware
-python3 tools/bench/compare.py results/runs/<host>/<runA> results/runs/<host>/<runB>
+python3 bench/tools/run.py --suites list                  # what exists
+python3 bench/tools/run.py --profile quick                # smoke test (~4 min, mostly build)
+python3 bench/tools/run.py --profile standard             # the published FINDINGS settings
+python3 bench/tools/run.py --profile reference --pin 2-15 --no-aslr --label ref-box   # dedicated hardware
+python3 bench/tools/compare.py bench/results/runs/<host>/<runA> bench/results/runs/<host>/<runB>
 ```
 
 ## Profiles
@@ -39,20 +38,20 @@ python3 tools/bench/compare.py results/runs/<host>/<runA> results/runs/<host>/<r
 
 | Suite | Binary | Measures |
 |---|---|---|
-| `baseline` | `spike_bench` | Storage designs on micro scenarios (baseline + H1) |
-| `fusion` | `spike_bench` | H7 sequential vs fused vs hand-merged |
-| `fusion-exec` | `spike_bench` | Planners × executors |
-| `skirmish` | `skirmish_bench` | RTS ms/tick per design, per-system counters |
-| `threads` | `skirmish_bench` | Thread scaling: ladder 1, 2, 4 … up to `hardware_concurrency()` |
-| `dynamic` | `spike_dynamic_timeline` | H9 stall vs incremental relayout (worst frame, frames to flip) |
-| `spans` | `spike_spans_micro` | Partition-count (span) overhead |
+| `baseline` | `sub0ecs_bench` | Storage designs on micro scenarios (baseline + H1) |
+| `fusion` | `sub0ecs_bench` | H7 sequential vs fused vs hand-merged |
+| `fusion-exec` | `sub0ecs_bench` | Planners × executors |
+| `skirmish` | `sub0ecs_skirmish_bench` | RTS ms/tick per design, per-system counters |
+| `threads` | `sub0ecs_skirmish_bench` | Thread scaling: ladder 1, 2, 4 … up to `hardware_concurrency()` |
+| `dynamic` | `sub0ecs_dynamic_timeline` | H9 stall vs incremental relayout (worst frame, frames to flip) |
+| `spans` | `sub0ecs_spans_bench` | Partition-count (span) overhead |
 
 The binaries read these environment variables (set by the profiles, or
 with `--env KEY=VALUE`):
 
 | Variable | Meaning | Default |
 |---|---|---|
-| `SPIKE_SIZES` | entity counts for `spike_bench` (comma list, or `small`) | `1000,100000,1000000` |
+| `BENCH_SIZES` | entity counts for `sub0ecs_bench` (comma list, or `small`) | `1000,100000,1000000` |
 | `SKIRMISH_UPT` | units per team (4 teams) for `Tick/*` | `250,2500,12500` |
 | `SKIRMISH_THREADS` | thread counts for `Threads/*` | `1,2,4,…,hw` |
 | `SKIRMISH_THREADS_UPT` | units per team for `Threads/*` | `2500,12500` |
@@ -63,8 +62,8 @@ compiled in (1M entities / 200K units); larger sizes skip them.
 ## Result directory
 
 ```
-results/runs/<host>/<YYYYmmdd-HHMMSS>-<sha>[-label]/
-    meta.json      schema "sub0ecs-spike-bench/1"
+bench/results/runs/<host>/<YYYYmmdd-HHMMSS>-<sha>[-label]/
+    meta.json      schema "sub0ecs-bench/1"
     <suite>.json   raw Google Benchmark JSON (or timeline JSON)
     <suite>.log    console output
     summary.md     median + CV per benchmark
@@ -76,7 +75,7 @@ results/runs/<host>/<YYYYmmdd-HHMMSS>-<sha>[-label]/
 - **Memory and OS:** memory size, kernel/OS, libc.
 - **Power state:** governor, turbo/boost, SMT, ASLR, load average.
 - **Compiler and build:** compiler and version, build type, flags,
-  `SPIKE_NATIVE`.
+  `SUB0ECS_NATIVE`.
 - **Git:** SHA, branch, dirty flag.
 - **Run:** profile settings, suites, pinning, extra environment, and per
   suite the exact command line, exit code and duration.
@@ -103,11 +102,11 @@ on a dedicated runner.
 ## Windows / MSVC
 
 Run from a **VS developer prompt** (`vcvars64.bat`), so the Ninja presets find
-`cl.exe`; the same presets and suites apply. `SPIKE_NATIVE` maps to `/arch:AVX2`
+`cl.exe`; the same presets and suites apply. `SUB0ECS_NATIVE` maps to `/arch:AVX2`
 (MSVC has no `-march=native`).
 
 ```bat
-python tools/bench/run.py --profile reference --pin P --label ref-msvc
+python bench/tools/run.py --profile reference --pin P --label ref-msvc
 ```
 
 - The fingerprint records the CPU (CIM), SIMD support, the **hybrid P/E core map**,
@@ -142,6 +141,6 @@ python tools/bench/run.py --profile reference --pin P --label ref-msvc
   and write `{"rows": [...]}`).
 - **New machine class:** no code change; the fingerprint and thread ladder
   adapt to the machine.
-- **Embedded (ESP32-P4, spike H4/H8e):** use a separate runner that
+- **Embedded (ESP32-P4, H4/H8e):** use a separate runner that
   flashes the device and captures serial output. It should keep the same
   `meta.json` schema (with device fields) so `compare.py` still works.

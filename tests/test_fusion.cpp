@@ -13,7 +13,7 @@
 #include "../bench/designs/query_partition.hpp"
 #include "../bench/designs/sparse_set.hpp"
 #include "../bench/skirmish/sim.hpp"
-#include "doctest.h"
+#include <doctest/doctest.h>
 
 using namespace bench;
 namespace fz = sub0ecs::fusion;

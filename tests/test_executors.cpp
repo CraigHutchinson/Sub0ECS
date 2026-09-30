@@ -11,7 +11,7 @@
 #include <sub0ecs/fusion/planner.hpp>
 
 #include "../bench/common/components.hpp"
-#include "doctest.h"
+#include <doctest/doctest.h>
 
 namespace fz = sub0ecs::fusion;
 using bench::Position;

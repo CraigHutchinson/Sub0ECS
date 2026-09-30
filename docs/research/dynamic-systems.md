@@ -11,10 +11,10 @@ layout should be. This note defines how that change happens:
   incremental restructuring, flipping to the full path when done.
 
 - Code: `addQuery` / `eachDyn` / `migrateStep` / `setQueryEnabled` /
-  `runFusedOnMasked` in [designs/query_partition.hpp](../designs/query_partition.hpp).
-- Tests: [test/dynamic_test.cpp](../test/dynamic_test.cpp).
-- Timeline: [bench/dynamic_timeline.cpp](../bench/dynamic_timeline.cpp).
-- Results: [results/h9-dynamic-*.json](../results/).
+  `runFusedOnMasked` in [designs/query_partition.hpp](../../include/sub0ecs/store/world.hpp).
+- Tests: [test/dynamic_test.cpp](../../tests/test_dynamic.cpp).
+- Timeline: [bench/dynamic_timeline.cpp](../../bench/dynamic_timeline.cpp).
+- Results: [results/h9-dynamic-*.json](../../bench/results/).
 
 ## 1. When does a new system need a relayout?
 

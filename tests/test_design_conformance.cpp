@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 
-#include "doctest.h"
+#include <doctest/doctest.h>
 
 #include "../bench/common/scenarios.hpp"
 #include "../bench/common/systems.hpp"
