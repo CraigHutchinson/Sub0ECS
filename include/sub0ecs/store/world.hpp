@@ -556,10 +556,11 @@ namespace sub0ecs::store
         // GCC stopped inlining in large TUs (sub0ecs_bench) and the fused loop ran
         // at unfused speed, so force it: flatten = inline everything called here.
         template <unsigned M, typename Exec, std::size_t... J, typename... Systems>
+        // GCC/Clang only. MSVC's [[msvc::flatten]] was tried (2026-10-01): no consistent gain in
+        // the paired fusion benchmarks, and +4 GB / +60 s compiling every file that
+        // includes the Skirmish systems (64 subset specialisations x full inlining).
 #if defined(__GNUC__)
         __attribute__((flatten))
-#elif defined(_MSC_VER)
-        [[msvc::flatten]]
 #endif
         void fusedLoop(Exec& exec, Partition& p, std::size_t n, std::index_sequence<J...>, const Systems&... systems)
         {

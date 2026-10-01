@@ -91,10 +91,11 @@ namespace sub0ecs::fusion
         };
 
         template <typename F>
+        // GCC/Clang only. MSVC's [[msvc::flatten]] was tried (2026-10-01): no consistent gain in
+        // the paired fusion benchmarks, and +4 GB / +60 s compiling every file that
+        // includes the Skirmish systems (64 subset specialisations x full inlining).
 #if defined(__GNUC__)
         __attribute__((flatten))
-#elif defined(_MSC_VER)
-        [[msvc::flatten]]
 #endif
         static void forThunk(void* p, unsigned worker)
         {

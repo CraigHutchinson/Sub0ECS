@@ -99,3 +99,4 @@ Design: [research/executor-async.md](research/executor-async.md).
 | ☑ | CI green on Linux GCC/Clang, macOS arm64 and ASan/UBSan; gate/exhaustive test tiers; nightly exhaustive workflow (active once on the default branch) |
 | ☑ | Benchmarks on nanobench 4.6 (paired, interleaved design comparisons with CIs); tests on doctest 2.5.3; both fetched, matching Sub0Log |
 | ☐ | A TSan job for the executors and the parallel store paths |
+| ☐ | MSVC fusion inlining: a same-binary A/B (two instantiations, one with `[[msvc::forceinline_calls]]` on the kernel body only) instead of cross-build runs; `[[msvc::flatten]]` was withdrawn as too costly to compile for no consistent gain |

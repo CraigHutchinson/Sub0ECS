@@ -366,9 +366,14 @@ MSVC 19.51 (Visual Studio 18), Release, `/W4 /permissive-`, `/arch:AVX2`, Ninja.
 - **All four suites pass:** storage conformance (bit-identical checksums across all
   designs, including v1), fusion (planners × executors), H9 dynamic, and Skirmish
   lockstep.
-- **Fusion inlining matches GCC:** `[[msvc::flatten]]` now accompanies GCC's
-  `flatten` on the fused loop and the pool thunk, so MSVC measures fusion with the
-  same forced inlining instead of silently leaving it to heuristics.
+- **Fusion inlining on MSVC:** `[[msvc::flatten]]` beside GCC's `flatten` was tried and
+  withdrawn (2026-10-01). The paired fusion benchmarks showed no consistent gain (MSVC
+  fuses at 1.1-1.8x over sequential either way), while it cost ~4 GB and ~60 s for
+  every file that includes the Skirmish systems.
+- **Compiler memory:** the fixed-capacity comparator's component arrays were members
+  initialised at compile time; MSVC needed ~48 KB per slot (50 GB for the 1M world,
+  105 GB with Skirmish's), which broke CI. They are now allocated once at
+  construction; the heaviest benchmark file compiles in 0.5 GB / 11 s.
 - The harness runs on Windows (see BENCHMARKING.md "Windows / MSVC").
 
 ## Promotion to the library

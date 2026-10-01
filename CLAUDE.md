@@ -18,8 +18,8 @@ Keep the everyday loop fast; put breadth on demand.
 
 | Tier | What | Budget | Where |
 |---|---|---|---|
-| Gate | `ctest --preset default` (label `gate`) | ~5 s Release, ~60 s sanitizers (now 1.2 s / 35 s) | every push/PR (`ci.yml`) |
-| Exhaustive | doctest `TEST_SUITE("exhaustive")`, label `exhaustive`: `ctest --preset exhaustive` | minutes | `nightly.yml` and by hand |
+| Gate | `ctest --preset default` (label `gate`) | ~5 s Release, ~60 s sanitizers (now 1.2 s / 35 s) | every push, any branch (`ci.yml`) |
+| Exhaustive | doctest `TEST_SUITE("exhaustive")`, label `exhaustive`: `ctest --preset exhaustive` | under a minute (now 24 s) | merges: PRs into and pushes to `master`/`v2` (`ci.yml`, Clang job); nightly, also under sanitizers |
 | Benchmark smoke | `bench/tools/run.py --profile quick` | ~10 s | `ci.yml` (Linux GCC) |
 | Benchmarks | `standard` / `reference` profiles | minutes / hours | by hand, dedicated hardware |
 

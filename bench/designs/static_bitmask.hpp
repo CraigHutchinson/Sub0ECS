@@ -15,6 +15,7 @@
 #include <array>
 #include <cstdint>
 #include <cstdlib>
+#include <memory>
 #include <tuple>
 #include <type_traits>
 
@@ -70,7 +71,7 @@ namespace bench::fixed
         void each(F&& f)
         {
             constexpr Signature need = kAlive | (bit<Cs>() | ...);
-            auto cols = std::tuple<Cs*...>{ column<Cs>().data()... };
+            auto cols = std::tuple<Cs*...>{ column<Cs>()... };
             for (std::uint32_t i = 0; i < highWater_; ++i)
             {
                 if ((mask_[i] & need) == need) f(std::get<Cs*>(cols)[i]...);
@@ -107,18 +108,19 @@ namespace bench::fixed
 
     private:
         template <typename C>
-        std::array<C, Capacity>& column() { return std::get<indexOf<C, Components...>()>(columns_); }
+        C* column() { return std::get<indexOf<C, Components...>()>(columns_).get(); }
 
         std::array<Signature, Capacity> mask_{};
         std::array<std::uint8_t, Capacity> version_{};
         std::array<std::uint32_t, Capacity> free_{};
         std::uint32_t freeCount_ = 0;
         std::uint32_t highWater_ = 0;
-        // Default-initialised, not `{}`: value-initialising Capacity components made MSVC
-        // materialise every element at compile time (~48 KB of compiler memory per slot,
-        // 50 GB at 1M). The slots need no initial value: create/add write a slot before
-        // the mask lets find/each see it.
-        std::tuple<std::array<Components, Capacity>...> columns_;
+        // One array per component, allocated once at construction (never afterwards, so
+        // the design stays "no heap after construction"). Not std::array members: any
+        // initialisation of Capacity components with default member initialisers made
+        // MSVC expand every element at compile time (~48 KB of compiler memory per
+        // slot: 50 GB for the 1M world, 105 GB for Skirmish's). A runtime array is a loop.
+        std::tuple<std::unique_ptr<Components[]>...> columns_{ std::make_unique<Components[]>(Capacity)... };
     };
 
     template <std::size_t Capacity>
