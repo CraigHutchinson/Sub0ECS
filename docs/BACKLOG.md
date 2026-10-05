@@ -41,7 +41,7 @@ it is checked at compile time for declared queries. Per-partition fixed tables s
 by `kMaxTypes` (`base`, `columnOf`, edge caches) need a sparse form before widths
 beyond 64 are practical. Gate: benchmarks unchanged at the default width.
 
-## 2. Examples: one per feature and alternative (required for landing)
+## 2. Examples: one per feature and alternative ☑ (2026-10-05)
 
 Plan and conventions: [EXAMPLES.md](EXAMPLES.md). Each source opens with **Use
 when / Demonstrates / Story / Keep in mind / Run**, is built and run by CTest
@@ -51,16 +51,22 @@ document, justify, and verify when each feature is useful.
 | | Example | Shows |
 |---|---|---|
 | ☑ | `minimal_world` | Declare queries, create entities, run one system |
-| ☐ | `hinted_partitions` | `Volatile<T>` for churn-heavy components vs carried columns (the H1 memory/churn trade) |
-| ☐ | `structural_changes` | add/remove/destroy, deferred commit, stale-handle detection |
-| ☐ | `random_access` | `find<T>(e)` and why column-first lookup is cheap |
-| ☐ | `fusion_planners` | NeverFuse / AlwaysFuse / ShareColumns / DeviceAware on one schedule: when each wins (Frame3 vs FusionFrame) |
-| ☐ | `auto_tuner` | Measured plan choice; switching plans is safe (bit-identical) |
-| ☐ | `executors` | Inline / Tiled / Parallel / Offload: row-locality contract, written-column write-back |
-| ☐ | `parallel_systems` | `eachParallel` / `runFusedParallel`, per-worker command buffers |
-| ☐ | `dynamic_systems` | H9: paging a system in, degraded path, bounded migration budget |
-| ☐ | `determinism` | Lockstep check across plans and executors (what `kBitExact` protects) |
-| ☐ | `skirmish` | Pointer to the full RTS testbed as the "everything together" sample |
+| ☑ | `hinted_partitions` | `Volatile<T>` for churn-heavy components vs carried columns (the H1 memory/churn trade) |
+| ☑ | `structural_changes` | add/remove/destroy, deferred commit, stale-handle detection |
+| ☑ | `random_access` | `find<T>(e)` and why column-first lookup is cheap |
+| ☑ | `fusion_planners` | NeverFuse / AlwaysFuse / ShareColumns / DeviceAware on one schedule: when each wins (Frame3 vs FusionFrame) |
+| ☑ | `auto_tuner` | Measured plan choice; switching plans is safe (bit-identical) |
+| ☑ | `executors` | Inline / Tiled / Parallel / Offload: row-locality contract, written-column write-back |
+| ☑ | `parallel_systems` | `eachParallel` / `runFusedParallel`, per-worker command buffers |
+| ☑ | `dynamic_systems` | H9: paging a system in, degraded path, bounded migration budget |
+| ☑ | `determinism` | Lockstep check across plans and executors (what `kBitExact` protects) |
+| ☑ | `skirmish` | Pointer to the full RTS testbed as the "everything together" sample |
+| ☑ | `rocket` | The classic first game loop: movement and rendering systems over different components (clean-room successor to v1's sample) |
+
+All are built and run by CTest; CI verifies them on GCC, Clang, MSVC, macOS and under sanitizers.
+v1's other sample, the SFML `balls_simulation` (ECS vs SoA vs AoS vs OOP, interactive), is not
+rewritten: the Skirmish testbed and `sub0ecs_skirmish_demo` are its successor as the interactive
+showcase, and the OOP/SoA comparison lives in the benchmarks (`OOP`, `RawSoA`).
 
 ## 3. Executors for accelerators (H10)
 

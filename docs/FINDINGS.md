@@ -243,7 +243,7 @@ matters at the edges:
 - fusion trims movement by ~9%.
 
 The big remaining lever, though, is spatial indexing: the grid build and
-neighbour queries. That argues for making spatial queries a first-class
+neighbour queries. That argues for making spatial queries a
 first-class feature (a grid/partition index maintained by the store, with neighbour
 iteration that can itself be fused and offloaded), and it is exactly the
 kind of priority a real testbed exposes and micro-benchmarks hide.
