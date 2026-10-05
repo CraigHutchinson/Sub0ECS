@@ -20,6 +20,7 @@
 #include <type_traits>
 
 #include "../common/components.hpp"
+#include <sub0ecs/detail/hints.hpp>
 #include <sub0ecs/entity.hpp>
 
 namespace bench::fixed
@@ -74,7 +75,7 @@ namespace bench::fixed
             auto cols = std::tuple<Cs*...>{ column<Cs>()... };
             for (std::uint32_t i = 0; i < highWater_; ++i)
             {
-                if ((mask_[i] & need) == need) f(std::get<Cs*>(cols)[i]...);
+                if ((mask_[i] & need) == need) SUB0ECS_FLATTEN_CALLS f(std::get<Cs*>(cols)[i]...);
             }
         }
 

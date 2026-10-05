@@ -27,20 +27,26 @@
  * find() returns nullptr; add() of a component the entity already has
  * overwrites it; remove() of a component it lacks is a no-op.
  *
- * Type indices: every World type numbers its own component types densely from
- * 0, on first use. The limit is therefore 64 component types per World type,
- * however many other component types the program uses elsewhere; every
- * instance of one World type shares the same numbering.
+ * Type indices: every World type numbers its own component types, shared by all
+ * its instances. The types known at compile time, queried and Volatile, come
+ * first (checked by static_assert to fit the 64 layout bits); every other type is
+ * numbered after them on first use, without limit. A type with one of the 64
+ * layout bits can be a dense column. A type numbered beyond them is kept in side
+ * storage instead: every operation still works, it just is never a column. In
+ * carry mode that means the first unqueried types seen are carried and later
+ * ones are side-stored; in pure mode unqueried types never need a bit at all.
  *
- * Constraints: trivially copyable components of at most 64 bytes, at most 64
- * component types per World type (exceeding it terminates), at most 32
- * declared queries, and each<Cs...> must name a declared Query<Cs...> exactly.
+ * Constraints: trivially copyable components of at most 64 bytes; at most 64
+ * queried plus Volatile component types and at most 32 declared queries (both
+ * compile-time errors); each<Cs...> must name a declared Query<Cs...> exactly;
+ * a query added at runtime (addQuery) must name types that have a layout bit.
  */
 
 
 #include <array>
 #include <bit>
 #include <cassert>
+#include <cstdlib>
 #include <cstring>
 #include <memory>
 #include <tuple>
@@ -48,6 +54,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "../detail/hints.hpp"
 #include "../entity.hpp"
 #include "../fusion/executors.hpp"
 #include "../query.hpp"
@@ -69,17 +76,34 @@ namespace sub0ecs::store
         static constexpr std::size_t kQueries = sizeof...(Qs);
         static_assert(kQueries <= 32, "signature is 32-bit");
 
-        using Indices = TypeIndices<BasicWorld>;   // this World type's own component numbering
+        // Component numbering: see "Type indices" above.
+        using StaticTypes = typename detail::UnionOf<detail::TypeList<>, Qs..., Query<Vs...>>::type;
+        static constexpr std::size_t kStaticTypes = detail::Size<StaticTypes>::value;
+        static_assert(kStaticTypes <= kMaxTypes, "more than 64 queried + Volatile component types in one World type");
+
+        using Indices = TypeIndices<BasicWorld>;   // numbering of the types met at runtime, after the static ones
 
         template <typename T>
-        static std::uint32_t typeIndex() { return Indices::template of<T>(); }
+        static std::uint32_t typeIndex()
+        {
+            constexpr std::size_t fixed = detail::IndexIn<T, StaticTypes>::value;
+            if constexpr (fixed != ~std::size_t{ 0 }) return static_cast<std::uint32_t>(fixed);
+            else return static_cast<std::uint32_t>(kStaticTypes) + Indices::template of<T>();
+        }
+
+        /** The layout bit of a type index; no bit (0) for indices beyond the 64 layout bits. */
+        static constexpr Mask bitAt(std::uint32_t index) { return index < kMaxTypes ? Mask{ 1 } << index : Mask{ 0 }; }
 
         template <typename T>
-        static Mask bit() { return Indices::template bit<T>(); }
+        static Mask bit() { return bitAt(typeIndex<T>()); }
 
         /** Column of C in partition p, or nullptr when C is not a column there. */
         template <typename C>
-        static C* col(const Partition& p) { return reinterpret_cast<C*>(p.base[typeIndex<C>()]); }
+        static C* col(const Partition& p)
+        {
+            const std::uint32_t index = typeIndex<C>();
+            return index < kMaxTypes ? reinterpret_cast<C*>(p.base[index]) : nullptr;
+        }
 
     public:
         using Entity = sub0ecs::Entity;
@@ -95,7 +119,6 @@ namespace sub0ecs::store
             // Plan-time fact: components outside this mask can never change an
             // entity's partition, so add/remove of them is a pure side-storage op.
             fragmenting_ = Carry ? ~volatile_ : queried_;
-            strides_.fill(0);
         }
 
         void reserve(std::size_t n) { records_.reserve(n); }
@@ -133,7 +156,7 @@ namespace sub0ecs::store
                 const std::size_t n = p->size();
                 if (n == 0) continue;
                 std::tuple<Cs*...> cols{ col<Cs>(*p)... };
-                for (std::size_t i = 0; i < n; ++i) f(std::get<Cs*>(cols)[i]...);
+                for (std::size_t i = 0; i < n; ++i) SUB0ECS_FLATTEN_CALLS f(std::get<Cs*>(cols)[i]...);
             }
         }
 
@@ -141,37 +164,44 @@ namespace sub0ecs::store
         C* find(Entity e)
         {
             if (!entities_.alive(e)) return nullptr;
-            if (!(fragmenting_ & bit<C>()))   // membership lives in the pool (which may not exist yet)
+            // The index is resolved once: for a type numbered at runtime each lookup
+            // re-checks a thread-safe static, which is measurable in churn-heavy paths.
+            const std::uint32_t t = typeIndex<C>();
+            const Mask bitC = bitAt(t);
+            if (!(fragmenting_ & bitC))   // membership lives in the pool (which may not exist yet)
             {
-                auto* pool = side_[typeIndex<C>()].get();
-                return pool ? static_cast<SidePool<C>*>(pool)->find(e) : nullptr;
+                auto* sidePool = poolAt(t);
+                return sidePool ? static_cast<SidePool<C>*>(sidePool)->find(e) : nullptr;
             }
             const Record& r = records_[e.index()];
             // Column first: columnsFor(has) is a subset of has, so a column
             // implies membership. Checking r.has before this dependent load cost
-            // RandomGet ~20% (measured), hence the order.
-            if (C* column = col<C>(*partitions_[r.partition])) return column + r.row;
-            if (!(r.has & bit<C>()))   // H9: not yet migrated entities still hold it in side storage
-                return (migrating_ & bit<C>()) ? side<C>().find(e) : nullptr;
-            return side<C>().find(e);
+            // RandomGet ~20% (measured), hence the order. (A fragmenting type has a
+            // layout bit, so t indexes the partition's tables.)
+            if (std::byte* column = partitions_[r.partition]->base[t]) return reinterpret_cast<C*>(column) + r.row;
+            if (!(r.has & bitC))   // H9: not yet migrated entities still hold it in side storage
+                return (migrating_ & bitC) ? poolOf<C>(t).find(e) : nullptr;
+            return poolOf<C>(t).find(e);
         }
 
         template <typename C>
         void add(Entity e, C value)
         {
             if (!entities_.alive(e)) return;
-            registerType<C>();
-            if (!(fragmenting_ & bit<C>()))
+            const std::uint32_t t = typeIndex<C>();
+            const Mask bitC = bitAt(t);
+            registerType<C>(t);
+            if (!(fragmenting_ & bitC))
             {
-                side<C>().emplace(e, value);   // non-fragmenting: exactly a sparse-set op
+                poolOf<C>(t).emplace(e, value);   // non-fragmenting: exactly a sparse-set op
                 return;
             }
             Record& r = records_[e.index()];
-            const Mask newHas = r.has | bit<C>();
+            const Mask newHas = r.has | bitC;
             const Mask newCols = columnsFor(newHas);
             if (newCols != part(r).columnsMask)
             {
-                moveTo(e, r, newCols, newHas, part(r).addEdge[typeIndex<C>()]);
+                moveTo(e, r, newCols, newHas, part(r).addEdge[t]);
             }
             r.has = newHas;
             store(part(r), r.row, e, std::move(value));
@@ -181,28 +211,29 @@ namespace sub0ecs::store
         void remove(Entity e)
         {
             if (!entities_.alive(e)) return;
-            if (!(fragmenting_ & bit<C>()))
+            const std::uint32_t t = typeIndex<C>();
+            const Mask bitC = bitAt(t);
+            if (!(fragmenting_ & bitC))
             {
                 // non-fragmenting: exactly a sparse-set op (the pool may not exist yet)
-                if (auto* pool = static_cast<SidePool<C>*>(side_[typeIndex<C>()].get())) pool->removeIfPresent(e);
+                if (auto* sidePool = static_cast<SidePool<C>*>(poolAt(t))) sidePool->removeIfPresent(e);
                 return;
             }
             Record& r = records_[e.index()];
-            const std::uint32_t t = typeIndex<C>();
-            if (!(r.has & bit<C>()))
+            if (!(r.has & bitC))
             {
-                if (migrating_ & bit<C>()) side<C>().removeIfPresent(e);   // H9: unmigrated holder, still side-stored
-                return;                                                     // otherwise: absent, nothing to do
+                if (migrating_ & bitC) poolOf<C>(t).removeIfPresent(e);   // H9: unmigrated holder, still side-stored
+                return;                                                  // otherwise: absent, nothing to do
             }
-            const Mask newHas = r.has & ~bit<C>();
+            const Mask newHas = r.has & ~bitC;
             const Mask newCols = columnsFor(newHas);
             if (newCols == part(r).columnsMask)
             {
-                side<C>().remove(e);   // not a column: pure side-storage op, no data moves
+                poolOf<C>(t).remove(e);   // not a column: pure side-storage op, no data moves
             }
             else
             {
-                if (part(r).columnOf[t] == kNoColumn) side<C>().remove(e);
+                if (part(r).columnOf[t] == kNoColumn) poolOf<C>(t).remove(e);
                 moveTo(e, r, newCols, newHas, part(r).removeEdge[t]);
             }
             r.has = newHas;
@@ -220,7 +251,7 @@ namespace sub0ecs::store
                 side_[t]->remove(e);
                 sideBits &= sideBits - 1u;
             }
-            for (std::uint32_t t : nonFragmentingTypes_) side_[t]->removeIfPresent(e);
+            for (std::uint32_t t : nonFragmentingTypes_) poolAt(t)->removeIfPresent(e);
             for (Mask m = migrating_; m; m &= m - 1u) side_[std::countr_zero(m)]->removeIfPresent(e);
             const Entity moved = p.swapRemove(r.row);
             if (!(moved == kNullEntity)) records_[moved.index()].row = r.row;
@@ -337,14 +368,14 @@ namespace sub0ecs::store
                 for (Partition* p : byQuery_[qi])
                 {
                     std::tuple<Cs*...> cols{ col<Cs>(*p)... };
-                    for (std::size_t i = 0, n = p->size(); i < n; ++i) f(0u, std::get<Cs*>(cols)[i]...);
+                    for (std::size_t i = 0, n = p->size(); i < n; ++i) SUB0ECS_FLATTEN_CALLS f(0u, std::get<Cs*>(cols)[i]...);
                 }
                 return;
             }
             auto body = [&](std::size_t item, unsigned worker) {
                 const Chunk& c = chunks_[item];
                 std::tuple<Cs*...> cols{ col<Cs>(*c.p)... };
-                for (std::uint32_t i = c.begin; i < c.end; ++i) f(worker, std::get<Cs*>(cols)[i]...);
+                for (std::uint32_t i = c.begin; i < c.end; ++i) SUB0ECS_FLATTEN_CALLS f(worker, std::get<Cs*>(cols)[i]...);
             };
             pool.parallelFor(chunks_.size(), body);
         }
@@ -367,6 +398,10 @@ namespace sub0ecs::store
         {
             static_assert(Carry, "dynamic queries are designed for the hinted (carry) layout");
             (registerType<Cs>(), ...);
+            // A query's components become columns, so each needs a layout bit. Queried and
+            // Volatile types always have one; a type first seen at runtime has one only
+            // while bits remain.
+            if (((typeIndex<Cs>() >= kMaxTypes) || ...)) std::abort();
             const Mask req = (Mask{ 0 } | ... | bit<Cs>());
             const Mask promote = req & volatile_;
             if (promote)
@@ -428,7 +463,7 @@ namespace sub0ecs::store
                 const std::size_t n = p->size();
                 if (n == 0) continue;
                 std::tuple<Cs*...> cols{ col<Cs>(*p)... };
-                for (std::size_t i = 0; i < n; ++i) f(std::get<Cs*>(cols)[i]...);
+                for (std::size_t i = 0; i < n; ++i) SUB0ECS_FLATTEN_CALLS f(std::get<Cs*>(cols)[i]...);
             }
             if (q.pending)                      // degraded path: sparse join over unmigrated holders
             {
@@ -468,8 +503,8 @@ namespace sub0ecs::store
         bool holds(Entity e, const Record& r)
         {
             if (r.has & bit<C>()) return true;
-            auto* pool = side_[typeIndex<C>()].get();
-            return pool && pool->tryFindRaw(e) != nullptr;
+            auto* sidePool = poolAt(typeIndex<C>());
+            return sidePool && sidePool->tryFindRaw(e) != nullptr;
         }
 
         template <typename C>
@@ -612,25 +647,57 @@ namespace sub0ecs::store
         template <typename T>
         void registerType()
         {
+            registerType<T>(typeIndex<T>());
+        }
+
+        /** As above, for a caller that has already resolved T's index. */
+        template <typename T>
+        void registerType(std::uint32_t t)
+        {
             static_assert(std::is_trivially_copyable_v<T>, "sub0ecs::store requires trivially copyable components");
             static_assert(sizeof(T) <= 64, "H9 promotion scratch holds components up to 64 bytes");
-            const std::uint32_t t = typeIndex<T>();
-            assert(t < kMaxTypes);
-            if (strides_[t] == 0)
+            if (t < kMaxTypes)
             {
-                strides_[t] = sizeof(T);
-                side_[t] = std::make_unique<SidePool<T>>();
-                if (!(fragmenting_ & (Mask{ 1 } << t))) nonFragmentingTypes_.push_back(t);
+                if (strides_[t] == 0)
+                {
+                    strides_[t] = sizeof(T);
+                    side_[t] = std::make_unique<SidePool<T>>();
+                    if (!(fragmenting_ & bitAt(t))) nonFragmentingTypes_.push_back(t);
+                }
+                return;
+            }
+            // Beyond the layout bits: never a column, so only a side pool is needed.
+            const std::uint32_t slot = t - kMaxTypes;
+            if (slot >= sideBeyond_.size()) sideBeyond_.resize(slot + 1u);
+            if (!sideBeyond_[slot])
+            {
+                sideBeyond_[slot] = std::make_unique<SidePool<T>>();
+                nonFragmentingTypes_.push_back(t);
             }
         }
 
+        /** The side pool of a type index, or nullptr if this world has never stored that
+         *  type. Indices with a layout bit sit in an inline array (one load, as before the
+         *  limit was lifted); the rest in a table that grows with the types seen. */
+        SidePoolBase* poolAt(std::uint32_t index) const
+        {
+            if (index < kMaxTypes) return side_[index].get();
+            const std::uint32_t slot = index - kMaxTypes;
+            return slot < sideBeyond_.size() ? sideBeyond_[slot].get() : nullptr;
+        }
+
         template <typename T>
-        SidePool<T>& side() { return static_cast<SidePool<T>&>(*side_[typeIndex<T>()]); }
+        SidePool<T>& side() { return poolOf<T>(typeIndex<T>()); }
+
+        /** T's side pool by its resolved index; the type must have been stored in this world. */
+        template <typename T>
+        SidePool<T>& poolOf(std::uint32_t index) { return static_cast<SidePool<T>&>(*poolAt(index)); }
 
         template <typename T>
         void store(Partition& p, std::uint32_t row, Entity e, T value)
         {
-            const std::int8_t c = p.columnOf[typeIndex<T>()];
+            const std::uint32_t t = typeIndex<T>();
+            const std::int8_t c = t < kMaxTypes ? p.columnOf[t] : kNoColumn;   // no layout bit: never a column
             if (c != kNoColumn) std::memcpy(p.columns[c].at(row), &value, sizeof(T));
             else side<T>().emplace(e, value);
         }
@@ -671,13 +738,13 @@ namespace sub0ecs::store
                 const std::int8_t s = src.columnOf[col.type];
                 if (s != kNoColumn)
                 {
-                    std::memcpy(col.at(dstRow), src.columns[s].at(srcRow), col.stride);
+                    copyRow(col.at(dstRow), src.columns[s].at(srcRow), col.stride);
                 }
                 else if (r.has & (Mask{ 1 } << col.type))
                 {
                     // promote: side storage -> column
                     SidePoolBase& pool = *side_[col.type];
-                    std::memcpy(col.at(dstRow), pool.findRaw(e), col.stride);
+                    copyRow(col.at(dstRow), static_cast<const std::byte*>(pool.findRaw(e)), col.stride);
                     pool.remove(e);
                 }
                 // else: component being added; caller stores it after the move
@@ -731,8 +798,9 @@ namespace sub0ecs::store
         std::vector<DynQuery> dyn_;                   // H9: runtime-registered queries
         std::array<std::array<std::byte, 64>, kMaxTypes> stash_{};   // promotion scratch (components <= 64 B)
         std::vector<std::uint32_t> nonFragmentingTypes_;
-        std::array<std::size_t, kMaxTypes> strides_{};
-        std::array<std::unique_ptr<SidePoolBase>, kMaxTypes> side_{};
+        std::array<std::size_t, kMaxTypes> strides_{};                    // by layout index; 0 = not stored here yet
+        std::array<std::unique_ptr<SidePoolBase>, kMaxTypes> side_{};     // by layout index
+        std::vector<std::unique_ptr<SidePoolBase>> sideBeyond_;           // types numbered beyond the layout bits
 
         EntityAllocator entities_;
         std::vector<Record> records_;

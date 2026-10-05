@@ -68,7 +68,7 @@ namespace sub0ecs::store
             Entity moved = kNullEntity;
             if (row != last)
             {
-                for (auto& c : columns) std::memcpy(c.at(row), c.at(last), c.stride);
+                for (auto& c : columns) copyRow(c.at(row), c.at(last), c.stride);
                 entities[row] = entities[last];
                 moved = entities[row];
             }
