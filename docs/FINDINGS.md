@@ -373,8 +373,8 @@ MSVC 19.51 (Visual Studio 18), Release, `/W4 /permissive-`, `/arch:AVX2`, Ninja.
 - **All four suites pass:** storage conformance (bit-identical checksums across all
   designs, including v1), fusion (planners × executors), H9 dynamic, and Skirmish
   lockstep.
-- **Fusion inlining on MSVC:** `[[msvc::flatten]]` beside GCC's `flatten` was tried and
-  withdrawn (2026-10-01). The paired fusion benchmarks showed no consistent gain (MSVC
+- **Fusion inlining on MSVC:** `[[msvc::flatten]]` on the whole `fusedLoop` function,
+  beside GCC's `flatten`, was tried and withdrawn (2026-10-01). The paired fusion benchmarks showed no consistent gain (MSVC
   fuses at 1.1-1.8x over sequential either way), while it cost ~4 GB and ~60 s for
   every file that includes the Skirmish systems.
 - **Compiler memory:** the fixed-capacity comparator's component arrays were members
@@ -382,6 +382,74 @@ MSVC 19.51 (Visual Studio 18), Release, `/W4 /permissive-`, `/arch:AVX2`, Ninja.
   105 GB with Skirmish's), which broke CI. They are now allocated once at
   construction; the heaviest benchmark file compiles in 0.5 GB / 11 s.
 - The harness runs on Windows (see BENCHMARKING.md "Windows / MSVC").
+
+## Compilers on one machine
+
+MSVC 19.51, clang-cl 22.1 and GCC 16.2 (MinGW-w64), all on the Core Ultra 9 275HX,
+pinned to its P-cores, tuned for the host (`/arch:AVX2`, `-march=native`), with
+floating-point contraction off so all three compute the same arithmetic. Three
+rounds, the compilers rotated within each round; the table is the median of the
+three (µs per pass, 100K entities, fragmented). 2026-10-05.
+
+| Case | MSVC | clang-cl | GCC |
+|---|---:|---:|---:|
+| Iter1 / store | 20.6 | 14.7 | 15.9 |
+| Update2 / hand-written loop | 149.4 | 165.9 | 115.0 |
+| Update2 / store | 140.7 | 168.1 | 119.8 |
+| Frame3 / store | 226.4 | 206.6 | 170.8 |
+| RandomGet / store | 575.7 | 369.9 | 410.5 |
+| AddRemove / store | 88.5 | 87.2 | 59.3 |
+| TagChurn / store | 612.4 | 459.1 | 434.9 |
+
+Absolute times moved by up to 30% between rounds on this laptop, so read a column
+against the hand-written loop in the same run, not against another column to the
+last digit. The store's Update2 is 0.94x, 1.01x and 1.01x the hand-written loop on
+MSVC, clang-cl and GCC: the library adds nothing on any of them.
+
+**Correction.** An earlier note put MSVC 3-7x behind GCC and blamed missing
+vectorisation. That compared this laptop with a cloud Xeon. On one machine MSVC is
+1.0-1.5x behind GCC, and GCC does not vectorise these kernels either.
+
+**What MSVC was losing, and the fixes (all three in the library, none in user code):**
+
+| Cause | Found by | Fix | Effect |
+|---|---|---|---|
+| The type index was a function-local static. MSVC does not inline a function with one, so every `find`, `add` and `remove` made a call (and every partition of an iteration) | Assembly: `call TypeIndices::of` | Indices of queried and Volatile types are compile-time constants (the component-capacity change) | RandomGet 1.6x faster on MSVC; 35-45% on clang-cl and GCC too |
+| The system callable was inlined into the row loop, but the kernel it calls was not: a call per row | Assembly: `call updatePosition` in the loop | `SUB0ECS_FLATTEN_CALLS` (`[[msvc::flatten]]`) on the row call statement of `each`, `eachDyn` and `eachParallel` | Update2 and Frame3 1.2-1.35x faster on MSVC; the store went from 1.24x the hand-written loop to 0.94x |
+| A row move copied each column with `memcpy(stride)`, a library call | Reading `moveTo` after the profile showed add/remove time spread over the move path | `copyRow`: fixed-size copies for 4, 8, 12 and 16 bytes | AddRemove 5% faster on MSVC and clang-cl, 11% on GCC (probe) |
+
+Measured as the store's paired ratio to v1 within one run, before against after
+the first two fixes (MSVC, 100K): Update2 1.31-1.35x, Frame3 1.20-1.24x,
+RandomGet 1.63-1.66x, AddRemove 1.15-1.51x. No case got slower (72 ratios: 34
+faster, 38 unchanged). The comparator designs got the same row hint, so they are
+not handicapped on MSVC. The statement-level hint did not lengthen the build; the
+function-level one tried on `fusedLoop` (see "MSVC validation") is what cost 4 GB.
+
+**Hints that were measured and not adopted** (`store / hand-written` was already
+1.0, so these are about the kernel, not the library; ns per entity, Update2):
+
+| Variant | MSVC | clang-cl | GCC |
+|---|---:|---:|---:|
+| As written (two structs, branches) | 0.99 | 1.29 | 0.81 |
+| `__restrict` on the column pointers | 0.90 | 1.13 | 0.95 |
+| "Iterations are independent" pragma | 1.02 | 0.73 | 0.95 |
+| Branches rewritten as selects | 0.92 | 0.34 | 0.93 |
+| One array per field, selects, `__restrict` | 0.93 | 0.21 | 1.01 |
+
+- Only Clang turns any of them into vector code. MSVC reports the two-struct loop
+  as a loop-carried dependence (reason 1200) even with `__restrict` and
+  `#pragma loop(ivdep)`, and the select form as control flow (reason 1100).
+- The independence pragma is not safe for `each`: a callable may carry state from
+  row to row. It could be applied to fused systems, whose access is declared.
+- A branch-free kernel is the user's choice; the benchmark kernel stays as written
+  so the comparison with v1 holds.
+
+**What is left on MSVC** is its code generator, not the library: Iter1 is 1.3-1.4x
+behind because MSVC will not vectorise a one-field update of a two-field struct
+(reason 1300, "too little computation"). One array per field makes that loop 3-4x
+faster on all three compilers (0.044 ns per entity against 0.13-0.17), which is a
+storage-layout change, not a hint; it is on the backlog. AddRemove and TagChurn
+are 1.4-1.5x behind GCC with the time spread across the side-pool operations.
 
 ## Promotion to the library
 

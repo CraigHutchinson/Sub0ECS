@@ -103,4 +103,8 @@ Design: [research/executor-async.md](research/executor-async.md).
 | ☑ | CI green on Linux GCC/Clang, macOS arm64 and ASan/UBSan; gate/exhaustive test tiers; nightly exhaustive workflow |
 | ☑ | Benchmarks on nanobench 4.6 (paired, interleaved design comparisons with CIs); tests on doctest 2.5.3; both fetched, matching Sub0Log |
 | ☐ | A TSan job for the executors and the parallel store paths |
+| ☑ | MSVC optimisation pass (2026-10-05): compile-time type indices, row-call inlining hint, fixed-size row copies; store Update2 at 0.94x the hand-written loop, RandomGet 1.6x faster. Same-machine comparison of MSVC, clang-cl and GCC in FINDINGS |
+| ☐ | Field-split columns (one array per field of a component): the one-field Iter1 loop is 3-4x faster on MSVC, clang-cl and GCC alike, and it is the only route to vector code on MSVC |
+| ☐ | Side-pool add/remove on MSVC: AddRemove and TagChurn are 1.4-1.5x behind GCC, time spread over `SidePool::emplace`/`remove`/`find` (profile first) |
+| ☐ | `bench/tools/profile.py`: wrap Linux `perf` for hosts without VTune; verify the `uarch` collection from an elevated prompt |
 | ☐ | MSVC fusion inlining: a same-binary A/B (two instantiations, one with `[[msvc::forceinline_calls]]` on the kernel body only) instead of cross-build runs; `[[msvc::flatten]]` was withdrawn as too costly to compile for no consistent gain |

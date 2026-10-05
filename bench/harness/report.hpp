@@ -1,5 +1,5 @@
 #pragma once
-/** The results JSON, schema "sub0ecs-bench-results/1", read by bench/tools/*.py:
+/** The results JSON, schema "sub0ecs-bench-results/1", read by the scripts in bench/tools:
  *  {"schema", "binary", "settings": {...}, "results": [Record...]}. */
 
 #include <iosfwd>

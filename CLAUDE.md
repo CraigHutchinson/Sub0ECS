@@ -50,6 +50,11 @@ only (a GitHub rule) and tests that branch.
 - **Record decisions with evidence.** A design choice backed by a measurement gets a
   FINDINGS section; ad-hoc benchmark runs stay in `bench/results/runs/`
   (ignored). Curate runs worth keeping into `bench/results/reference/<host>/`.
+- **Profile before optimising.** A speed change starts from evidence, not from a
+  guess: the paired ratio to the hand-written floor, then `bench/tools/profile.py`
+  (VTune hot functions and processor metrics), then the compiler's vectoriser
+  report. The order and commands are in `bench/BENCHMARKING.md`, "Finding out why".
+  Compare compilers on one machine, in rotated runs; never across machines.
 - **API changes** to anything under `include/sub0ecs/` are described in the commit
   message.
 - Follow `STYLE_GUIDE.md`. Tests must pass before committing.
