@@ -249,7 +249,7 @@ namespace
                     fx->entities = populate(*fx->world, n, p);
                     return fx;
                 },
-                [](WorldFixture<oop::World>& fx) { fx.world->updateAll(kDeltaTime); });
+                [](WorldFixture<oop::World>& fx) { fx.world->updateAll(); });
         }
     }
 

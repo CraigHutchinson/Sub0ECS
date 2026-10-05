@@ -195,7 +195,7 @@ TEST_CASE("the OOP comparator reproduces the reference Update2 state")
         for (int step = 0; step < 5; ++step)
         {
             systemPhysics(*reference);
-            objects->updateAll(kDeltaTime);
+            objects->updateAll();
         }
         CHECK(checksum(*objects, objectEntities) == checksum(*reference, referenceEntities));
     }

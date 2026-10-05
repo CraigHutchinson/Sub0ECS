@@ -6,7 +6,8 @@
  * update() per object: the class-hierarchy design an ECS is usually measured
  * against. Entities are created through the shared populate() (scenarios.hpp), so the
  * entity mix and values are identical to every other design; Update2's work is
- * updateAll(), one virtual call per entity running the same kernel::updatePosition.
+ * updateAll(), one virtual call per entity running the same kernel::updatePosition
+ * with the same constant timestep.
  *
  * Scope, as in v1: Create and Update2 only (no queries, structural change or
  * destroy). find<C>() exists so conformance can compare state; it is not timed.
@@ -19,6 +20,7 @@
 #include <vector>
 
 #include "../common/components.hpp"
+#include "../common/scenarios.hpp"
 
 namespace bench::oop
 {
@@ -38,7 +40,11 @@ namespace bench::oop
     {
     public:
         virtual ~Object() = default;
-        virtual void update(float dt) = 0;
+        /** One Update2 step. The timestep is the workload's compile-time constant, exactly as
+         *  in every other design: passed at runtime instead, `9.8f * dt` is fused into the
+         *  add on FMA targets (ARM64, native x86) and rounds differently from the folded
+         *  constant, so the designs would no longer be bit-identical. */
+        virtual void update() = 0;
         /** Address of the member for kSlot<C>, or nullptr if this class has none (conformance only). */
         virtual void* raw(int slot) = 0;
     };
@@ -47,7 +53,7 @@ namespace bench::oop
     {
     public:
         Small(Position p, Velocity v) : pos_(p), vel_(v) {}
-        void update(float dt) override { kernel::updatePosition(pos_, vel_, dt); }
+        void update() override { kernel::updatePosition(pos_, vel_, kDeltaTime); }
         void* raw(int slot) override
         {
             switch (slot)
@@ -67,7 +73,7 @@ namespace bench::oop
     {
     public:
         Medium(Position p, Velocity v, Health h, Rotation r, Scale s) : pos_(p), vel_(v), health_(h), rotation_(r), scale_(s) {}
-        void update(float dt) override { kernel::updatePosition(pos_, vel_, dt); }
+        void update() override { kernel::updatePosition(pos_, vel_, kDeltaTime); }
         void* raw(int slot) override
         {
             switch (slot)
@@ -96,7 +102,7 @@ namespace bench::oop
             : pos_(p), vel_(v), health_(h), rotation_(r), scale_(s), color_(c), team_(t), flags_(f)
         {
         }
-        void update(float dt) override { kernel::updatePosition(pos_, vel_, dt); }
+        void update() override { kernel::updatePosition(pos_, vel_, kDeltaTime); }
         void* raw(int slot) override
         {
             switch (slot)
@@ -143,9 +149,9 @@ namespace bench::oop
         }
 
         /** Update2: one virtual call per entity. */
-        void updateAll(float dt)
+        void updateAll()
         {
-            for (auto& o : objects_) o->update(dt);
+            for (auto& o : objects_) o->update();
         }
 
         template <typename C>
