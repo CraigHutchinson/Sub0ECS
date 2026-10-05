@@ -2,7 +2,7 @@
   "_comment": "Benchmark suites for bench/tools/run.py. kind=harness runs a bench/harness binary (nanobench; --filter/--epochs/--min-epoch-ms/--out); kind=timeline runs a custom tool that writes its own JSON. env values are passed through (\"auto\" = the binary's own default, e.g. thread ladder up to hardware concurrency).",
   "suites": {
     "baseline": {
-      "description": "Storage-model baseline: all designs, micro scenarios (FINDINGS: baseline, H1)",
+      "description": "Every design and reference on the micro scenarios (FINDINGS section 2)",
       "kind": "harness",
       "exe": "bench/sub0ecs_bench",
       "filter": "^(Create|Iter1|Update2|Frame3|SparseQuery|RandomGet|AddRemove|TagChurn|DestroyCreate)/"
@@ -67,6 +67,17 @@
       ],
       "epochs": 5,
       "min_epoch_ms": 0
+    },
+    "compare": {
+      "description": "Between-build comparisons (rotate.py): short enough to take many interleaved samples",
+      "env": {
+        "BENCH_SIZES": "1000,100000"
+      },
+      "suites": [
+        "baseline"
+      ],
+      "epochs": 11,
+      "min_epoch_ms": 1
     },
     "standard": {
       "description": "Everyday comparisons: every suite at the default sizes",

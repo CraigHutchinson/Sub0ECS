@@ -35,16 +35,18 @@ only (a GitHub rule) and tests that branch.
 |---|---|
 | `include/sub0ecs/` | The library (header-only, `Sub0ECS::Sub0ECS`) |
 | `tests/` | doctest suites, one `sub0ecs_tests` binary |
-| `bench/` | Comparison benchmarks: comparator designs, frozen v1 baseline, Skirmish testbed, harness, results |
+| `bench/` | Comparison benchmarks: reference designs, Skirmish testbed, harness, results |
 | `docs/` | FINDINGS (decision record), research notes, BACKLOG |
 
 ## Rules
 
 - **Single-responsibility headers.** One type, concept or alternative per header,
   grouped by directory, with an umbrella header per group. See `STYLE_GUIDE.md`.
-- **The comparators stay honest.** `bench/baselines/v1/` is v1 frozen
-  byte-identical; never edit it. The designs in `bench/designs/` are reference
-  implementations for comparison, not library code.
+- **The references stay honest.** The designs in `bench/designs/` are what the
+  library is measured against, not library code: the hand-written bars
+  (`handwritten.hpp`) are the target, and a headline figure is always quoted
+  relative to them, on a named machine and compiler. Never weaken a reference to
+  improve a ratio.
 - **Conformance before numbers.** Every design must pass the conformance tests
   (bit-identical state) before its benchmark numbers mean anything.
 - **Record decisions with evidence.** A design choice backed by a measurement gets a
@@ -54,7 +56,11 @@ only (a GitHub rule) and tests that branch.
   guess: the paired ratio to the hand-written floor, then `bench/tools/profile.py`
   (VTune hot functions and processor metrics), then the compiler's vectoriser
   report. The order and commands are in `bench/BENCHMARKING.md`, "Finding out why".
-  Compare compilers on one machine, in rotated runs; never across machines.
+  Compare compilers on one machine, never across machines.
+- **Several samples, interleaved.** Other work runs on the benchmark machine and it
+  heats up. Never judge a between-run difference from one run of each: use
+  `bench/tools/rotate.py` (at least three rounds, builds rotated, load checked before
+  each sample) and report the spread with the figure.
 - **API changes** to anything under `include/sub0ecs/` are described in the commit
   message.
 - Follow `STYLE_GUIDE.md`. Tests must pass before committing.

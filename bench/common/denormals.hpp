@@ -3,8 +3,7 @@
  *
  * The physics kernels damp velocity every step, so long benchmark runs drift into
  * denormal floats and end up timing the FPU's microcode path (10-30x slower,
- * varying with iteration count). v1's published benchmark avoided this only
- * implicitly through -ffast-math; the benchmarks here set it explicitly and build
+ * varying with iteration count). The benchmarks set it explicitly and build
  * without -ffast-math, so conformance stays bit-exact.
  */
 

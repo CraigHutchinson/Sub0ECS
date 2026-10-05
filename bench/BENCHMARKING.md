@@ -11,6 +11,7 @@ bench/harness/            nanobench + names, --filter, paired group comparisons,
 bench/tools/suites.json   what can be run (suites) and how (profiles)
 bench/tools/run.py        build → fingerprint machine → run suites → result directory
 bench/tools/compare.py    A/B comparison with noise-aware verdicts
+bench/tools/rotate.py     several interleaved samples of several builds: medians, spread, busy-machine check
 bench/tools/profile.py    one case under Intel VTune: hot functions, processor metrics
 CMakePresets.json         bench-native | bench-portable | sanitize
 ```
@@ -28,8 +29,12 @@ a **group**, and a group's designs are measured **against each other, paired**
 - one iteration count for every design, epochs interleaved in rotating order,
   so frequency ramps, thermal drift and noisy neighbours hit every design alike
   and cancel out of the ratios;
-- each design gets a ratio to the group's **baseline** (the first registered: v1
-  wherever v1 supports the scenario, SparseSet for Skirmish, 1 thread for
+- that count is sized so the *fastest* design fills an epoch. Sized by the slowest,
+  a group holding a very slow design times the fast ones on a single cold pass
+  straight after the others have flushed the caches (Iter1 read 50 µs where it
+  takes 14);
+- each design gets a ratio to the group's **baseline** (the first registered: the
+  hand-written loop for iteration and lookup, SparseSet elsewhere, 1 thread for
   thread scaling) with a 95% interval corrected for the group's size;
 - Skirmish runs one tick per epoch with no calibration, so every design plays
   exactly the same ticks and ends in the same state.
@@ -52,6 +57,7 @@ python3 bench/tools/compare.py bench/results/runs/<host>/<runA> bench/results/ru
 | Profile | Epochs (paired rounds) | Min epoch | Sizes | Use |
 |---|---:|---:|---|---|
 | `quick` | 5 | default | 1K entities, 1K units | Check the harness works (seconds), not numbers |
+| `compare` | 11 | 1 ms | 1K / 100K entities | `rotate.py`: about a minute per sample, so many interleaved samples are affordable |
 | `standard` | 22 | 1 ms | 1K / 100K / 1M; 1K / 10K / 50K units | Everyday comparisons |
 | `reference` | 52 | 5 ms | + 10M entities, + 200K units, thread ladder to all cores | Dedicated hardware |
 
@@ -126,6 +132,36 @@ they cancel drift, which a comparison across runs cannot.
 `--fail-on-regression` returns exit code 1, so the same script can gate CI
 on a dedicated runner.
 
+## Comparing builds: several samples, interleaved
+
+Within one run the designs of a group are already paired and interleaved, so
+their ratios are robust. A comparison **between runs** is not: different
+compilers, a branch against its base, one flag against another. The machine is
+shared, it warms up, and other work comes and goes, so one run of each proves
+nothing. Never quote a between-run difference from single runs.
+
+```bash
+python bench/tools/rotate.py --build msvc=build/msvc-native --build gcc=build/gcc16-native \
+    --rounds 5 --suites baseline --pin P --label compilers
+```
+
+`rotate.py` takes `--rounds` samples of every build (default 5, never fewer than
+3). Each round runs every build once and the starting build rotates, so heat and
+drift do not land on the same build each time. Before each sample it pauses, then
+waits for the CPU to be quiet (`--max-load`, default 10% of the machine), and it
+records the load before and after. A sample taken on a busy machine is kept in
+`rotation.json` but left out of the figures while two clean samples of that build
+remain. `rotation.md` gives, per case and build, the median time with its spread
+over the samples and the median ratio to the group's baseline with its range.
+
+Reading it:
+
+- Prefer the **ratio to the baseline** to the time: it is measured inside one run.
+- A spread above about 10%, or a ratio range that crosses 1.0, means the samples
+  disagree: take more rounds or find what else is running, do not pick a side.
+- A difference counts when the ranges of the two builds do not overlap.
+- Build everything first. A compile just before a sample heats the CPU.
+
 ## Finding out why: profiles and processor metrics
 
 A benchmark run says how long a case takes and how it ranks. It does not say
@@ -134,7 +170,7 @@ collect evidence in this order (cheapest first):
 
 | Step | Question it answers | How |
 |---|---|---|
-| 1. Paired ratio to a floor | Is there a gap at all, and is it the library's? | The hand-written `RawSoA` design in the same group; `store / RawSoA` near 1.0 means the rest is the compiler's or the kernel's |
+| 1. Paired ratio to the bars | Is there a gap at all, and is it the library's? | `HandWritten` in the same group: a ratio near 1.0 means the library adds nothing to a plain loop. `HandTuned` shows what is left to the layout and to SIMD |
 | 2. Hot functions | Which functions hold the time: the kernel, or the library around it? | `profile.py --collect hotspots` |
 | 3. Processor metrics | Is it mispredicted branches, cache misses, or just more instructions? | `profile.py --collect uarch` |
 | 4. The compiler's own report | Did the loop vectorise, and if not, why? Was the kernel inlined into it? | MSVC `/Qvec-report:2`, GCC `-fopt-info-vec-missed`, Clang `-Rpass-missed=loop-vectorize`; the assembly (MSVC `/FAs`, others `-S`) for a `call` inside the loop |
@@ -170,7 +206,7 @@ Worked example (2026-10-05, MSVC): step 1 showed the store's Update2 at 1.24x th
 hand-written loop on MSVC and 1.0x on GCC and Clang. Step 2 puts the time in
 `kernel::updatePosition` (99% of it), not in library code. Step 4 found the cause: the assembly had a `call` to the kernel inside the row loop, where the
 hand-written loop had it inlined. One statement attribute on the row call fixed it
-(FINDINGS, "Compilers on one machine").
+(FINDINGS, section 4).
 
 ## Windows / MSVC
 
@@ -184,6 +220,8 @@ python bench/tools/run.py --profile reference --pin P --label ref-msvc
 
 - The fingerprint records the CPU (CIM), SIMD support, the **hybrid P/E core map**,
   memory, power plan, AC/battery and CPU load, and warns on each noise source.
+- CPU load is measured over one second (`GetSystemTimes`); `Win32_Processor.LoadPercentage`
+  is not used, because on a hybrid CPU it reported 88% with 12% of the machine in use.
 - `--pin` sets the process affinity mask (taskset syntax). On a hybrid CPU,
   `--pin P` pins to the performance cores. Unpinned threads migrate between core
   types, which shows up as bimodal timings.
@@ -209,6 +247,9 @@ python bench/tools/run.py --profile reference --pin P --label ref-msvc
 
 ## Extending
 
+- **Tables for a write-up:** `python bench/tools/tables.py <rotation dir>` prints every
+  design's speed relative to its group's reference, per build, with the range over
+  the samples.
 - **New suite:** add an entry to `suites.json` (`harness` for
   bench/harness binaries; `timeline` for tools that take `[args…] <out.json>`
   and write `{"rows": [...]}`).

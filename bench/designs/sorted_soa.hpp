@@ -1,16 +1,13 @@
 #pragma once
-/** Design C — "v1-evolved": sorted id vectors, fixed.
+/** Design C: sorted id vectors.
  *
- * Keeps v1's data model (per component: sorted entity-id vector + parallel
- * component vector) to test whether the model itself is viable as the library core once
- * the known v1 costs are removed:
- *   - raw pointer/index iteration (no tuple-of-iterators, no .at() bounds checks)
- *   - leader = smallest collection; others gallop (exponential + binary search)
- *   - per-world runtime registry (no static 32-world table)
- *   - remove/destroy supported via deferred, batched structural changes:
- *     out-of-order inserts and removals are staged and merged in one O(n)
- *     pass at the next commit()/query, keeping the arrays sorted.
- * Ids are monotonic (never recycled) so in-order creation is an append.
+ * Storage: per component a sorted entity-id vector plus a parallel component vector.
+ * Query:   leader = smallest collection, the others gallop (exponential + binary
+ *          search); raw pointer iteration.
+ * Mutation: remove/destroy are deferred and batched: out-of-order inserts and
+ *          removals are staged and merged in one O(n) pass at the next
+ *          commit()/query, keeping the arrays sorted.
+ * Ids are monotonic (never recycled), so in-order creation is an append.
  */
 
 #include <algorithm>

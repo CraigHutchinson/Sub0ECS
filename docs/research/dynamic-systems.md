@@ -1,5 +1,10 @@
 # Dynamic system lifetimes (H9)
 
+> **Design note from the exploration phase.** It records the reasoning behind a
+> decision; its numbers were measured on an earlier host (a 4-vCPU cloud VM, GCC 13)
+> and its result files are in the repository history, not the tree. Current,
+> re-measured figures are in [FINDINGS.md](../FINDINGS.md).
+
 Systems are not all known at startup. A game pages systems in and out as
 it moves between levels and phases, or as new world regions and element
 types stream in. Because the layout is *derived from the system set*

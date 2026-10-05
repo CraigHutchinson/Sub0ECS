@@ -1,9 +1,8 @@
 #pragma once
 /** Shared component types and system kernels used by every benchmark design.
  *
- * Kernels are identical to v1's published update_patterns benchmark (see the
- * master branch), so v1 numbers here are directly comparable with it.
- */
+ * The kernels are fixed: every design and every hand-written reference must
+ * reproduce their results bit for bit (tests/test_design_conformance.cpp). */
 
 #include <cstdint>
 

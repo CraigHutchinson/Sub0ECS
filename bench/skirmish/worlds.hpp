@@ -3,7 +3,6 @@
  *
  * Query-partition designs need the game's system queries declared up front
  * (that is the point of H1): every each<...> signature used by sim.hpp.
- * V1 is absent: it cannot remove components or destroy entities.
  */
 
 #include "../designs/archetype.hpp"

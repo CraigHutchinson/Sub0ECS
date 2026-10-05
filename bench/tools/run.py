@@ -200,10 +200,32 @@ def windows_power_state():
     status = SystemPowerStatus()
     if ctypes.windll.kernel32.GetSystemPowerStatus(ctypes.byref(status)):
         state["on_ac_power"] = {0: False, 1: True}.get(status.ACLineStatus)
-    load = powershell("(Get-CimInstance Win32_Processor | Measure-Object -Property LoadPercentage -Average).Average")
+    load = windows_cpu_busy_percent()
     if load is not None:
         state["cpu_load_percent"] = load
     return state
+
+
+def windows_cpu_busy_percent(interval=1.0):
+    """Share of all CPU time spent non-idle over `interval` seconds (GetSystemTimes).
+
+    Measured, not read from Win32_Processor.LoadPercentage: on a hybrid CPU that
+    figure reported 88% while 12% of the machine was in use."""
+    import ctypes
+    import time
+
+    def times():
+        idle, kernel, user = ctypes.c_uint64(), ctypes.c_uint64(), ctypes.c_uint64()
+        if not ctypes.windll.kernel32.GetSystemTimes(ctypes.byref(idle), ctypes.byref(kernel), ctypes.byref(user)):
+            return None
+        return idle.value, kernel.value + user.value   # kernel time includes idle time
+
+    first = times()
+    time.sleep(interval)
+    second = times()
+    if not first or not second or second[1] == first[1]:
+        return None
+    return round(100.0 * (1.0 - (second[0] - first[0]) / (second[1] - first[1])), 1)
 
 
 def memory_info():

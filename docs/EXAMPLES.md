@@ -37,8 +37,8 @@ observable check, and its own CTest entry named `Sub0ECS_Example_<name>`.
 ## Status
 
 All of the examples above are implemented in [`examples/`](../examples/), together
-with `rocket`: the classic first game loop (movement and rendering systems), a
-clean-room successor to v1's rocket sample. Each is a CTest test labelled `example`.
+with `rocket`: the classic first game loop (movement and rendering systems).
+Each is a CTest test labelled `example`.
 
 Build and run them with:
 
@@ -47,6 +47,6 @@ cmake --build --preset default
 ctest --preset default -L example
 ```
 
-v1's other sample, the SFML `balls_simulation`, is not rewritten. Its interactive
-role is filled by the Skirmish testbed (`sub0ecs_skirmish_demo`), and its ECS vs
-SoA vs OOP comparison by the benchmarks (`OOP` and `RawSoA` in [bench/](../bench/README.md)).
+For an interactive showcase see the Skirmish testbed (`sub0ecs_skirmish_demo`). The
+comparison with hand-written, class-hierarchy and naive component designs is in the
+benchmarks ([bench/](../bench/README.md)).

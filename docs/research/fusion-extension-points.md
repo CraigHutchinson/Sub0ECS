@@ -1,5 +1,10 @@
 # Fusion as a first-class feature: extension points
 
+> **Design note from the exploration phase.** It records the reasoning behind a
+> decision; its numbers were measured on an earlier host (a 4-vCPU cloud VM, GCC 13)
+> and its result files are in the repository history, not the tree. Current,
+> re-measured figures are in [FINDINGS.md](../FINDINGS.md).
+
 Fusion is a headline feature. This note designs it as **two extension
 points**, each usable at compile time or at runtime. H7 (research/fusion.md)
 proved the mechanism; this note turns it into architecture.
@@ -180,8 +185,8 @@ GPU or DSP generally is not. The design therefore needs:
 ## 6. Evidence
 
 Raw data:
-- [results/fusion-extension-points-linux-gcc13.json](../../bench/results/fusion-extension-points-linux-gcc13.json)
-- [results/fusion-extension-points-skirmish-linux-gcc13.json](../../bench/results/fusion-extension-points-skirmish-linux-gcc13.json)
+- `results/fusion-extension-points-linux-gcc13.json`
+- `results/fusion-extension-points-skirmish-linux-gcc13.json`
 
 Median of 5, random interleaving. Speed-up is relative to `NeverFuse`.
 

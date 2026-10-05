@@ -1,5 +1,10 @@
 # Executors for accelerators: split-phase contract and column residency
 
+> **Design note from the exploration phase.** It records the reasoning behind a
+> decision; its numbers were measured on an earlier host (a 4-vCPU cloud VM, GCC 13)
+> and its result files are in the repository history, not the tree. Current,
+> re-measured figures are in [FINDINGS.md](../FINDINGS.md).
+
 Status: design note, not yet prototyped (see "H10" at the end).
 Builds on [fusion-extension-points.md](fusion-extension-points.md) §2.3
 (the executor extension point) and §5 (the determinism caveat).

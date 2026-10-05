@@ -78,8 +78,7 @@ belong to the game, not just the test.
 
 SparseSet, Archetype, SortedSoA (1K only in the benchmark: its O(n) flushes
 per structural batch dominate), StaticBitmask (capacity per size),
-QueryPart and QPartHinted (both sequential and **fused movement**). V1
-cannot run it: it has no component removal or entity destruction.
+QueryPart and QPartHinted (both sequential and **fused movement**).
 
 ## Roadmap for the parent project
 
