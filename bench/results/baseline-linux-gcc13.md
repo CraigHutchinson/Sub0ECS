@@ -1,4 +1,4 @@
-# SubzeroECS v2 spike — benchmark baseline
+# SubzeroECS design spike — benchmark baseline
 
 - Host: 4 × 2100 MHz, caches: L1 D 48 KiB, L1 I 32 KiB, L2 U 2048 KiB, L3 U 266240 KiB
 - Date: 2026-09-30T11:28:09+00:00  |  Build: release  |  Statistic: median of repetitions; cell = time/iteration (speed-up vs V1)

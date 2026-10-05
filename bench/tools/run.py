@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reproducible benchmark runs for SubzeroECS v2 and its comparators.
+"""Reproducible benchmark runs for SubzeroECS and its comparators.
 
 Builds the benchmark preset, fingerprints the machine, runs suites from
 suites.json under a profile, and writes a self-describing result directory:

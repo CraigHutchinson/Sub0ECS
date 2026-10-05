@@ -2,7 +2,7 @@
 /** Design C — "v1-evolved": sorted id vectors, fixed.
  *
  * Keeps v1's data model (per component: sorted entity-id vector + parallel
- * component vector) to test whether the model itself is viable for v2 once
+ * component vector) to test whether the model itself is viable as the library core once
  * the known v1 costs are removed:
  *   - raw pointer/index iteration (no tuple-of-iterators, no .at() bounds checks)
  *   - leader = smallest collection; others gallop (exponential + binary search)

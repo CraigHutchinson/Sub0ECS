@@ -1,0 +1,3 @@
+add_executable(sub0ecs_example_minimal_world minimal_world.cpp)
+target_link_libraries(sub0ecs_example_minimal_world PRIVATE Sub0ECS::Sub0ECS sub0ecs_dev_flags)
+add_test(NAME Sub0ECS_Example_minimal_world COMMAND sub0ecs_example_minimal_world)

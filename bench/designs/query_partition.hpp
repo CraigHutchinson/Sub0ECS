@@ -1,9 +1,9 @@
 #pragma once
-/** The v2 store (sub0ecs::store) as a benchmark candidate, declared with the
+/** The library store (sub0ecs::store) as a benchmark candidate, declared with the
  *  benchmark workload's query set (common/scenarios.hpp).
  *
  *   QueryPart    pure automatic: unqueried components live in side storage
- *   QPartHinted  the recommended v2 model: unqueried components ride along as
+ *   QPartHinted  the recommended model: unqueried components ride along as
  *                dense columns unless declared Volatile (here: Frozen)
  */
 

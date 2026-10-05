@@ -1,11 +1,11 @@
-# System-driven ("holographic") storage for SubzeroECS v2
+# System-driven ("holographic") storage for SubzeroECS
 
 Research note: use cases, prior art, design patterns and a proposed
 architecture. It follows the storage-model spike in [../FINDINGS.md](../FINDINGS.md).
 
-> Status: research / proposal, not a decision. Every design claim here is meant
-> to be tested by the spikes in [§8](#8-validation-plan) against the baseline
-> in [../results/](../../bench/results/).
+> Status: historical research and proposal. Query-partition storage and fusion
+> were implemented; reference bindings, replicas, and the proposed library split
+> remain unimplemented design options, not current API guarantees.
 
 > **Design review before H2:** [design-review-pre-h2.md](design-review-pre-h2.md)
 > reframes the "entity in two systems" problem. The partition model has no
@@ -54,7 +54,7 @@ architecture. It follows the storage-model spike in [../FINDINGS.md](../FINDINGS
   from that set.
 - **Proposal.** Put the storage engine in a new domain-agnostic library, working
   name **Sub0DataStore**. It takes a schema plus declared access patterns, produces
-  a *plan*, and serves spans. SubzeroECS v2 becomes a thin ECS vocabulary on
+  a *plan*, and serves spans. SubzeroECS becomes a thin ECS vocabulary on
   top: entities→rows, components→columns, systems→access declarations.
   Sub0Pipeline supplies scheduling and commit points, and Sub0Pub supplies
   change events.
@@ -488,7 +488,7 @@ rollback).
  └──────────────┬─────────────────────────────────────────────┬───────────────┘
                 │                                             │
  ┌──────────────▼──────────────┐   access sets / DAG   ┌──────▼──────────────┐
- │  SubzeroECS v2 (sub0ecs)    │──────────────────────▶│  Sub0Pipeline       │
+ │  SubzeroECS (sub0ecs)       │──────────────────────▶│  Sub0Pipeline       │
  │  entities, components,      │◀──── commit points ───│  jobs = systems,    │
  │  systems → AccessDecl,      │                       │  edges = conflicts  │
  │  world facade, observers    │── on_add/on_remove ──▶│                     │
@@ -510,7 +510,7 @@ rollback).
   and access declarations, so they are testable in isolation.
 - The same store can back other Sub0 uses: device registries, telemetry
   tables, and Sub0Pipeline batch stages (U7).
-- It keeps SubzeroECS v2 small: vocabulary, ergonomics and scheduling glue.
+- It keeps SubzeroECS small: vocabulary, ergonomics and scheduling glue.
 - It follows the existing family pattern of narrow, composable libraries
   (Sub0Pub for messaging, Sub0Pipeline for scheduling).
 
@@ -538,7 +538,7 @@ namespace sub0datastore {
     auto ent = s.insert(Position{}, authority_ref<Material>{sharedMaterialRow});   // per-entity authority ref
 }
 
-// ---- SubzeroECS v2: ECS vocabulary on top ----------------------------------
+// ---- SubzeroECS: ECS vocabulary on top -------------------------------------
 struct Physics {
     void operator()(sub0ecs::Write<Position> p, sub0ecs::Write<Velocity> v) const;  // access inferred from signature
 };

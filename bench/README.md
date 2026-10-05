@@ -1,6 +1,6 @@
 # Comparison benchmarks
 
-Keeps the v2 store honest. The v2 store ([`sub0ecs::store`](../include/sub0ecs/store/world.hpp),
+Keeps the library store honest. The query-partition store ([`sub0ecs::store`](../include/sub0ecs/store/world.hpp),
 *QueryPart* / *QPartHinted* below) is driven through one workload and adapter surface
 alongside the alternatives it was chosen over, including v1 itself, unmodified. The
 storage model is the only variable.

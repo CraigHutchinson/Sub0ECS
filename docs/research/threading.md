@@ -1,6 +1,6 @@
 # Threading: how systems scale across processors (H8)
 
-Question: how should v2 systems use multiple processors? Lock-step (all
+Question: how should systems use multiple processors? Lock-step (all
 threads cooperate on each phase, with barriers) or independent working
 (threads or engines progress without global barriers)?
 
@@ -124,7 +124,7 @@ granularity is the real design variable.
 | **M5 Pipelined frames** | Read-only consumers of frame N run while frame N+1 simulates | **Independent working where it is safe**: consumers read an immutable snapshot (the replica mechanism, research §4.3.4), so determinism holds |
 | M6 Free-running threads | No barriers, eventual consistency | Rejected: non-deterministic; breaks lock-step networking, replays and conformance |
 
-## 5. Recommendations for v2
+## 5. Recommendations
 
 | # | Recommendation | Rationale / evidence |
 |---|---|---|

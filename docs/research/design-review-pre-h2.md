@@ -1,6 +1,6 @@
 # Design review: before H2
 
-Scope: the Sub0DataStore / SubzeroECS v2 storage design after H1, and the
+Scope: the Sub0DataStore / SubzeroECS storage design after H1, and the
 proposal to resolve "an entity in two systems" by **composition** (system
 tree, parenting, DAG) instead of copies or references.
 

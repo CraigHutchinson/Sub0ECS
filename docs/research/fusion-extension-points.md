@@ -1,6 +1,6 @@
-# Fusion as a first-class v2 feature: extension points
+# Fusion as a first-class feature: extension points
 
-Fusion is a headline v2 feature. This note designs it as **two extension
+Fusion is a headline feature. This note designs it as **two extension
 points**, each usable at compile time or at runtime. H7 (research/fusion.md)
 proved the mechanism; this note turns it into architecture.
 
@@ -15,7 +15,7 @@ proved the mechanism; this note turns it into architecture.
 
 ## 1. The pitch
 
-> **Write small, single-purpose systems. SubzeroECS v2 fuses them into
+> **Write small, single-purpose systems. SubzeroECS fuses them into
 > single passes and runs those passes on whatever engines the target has
 > (vector units, threads, coprocessors), with bit-identical results
 > whichever plan or engine is chosen.**
@@ -141,7 +141,7 @@ struct MyExecutor {
 
 ## 4. Integration
 
-- **SubzeroECS v2** owns declarations, the legality filter and the planner.
+- **SubzeroECS** owns declarations, the legality filter and the planner.
   **Sub0DataStore** provides partition columns (it knows nothing about
   fusion). **Executors** plug in per world or per schedule, including
   Sub0Pipeline workers.

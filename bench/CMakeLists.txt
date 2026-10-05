@@ -1,4 +1,4 @@
-# Comparison benchmarks: the v2 store against the alternative designs and v1.
+# Comparison benchmarks: the library store against alternative designs and v1.
 # See README.md (candidates, workloads, fairness guards) and BENCHMARKING.md (harness).
 
 # ── Support used by the benchmarks AND the conformance tests ──────────────────
