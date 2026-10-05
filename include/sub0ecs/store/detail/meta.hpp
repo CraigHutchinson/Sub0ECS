@@ -30,6 +30,16 @@ namespace sub0ecs::store::detail
     {
         using type = typename AppendQuery<typename Append<L, C>::type, Query<Cs...>>::type;
     };
+    /** Number of types in a TypeList. */
+    template <typename L> struct Size;
+    template <typename... Ts>
+    struct Size<TypeList<Ts...>> : std::integral_constant<std::size_t, sizeof...(Ts)> {};
+
+    /** Position of T in a TypeList, or ~0 when it is not in it. */
+    template <typename T, typename L> struct IndexIn;
+    template <typename T, typename... Ts>
+    struct IndexIn<T, TypeList<Ts...>> : std::integral_constant<std::size_t, indexOf<T, Ts...>()> {};
+
     template <typename L, typename... Qs2> struct UnionOf { using type = L; };
     template <typename L, typename Q, typename... Rest>
     struct UnionOf<L, Q, Rest...>

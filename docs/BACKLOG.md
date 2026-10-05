@@ -20,26 +20,25 @@ defects, and an edge-cache bug that dropped entities holding 64 column types out
 of every query.
 Component type indices are now per World type, not process-wide.
 
-## 1b. Store capability configuration (component-type capacity) ☐
+## 1b. Component-type capacity ◐
 
-Today: `Mask = std::uint64_t`, `kMaxTypes = 64`, per World type; a 65th type terminates.
-Bits are needed only by **fragmenting** components (queried ones, plus carried ones in
-carry mode). Volatile components and, in pure mode, every unqueried component never
-enter a mask. Options:
+**Done (tiered numbering):** there is no runtime limit on component types any more.
+A World type numbers the types its queries and `Volatile` list name at compile time
+(a `static_assert` if they exceed the 64 layout bits), then other types on first use
+without limit. A type with a layout bit can be a dense column; a type beyond them
+is kept in side storage, so overflow costs `find` locality, never correctness. In
+pure mode unqueried types never need a bit, so they do not count at all.
 
-| Option | Mechanism | Cost | Notes |
-|---|---|---|---|
-| A | Config as a World template parameter: option tags (`World<Queries, Volatile<...>, MaxTypes<128>>`) or a traits struct | None at runtime | Per World type, like `Volatile`. Order-independent tags extend without breaking signatures |
-| B | Mask type from the requested width: `uint32_t` / `uint64_t` / `WideMask<Words>` (array of words: and/or/test/iterate/hash) | Wider masks cost more per structural move and partition lookup; iteration is unaffected | `unsigned __int128` is not available on MSVC; `std::bitset` lacks bit iteration and a cheap hash |
-| C | Tiered indices: queried types first (compile time known, so a `static_assert` on the query set), carried types next while bits last, overflow types fall back to side storage automatically | None when within budget | Removes the runtime hard limit: overflow degrades locality, never correctness. Runtime `addQuery` of a type without a bit fails cleanly |
-| D | Non-fragmenting types get unbounded indices (growable side-pool table) | None | Pure-mode and Volatile types stop counting against the limit at all |
-| E | Macro (`SUB0ECS_MAX_TYPES`) | None | Process-wide ODR hazard; rejected |
+**Open:**
 
-Recommended: **A + C + D**, with B for opt-in widths (default stays one 64-bit word).
-The limit then applies only where it must, to components that decide the layout, and
-it is checked at compile time for declared queries. Per-partition fixed tables sized
-by `kMaxTypes` (`base`, `columnOf`, edge caches) need a sparse form before widths
-beyond 64 are practical. Gate: benchmarks unchanged at the default width.
+| | Item |
+|---|---|
+| ☐ | Wider layout masks as a World option (`MaxTypes<128>`), for worlds with more than 64 queried or carried types: `WideMask<Words>` (array of words; `unsigned __int128` is not on MSVC, `std::bitset` lacks bit iteration and a cheap hash). Default stays one 64-bit word. Needs a sparse form of the per-partition tables sized by the bit count (`base`, `columnOf`, edge caches) |
+| ☐ | Option tags as the configuration style (`World<Queries, Volatile<...>, MaxTypes<N>>`), order-independent so options can be added without breaking signatures |
+| ☐ | A runtime `addQuery` naming a type without a layout bit terminates; make it report instead |
+| ☐ | Let carried types be chosen deliberately (a `Carried<...>` hint) rather than by first use, for worlds near the limit |
+
+Rejected: a macro (`SUB0ECS_MAX_TYPES`), a process-wide ODR hazard.
 
 ## 2. Examples: one per feature and alternative ☑ (2026-10-05)
 
