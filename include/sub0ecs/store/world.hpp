@@ -1,5 +1,5 @@
 #pragma once
-/** BasicWorld / World: the v2 store — query-signature partitions ("automatic archetypes").
+/** BasicWorld / World: query-signature partitions ("automatic archetypes").
  *
  * Design and evidence: docs/research/holographic-storage.md §4.1 and
  * docs/FINDINGS.md (H1, H7-H9). The world is told its system

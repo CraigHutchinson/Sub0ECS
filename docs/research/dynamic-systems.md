@@ -2,7 +2,7 @@
 
 Systems are not all known at startup. A game pages systems in and out as
 it moves between levels and phases, or as new world regions and element
-types stream in. Because v2's layout is *derived from the system set*
+types stream in. Because the layout is *derived from the system set*
 (research/holographic-storage.md), a new system can change what the
 layout should be. This note defines how that change happens:
 - **at stall-acceptable points** (level loads), by doing the whole relayout
@@ -111,7 +111,7 @@ What the numbers say:
   partition with column slice copies) should be several times faster, and
   it is the obvious next optimisation.
 
-## 4. Design decisions for v2
+## 4. Design decisions
 
 | # | Decision |
 |---|---|

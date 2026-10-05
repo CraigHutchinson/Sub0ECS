@@ -62,5 +62,6 @@ add_subdirectory(bench)
 
 if(SUB0ECS_BUILD_TESTING)
     enable_testing()
+    add_subdirectory(examples)
     add_subdirectory(tests)
 endif()

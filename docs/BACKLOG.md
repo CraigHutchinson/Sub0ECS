@@ -1,23 +1,23 @@
-# SubzeroECS v2 — backlog to landing
+# SubzeroECS — landing checklist and follow-up backlog
 
-Branch: `v2` (holding branch; `claude/sub0ecs-v2-design-spike-ndbal6` is its
-history). Decided: the v2 core is the archetype-class **query-partition store**
-(H1 hinted model, [store/world.hpp](../include/sub0ecs/store/world.hpp)). The
-alternative designs and v1 stay **only as benchmark comparators**, so every claim
-stays honest against them.
+The selected core is the archetype-class **query-partition store** (H1 hinted
+model, [store/world.hpp](../include/sub0ecs/store/world.hpp)). The historical v1
+API is preserved by the `v1.0.0` tag and as a frozen benchmark comparator; the
+alternative designs remain comparators so every claim stays honest against them.
 
 Status key: ☐ open · ◐ in progress · ☑ done.
 
 ## 1. Promote the spike into the library layout ☑ (2026-09-30)
 
 Done: header-only `Sub0ECS::Sub0ECS` in `include/sub0ecs/`, split into single-
-responsibility headers (`store/`, `fusion/executors/`, `fusion/planners/`); comparators,
-v1 (byte-identical) and the harness in `bench/`; doctest suites in `tests/`
-(57 cases, 741,669 assertions, versus v1's 114 cases and 339 assertions); findings
-and research in `docs/`; one `ci.yml`; README, CLAUDE.md and STYLE_GUIDE.md. The v1
-tests, samples, benchmarks, workflows and build scaffolding were removed (`master`
-keeps v1). Promoting the code surfaced and fixed three edge-case defects, and an
-edge-cache bug that dropped entities holding 64 column types out of every query.
+responsibility headers (`store/`, `fusion/executors/`, `fusion/planners/`);
+comparators, the frozen v1 baseline and harness in `bench/`; doctest suites in
+`tests/` (57 cases, 741,669 assertions, versus v1's 114 cases and 339 assertions);
+findings and research in `docs/`; one `ci.yml`; README, CLAUDE.md and STYLE_GUIDE.md. The
+old v1 implementation, samples, benchmarks, workflows and build scaffolding are
+preserved at the `v1.0.0` tag. Promoting the code surfaced and fixed three edge-case
+defects, and an edge-cache bug that dropped entities holding 64 column types out
+of every query.
 Component type indices are now per World type, not process-wide.
 
 ## 1b. Store capability configuration (component-type capacity) ☐
@@ -41,27 +41,32 @@ it is checked at compile time for declared queries. Per-partition fixed tables s
 by `kMaxTypes` (`base`, `columnOf`, edge caches) need a sparse form before widths
 beyond 64 are practical. Gate: benchmarks unchanged at the default width.
 
-## 2. Examples: one per feature and alternative (required for landing)
+## 2. Examples: one per feature and alternative ☑ (2026-10-05)
 
-Model: Sub0Pub's `examples/`. Each source opens with **Use when / Demonstrates /
-Story / Keep in mind / Run**, is built and run by ctest (`Sub0ECS_Example_*`), and
-returns a failure code if its checks fail. The examples are how each alternative
-gets **documented, justified and pinned down**: what it is for, when to choose it,
-and how to use it well.
+Plan and conventions: [EXAMPLES.md](EXAMPLES.md). Each source opens with **Use
+when / Demonstrates / Story / Keep in mind / Run**, is built and run by CTest
+(`Sub0ECS_Example_*`), and returns a failure code if its checks fail. The examples
+document, justify, and verify when each feature is useful.
 
 | | Example | Shows |
 |---|---|---|
-| ☐ | `minimal_world` | Declare queries, create entities, run one system |
-| ☐ | `hinted_partitions` | `Volatile<T>` for churn-heavy components vs carried columns (the H1 memory/churn trade) |
-| ☐ | `structural_changes` | add/remove/destroy, deferred commit, stale-handle detection |
-| ☐ | `random_access` | `find<T>(e)` and why column-first lookup is cheap |
-| ☐ | `fusion_planners` | NeverFuse / AlwaysFuse / ShareColumns / DeviceAware on one schedule: when each wins (Frame3 vs FusionFrame) |
-| ☐ | `auto_tuner` | Measured plan choice; switching plans is safe (bit-identical) |
-| ☐ | `executors` | Inline / Tiled / Parallel / Offload: row-locality contract, written-column write-back |
-| ☐ | `parallel_systems` | `eachParallel` / `runFusedParallel`, per-worker command buffers |
-| ☐ | `dynamic_systems` | H9: paging a system in, degraded path, bounded migration budget |
-| ☐ | `determinism` | Lockstep check across plans and executors (what `kBitExact` protects) |
-| ☐ | `skirmish` | Pointer to the full RTS testbed as the "everything together" sample |
+| ☑ | `minimal_world` | Declare queries, create entities, run one system |
+| ☑ | `hinted_partitions` | `Volatile<T>` for churn-heavy components vs carried columns (the H1 memory/churn trade) |
+| ☑ | `structural_changes` | add/remove/destroy, deferred commit, stale-handle detection |
+| ☑ | `random_access` | `find<T>(e)` and why column-first lookup is cheap |
+| ☑ | `fusion_planners` | NeverFuse / AlwaysFuse / ShareColumns / DeviceAware on one schedule: when each wins (Frame3 vs FusionFrame) |
+| ☑ | `auto_tuner` | Measured plan choice; switching plans is safe (bit-identical) |
+| ☑ | `executors` | Inline / Tiled / Parallel / Offload: row-locality contract, written-column write-back |
+| ☑ | `parallel_systems` | `eachParallel` / `runFusedParallel`, per-worker command buffers |
+| ☑ | `dynamic_systems` | H9: paging a system in, degraded path, bounded migration budget |
+| ☑ | `determinism` | Lockstep check across plans and executors (what `kBitExact` protects) |
+| ☑ | `skirmish` | Pointer to the full RTS testbed as the "everything together" sample |
+| ☑ | `rocket` | The classic first game loop: movement and rendering systems over different components (clean-room successor to v1's sample) |
+
+All are built and run by CTest; CI verifies them on GCC, Clang, MSVC, macOS and under sanitizers.
+v1's other sample, the SFML `balls_simulation` (ECS vs SoA vs AoS vs OOP, interactive), is not
+rewritten: the Skirmish testbed and `sub0ecs_skirmish_demo` are its successor as the interactive
+showcase, and the OOP/SoA comparison lives in the benchmarks (`OOP`, `RawSoA`).
 
 ## 3. Executors for accelerators (H10)
 
@@ -96,7 +101,7 @@ Design: [research/executor-async.md](research/executor-async.md).
 | ☑ | Benchmark harness runs on Windows (fingerprint, hybrid P/E map, `--pin P`) |
 | ◐ | Reference capture on the Core Ultra 9 275HX (MSVC, P-cores pinned + thread ladder to 24) |
 | ☑ | Promoted layout: `default`, `ci-msvc` and `sanitize` (MSVC ASan) presets pass; tests converted to doctest |
-| ☑ | CI green on Linux GCC/Clang, macOS arm64 and ASan/UBSan; gate/exhaustive test tiers; nightly exhaustive workflow (active once on the default branch) |
+| ☑ | CI green on Linux GCC/Clang, macOS arm64 and ASan/UBSan; gate/exhaustive test tiers; nightly exhaustive workflow |
 | ☑ | Benchmarks on nanobench 4.6 (paired, interleaved design comparisons with CIs); tests on doctest 2.5.3; both fetched, matching Sub0Log |
 | ☐ | A TSan job for the executors and the parallel store paths |
 | ☐ | MSVC fusion inlining: a same-binary A/B (two instantiations, one with `[[msvc::forceinline_calls]]` on the kernel body only) instead of cross-build runs; `[[msvc::flatten]]` was withdrawn as too costly to compile for no consistent gain |

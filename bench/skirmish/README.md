@@ -1,7 +1,7 @@
-# Skirmish: RTS testbed for SubzeroECS v2
+# Skirmish: RTS testbed for SubzeroECS
 
 *Working name. This is intended to become the parent project: the first
-real user of SubzeroECS v2 / Sub0DataStore, and its test bed.*
+real user of SubzeroECS / Sub0DataStore, and its test bed.*
 
 A deterministic, headless, 4-team real-time-strategy simulation in the
 classic RTS style:
@@ -23,7 +23,7 @@ sub0ecs_skirmish_bench              # ms per tick per design at 1K / 10K / 50K u
 
 ## Why an RTS
 
-A classic RTS converted to ECS exercises almost every property the v2
+A classic RTS converted to ECS exercises almost every property the library
 design has to get right, in realistic proportions rather than as isolated
 micro-benchmarks:
 
@@ -84,7 +84,7 @@ cannot run it: it has no component removal or entity destruction.
 ## Roadmap for the parent project
 
 1. **Extract** into its own repository once named, depending on SubzeroECS
-   v2 (and, through it, Sub0DataStore) instead of the spike's adapters.
+   (and, through it, Sub0DataStore) instead of the spike's adapters.
 2. **Schedule systems with Sub0Pipeline**: derive DAG edges from declared
    access, fused groups as single jobs, parallel partitions. Emit
    add/remove events via **Sub0Pub** (e.g. a HUD subscribing to kills).

@@ -1,5 +1,5 @@
 #pragma once
-/** The v2 store: query-signature partitions ("automatic archetypes").
+/** The store: query-signature partitions ("automatic archetypes").
  *
  *   store/world.hpp        World / BasicWorld: entities, components, queries,
  *                          fused and parallel iteration, dynamic queries

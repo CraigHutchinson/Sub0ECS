@@ -1,5 +1,5 @@
 #pragma once
-/** SubzeroECS v2: everything in one include.
+/** SubzeroECS: everything in one include.
  *
  *   entity.hpp          Entity handle, EntityAllocator
  *   query.hpp           Query<Cs...>: the components a system requires

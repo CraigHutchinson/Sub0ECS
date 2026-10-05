@@ -9,6 +9,7 @@
 #include "../bench/common/scenarios.hpp"
 #include "../bench/common/systems.hpp"
 #include "../bench/designs/archetype.hpp"
+#include "../bench/designs/oop.hpp"
 #include "../bench/designs/query_partition.hpp"
 #include "../bench/designs/sorted_soa.hpp"
 #include "../bench/designs/sparse_set.hpp"
@@ -175,5 +176,27 @@ TEST_CASE("H7 fused passes equal sequential passes bit-for-bit")
         check(fusionRun<qpart::HintedWorld>(pattern, Exec::Sequential) == fRef, ft + ": sequential QPartHinted == SparseSet");
         check(fusionRun<qpart::HintedWorld>(pattern, Exec::Fused) == fRef, ft + ": fused QPartHinted == sequential");
         check(fusionRun<qpart::World>(pattern, Exec::Fused) == fRef, ft + ": fused QueryPart == sequential");
+    }
+}
+
+TEST_CASE("the OOP comparator reproduces the reference Update2 state")
+{
+    // OOP takes part in Create and Update2 only; its Update2 work is updateAll()
+    // (one virtual call per entity) instead of a query, so it is checked on its own.
+    using namespace bench;
+    for (Pattern pattern : { Pattern::Coherent, Pattern::Fragmented })
+    {
+        CAPTURE(toString(pattern));
+        auto reference = std::make_unique<sparse::World>();
+        const auto referenceEntities = populate(*reference, kN, pattern);
+        auto objects = std::make_unique<oop::World>();
+        const auto objectEntities = populate(*objects, kN, pattern);
+        CHECK(checksum(*objects, objectEntities) == checksum(*reference, referenceEntities));   // created alike
+        for (int step = 0; step < 5; ++step)
+        {
+            systemPhysics(*reference);
+            objects->updateAll();
+        }
+        CHECK(checksum(*objects, objectEntities) == checksum(*reference, referenceEntities));
     }
 }

@@ -1,6 +1,6 @@
 # Comparison benchmarks
 
-Keeps the v2 store honest. The v2 store ([`sub0ecs::store`](../include/sub0ecs/store/world.hpp),
+Keeps the library store honest. The query-partition store ([`sub0ecs::store`](../include/sub0ecs/store/world.hpp),
 *QueryPart* / *QPartHinted* below) is driven through one workload and adapter surface
 alongside the alternatives it was chosen over, including v1 itself, unmodified. The
 storage model is the only variable.
@@ -20,6 +20,7 @@ decision record are in [FINDINGS.md](../docs/FINDINGS.md); raw numbers in
 | **A** | Sparse set, EnTT-style ([`sparse_set.hpp`](designs/sparse_set.hpp)) | per-type sparse index + packed dense entities/data | smallest-pool leader, O(1) `contains` on others | O(1) swap-and-pop | O(#pools) | per-world runtime |
 | **B** | Archetype tables, flecs/Bevy-style ([`archetype.hpp`](designs/archetype.hpp)) | tables per exact signature, SoA columns | cached archetype match, tight typed-column loop | row move between tables (memcpy), cached edges | swap-remove row | runtime, 64-bit signature |
 | **D** | Static bitmask, fixed capacity ([`static_bitmask.hpp`](designs/static_bitmask.hpp)) | compile-time component list, `Capacity` dense arrays indexed by slot, 32-bit signature per slot | linear scan of signatures | set/clear bit O(1) | O(1) | compile-time |
+| OOP | class hierarchy ([`oop.hpp`](designs/oop.hpp)): one heap object per entity, a virtual `update()` each | per-object members | — (Create and Update2 only) | — | — | v1's "OOP" column |
 | RawSoA | hand-written `vector<Position>` + `vector<Velocity>` loop | — | — | — | — | roofline for Update2 only |
 
 All generational designs (A, B, D) share the 32-bit handle in

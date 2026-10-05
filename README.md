@@ -3,11 +3,13 @@
 A header-only C++20 Entity Component System whose storage is laid out by the
 **systems you declare**, not only by the components entities happen to have.
 
-> **Branch `v2`.** v2 replaces the v1 API (which remains on `master`). The design
-> record and evidence are in [docs/FINDINGS.md](docs/FINDINGS.md); open work toward
-> the v2 release is in [docs/BACKLOG.md](docs/BACKLOG.md).
+The current API is the successor to the historical v1 API, preserved at the
+[`v1.0.0` tag](https://github.com/CraigHutchinson/Sub0ECS/tree/v1.0.0). The
+design evidence is in [docs/FINDINGS.md](docs/FINDINGS.md); implementation
+examples and remaining work are tracked in [docs/EXAMPLES.md](docs/EXAMPLES.md)
+and [docs/BACKLOG.md](docs/BACKLOG.md).
 
-## Why v2
+## Why this design
 
 - **Iteration at hand-written-SoA speed.** Every declared query iterates whole
   partitions of dense, typed columns. The compiler sees a plain loop and
@@ -75,10 +77,11 @@ most 64 bytes, and a World type supports up to 64 component types.
 
 ## Performance
 
-v2 against v1 at 100K entities of mixed shapes (GCC 13, `-O3 -march=native`,
-median of 5; [full tables](bench/results/h1-query-partition-linux-gcc13.md)):
+The current store against the v1 API at 100K entities of mixed shapes (GCC 13,
+`-O3 -march=native`, median of 5;
+[full tables](bench/results/h1-query-partition-linux-gcc13.md)):
 
-| Scenario | v1 | v2 | |
+| Scenario | v1 API | Current store | |
 |---|---:|---:|---:|
 | Update two components (v1's headline benchmark) | 294 µs | 42.9 µs | **6.9×**, equal to hand-written SoA |
 | Three systems per frame | 459 µs | 118 µs | 3.9× |
@@ -86,10 +89,11 @@ median of 5; [full tables](bench/results/h1-query-partition-linux-gcc13.md)):
 | Random `find` | 11.1 ms | 1.8 ms | 6.1× |
 | Add + remove a component on 10% of entities | unsupported | 89 µs | |
 
-Every number comes from the comparison suite in [bench/](bench/). It runs v2 beside
-the alternatives it was chosen over, and v1 unmodified, and checks they all
-produce bit-identical results first. [bench/BENCHMARKING.md](bench/BENCHMARKING.md)
-explains how to reproduce the numbers on your hardware.
+Every number comes from the comparison suite in [bench/](bench/). It runs the
+current store beside the alternatives it was chosen over, and v1 unmodified, and
+checks they all produce bit-identical results first.
+[bench/BENCHMARKING.md](bench/BENCHMARKING.md) explains how to reproduce the
+numbers on your hardware.
 
 ## Build
 
@@ -102,14 +106,18 @@ ctest --preset default
 Other presets: `debug`, `sanitize` (ASan/UBSan), `bench-native`, `bench-portable`,
 `ci-msvc` (Visual Studio generator). To use the library from another CMake project,
 `add_subdirectory` (or FetchContent) it and link `Sub0ECS::Sub0ECS`.
+The examples are built and registered with CTest whenever
+`SUB0ECS_BUILD_TESTING=ON`; run them with
+`ctest --preset default -R '^Sub0ECS_Example_'`.
 
 ## Repository layout
 
 ```
 include/sub0ecs/   the library (header-only)
+examples/          runnable feature examples, registered with CTest
 tests/             unit and conformance tests (doctest)
 bench/             comparison benchmarks, comparator designs, v1 baseline, harness, results
-docs/              findings, research notes, backlog
+docs/              design evidence, example plan, research notes, backlog
 ```
 
 ## Related projects

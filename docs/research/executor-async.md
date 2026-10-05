@@ -30,7 +30,7 @@ express:
    a device, the store must know, because a host `find()` or host-side system must
    not read a stale host copy.
 
-Point 3 is what shapes the v2 API now. The store API needs a coherence state per
+Point 3 is what shapes a future asynchronous API. The store API needs a coherence state per
 column, and host access paths need a place to sync. A later executor cannot add
 those without changing the store.
 

@@ -1,4 +1,4 @@
-/** The v2 store (sub0ecs::store::BasicWorld): per-operation semantics in both
+/** The store (sub0ecs::store::BasicWorld): per-operation semantics in both
  * storage modes, handle rules, and a model-based churn test that checks every
  * observable against a trivially correct reference after random operations.
  */

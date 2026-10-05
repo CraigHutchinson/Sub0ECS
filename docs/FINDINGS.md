@@ -1,4 +1,8 @@
-# SubzeroECS v2 spike — findings
+# SubzeroECS design findings
+
+This is the evidence record for selecting query-partition storage. The design
+has since been implemented in the library; exploratory alternatives below
+remain useful as historical benchmark comparisons, not undecided product choices.
 
 Baseline: [results/baseline-linux-gcc13.md](../bench/results/baseline-linux-gcc13.md)
 (raw: [JSON](../bench/results/baseline-linux-gcc13.json)). Host: 4 vCPU Xeon @ 2.1 GHz
@@ -32,7 +36,7 @@ ESP32-P4) before making final decisions.
    1.1–1.9×, and random access stays O(log n) (1.0× at 100K).
    Sorted-id intersection cannot give the compiler a contiguous, branch-free
    loop, so it never gets near the roofline. **Recommendation: do not carry
-   the v1 storage model into v2.**
+   the v1 storage model into the current library.**
 
 2. **Only archetype tables reach the roofline on iteration.** Every matched
    archetype becomes plain typed column pointers, so GCC auto-vectorises the
@@ -59,13 +63,15 @@ ESP32-P4) before making final decisions.
    queries scan all slots (0.7× v1 on Iter1, linear-in-N sparse queries). That
    suits ESP32-class targets with bounded N and mostly-dense components.
 
-## Recommendation for v2 (to validate, not yet decided)
+## Selected storage direction and follow-up proposals
 
-The core should be **archetype tables** with two escape hatches:
+The implemented library uses **query-partition storage**: queried components
+form dense columns, and `Volatile<T>` components use side storage to avoid
+partition churn. The original spike also proposed these follow-up directions;
+they are not claims about already-shipped functionality:
 
-- **Sparse-set side storage per component** (the flecs "sparse" trait, Bevy
-  `SparseSet` storage), opt-in via a component trait. It serves tags and
-  high-churn components so they don't trigger table moves.
+- **Broader sparse-set side storage** selected per component, beyond the
+  current world-level `Volatile<T>` hint, for tags and high-churn components.
 - **Deferred command buffer** for structural changes, applied at sync points.
   Batching amortises the table moves. It is also the prerequisite for running
   systems in parallel under Sub0Pipeline, where systems become jobs and
@@ -95,8 +101,9 @@ without forking the query model.
    e.g. 2^k combinations of k optional components, plus query-cache
    invalidation cost.
 6. **Component constraints:** the archetype spike requires trivially copyable
-   components (memcpy moves). Decide whether v2 accepts that or needs
-   type-erased move/destroy vtables.
+   components (memcpy moves). The current component contract requires
+   trivially copyable values; supporting non-trivial components would require
+   type-erased move/destroy operations.
 7. **v1 benchmark hygiene:** v1's published numbers depend on `-ffast-math`
    implicitly setting FTZ/DAZ. Without it, the kernel runs on denormals after
    ~9K iterations and results depend on iteration count. v1's Linux configure
@@ -236,8 +243,8 @@ matters at the edges:
 - fusion trims movement by ~9%.
 
 The big remaining lever, though, is spatial indexing: the grid build and
-neighbour queries. That argues for making spatial queries a first-class
-v2 citizen (a grid/partition index maintained by the store, with neighbour
+neighbour queries. That argues for making spatial queries a
+first-class feature (a grid/partition index maintained by the store, with neighbour
 iteration that can itself be fused and offloaded), and it is exactly the
 kind of priority a real testbed exposes and micro-benchmarks hide.
 
