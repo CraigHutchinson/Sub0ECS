@@ -406,9 +406,14 @@ against the hand-written loop in the same run, not against another column to the
 last digit. The store's Update2 is 0.94x, 1.01x and 1.01x the hand-written loop on
 MSVC, clang-cl and GCC: the library adds nothing on any of them.
 
-**Correction.** An earlier note put MSVC 3-7x behind GCC and blamed missing
-vectorisation. That compared this laptop with a cloud Xeon. On one machine MSVC is
-1.0-1.5x behind GCC, and GCC does not vectorise these kernels either.
+An earlier reading of the reference capture put MSVC 3-7x behind GCC and blamed
+missing vectorisation. That compared this laptop with a cloud Xeon. On one machine
+MSVC is 1.0-1.5x behind GCC, and GCC does not vectorise these kernels either.
+Fusion is the same story. Fused against sequential on FusionFrame here (median of
+the three rounds): 1.38x on MSVC, 1.26x on GCC and 0.95x on clang-cl at 100K;
+1.72x, 1.54x and 1.30x at 1M. That is far from the 3.5-5.3x of the earlier GCC
+runs, which were on another machine and had multiply-add fusing on. The planner
+and executor results need re-measuring here before they are quoted again.
 
 **What MSVC was losing, and the fixes (all three in the library, none in user code):**
 
@@ -494,22 +499,24 @@ in the run summaries.
 What the MSVC capture adds to the GCC results:
 
 1. **The ranking holds; the magnitudes do not.** The store matches Archetype on
-   iteration and beats v1 everywhere, as on GCC. But Update2 is 1.5x v1 here against
-   6.9x on GCC. The difference is the compiler's ceiling, not the store: hand-
-   written SoA runs Update2 in 113 µs under MSVC and 43 µs under GCC, because MSVC
-   does not vectorise this kernel (its wrap-around branches). The store is at 79% of
-   the ceiling on MSVC and 85-95% on GCC. Claims of "N x faster than v1" must name
-   the compiler.
+   iteration and beats v1 everywhere, as in the GCC results. But Update2 is 1.5x v1
+   here against 6.9x there. Those GCC results came from another machine (a cloud
+   Xeon), so the difference is not a compiler comparison; "Compilers on one
+   machine" above is, and it puts MSVC 1.0-1.5x behind GCC with neither vectorising
+   this kernel. In this capture the store ran Update2 at 79% of the hand-written
+   loop's speed; that gap was the library's and is closed since (same section).
+   Claims of "N x faster than v1" must name the machine and the compiler.
 2. **The structural-change result is compiler-independent.** AddRemove of an
    unqueried component is 7.4x faster than Archetype (107.8 vs 800.6 µs) and close
    to SparseSet, as designed. RandomGet is 11x v1; SparseQuery 31x.
 3. **OOP is the slowest design at iteration** (Update2 0.78x v1) and among the
    fastest at creation: one allocation per entity is cheap next to v1's sorted
    insert.
-4. **Fusion pays less on MSVC, and the plan matters more.** FusionFrame fused vs
-   sequential: 1.24x at 100K, 1.72x at 1M (GCC: 3.5-5.3x). `AlwaysFuse` is *0.61x*
-   on the four-system frame (GCC: 3.7x): fusing an unrelated system into the loop
-   defeats MSVC's optimiser. `ShareColumns` gets 1.72x and the measuring
+4. **Fusion pays less here, and the plan matters more.** FusionFrame fused vs
+   sequential: 1.24x at 100K, 1.72x at 1M (the earlier GCC runs, on another machine
+   and with GCC's default multiply-add fusing: 3.5-5.3x). `AlwaysFuse` is *0.61x*
+   on the four-system frame (earlier GCC runs: 3.7x): fusing an unrelated system
+   into the loop defeats MSVC's optimiser. `ShareColumns` gets 1.72x and the measuring
    `AutoTuned` 1.77x. This is the case for a measured planner: the best static
    policy differs by compiler.
 5. **Skirmish (50K units per team):** the store, Archetype and StaticBitmask are
