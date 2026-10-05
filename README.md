@@ -72,8 +72,13 @@ int main()
 
 Handle rules: operations on a destroyed entity's handle are no-ops and `find`
 returns `nullptr`; `add` of a component the entity already has overwrites it;
-`remove` of one it lacks does nothing. Components must be trivially copyable, at
-most 64 bytes, and a World type supports up to 64 component types.
+`remove` of one it lacks does nothing. Components must be trivially copyable and at most 64 bytes.
+
+There is no fixed limit on the number of component types. Up to 64 of a World
+type's components can be dense columns: the ones its queries and `Volatile` list
+name (checked at compile time), then others in the order they are first used. Any
+further type is kept in side storage, where everything still works and only
+`find` locality differs.
 
 ## Performance
 

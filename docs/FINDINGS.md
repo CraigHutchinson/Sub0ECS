@@ -395,7 +395,7 @@ suite never exercised, because it never repeats an operation on the same entity:
 | `remove` of an absent component | UB (indexing with the null slot), or a null-pool dereference for a never-stored type | No-op |
 | `destroy` / `add` / `remove` on a stale handle | `destroy` twice released the slot twice, so two live entities later shared it | No-op |
 | Edge cache sentinel was the all-ones mask | An entity holding 64 column types matched the "empty" sentinel and was moved to the empty partition, dropping out of every query | Separate `kNoEdge` index |
-| Component type ids were process-wide | The 64-type limit covered every type in the program, not one World | Numbered per World type |
+| Component type ids were process-wide | The 64-type limit covered every type in the program, not one World | Numbered per World type; since 2026-10-05 no runtime limit at all (types beyond the 64 layout bits are side-stored) |
 
 Each fix has a test that fails without it. That was verified for the side-pool and
 double-destroy fixes by reintroducing the old code: the model-based churn test

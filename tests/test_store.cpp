@@ -487,16 +487,26 @@ namespace
         return ((w.template find<Many<N, Family>>(e) && w.template find<Many<N, Family>>(e)->value == N) && ...);
     }
 
-    // Two unrelated world types; each has its own 64-type budget.
+    /** Adds Many<Offset..Offset+count-1, Family> in that order, each holding its own number. */
+    template <int Family, int Offset, int... N>
+    void addFrom(auto& w, Entity e, std::integer_sequence<int, N...>)
+    {
+        (w.add(e, Many<N + Offset, Family>{ N + Offset }), ...);
+    }
+
+    // Each world type numbers its own component types. A family is used by one world
+    // type only, so its runtime numbering is exactly the order the test adds in.
     using WorldA = BasicWorld<true, std::tuple<Query<Many<0, 1>>>>;
     using WorldB = BasicWorld<true, std::tuple<Query<Many<0, 2>>>>;
+    using CarryManyWorld = BasicWorld<true, std::tuple<Query<Many<0, 3>>>, Volatile<Many<1, 3>>>;
+    using PureManyWorld = BasicWorld<false, std::tuple<Query<Many<0, 4>>>>;
 } // namespace
 
-TEST_CASE("store: each World type has its own 64-type budget, independent of the rest of the process")
+TEST_CASE("store: each World type has its own 64 layout bits, independent of the rest of the process")
 {
-    // 128 component types in total, 64 per world type, on top of every type the
-    // other tests and the benchmark designs already use. A process-wide id
-    // would have exhausted a 64-bit mask long before this.
+    // 128 component types in total, 64 per world type and every one a column, on
+    // top of every type the other tests and the benchmark designs already use. A
+    // process-wide id would have exhausted a 64-bit mask long before this.
     constexpr auto kSeq = std::make_integer_sequence<int, 64>{};
     WorldA a;
     WorldB b;
@@ -515,4 +525,60 @@ TEST_CASE("store: each World type has its own 64-type budget, independent of the
     const Entity e2 = second.create(Many<5, 1>{ 5 }, Many<0, 1>{ 0 });
     CHECK(second.template find<Many<5, 1>>(e2)->value == 5);
     CHECK(second.template find<Many<7, 1>>(e2) == nullptr);
+}
+
+TEST_CASE("store: component types beyond the 64 layout bits are side-stored, not refused")
+{
+    CarryManyWorld w;
+    const Entity e = w.create();
+    const Entity other = w.create(Many<0, 3>{ 0 });
+    const std::size_t before = w.partitionCount();
+
+    // Many<0> is queried and Many<1> Volatile: both numbered at compile time (0 and 1).
+    // Many<2>..Many<63> are first seen here and take the remaining 62 layout bits, so
+    // each is carried as a column and moves e to a partition of its own shape.
+    addFrom<3, 0>(w, e, std::make_integer_sequence<int, 64>{});
+    CHECK(w.partitionCount() == before + 62);
+
+    // 136 more types: no layout bit is left, so they go to side storage and move nothing.
+    const std::size_t full = w.partitionCount();
+    addFrom<3, 64>(w, e, std::make_integer_sequence<int, 136>{});
+    CHECK(w.partitionCount() == full);
+    CHECK(allPresent<3>(w, e, std::make_integer_sequence<int, 200>{}));
+
+    std::size_t matched = 0;
+    w.template each<Many<0, 3>>([&](Many<0, 3>&) { ++matched; });
+    CHECK(matched == 2);
+
+    // A side-stored overflow type behaves like any other component.
+    w.add(e, Many<150, 3>{ -1 });
+    CHECK(w.template find<Many<150, 3>>(e)->value == -1);
+    w.template remove<Many<150, 3>>(e);
+    CHECK(w.template find<Many<150, 3>>(e) == nullptr);
+    CHECK(w.template find<Many<151, 3>>(e)->value == 151);
+    CHECK(w.template find<Many<151, 3>>(other) == nullptr);
+
+    // Destroy scrubs every pool, so the entity that reuses the slot starts clean.
+    w.destroy(e);
+    CHECK(w.size() == 1);
+    const Entity again = w.create(Many<199, 3>{ 7 });
+    CHECK(again.index() == e.index());
+    CHECK(w.template find<Many<199, 3>>(again)->value == 7);
+    CHECK(w.template find<Many<198, 3>>(again) == nullptr);
+    CHECK(w.template find<Many<5, 3>>(again) == nullptr);
+}
+
+TEST_CASE("store: in pure mode unqueried types need no layout bit, so their number is unlimited")
+{
+    PureManyWorld w;
+    const Entity e = w.create(Many<0, 4>{ 0 });
+    const std::size_t partitions = w.partitionCount();
+    addFrom<4, 1>(w, e, std::make_integer_sequence<int, 199>{});
+    CHECK(w.partitionCount() == partitions);   // nothing but the queried component shapes the layout
+    CHECK(allPresent<4>(w, e, std::make_integer_sequence<int, 200>{}));
+
+    PureManyWorld second;   // another instance of the type shares its numbering, not its data
+    const Entity e2 = second.create(Many<0, 4>{ 0 }, Many<120, 4>{ 120 });
+    CHECK(second.template find<Many<120, 4>>(e2)->value == 120);
+    CHECK(second.template find<Many<121, 4>>(e2) == nullptr);
 }
