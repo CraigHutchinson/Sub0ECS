@@ -23,6 +23,7 @@
 #include "common/scenarios.hpp"
 #include "common/systems.hpp"
 #include "designs/archetype.hpp"
+#include "designs/oop.hpp"
 #include "designs/query_partition.hpp"
 #include "designs/sorted_soa.hpp"
 #include "designs/sparse_set.hpp"
@@ -235,6 +236,23 @@ namespace
         }
     }
 
+    /** OOP comparator (v1's "OOP" column): one heap object and one virtual call per entity.
+     *  Create and Update2 only, as in v1; its Update2 work is updateAll(). */
+    void registerOop(std::int64_t n)
+    {
+        for (Pattern p : { Pattern::Coherent, Pattern::Fragmented })
+        {
+            addCreate<oop::World>(p, n);
+            add("Update2", p, oop::World::kName, n,
+                [=] {
+                    auto fx = std::make_shared<WorldFixture<oop::World>>();   // not populated<>(): OOP has no add() to tag with
+                    fx->entities = populate(*fx->world, n, p);
+                    return fx;
+                },
+                [](WorldFixture<oop::World>& fx) { fx.world->updateAll(kDeltaTime); });
+        }
+    }
+
     /** Hand-written SoA upper bound for Update2 (every entity has Position+Velocity). */
     void registerRawSoA(std::int64_t n)
     {
@@ -377,6 +395,7 @@ namespace
         if (n <= 1024) registerDesign<fixed::World<1024>>(n);
         else if (n <= (1 << 17)) registerDesign<fixed::World<(1 << 17)>>(n);
         else if (n <= (1 << 20)) registerDesign<fixed::World<(1 << 20)>>(n);
+        registerOop(n);
         registerRawSoA(n);
         registerFusion(n);
     }
