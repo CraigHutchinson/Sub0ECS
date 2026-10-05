@@ -1,7 +1,7 @@
 name: CI
 
-# Every push runs the gate; merges (pull requests into master, and pushes to
-# master) also run the exhaustive test tier. Nightly.yml repeats the
+# Every push runs the gate; merges (pull requests into master/v2, and pushes to
+# those branches) also run the exhaustive test tier. Nightly.yml repeats the
 # exhaustive tier under sanitizers, which is too slow for every merge.
 #   - tests: the gate tier (ctest presets exclude the "exhaustive" label); the
 #     exhaustive tier on the Clang job, which already builds the test binary
@@ -12,7 +12,7 @@ name: CI
 on:
   push:
   pull_request:
-    branches: [master]
+    branches: [master, v2]
 
 jobs:
   linux-gcc:
@@ -45,7 +45,7 @@ jobs:
       - name: Test (gate)
         run: ctest --preset default
       - name: Test (exhaustive, merges only)
-        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/master'
+        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/v2'
         run: ctest --test-dir build/default -L exhaustive --output-on-failure
 
   macos:
