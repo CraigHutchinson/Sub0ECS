@@ -2,6 +2,7 @@ name: Nightly
 
 # The on-demand tier: every test, including the "exhaustive" doctest suite (many
 # seeds, long random walks), plain and under sanitizers. Also runnable by hand.
+# GitHub schedules workflows from the default branch only, and this checks that branch out.
 
 on:
   schedule:
@@ -13,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with: { ref: v2 }
       - name: Install Ninja
         run: sudo apt-get update && sudo apt-get install -y ninja-build
       - name: Configure (tests only)
@@ -27,7 +27,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with: { ref: v2 }
       - name: Install Ninja
         run: sudo apt-get update && sudo apt-get install -y ninja-build
       - name: Configure (ASan + UBSan)
