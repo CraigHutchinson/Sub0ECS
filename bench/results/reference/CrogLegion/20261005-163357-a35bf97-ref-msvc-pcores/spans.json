@@ -1,0 +1,31 @@
+{
+  "schema": "sub0ecs-bench-results/1",
+  "binary": "sub0ecs_spans_bench",
+  "settings": {"filter": ".*", "epochs": 52, "min_epoch_ms": 5, "warmup": 0},
+  "results": [
+    {"name": "Spans/-/k1/100000", "scenario": "Spans", "pattern": "-", "design": "k1", "group": "Spans/-/100000", "n": 100000, "unit": "pass",
+     "median_ns": 128234.722, "err_pct": 6.98266086, "min_ns": 101797.222, "max_ns": 142083.333, "epochs": 54, "items_per_second": 779819992,
+     "paired": {"baseline": "k1", "ratio": 1, "low": 1, "high": 1, "significant": false, "rounds": 54},
+     "counters": {"per_span": 100000}, "notes": {}},
+    {"name": "Spans/-/k6/100000", "scenario": "Spans", "pattern": "-", "design": "k6", "group": "Spans/-/100000", "n": 100000, "unit": "pass",
+     "median_ns": 114333.333, "err_pct": 6.34478149, "min_ns": 94766.6667, "max_ns": 156738.889, "epochs": 54, "items_per_second": 874635569,
+     "paired": {"baseline": "k1", "ratio": 1.10951138, "low": 1.06963636, "high": 1.13106695, "significant": true, "rounds": 54},
+     "counters": {"per_span": 16666.6667}, "notes": {}},
+    {"name": "Spans/-/k64/100000", "scenario": "Spans", "pattern": "-", "design": "k64", "group": "Spans/-/100000", "n": 100000, "unit": "pass",
+     "median_ns": 114794.444, "err_pct": 5.16665679, "min_ns": 96744.4444, "max_ns": 129783.333, "epochs": 54, "items_per_second": 871122296,
+     "paired": {"baseline": "k1", "ratio": 1.11268528, "low": 1.07149738, "high": 1.14581466, "significant": true, "rounds": 54},
+     "counters": {"per_span": 1562.5}, "notes": {}},
+    {"name": "Spans/-/k512/100000", "scenario": "Spans", "pattern": "-", "design": "k512", "group": "Spans/-/100000", "n": 100000, "unit": "pass",
+     "median_ns": 120805.556, "err_pct": 5.43909507, "min_ns": 95488.8889, "max_ns": 138725, "epochs": 54, "items_per_second": 827776500,
+     "paired": {"baseline": "k1", "ratio": 1.03778795, "low": 1.00332212, "high": 1.09869623, "significant": true, "rounds": 54},
+     "counters": {"per_span": 195.3125}, "notes": {}},
+    {"name": "Spans/-/k4096/100000", "scenario": "Spans", "pattern": "-", "design": "k4096", "group": "Spans/-/100000", "n": 100000, "unit": "pass",
+     "median_ns": 153000, "err_pct": 5.60858836, "min_ns": 124475, "max_ns": 184883.333, "epochs": 54, "items_per_second": 653594771,
+     "paired": {"baseline": "k1", "ratio": 0.835156961, "low": 0.797818646, "high": 0.85271004, "significant": true, "rounds": 54},
+     "counters": {"per_span": 24.4140625}, "notes": {}},
+    {"name": "Spans/-/k16384/100000", "scenario": "Spans", "pattern": "-", "design": "k16384", "group": "Spans/-/100000", "n": 100000, "unit": "pass",
+     "median_ns": 171880.556, "err_pct": 5.01325, "min_ns": 146461.111, "max_ns": 234594.444, "epochs": 54, "items_per_second": 581799376,
+     "paired": {"baseline": "k1", "ratio": 0.751313574, "low": 0.732677553, "high": 0.767102513, "significant": true, "rounds": 54},
+     "counters": {"per_span": 6.10351562}, "notes": {}}
+  ]
+}

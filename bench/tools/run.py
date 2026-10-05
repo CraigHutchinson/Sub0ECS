@@ -336,7 +336,7 @@ def summarize(run_dir, results):
         path = run_dir / f"{name}.json"
         if res["status"] != "ok" or not path.exists():
             continue
-        rows = json.loads(path.read_text()).get("rows")
+        rows = json.loads(path.read_text(encoding="utf-8")).get("rows")
         if rows:
             keys = list(rows[0].keys())
             lines += [f"## {name}", "", "| " + " | ".join(keys) + " |", "|" + "---|" * len(keys)]

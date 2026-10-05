@@ -400,3 +400,64 @@ suite never exercised, because it never repeats an operation on the same entity:
 Each fix has a test that fails without it. That was verified for the side-pool and
 double-destroy fixes by reintroducing the old code: the model-based churn test
 reported 43 mismatches, and the stale-handle test crashed.
+
+## Reference capture: MSVC on dedicated hardware
+
+Runs: [bench/results/reference/](../bench/results/reference/README.md). Core Ultra 9
+275HX (8 P + 16 E cores, no SMT), MSVC 19.51 `/O2 /arch:AVX2`, nanobench harness,
+`reference` profile (52 paired rounds, epochs of at least 5 ms), single-threaded
+suites pinned to the P-cores. Ratios are paired within a group, with 95% intervals
+in the run summaries.
+
+**Storage scenarios at 100K fragmented entities (time per pass, µs):**
+
+| Scenario | v1 | OOP | SparseSet | Archetype | **Store (hinted)** | StaticBitmask | RawSoA |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Update2 | 216.6 | 278.6 | 221.5 | 142.6 | **143.5** | 149.5 | 113.2 |
+| Frame3 | 364.8 | | 340.9 | 199.6 | **200.7** | 303.7 | |
+| SparseQuery | 40.3 | | 4.6 | 1.4 | **1.3** | 38.9 | |
+| RandomGet | 6529 | | 426 | 566 | **588** | 207 | |
+| Iter1 | 34.8 | | 18.2 | 18.3 | **18.2** | 27.7 | |
+| AddRemove (unqueried component) | n/a | | 82.1 | 800.6 | **107.8** | 28.1 | |
+| TagChurn (queried component) | n/a | | 76.7 | 834.6 | **567.1** | 31.1 | |
+| DestroyCreate | n/a | | 335.4 | 350.7 | **340.6** | 121.7 | |
+| Create | 7380 | 2732 | 8197 | 5238 | **4682** | 1076 | |
+
+What the MSVC capture adds to the GCC results:
+
+1. **The ranking holds; the magnitudes do not.** The store matches Archetype on
+   iteration and beats v1 everywhere, as on GCC. But Update2 is 1.5x v1 here against
+   6.9x on GCC. The difference is the compiler's ceiling, not the store: hand-
+   written SoA runs Update2 in 113 µs under MSVC and 43 µs under GCC, because MSVC
+   does not vectorise this kernel (its wrap-around branches). The store is at 79% of
+   the ceiling on MSVC and 85-95% on GCC. Claims of "N x faster than v1" must name
+   the compiler.
+2. **The structural-change result is compiler-independent.** AddRemove of an
+   unqueried component is 7.4x faster than Archetype (107.8 vs 800.6 µs) and close
+   to SparseSet, as designed. RandomGet is 11x v1; SparseQuery 31x.
+3. **OOP is the slowest design at iteration** (Update2 0.78x v1) and among the
+   fastest at creation: one allocation per entity is cheap next to v1's sorted
+   insert.
+4. **Fusion pays less on MSVC, and the plan matters more.** FusionFrame fused vs
+   sequential: 1.24x at 100K, 1.72x at 1M (GCC: 3.5-5.3x). `AlwaysFuse` is *0.61x*
+   on the four-system frame (GCC: 3.7x): fusing an unrelated system into the loop
+   defeats MSVC's optimiser. `ShareColumns` gets 1.72x and the measuring
+   `AutoTuned` 1.77x. This is the case for a measured planner: the best static
+   policy differs by compiler.
+5. **Skirmish (50K units per team):** the store, Archetype and StaticBitmask are
+   within 2% of each other at 1.10-1.13x SparseSet; whole-game time is dominated by
+   the spatial grid and neighbour queries, as noted above. The `Parallel` executor
+   on the movement group alone gives 1.59x.
+6. **Thread scaling on a hybrid CPU** (fused movement, 50K units per team, vs 1
+   thread): 2 -> 1.74x, 4 -> 2.89x, 8 -> 3.55x, 16 -> 4.54x, 24 -> 4.38x. Past the 8
+   P-cores the E-cores add little, and 24 threads is slower than 16. Static
+   "owner computes" affinity is slower than dynamic claiming at every thread count
+   here (3.52x vs 4.54x at 16): equal-sized blocks suit equal cores, and these are
+   not. At 12.5K units scaling peaks at 8 threads (3.13x).
+7. **Spans:** splitting 100K rows into up to 512 partitions is free (1.04-1.11x of
+   one span); 4,096 costs 16% and 16,384 costs 25%. Consistent with the GCC
+   finding that partition granularity only matters below a few hundred rows each.
+8. **H9 dynamic systems (1M entities, 500K promoted):** a stall relayout is one
+   40.7 ms frame; 16,384 entities per frame caps the worst frame at 7.8 ms and
+   reaches the full path in 30 frames. Degraded iteration costs 10-20x the full
+   path, so it remains a transition mechanism.

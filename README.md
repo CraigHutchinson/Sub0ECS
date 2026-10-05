@@ -95,6 +95,11 @@ checks they all produce bit-identical results first.
 [bench/BENCHMARKING.md](bench/BENCHMARKING.md) explains how to reproduce the
 numbers on your hardware.
 
+The size of the gap depends on the compiler. MSVC does not vectorise the Update2
+kernel, so there the same benchmark is 1.5× v1 (hand-written SoA: 1.9×); the
+structural-change and lookup results carry over. See "Reference capture" in
+[docs/FINDINGS.md](docs/FINDINGS.md).
+
 ## Build
 
 ```bash
