@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "../common/components.hpp"
+#include <sub0ecs/detail/hints.hpp>
 #include <sub0ecs/entity.hpp>
 
 namespace bench::sparse
@@ -111,7 +112,7 @@ namespace bench::sparse
             {
                 auto& p = *std::get<0>(pools);
                 auto* d = p.data();
-                for (std::size_t i = 0, n = p.size(); i < n; ++i) f(d[i]);
+                for (std::size_t i = 0, n = p.size(); i < n; ++i) SUB0ECS_FLATTEN_CALLS f(d[i]);
             }
             else
             {
@@ -171,7 +172,7 @@ namespace bench::sparse
                 const Entity e = ents[i];
                 if (((Is == L || std::get<Is>(pools)->contains(e)) && ...))
                 {
-                    f(access<Is, L>(pools, leadData, i, e)...);
+                    SUB0ECS_FLATTEN_CALLS f(access<Is, L>(pools, leadData, i, e)...);
                 }
             }
         }

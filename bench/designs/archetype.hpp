@@ -22,6 +22,7 @@
 #include <vector>
 
 #include "../common/components.hpp"
+#include <sub0ecs/detail/hints.hpp>
 #include <sub0ecs/entity.hpp>
 
 namespace bench::archetype
@@ -124,7 +125,7 @@ namespace bench::archetype
                 std::tuple<Cs*...> cols{ a->column<Cs>()... };
                 for (std::size_t i = 0; i < n; ++i)
                 {
-                    f(std::get<Cs*>(cols)[i]...);
+                    SUB0ECS_FLATTEN_CALLS f(std::get<Cs*>(cols)[i]...);
                 }
             }
         }

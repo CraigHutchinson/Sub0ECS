@@ -1,6 +1,6 @@
 #pragma once
 /** The benchmark harness: nanobench with names, filtering, paired group comparisons
- *  and a JSON report for bench/tools/*.py.
+ *  and a JSON report for the scripts in bench/tools.
  *
  *   case.hpp      Case, Prepared: what a benchmark is
  *   registry.hpp  Registry: registration and --filter

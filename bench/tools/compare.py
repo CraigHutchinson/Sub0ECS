@@ -22,12 +22,12 @@ SCHEMA = "sub0ecs-bench-results/1"
 def load_run(d):
     """(meta, {suite: {case name: record}}) for a run directory."""
     d = Path(d)
-    meta = json.loads((d / "meta.json").read_text())
+    meta = json.loads((d / "meta.json").read_text(encoding="utf-8"))
     suites = {}
     for f in d.glob("*.json"):
         if f.name == "meta.json":
             continue
-        data = json.loads(f.read_text())
+        data = json.loads(f.read_text(encoding="utf-8"))
         if data.get("schema") == SCHEMA:
             suites[f.stem] = {r["name"]: r for r in data["results"]}
     return meta, suites
@@ -45,6 +45,7 @@ def machine_diff(ma, mb):
 
 
 def main():
+    sys.stdout.reconfigure(encoding="utf-8")   # the report uses non-ASCII symbols; Windows pipes default to cp1252
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("a")
     ap.add_argument("b")

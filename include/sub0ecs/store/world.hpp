@@ -54,6 +54,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "../detail/hints.hpp"
 #include "../entity.hpp"
 #include "../fusion/executors.hpp"
 #include "../query.hpp"
@@ -155,7 +156,7 @@ namespace sub0ecs::store
                 const std::size_t n = p->size();
                 if (n == 0) continue;
                 std::tuple<Cs*...> cols{ col<Cs>(*p)... };
-                for (std::size_t i = 0; i < n; ++i) f(std::get<Cs*>(cols)[i]...);
+                for (std::size_t i = 0; i < n; ++i) SUB0ECS_FLATTEN_CALLS f(std::get<Cs*>(cols)[i]...);
             }
         }
 
@@ -367,14 +368,14 @@ namespace sub0ecs::store
                 for (Partition* p : byQuery_[qi])
                 {
                     std::tuple<Cs*...> cols{ col<Cs>(*p)... };
-                    for (std::size_t i = 0, n = p->size(); i < n; ++i) f(0u, std::get<Cs*>(cols)[i]...);
+                    for (std::size_t i = 0, n = p->size(); i < n; ++i) SUB0ECS_FLATTEN_CALLS f(0u, std::get<Cs*>(cols)[i]...);
                 }
                 return;
             }
             auto body = [&](std::size_t item, unsigned worker) {
                 const Chunk& c = chunks_[item];
                 std::tuple<Cs*...> cols{ col<Cs>(*c.p)... };
-                for (std::uint32_t i = c.begin; i < c.end; ++i) f(worker, std::get<Cs*>(cols)[i]...);
+                for (std::uint32_t i = c.begin; i < c.end; ++i) SUB0ECS_FLATTEN_CALLS f(worker, std::get<Cs*>(cols)[i]...);
             };
             pool.parallelFor(chunks_.size(), body);
         }
@@ -462,7 +463,7 @@ namespace sub0ecs::store
                 const std::size_t n = p->size();
                 if (n == 0) continue;
                 std::tuple<Cs*...> cols{ col<Cs>(*p)... };
-                for (std::size_t i = 0; i < n; ++i) f(std::get<Cs*>(cols)[i]...);
+                for (std::size_t i = 0; i < n; ++i) SUB0ECS_FLATTEN_CALLS f(std::get<Cs*>(cols)[i]...);
             }
             if (q.pending)                      // degraded path: sparse join over unmigrated holders
             {
@@ -737,13 +738,13 @@ namespace sub0ecs::store
                 const std::int8_t s = src.columnOf[col.type];
                 if (s != kNoColumn)
                 {
-                    std::memcpy(col.at(dstRow), src.columns[s].at(srcRow), col.stride);
+                    copyRow(col.at(dstRow), src.columns[s].at(srcRow), col.stride);
                 }
                 else if (r.has & (Mask{ 1 } << col.type))
                 {
                     // promote: side storage -> column
                     SidePoolBase& pool = *side_[col.type];
-                    std::memcpy(col.at(dstRow), pool.findRaw(e), col.stride);
+                    copyRow(col.at(dstRow), static_cast<const std::byte*>(pool.findRaw(e)), col.stride);
                     pool.remove(e);
                 }
                 // else: component being added; caller stores it after the move

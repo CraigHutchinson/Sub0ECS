@@ -31,12 +31,25 @@ if(MSVC)
     # _CRT_SECURE_NO_WARNINGS: std::getenv/std::fopen are the portable spelling; the _s variants are not.
     target_compile_options(sub0ecs_dev_flags INTERFACE /W4 /permissive- /Zc:__cplusplus /bigobj)
     target_compile_definitions(sub0ecs_dev_flags INTERFACE _CRT_SECURE_NO_WARNINGS)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        target_compile_options(sub0ecs_dev_flags INTERFACE /clang:-ffp-contract=off)   # see the GCC/Clang branch
+    endif()
     if(SUB0ECS_NATIVE)
-        # MSVC has no -march=native; AVX2 is the widest ISA every x86-64 bench host here supports.
-        target_compile_options(sub0ecs_dev_flags INTERFACE /arch:AVX2)
+        if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+            # clang-cl: the MSVC command line and standard library, with LLVM's optimiser,
+            # which can target the build host exactly.
+            target_compile_options(sub0ecs_dev_flags INTERFACE /clang:-march=native)
+        else()
+            # MSVC has no -march=native; AVX2 is the widest ISA every x86-64 bench host here supports.
+            target_compile_options(sub0ecs_dev_flags INTERFACE /arch:AVX2)
+        endif()
     endif()
 else()
-    target_compile_options(sub0ecs_dev_flags INTERFACE -Wall -Wextra $<$<CONFIG:Release>:-O3>)
+    # -ffp-contract=off: the designs must agree bit for bit, and every compiler should be
+    # measured on the same arithmetic. GCC's default (fast) fuses multiply-adds across
+    # statements, differently in differently shaped loops, so on an FMA target (-march=native,
+    # ARM64) the conformance tests fail (seen with GCC 15). MSVC's /fp:precise does not contract.
+    target_compile_options(sub0ecs_dev_flags INTERFACE -Wall -Wextra -ffp-contract=off $<$<CONFIG:Release>:-O3>)
     if(SUB0ECS_NATIVE)
         target_compile_options(sub0ecs_dev_flags INTERFACE -march=native)
     endif()

@@ -11,6 +11,7 @@ bench/harness/            nanobench + names, --filter, paired group comparisons,
 bench/tools/suites.json   what can be run (suites) and how (profiles)
 bench/tools/run.py        build → fingerprint machine → run suites → result directory
 bench/tools/compare.py    A/B comparison with noise-aware verdicts
+bench/tools/profile.py    one case under Intel VTune: hot functions, processor metrics
 CMakePresets.json         bench-native | bench-portable | sanitize
 ```
 
@@ -124,6 +125,52 @@ they cancel drift, which a comparison across runs cannot.
 
 `--fail-on-regression` returns exit code 1, so the same script can gate CI
 on a dedicated runner.
+
+## Finding out why: profiles and processor metrics
+
+A benchmark run says how long a case takes and how it ranks. It does not say
+why. Before changing code for speed, and again before explaining a result,
+collect evidence in this order (cheapest first):
+
+| Step | Question it answers | How |
+|---|---|---|
+| 1. Paired ratio to a floor | Is there a gap at all, and is it the library's? | The hand-written `RawSoA` design in the same group; `store / RawSoA` near 1.0 means the rest is the compiler's or the kernel's |
+| 2. Hot functions | Which functions hold the time: the kernel, or the library around it? | `profile.py --collect hotspots` |
+| 3. Processor metrics | Is it mispredicted branches, cache misses, or just more instructions? | `profile.py --collect uarch` |
+| 4. The compiler's own report | Did the loop vectorise, and if not, why? Was the kernel inlined into it? | MSVC `/Qvec-report:2`, GCC `-fopt-info-vec-missed`, Clang `-Rpass-missed=loop-vectorize`; the assembly (MSVC `/FAs`, others `-S`) for a `call` inside the loop |
+| 5. A probe | Does the candidate fix work on every compiler? | The loop and its hand-written equivalent in one small file, built with each compiler |
+
+```bash
+python bench/tools/profile.py --build-dir build/bench-native     --filter "^Update2/Fragmented/QPartHinted/100000$" --pin P --label update2
+python bench/tools/profile.py --build-dir build/bench-native --collect uarch     --filter "^RandomGet/Fragmented/QPartHinted/100000$" --pin P --label randomget
+```
+
+`profile.py` runs one benchmark case for about `--seconds` (default 10) under
+[Intel VTune](https://www.intel.com/content/www/us/en/developer/tools/oneapi/vtune-profiler.html)
+and writes `bench/results/profiles/<host>/<stamp>-<sha>[-label]/` (git-ignored):
+the VTune result, `summary.txt`, `hotspots.csv` and the command. It prints the
+headline metrics and the heaviest functions.
+
+- **Name one design in `--filter`.** A filter that matches a whole group profiles
+  every design in it, and the hot-function list mixes them.
+- **`hotspots` needs no privileges** (user-mode sampling). **`uarch` reads the
+  hardware counters:** on Windows run it from an elevated prompt, or install VTune's
+  sampling driver; on Linux lower `kernel.perf_event_paranoid`.
+- The benchmark binaries carry debug information (`/Z7`, `-g`), which is what lets
+  a profiler name functions. It does not change the generated code.
+- Read `uarch` on a hybrid CPU per core type, and pin (`--pin P`): a P-core and an
+  E-core give different answers to the same question.
+- Without VTune, Linux `perf` answers steps 2 and 3:
+  `perf stat -d -- <bench> --filter=...` and `perf record -g` / `perf report`.
+  `profile.py` does not wrap them yet.
+- VTune credits inlined code to the function it came from, so a kernel shows under
+  its own name whether or not it was inlined. Use the assembly (step 4) to tell.
+
+Worked example (2026-10-05, MSVC): step 1 showed the store's Update2 at 1.24x the
+hand-written loop on MSVC and 1.0x on GCC and Clang. Step 2 puts the time in
+`kernel::updatePosition` (99% of it), not in library code. Step 4 found the cause: the assembly had a `call` to the kernel inside the row loop, where the
+hand-written loop had it inlined. One statement attribute on the row call fixed it
+(FINDINGS, "Compilers on one machine").
 
 ## Windows / MSVC
 

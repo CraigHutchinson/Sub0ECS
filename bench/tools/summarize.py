@@ -22,7 +22,7 @@ def load(paths):
         files += sorted(f for f in p.glob("*.json") if f.name != "meta.json") if p.is_dir() else [p]
     records = []
     for f in files:
-        data = json.loads(f.read_text())
+        data = json.loads(f.read_text(encoding="utf-8"))
         if data.get("schema") == SCHEMA:
             records += data["results"]
     return records
@@ -75,6 +75,7 @@ def summarize(records):
 
 
 def main():
+    sys.stdout.reconfigure(encoding="utf-8")   # the tables use non-ASCII symbols; Windows pipes default to cp1252
     if len(sys.argv) < 2:
         print(__doc__, file=sys.stderr)
         return 2

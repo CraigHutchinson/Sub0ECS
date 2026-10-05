@@ -53,6 +53,15 @@ add_library(sub0ecs_bench_harness STATIC
 )
 target_link_libraries(sub0ecs_bench_harness PUBLIC sub0ecs_bench_support nanobench::nanobench)
 
+# Symbols in the benchmark binaries, so profilers can name what they sample
+# (tools/profile.py). Debug information does not change the generated code.
+if(MSVC)
+    target_compile_options(sub0ecs_bench_harness PUBLIC /Z7)
+    target_link_options(sub0ecs_bench_harness PUBLIC /DEBUG /OPT:REF /OPT:ICF)
+else()
+    target_compile_options(sub0ecs_bench_harness PUBLIC -g)
+endif()
+
 # Storage designs on micro scenarios, fusion, planners x executors
 add_executable(sub0ecs_bench scenarios_bench.cpp)
 target_link_libraries(sub0ecs_bench PRIVATE sub0ecs_bench_harness)

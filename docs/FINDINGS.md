@@ -373,8 +373,8 @@ MSVC 19.51 (Visual Studio 18), Release, `/W4 /permissive-`, `/arch:AVX2`, Ninja.
 - **All four suites pass:** storage conformance (bit-identical checksums across all
   designs, including v1), fusion (planners × executors), H9 dynamic, and Skirmish
   lockstep.
-- **Fusion inlining on MSVC:** `[[msvc::flatten]]` beside GCC's `flatten` was tried and
-  withdrawn (2026-10-01). The paired fusion benchmarks showed no consistent gain (MSVC
+- **Fusion inlining on MSVC:** `[[msvc::flatten]]` on the whole `fusedLoop` function,
+  beside GCC's `flatten`, was tried and withdrawn (2026-10-01). The paired fusion benchmarks showed no consistent gain (MSVC
   fuses at 1.1-1.8x over sequential either way), while it cost ~4 GB and ~60 s for
   every file that includes the Skirmish systems.
 - **Compiler memory:** the fixed-capacity comparator's component arrays were members
@@ -382,6 +382,79 @@ MSVC 19.51 (Visual Studio 18), Release, `/W4 /permissive-`, `/arch:AVX2`, Ninja.
   105 GB with Skirmish's), which broke CI. They are now allocated once at
   construction; the heaviest benchmark file compiles in 0.5 GB / 11 s.
 - The harness runs on Windows (see BENCHMARKING.md "Windows / MSVC").
+
+## Compilers on one machine
+
+MSVC 19.51, clang-cl 22.1 and GCC 16.2 (MinGW-w64), all on the Core Ultra 9 275HX,
+pinned to its P-cores, tuned for the host (`/arch:AVX2`, `-march=native`), with
+floating-point contraction off so all three compute the same arithmetic. Three
+rounds, the compilers rotated within each round; the table is the median of the
+three (µs per pass, 100K entities, fragmented). 2026-10-05.
+
+| Case | MSVC | clang-cl | GCC |
+|---|---:|---:|---:|
+| Iter1 / store | 20.6 | 14.7 | 15.9 |
+| Update2 / hand-written loop | 149.4 | 165.9 | 115.0 |
+| Update2 / store | 140.7 | 168.1 | 119.8 |
+| Frame3 / store | 226.4 | 206.6 | 170.8 |
+| RandomGet / store | 575.7 | 369.9 | 410.5 |
+| AddRemove / store | 88.5 | 87.2 | 59.3 |
+| TagChurn / store | 612.4 | 459.1 | 434.9 |
+
+Absolute times moved by up to 30% between rounds on this laptop, so read a column
+against the hand-written loop in the same run, not against another column to the
+last digit. The store's Update2 is 0.94x, 1.01x and 1.01x the hand-written loop on
+MSVC, clang-cl and GCC: the library adds nothing on any of them.
+
+An earlier reading of the reference capture put MSVC 3-7x behind GCC and blamed
+missing vectorisation. That compared this laptop with a cloud Xeon. On one machine
+MSVC is 1.0-1.5x behind GCC, and GCC does not vectorise these kernels either.
+Fusion is the same story. Fused against sequential on FusionFrame here (median of
+the three rounds): 1.38x on MSVC, 1.26x on GCC and 0.95x on clang-cl at 100K;
+1.72x, 1.54x and 1.30x at 1M. That is far from the 3.5-5.3x of the earlier GCC
+runs, which were on another machine and had multiply-add fusing on. The planner
+and executor results need re-measuring here before they are quoted again.
+
+**What MSVC was losing, and the fixes (all three in the library, none in user code):**
+
+| Cause | Found by | Fix | Effect |
+|---|---|---|---|
+| The type index was a function-local static. MSVC does not inline a function with one, so every `find`, `add` and `remove` made a call (and every partition of an iteration) | Assembly: `call TypeIndices::of` | Indices of queried and Volatile types are compile-time constants (the component-capacity change) | RandomGet 1.6x faster on MSVC; 35-45% on clang-cl and GCC too |
+| The system callable was inlined into the row loop, but the kernel it calls was not: a call per row | Assembly: `call updatePosition` in the loop | `SUB0ECS_FLATTEN_CALLS` (`[[msvc::flatten]]`) on the row call statement of `each`, `eachDyn` and `eachParallel` | Update2 and Frame3 1.2-1.35x faster on MSVC; the store went from 1.24x the hand-written loop to 0.94x |
+| A row move copied each column with `memcpy(stride)`, a library call | Reading `moveTo` after the profile showed add/remove time spread over the move path | `copyRow`: fixed-size copies for 4, 8, 12 and 16 bytes | AddRemove 5% faster on MSVC and clang-cl, 11% on GCC (probe) |
+
+Measured as the store's paired ratio to v1 within one run, before against after
+the first two fixes (MSVC, 100K): Update2 1.31-1.35x, Frame3 1.20-1.24x,
+RandomGet 1.63-1.66x, AddRemove 1.15-1.51x. No case got slower (72 ratios: 34
+faster, 38 unchanged). The comparator designs got the same row hint, so they are
+not handicapped on MSVC. The statement-level hint did not lengthen the build; the
+function-level one tried on `fusedLoop` (see "MSVC validation") is what cost 4 GB.
+
+**Hints that were measured and not adopted** (`store / hand-written` was already
+1.0, so these are about the kernel, not the library; ns per entity, Update2):
+
+| Variant | MSVC | clang-cl | GCC |
+|---|---:|---:|---:|
+| As written (two structs, branches) | 0.99 | 1.29 | 0.81 |
+| `__restrict` on the column pointers | 0.90 | 1.13 | 0.95 |
+| "Iterations are independent" pragma | 1.02 | 0.73 | 0.95 |
+| Branches rewritten as selects | 0.92 | 0.34 | 0.93 |
+| One array per field, selects, `__restrict` | 0.93 | 0.21 | 1.01 |
+
+- Only Clang turns any of them into vector code. MSVC reports the two-struct loop
+  as a loop-carried dependence (reason 1200) even with `__restrict` and
+  `#pragma loop(ivdep)`, and the select form as control flow (reason 1100).
+- The independence pragma is not safe for `each`: a callable may carry state from
+  row to row. It could be applied to fused systems, whose access is declared.
+- A branch-free kernel is the user's choice; the benchmark kernel stays as written
+  so the comparison with v1 holds.
+
+**What is left on MSVC** is its code generator, not the library: Iter1 is 1.3-1.4x
+behind because MSVC will not vectorise a one-field update of a two-field struct
+(reason 1300, "too little computation"). One array per field makes that loop 3-4x
+faster on all three compilers (0.044 ns per entity against 0.13-0.17), which is a
+storage-layout change, not a hint; it is on the backlog. AddRemove and TagChurn
+are 1.4-1.5x behind GCC with the time spread across the side-pool operations.
 
 ## Promotion to the library
 
@@ -400,3 +473,66 @@ suite never exercised, because it never repeats an operation on the same entity:
 Each fix has a test that fails without it. That was verified for the side-pool and
 double-destroy fixes by reintroducing the old code: the model-based churn test
 reported 43 mismatches, and the stale-handle test crashed.
+
+## Reference capture: MSVC on dedicated hardware
+
+Runs: [bench/results/reference/](../bench/results/reference/README.md). Core Ultra 9
+275HX (8 P + 16 E cores, no SMT), MSVC 19.51 `/O2 /arch:AVX2`, nanobench harness,
+`reference` profile (52 paired rounds, epochs of at least 5 ms), single-threaded
+suites pinned to the P-cores. Ratios are paired within a group, with 95% intervals
+in the run summaries.
+
+**Storage scenarios at 100K fragmented entities (time per pass, µs):**
+
+| Scenario | v1 | OOP | SparseSet | Archetype | **Store (hinted)** | StaticBitmask | RawSoA |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Update2 | 216.6 | 278.6 | 221.5 | 142.6 | **143.5** | 149.5 | 113.2 |
+| Frame3 | 364.8 | | 340.9 | 199.6 | **200.7** | 303.7 | |
+| SparseQuery | 40.3 | | 4.6 | 1.4 | **1.3** | 38.9 | |
+| RandomGet | 6529 | | 426 | 566 | **588** | 207 | |
+| Iter1 | 34.8 | | 18.2 | 18.3 | **18.2** | 27.7 | |
+| AddRemove (unqueried component) | n/a | | 82.1 | 800.6 | **107.8** | 28.1 | |
+| TagChurn (queried component) | n/a | | 76.7 | 834.6 | **567.1** | 31.1 | |
+| DestroyCreate | n/a | | 335.4 | 350.7 | **340.6** | 121.7 | |
+| Create | 7380 | 2732 | 8197 | 5238 | **4682** | 1076 | |
+
+What the MSVC capture adds to the GCC results:
+
+1. **The ranking holds; the magnitudes do not.** The store matches Archetype on
+   iteration and beats v1 everywhere, as in the GCC results. But Update2 is 1.5x v1
+   here against 6.9x there. Those GCC results came from another machine (a cloud
+   Xeon), so the difference is not a compiler comparison; "Compilers on one
+   machine" above is, and it puts MSVC 1.0-1.5x behind GCC with neither vectorising
+   this kernel. In this capture the store ran Update2 at 79% of the hand-written
+   loop's speed; that gap was the library's and is closed since (same section).
+   Claims of "N x faster than v1" must name the machine and the compiler.
+2. **The structural-change result is compiler-independent.** AddRemove of an
+   unqueried component is 7.4x faster than Archetype (107.8 vs 800.6 µs) and close
+   to SparseSet, as designed. RandomGet is 11x v1; SparseQuery 31x.
+3. **OOP is the slowest design at iteration** (Update2 0.78x v1) and among the
+   fastest at creation: one allocation per entity is cheap next to v1's sorted
+   insert.
+4. **Fusion pays less here, and the plan matters more.** FusionFrame fused vs
+   sequential: 1.24x at 100K, 1.72x at 1M (the earlier GCC runs, on another machine
+   and with GCC's default multiply-add fusing: 3.5-5.3x). `AlwaysFuse` is *0.61x*
+   on the four-system frame (earlier GCC runs: 3.7x): fusing an unrelated system
+   into the loop defeats MSVC's optimiser. `ShareColumns` gets 1.72x and the measuring
+   `AutoTuned` 1.77x. This is the case for a measured planner: the best static
+   policy differs by compiler.
+5. **Skirmish (50K units per team):** the store, Archetype and StaticBitmask are
+   within 2% of each other at 1.10-1.13x SparseSet; whole-game time is dominated by
+   the spatial grid and neighbour queries, as noted above. The `Parallel` executor
+   on the movement group alone gives 1.59x.
+6. **Thread scaling on a hybrid CPU** (fused movement, 50K units per team, vs 1
+   thread): 2 -> 1.74x, 4 -> 2.89x, 8 -> 3.55x, 16 -> 4.54x, 24 -> 4.38x. Past the 8
+   P-cores the E-cores add little, and 24 threads is slower than 16. Static
+   "owner computes" affinity is slower than dynamic claiming at every thread count
+   here (3.52x vs 4.54x at 16): equal-sized blocks suit equal cores, and these are
+   not. At 12.5K units scaling peaks at 8 threads (3.13x).
+7. **Spans:** splitting 100K rows into up to 512 partitions is free (1.04-1.11x of
+   one span); 4,096 costs 16% and 16,384 costs 25%. Consistent with the GCC
+   finding that partition granularity only matters below a few hundred rows each.
+8. **H9 dynamic systems (1M entities, 500K promoted):** a stall relayout is one
+   40.7 ms frame; 16,384 entities per frame caps the worst frame at 7.8 ms and
+   reaches the full path in 30 frames. Degraded iteration costs 10-20x the full
+   path, so it remains a transition mechanism.

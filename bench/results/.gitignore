@@ -1,2 +1,4 @@
-# Ad-hoc benchmark runs (tools/bench/run.py). Curate keepers into results/reference/<host>/.
+# Ad-hoc benchmark runs (bench/tools/run.py) and profiles (bench/tools/profile.py).
+# Curate keepers into results/reference/<host>/.
 runs/
+profiles/
