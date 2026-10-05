@@ -1,0 +1,107 @@
+{
+  "schema": "sub0ecs-bench/1",
+  "timestamp_utc": "2026-10-05T15:54:34+00:00",
+  "label": "ref-msvc-threads",
+  "host": "CrogLegion",
+  "os": {
+    "system": "Windows",
+    "release": "11",
+    "version": "10.0.26220",
+    "libc": " ",
+    "python": "3.14.5"
+  },
+  "cpu": {
+    "logical_cpus": 24,
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+    "Model name": "Intel(R) Core(TM) Ultra 9 275HX",
+    "Core(s) per socket": 24,
+    "CPU(s)": 24,
+    "CPU max MHz": 2700,
+    "L2 cache": "40960 KiB",
+    "L3 cache": "36864 KiB",
+    "Thread(s) per core": 1,
+    "Flags": "sse4_2 avx avx2",
+    "hybrid": {
+      "P": "0-1,10-13,22-23",
+      "E0": "2-9,14-21"
+    }
+  },
+  "memory": {
+    "total_gib": 63.4
+  },
+  "power": {
+    "power_plan": "Balanced",
+    "on_ac_power": true,
+    "cpu_load_percent": 6
+  },
+  "git": {
+    "sha": "a35bf9703ee74f13f26ac3ca97e9a6286cbcd0af",
+    "branch": "feature/component-capacity",
+    "dirty": true,
+    "describe": "v1.0.0-35-ga35bf97-dirty"
+  },
+  "build": {
+    "build_dir": "build\\bench-native",
+    "build_type": "Release",
+    "cxx": "C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe",
+    "cxx_version": "MSVC 19.51.36246.0",
+    "cxx_flags": "/DWIN32 /D_WINDOWS /EHsc",
+    "cxx_flags_release": "/O2 /Ob2 /DNDEBUG",
+    "native": "ON",
+    "generator": "Ninja"
+  },
+  "run": {
+    "profile": "reference",
+    "profile_settings": {
+      "description": "Dedicated hardware: more paired rounds, longer epochs, larger sizes",
+      "env": {
+        "BENCH_SIZES": "1000,100000,1000000,10000000",
+        "SKIRMISH_UPT": "250,2500,12500,50000",
+        "SKIRMISH_THREADS_UPT": "2500,12500,50000"
+      },
+      "suites": [
+        "baseline",
+        "fusion",
+        "fusion-exec",
+        "skirmish",
+        "threads",
+        "dynamic",
+        "spans"
+      ],
+      "epochs": 52,
+      "min_epoch_ms": 5
+    },
+    "suites": [
+      "threads"
+    ],
+    "pin": "",
+    "no_aslr": false,
+    "extra_env": []
+  },
+  "warnings": [
+    "power plan is 'Balanced' (High performance / Best performance gives steadier clocks)",
+    "hybrid CPU {'P': '0-1,10-13,22-23', 'E0': '2-9,14-21'} and no --pin: threads migrate between core types",
+    "working tree has uncommitted changes: results are not reproducible from the SHA alone"
+  ],
+  "results": {
+    "threads": {
+      "status": "ok",
+      "returncode": 0,
+      "seconds": 73.8,
+      "command": [
+        "build\\bench-native\\bench\\sub0ecs_skirmish_bench.exe",
+        "--filter=^Threads/",
+        "--epochs=52",
+        "--min-epoch-ms=5",
+        "--out=D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261005-165440-a35bf97-ref-msvc-threads\\threads.json"
+      ],
+      "env": {
+        "BENCH_SIZES": "1000,100000,1000000,10000000",
+        "SKIRMISH_UPT": "250,2500,12500,50000",
+        "SKIRMISH_THREADS_UPT": "2500,12500,50000",
+        "SKIRMISH_THREADS": "auto"
+      }
+    }
+  }
+}
