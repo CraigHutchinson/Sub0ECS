@@ -1,6 +1,7 @@
 /** Executor contract, checked directly: every row exactly once whatever the
  * split, only declared-written columns come back from a device, and the
  * AutoTuner settles on one of its candidates. */
+#include <algorithm>
 #include <atomic>
 #include <cstddef>
 #include <string_view>
@@ -220,4 +221,91 @@ TEST_CASE("planners: AutoTuner trials every candidate, then keeps one")
     const int before = w.groups;
     tuner.run(w, exec, exec, A{}, B{});
     CHECK(w.groups - before == (tuner.chosen() == 0 ? 2 : 1));   // runs the chosen plan from now on
+}
+
+TEST_CASE("executors: Parallel creates threads only as work needs them")
+{
+    fz::Parallel pool(8);
+    CHECK(pool.concurrency() == 8);
+    CHECK(pool.threadsStarted() == 0);   // nothing until a dispatch asks
+
+    std::atomic<int> ran{ 0 };
+    std::atomic<unsigned> widest{ 0 };
+    auto body = [&](std::size_t, unsigned worker) {
+        ran.fetch_add(1, std::memory_order_relaxed);
+        for (unsigned seen = widest.load(); worker > seen && !widest.compare_exchange_weak(seen, worker);) {}
+    };
+
+    pool.parallelFor(1, body);           // one item runs on the caller
+    CHECK(pool.threadsStarted() == 0);
+
+    pool.parallelFor(4, body);           // four ways parallel: the caller plus three
+    CHECK(pool.threadsStarted() == 3);
+    CHECK(widest.load() <= 3);
+
+    pool.parallelFor(2, body);           // narrower work starts nothing new
+    CHECK(pool.threadsStarted() == 3);
+
+    pool.parallelFor(100, body);         // wide work grows to the limit, not beyond
+    CHECK(pool.threadsStarted() == 7);
+    CHECK(widest.load() <= 7);
+    CHECK(ran.load() == 1 + 4 + 2 + 100);
+}
+
+TEST_CASE("executors: a narrow dispatch on a grown pool uses only the workers it needs")
+{
+    for (bool affinity : { false, true })
+    {
+        CAPTURE(affinity);
+        fz::Parallel pool(8, affinity);
+        std::atomic<int> warm{ 0 };
+        auto warmUp = [&](std::size_t, unsigned) { warm.fetch_add(1, std::memory_order_relaxed); };
+        pool.parallelFor(64, warmUp);    // all seven workers exist now
+        CHECK(pool.threadsStarted() == 7);
+
+        for (int round = 0; round < 200; ++round)
+        {
+            std::atomic<int> hits[3] = {};
+            std::atomic<bool> outsider{ false };
+            auto body = [&](std::size_t i, unsigned worker) {
+                hits[i].fetch_add(1, std::memory_order_relaxed);
+                if (worker >= 3) outsider = true;   // only the caller and two workers may take part
+            };
+            pool.parallelFor(3, body);
+            CHECK(hits[0].load() == 1);
+            CHECK(hits[1].load() == 1);
+            CHECK(hits[2].load() == 1);
+            CHECK_FALSE(outsider.load());
+        }
+    }
+}
+
+TEST_CASE("executors: the default Parallel is sized by the CPU topology")
+{
+    const fz::CpuTopology& topology = fz::cpuTopology();
+    CHECK(!topology.cpus.empty());
+    CHECK(topology.performance >= 1);
+    CHECK(topology.performance <= topology.cpus.size());
+    std::vector<unsigned> sorted = topology.cpus;
+    std::sort(sorted.begin(), sorted.end());
+    CHECK(std::adjacent_find(sorted.begin(), sorted.end()) == sorted.end());   // no CPU listed twice
+    CHECK(topology.hybrid() == (topology.performance < topology.cpus.size()));
+
+    fz::Parallel pool;   // one thread per performance core the process may use
+    CHECK(pool.concurrency() == topology.performance);
+    CHECK(pool.threadsStarted() == 0);
+}
+
+TEST_CASE("executors: pinning workers to the performance cores is an option that changes no result")
+{
+    // Whether a thread can be restricted depends on the machine; the work must not.
+    fz::Parallel pool(fz::Parallel::Options{ .threads = 4, .ownerComputes = false, .pinToPerformanceCores = true });
+    CHECK(pool.concurrency() == 4);
+    std::vector<std::atomic<int>> hits(5000);
+    auto body = [&](std::size_t i, unsigned) { hits[i].fetch_add(1, std::memory_order_relaxed); };
+    for (int round = 0; round < 3; ++round) pool.parallelFor(hits.size(), body);
+    bool thrice = true;
+    for (auto& h : hits) thrice = thrice && h.load() == 3;
+    CHECK(thrice);
+    CHECK(pool.threadsStarted() == 3);
 }

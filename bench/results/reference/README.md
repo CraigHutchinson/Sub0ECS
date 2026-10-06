@@ -9,8 +9,8 @@ before every sample.
 | Capture | Covers | Samples per build |
 |---|---|---:|
 | [`20261006-000543-rotation-bars`](CrogLegion/20261006-000543-rotation-bars/tables.md) | Every design against the hand-written references: iteration, lookup, structural change, small systems fused (`compare` profile, P-cores) | 5 |
-| [`20261006-084419-rotation-exec`](CrogLegion/20261006-084419-rotation-exec/rotation.md) | Fusion at larger sizes, planners and executors, Skirmish, partition count, the [runtime-query timeline](CrogLegion/20261006-084419-rotation-exec/dynamic.md) (`standard` profile, P-cores) | 3 |
-| [`20261006-085203-rotation-threads`](CrogLegion/20261006-085203-rotation-threads/rotation.md) | Thread scaling on Skirmish, 1 to 24 threads (`standard` profile, unpinned) | 3 |
+| [`20261006-135259-rotation-exec`](CrogLegion/20261006-135259-rotation-exec/rotation.md) | Fusion at larger sizes, planners and executors, Skirmish, partition count, the [runtime-query timeline](CrogLegion/20261006-135259-rotation-exec/dynamic.md) (`standard` profile, P-cores) | 3 |
+| [`20261006-140047-rotation-threads`](CrogLegion/20261006-140047-rotation-threads/rotation.md) | Thread scaling on Skirmish: 1 to 24 threads, the default pool, and the default pool pinned to the performance cores (`standard` profile, unpinned) | 5 |
 
 In each directory: `rotation.md` (every case: median time with its spread, and
 the ratio to the group's baseline with its range), `rotation.json` (every sample,

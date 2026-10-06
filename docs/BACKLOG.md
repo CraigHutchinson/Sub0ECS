@@ -21,7 +21,6 @@ within a group.
 | Item | Why |
 |---|---|
 | **Benchmark against EnTT and flecs themselves**, through the same adapter and conformance check | SparseSet and Archetype in `bench/designs/` are our implementations of their storage models, not those libraries |
-| Measure the `Parallel` executor outside Skirmish | Its pool starts one worker per hardware thread, so pinned captures oversubscribe it (24 workers on 8 cores) |
 | Many partitions with few entities each (2^k combinations of k optional components), and query-match invalidation there | Not measured |
 | `bench/tools/profile.py`: wrap Linux `perf` for hosts without VTune; verify the `uarch` collection from an elevated prompt | Only the hotspots collection has been run |
 | A ThreadSanitizer job for the executors and the parallel store paths | Checked by hand once, not in CI |
@@ -54,7 +53,10 @@ Design: [research/executor-async.md](research/executor-async.md).
 | A `kBitExact` capability, plus a non-exact emulated device to exercise it |
 | Automatic grouping from declared `Access` over a whole schedule |
 | A `Parallel` executor backed by Sub0Pipeline; batch small systems into one dispatch; parallel commit |
-| Size the `Parallel` pool to the process affinity, not `hardware_concurrency()`; on a hybrid CPU prefer the performance cores (scaling peaks at their count and falls beyond it) |
+| **Width by work, not by rows.** `Parallel` splits into chunks of at least 4,096 rows whatever the kernel costs: 3–4× at 1M entities, 0.4–0.6× at 100K, where a chunk is about 5 µs of work and waking a parked worker costs more. Choose the number of participants from measured time per row (an `AutoTuner` candidate: inline, or N ways), so a small workload stays narrow or inline |
+| Tell the pool its width ahead of time from the schedule: the planner knows how many chunks a frame's widest group has, so workers could be started before the first dispatch instead of during it |
+| Use efficiency cores deliberately: a second, lower-priority pool for background work (migration, snapshots) instead of leaving them idle |
+| CPU topology beyond one 64-CPU processor group (Windows) and per-thread QoS on macOS; today those fall back to one class and no pinning |
 | Later: a CUDA executor behind an off-by-default option; an ESP32-P4 async-memcpy `Offload` |
 
 ## Platforms and ecosystem

@@ -35,11 +35,11 @@ namespace
         std::unique_ptr<Sim<W, Fused, Runner>> sim;
         std::int64_t startTick = 0;
 
-        explicit Game(Config cfg, unsigned threads = 1, bool affinity = false)
+        explicit Game(Config cfg, unsigned threads = 1, bool affinity = false, bool pin = false)
         {
-            if (threads > 1)
+            if (threads != 1)   // 0 = the pool's own default: one thread per performance core
             {
-                pool = std::make_unique<fz::Parallel>(threads, affinity);
+                pool = std::make_unique<fz::Parallel>(fz::Parallel::Options{ threads, affinity, pin });
                 cfg.pool = pool.get();
             }
             sim = std::make_unique<Sim<W, Fused, Runner>>(*world, cfg);
@@ -79,16 +79,16 @@ namespace
                           } });
     }
 
-    /** Thread scaling on the store; threads = 1 runs without a pool. */
-    void threads(int unitsPerTeam, unsigned threadCount, bool fused, bool affinity)
+    /** Thread scaling on the store; threads = 1 runs without a pool, 0 with the pool's default size. */
+    void threads(int unitsPerTeam, unsigned threadCount, bool fused, bool affinity, bool pin = false)
     {
-        const std::string design = "t" + std::to_string(threadCount) + (affinity ? "+affinity" : "");
+        const std::string design = (threadCount == 0 ? std::string("tAuto") : "t" + std::to_string(threadCount)) + (affinity ? "+affinity" : "") + (pin ? "+pin" : "");
         registry.add(Case{ "Threads", fused ? "Fused" : "Unfused", design, unitsPerTeam, 1.0, "tick", false, 1,
                            [=] {
                                Config cfg;
                                cfg.unitsPerTeam = unitsPerTeam;
                                cfg.fuseMovement = fused;
-                               return prepared(std::make_shared<Game<QPartHintedWorld, true, void>>(cfg, threadCount, affinity));
+                               return prepared(std::make_shared<Game<QPartHintedWorld, true, void>>(cfg, threadCount, affinity, pin));
                            } });
     }
 } // namespace
@@ -125,5 +125,12 @@ int main(int argc, char** argv)
                     if (affinity && (t == 1 || !fused)) continue;
                     threads(static_cast<int>(upt), static_cast<unsigned>(t), fused, affinity);
                 }
+    // The default pool, beside the ladder it should match the best rung of, and the same
+    // pool with its workers pinned to the performance cores (the opt-in).
+    for (std::int64_t upt : bench::env::list("SKIRMISH_THREADS_UPT", { 2500, 12500 }))
+    {
+        threads(static_cast<int>(upt), 0u, true, false);
+        threads(static_cast<int>(upt), 0u, true, false, true);
+    }
     return bench::harness::benchMain(argc, argv, registry, "sub0ecs_skirmish_bench");
 }

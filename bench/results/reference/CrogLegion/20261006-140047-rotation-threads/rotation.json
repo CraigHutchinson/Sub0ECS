@@ -1,0 +1,3057 @@
+{
+ "schema": "sub0ecs-bench-rotation/1",
+ "builds": {
+  "msvc": "build\\msvc-native",
+  "clangcl": "build\\clangcl-native",
+  "gcc": "build\\gcc16-native"
+ },
+ "settings": {
+  "build": [
+   "msvc=build\\msvc-native",
+   "clangcl=build\\clangcl-native",
+   "gcc=build\\gcc16-native"
+  ],
+  "rounds": 5,
+  "profile": "standard",
+  "suites": "threads",
+  "pin": "",
+  "cooldown": 20,
+  "max_load": 10.0,
+  "quiet_timeout": 180,
+  "filter": ".",
+  "label": "threads",
+  "out": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs"
+ },
+ "samples": [
+  {
+   "round": 1,
+   "build": "msvc",
+   "status": "ok",
+   "load_before": 5.3,
+   "load_after": 5.8,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-140047-838f576-rotation-threads\\samples\\CrogLegion\\20261006-140111-838f576-r1-msvc",
+   "results": {
+    "Threads/Unfused/t1/2500": [
+     1841350,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/2500": [
+     1095100,
+     1.67598203,
+     "t1"
+    ],
+    "Threads/Unfused/t4/2500": [
+     785150,
+     2.29211866,
+     "t1"
+    ],
+    "Threads/Unfused/t8/2500": [
+     784700,
+     2.18602999,
+     "t1"
+    ],
+    "Threads/Unfused/t16/2500": [
+     931050,
+     1.93957622,
+     "t1"
+    ],
+    "Threads/Unfused/t24/2500": [
+     1062800,
+     1.73650567,
+     "t1"
+    ],
+    "Threads/Fused/t1/2500": [
+     1818000,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/2500": [
+     1080000,
+     1.65073509,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/2500": [
+     1732400,
+     1.06956398,
+     "t1"
+    ],
+    "Threads/Fused/t4/2500": [
+     781100,
+     2.29912546,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/2500": [
+     1311450,
+     1.36208635,
+     "t1"
+    ],
+    "Threads/Fused/t8/2500": [
+     755900,
+     2.38571487,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/2500": [
+     1044150,
+     1.70659524,
+     "t1"
+    ],
+    "Threads/Fused/t16/2500": [
+     1005500,
+     1.76243562,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/2500": [
+     1142450,
+     1.64355494,
+     "t1"
+    ],
+    "Threads/Fused/t24/2500": [
+     1242150,
+     1.4592445,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/2500": [
+     1279550,
+     1.40925451,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/2500": [
+     749300,
+     2.42574918,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/2500": [
+     1030700,
+     1.82020719,
+     "t1"
+    ],
+    "Threads/Unfused/t1/12500": [
+     9114600,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/12500": [
+     5179050,
+     1.6714893,
+     "t1"
+    ],
+    "Threads/Unfused/t4/12500": [
+     3316800,
+     2.65182529,
+     "t1"
+    ],
+    "Threads/Unfused/t8/12500": [
+     2853600,
+     3.18707703,
+     "t1"
+    ],
+    "Threads/Unfused/t16/12500": [
+     3076850,
+     2.90121966,
+     "t1"
+    ],
+    "Threads/Unfused/t24/12500": [
+     3523950,
+     2.58108417,
+     "t1"
+    ],
+    "Threads/Fused/t1/12500": [
+     9012950,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/12500": [
+     5333650,
+     1.68208592,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/12500": [
+     7075700,
+     1.31469063,
+     "t1"
+    ],
+    "Threads/Fused/t4/12500": [
+     3294450,
+     2.80296858,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/12500": [
+     4703250,
+     1.92793162,
+     "t1"
+    ],
+    "Threads/Fused/t8/12500": [
+     2595650,
+     3.314444,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/12500": [
+     3592900,
+     2.4683131,
+     "t1"
+    ],
+    "Threads/Fused/t16/12500": [
+     2910600,
+     3.09492538,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/12500": [
+     3678500,
+     2.46274679,
+     "t1"
+    ],
+    "Threads/Fused/t24/12500": [
+     3262200,
+     2.75652061,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/12500": [
+     3562450,
+     2.52501218,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/12500": [
+     2533150,
+     3.53100816,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/12500": [
+     2673050,
+     3.39822817,
+     "t1"
+    ]
+   }
+  },
+  {
+   "round": 1,
+   "build": "clangcl",
+   "status": "ok",
+   "load_before": 4.0,
+   "load_after": 7.1,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-140047-838f576-rotation-threads\\samples\\CrogLegion\\20261006-140152-838f576-r1-clangcl",
+   "results": {
+    "Threads/Unfused/t1/2500": [
+     1827450,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/2500": [
+     983550,
+     1.80230125,
+     "t1"
+    ],
+    "Threads/Unfused/t4/2500": [
+     712150,
+     2.59356502,
+     "t1"
+    ],
+    "Threads/Unfused/t8/2500": [
+     759800,
+     2.2978839,
+     "t1"
+    ],
+    "Threads/Unfused/t16/2500": [
+     852850,
+     2.07552839,
+     "t1"
+    ],
+    "Threads/Unfused/t24/2500": [
+     1150650,
+     1.59728749,
+     "t1"
+    ],
+    "Threads/Fused/t1/2500": [
+     1620250,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/2500": [
+     994100,
+     1.5831929,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/2500": [
+     1540500,
+     1.03849924,
+     "t1"
+    ],
+    "Threads/Fused/t4/2500": [
+     724050,
+     2.27642464,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/2500": [
+     1175800,
+     1.36116363,
+     "t1"
+    ],
+    "Threads/Fused/t8/2500": [
+     698700,
+     2.27581754,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/2500": [
+     1016600,
+     1.55967523,
+     "t1"
+    ],
+    "Threads/Fused/t16/2500": [
+     862650,
+     1.83407675,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/2500": [
+     1036050,
+     1.60919736,
+     "t1"
+    ],
+    "Threads/Fused/t24/2500": [
+     1137850,
+     1.42329488,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/2500": [
+     1201500,
+     1.33470125,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/2500": [
+     756700,
+     2.24242251,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/2500": [
+     990950,
+     1.71644239,
+     "t1"
+    ],
+    "Threads/Unfused/t1/12500": [
+     7773450,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/12500": [
+     4681250,
+     1.69271518,
+     "t1"
+    ],
+    "Threads/Unfused/t4/12500": [
+     3088000,
+     2.57935304,
+     "t1"
+    ],
+    "Threads/Unfused/t8/12500": [
+     2318650,
+     3.48152113,
+     "t1"
+    ],
+    "Threads/Unfused/t16/12500": [
+     2780400,
+     3.01507561,
+     "t1"
+    ],
+    "Threads/Unfused/t24/12500": [
+     3136200,
+     2.65179314,
+     "t1"
+    ],
+    "Threads/Fused/t1/12500": [
+     9881700,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/12500": [
+     5199200,
+     1.89036494,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/12500": [
+     7226950,
+     1.29113158,
+     "t1"
+    ],
+    "Threads/Fused/t4/12500": [
+     3265650,
+     2.91815146,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/12500": [
+     4499950,
+     2.14600345,
+     "t1"
+    ],
+    "Threads/Fused/t8/12500": [
+     2503200,
+     4.06190096,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/12500": [
+     3869500,
+     2.58960484,
+     "t1"
+    ],
+    "Threads/Fused/t16/12500": [
+     2780550,
+     3.3881201,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/12500": [
+     3505600,
+     2.61710221,
+     "t1"
+    ],
+    "Threads/Fused/t24/12500": [
+     2975650,
+     3.26680154,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/12500": [
+     3519300,
+     2.81003481,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/12500": [
+     2300550,
+     4.10715873,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/12500": [
+     2637100,
+     3.72378093,
+     "t1"
+    ]
+   }
+  },
+  {
+   "round": 1,
+   "build": "gcc",
+   "status": "ok",
+   "load_before": 5.0,
+   "load_after": 6.3,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-140047-838f576-rotation-threads\\samples\\CrogLegion\\20261006-140232-838f576-r1-gcc",
+   "results": {
+    "Threads/Unfused/t1/2500": [
+     1511200,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/2500": [
+     947000,
+     1.5982245,
+     "t1"
+    ],
+    "Threads/Unfused/t4/2500": [
+     697700,
+     2.16113541,
+     "t1"
+    ],
+    "Threads/Unfused/t8/2500": [
+     689600,
+     2.18981651,
+     "t1"
+    ],
+    "Threads/Unfused/t16/2500": [
+     871700,
+     1.75863796,
+     "t1"
+    ],
+    "Threads/Unfused/t24/2500": [
+     1097850,
+     1.34662382,
+     "t1"
+    ],
+    "Threads/Fused/t1/2500": [
+     1488600,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/2500": [
+     1001000,
+     1.49429812,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/2500": [
+     1450600,
+     1.03837706,
+     "t1"
+    ],
+    "Threads/Fused/t4/2500": [
+     721000,
+     2.1148587,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/2500": [
+     1136600,
+     1.31333452,
+     "t1"
+    ],
+    "Threads/Fused/t8/2500": [
+     766400,
+     1.86791283,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/2500": [
+     998650,
+     1.52044916,
+     "t1"
+    ],
+    "Threads/Fused/t16/2500": [
+     924350,
+     1.54435778,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/2500": [
+     1119400,
+     1.3897071,
+     "t1"
+    ],
+    "Threads/Fused/t24/2500": [
+     1134950,
+     1.34272488,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/2500": [
+     1171450,
+     1.30287097,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/2500": [
+     759000,
+     1.99681022,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/2500": [
+     977700,
+     1.54459546,
+     "t1"
+    ],
+    "Threads/Unfused/t1/12500": [
+     6999200,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/12500": [
+     4281900,
+     1.63926226,
+     "t1"
+    ],
+    "Threads/Unfused/t4/12500": [
+     2956500,
+     2.39046121,
+     "t1"
+    ],
+    "Threads/Unfused/t8/12500": [
+     2273600,
+     3.02988913,
+     "t1"
+    ],
+    "Threads/Unfused/t16/12500": [
+     2440650,
+     2.90773371,
+     "t1"
+    ],
+    "Threads/Unfused/t24/12500": [
+     2922150,
+     2.38218887,
+     "t1"
+    ],
+    "Threads/Fused/t1/12500": [
+     8691150,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/12500": [
+     4815700,
+     1.70899101,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/12500": [
+     6313950,
+     1.34991076,
+     "t1"
+    ],
+    "Threads/Fused/t4/12500": [
+     2901400,
+     2.82784602,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/12500": [
+     4153500,
+     2.00220531,
+     "t1"
+    ],
+    "Threads/Fused/t8/12500": [
+     2363850,
+     3.44176741,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/12500": [
+     3086550,
+     2.61484971,
+     "t1"
+    ],
+    "Threads/Fused/t16/12500": [
+     2587100,
+     3.12506266,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/12500": [
+     2749750,
+     2.9252553,
+     "t1"
+    ],
+    "Threads/Fused/t24/12500": [
+     2716200,
+     2.97333431,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/12500": [
+     2907700,
+     2.69240416,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/12500": [
+     2424450,
+     3.29921032,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/12500": [
+     2942950,
+     2.8588767,
+     "t1"
+    ]
+   }
+  },
+  {
+   "round": 2,
+   "build": "clangcl",
+   "status": "ok",
+   "load_before": 4.9,
+   "load_after": 5.2,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-140047-838f576-rotation-threads\\samples\\CrogLegion\\20261006-140311-838f576-r2-clangcl",
+   "results": {
+    "Threads/Unfused/t1/2500": [
+     1451150,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/2500": [
+     934850,
+     1.54442145,
+     "t1"
+    ],
+    "Threads/Unfused/t4/2500": [
+     680650,
+     2.09410167,
+     "t1"
+    ],
+    "Threads/Unfused/t8/2500": [
+     760200,
+     1.93272861,
+     "t1"
+    ],
+    "Threads/Unfused/t16/2500": [
+     857600,
+     1.80622835,
+     "t1"
+    ],
+    "Threads/Unfused/t24/2500": [
+     1112600,
+     1.28888196,
+     "t1"
+    ],
+    "Threads/Fused/t1/2500": [
+     1758900,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/2500": [
+     1076000,
+     1.60779155,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/2500": [
+     1765900,
+     1.00222685,
+     "t1"
+    ],
+    "Threads/Fused/t4/2500": [
+     733950,
+     2.22836583,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/2500": [
+     1273150,
+     1.31414643,
+     "t1"
+    ],
+    "Threads/Fused/t8/2500": [
+     763700,
+     2.26813339,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/2500": [
+     955850,
+     1.75174941,
+     "t1"
+    ],
+    "Threads/Fused/t16/2500": [
+     948200,
+     1.79222951,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/2500": [
+     1122850,
+     1.5572695,
+     "t1"
+    ],
+    "Threads/Fused/t24/2500": [
+     1192850,
+     1.43924765,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/2500": [
+     1249850,
+     1.40020415,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/2500": [
+     773200,
+     2.26040286,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/2500": [
+     947450,
+     1.86593928,
+     "t1"
+    ],
+    "Threads/Unfused/t1/12500": [
+     7653050,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/12500": [
+     4707100,
+     1.69536953,
+     "t1"
+    ],
+    "Threads/Unfused/t4/12500": [
+     2934650,
+     2.70538689,
+     "t1"
+    ],
+    "Threads/Unfused/t8/12500": [
+     2367050,
+     3.42972044,
+     "t1"
+    ],
+    "Threads/Unfused/t16/12500": [
+     2698350,
+     2.98939169,
+     "t1"
+    ],
+    "Threads/Unfused/t24/12500": [
+     3123500,
+     2.53262192,
+     "t1"
+    ],
+    "Threads/Fused/t1/12500": [
+     10002750,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/12500": [
+     5454450,
+     1.7529855,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/12500": [
+     6861200,
+     1.29344104,
+     "t1"
+    ],
+    "Threads/Fused/t4/12500": [
+     3207850,
+     3.01841837,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/12500": [
+     4663900,
+     1.97205577,
+     "t1"
+    ],
+    "Threads/Fused/t8/12500": [
+     2752800,
+     3.49954013,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/12500": [
+     3228850,
+     2.93837799,
+     "t1"
+    ],
+    "Threads/Fused/t16/12500": [
+     2663050,
+     3.36245211,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/12500": [
+     3308650,
+     2.84632895,
+     "t1"
+    ],
+    "Threads/Fused/t24/12500": [
+     2831450,
+     3.38016382,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/12500": [
+     3105650,
+     2.92293699,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/12500": [
+     2402850,
+     3.84323942,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/12500": [
+     2901350,
+     3.20957197,
+     "t1"
+    ]
+   }
+  },
+  {
+   "round": 2,
+   "build": "gcc",
+   "status": "ok",
+   "load_before": 3.6,
+   "load_after": 8.2,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-140047-838f576-rotation-threads\\samples\\CrogLegion\\20261006-140351-838f576-r2-gcc",
+   "results": {
+    "Threads/Unfused/t1/2500": [
+     1574950,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/2500": [
+     955200,
+     1.62289606,
+     "t1"
+    ],
+    "Threads/Unfused/t4/2500": [
+     684050,
+     2.26896497,
+     "t1"
+    ],
+    "Threads/Unfused/t8/2500": [
+     783300,
+     2.01576795,
+     "t1"
+    ],
+    "Threads/Unfused/t16/2500": [
+     887150,
+     1.78086712,
+     "t1"
+    ],
+    "Threads/Unfused/t24/2500": [
+     1125150,
+     1.35087072,
+     "t1"
+    ],
+    "Threads/Fused/t1/2500": [
+     1704150,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/2500": [
+     1072050,
+     1.57910949,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/2500": [
+     1619350,
+     1.0263141,
+     "t1"
+    ],
+    "Threads/Fused/t4/2500": [
+     744750,
+     2.35752171,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/2500": [
+     1148650,
+     1.4184073,
+     "t1"
+    ],
+    "Threads/Fused/t8/2500": [
+     729200,
+     2.33674354,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/2500": [
+     974100,
+     1.77474025,
+     "t1"
+    ],
+    "Threads/Fused/t16/2500": [
+     918050,
+     1.86341291,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/2500": [
+     944350,
+     1.67660354,
+     "t1"
+    ],
+    "Threads/Fused/t24/2500": [
+     1092950,
+     1.56654059,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/2500": [
+     1163850,
+     1.45363635,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/2500": [
+     772700,
+     2.29272916,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/2500": [
+     944750,
+     1.74743988,
+     "t1"
+    ],
+    "Threads/Unfused/t1/12500": [
+     6988450,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/12500": [
+     4466200,
+     1.58832649,
+     "t1"
+    ],
+    "Threads/Unfused/t4/12500": [
+     2742450,
+     2.55519111,
+     "t1"
+    ],
+    "Threads/Unfused/t8/12500": [
+     2044750,
+     3.45428032,
+     "t1"
+    ],
+    "Threads/Unfused/t16/12500": [
+     2722450,
+     2.70104146,
+     "t1"
+    ],
+    "Threads/Unfused/t24/12500": [
+     3031050,
+     2.32928765,
+     "t1"
+    ],
+    "Threads/Fused/t1/12500": [
+     7886500,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/12500": [
+     4819650,
+     1.64746703,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/12500": [
+     6061400,
+     1.30014777,
+     "t1"
+    ],
+    "Threads/Fused/t4/12500": [
+     2955650,
+     2.60555149,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/12500": [
+     4057000,
+     1.95244648,
+     "t1"
+    ],
+    "Threads/Fused/t8/12500": [
+     2269400,
+     3.4093324,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/12500": [
+     2816700,
+     2.74323737,
+     "t1"
+    ],
+    "Threads/Fused/t16/12500": [
+     2704650,
+     3.08007244,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/12500": [
+     3070750,
+     2.63268723,
+     "t1"
+    ],
+    "Threads/Fused/t24/12500": [
+     2554800,
+     3.08434525,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/12500": [
+     3214850,
+     2.51554342,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/12500": [
+     2252400,
+     3.38149149,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/12500": [
+     2406950,
+     3.38390512,
+     "t1"
+    ]
+   }
+  },
+  {
+   "round": 2,
+   "build": "msvc",
+   "status": "ok",
+   "load_before": 6.5,
+   "load_after": 6.2,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-140047-838f576-rotation-threads\\samples\\CrogLegion\\20261006-140430-838f576-r2-msvc",
+   "results": {
+    "Threads/Unfused/t1/2500": [
+     1787700,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/2500": [
+     1073800,
+     1.68430451,
+     "t1"
+    ],
+    "Threads/Unfused/t4/2500": [
+     780650,
+     2.20056512,
+     "t1"
+    ],
+    "Threads/Unfused/t8/2500": [
+     796150,
+     2.23078095,
+     "t1"
+    ],
+    "Threads/Unfused/t16/2500": [
+     927850,
+     1.92900775,
+     "t1"
+    ],
+    "Threads/Unfused/t24/2500": [
+     1175600,
+     1.48674005,
+     "t1"
+    ],
+    "Threads/Fused/t1/2500": [
+     1735450,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/2500": [
+     1069050,
+     1.55292909,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/2500": [
+     1762900,
+     0.973360764,
+     "t1"
+    ],
+    "Threads/Fused/t4/2500": [
+     792450,
+     2.19305905,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/2500": [
+     1273800,
+     1.38307459,
+     "t1"
+    ],
+    "Threads/Fused/t8/2500": [
+     761400,
+     2.27032196,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/2500": [
+     1034550,
+     1.64017175,
+     "t1"
+    ],
+    "Threads/Fused/t16/2500": [
+     1032900,
+     1.64258934,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/2500": [
+     1174550,
+     1.52863623,
+     "t1"
+    ],
+    "Threads/Fused/t24/2500": [
+     1195050,
+     1.44404139,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/2500": [
+     1347000,
+     1.2573711,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/2500": [
+     786200,
+     2.19952576,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/2500": [
+     1037000,
+     1.68979851,
+     "t1"
+    ],
+    "Threads/Unfused/t1/12500": [
+     8471600,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/12500": [
+     5210600,
+     1.62583218,
+     "t1"
+    ],
+    "Threads/Unfused/t4/12500": [
+     3281850,
+     2.58917531,
+     "t1"
+    ],
+    "Threads/Unfused/t8/12500": [
+     2600350,
+     3.56303493,
+     "t1"
+    ],
+    "Threads/Unfused/t16/12500": [
+     2835550,
+     3.22634247,
+     "t1"
+    ],
+    "Threads/Unfused/t24/12500": [
+     3457250,
+     2.57808933,
+     "t1"
+    ],
+    "Threads/Fused/t1/12500": [
+     8291950,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/12500": [
+     5078750,
+     1.63076267,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/12500": [
+     6489400,
+     1.27888963,
+     "t1"
+    ],
+    "Threads/Fused/t4/12500": [
+     3269600,
+     2.56567078,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/12500": [
+     4481250,
+     1.88171926,
+     "t1"
+    ],
+    "Threads/Fused/t8/12500": [
+     2586950,
+     3.21373126,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/12500": [
+     3539050,
+     2.37297812,
+     "t1"
+    ],
+    "Threads/Fused/t16/12500": [
+     2790100,
+     2.96884324,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/12500": [
+     3400550,
+     2.53488253,
+     "t1"
+    ],
+    "Threads/Fused/t24/12500": [
+     2915050,
+     2.857168,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/12500": [
+     3236750,
+     2.68991404,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/12500": [
+     2672150,
+     3.0845001,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/12500": [
+     2872250,
+     2.84324492,
+     "t1"
+    ]
+   }
+  },
+  {
+   "round": 3,
+   "build": "gcc",
+   "status": "ok",
+   "load_before": 6.1,
+   "load_after": 7.6,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-140047-838f576-rotation-threads\\samples\\CrogLegion\\20261006-140511-838f576-r3-gcc",
+   "results": {
+    "Threads/Unfused/t1/2500": [
+     1489850,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/2500": [
+     993400,
+     1.57313025,
+     "t1"
+    ],
+    "Threads/Unfused/t4/2500": [
+     714200,
+     2.16670895,
+     "t1"
+    ],
+    "Threads/Unfused/t8/2500": [
+     837450,
+     1.85053156,
+     "t1"
+    ],
+    "Threads/Unfused/t16/2500": [
+     799200,
+     1.89631118,
+     "t1"
+    ],
+    "Threads/Unfused/t24/2500": [
+     1159650,
+     1.34381292,
+     "t1"
+    ],
+    "Threads/Fused/t1/2500": [
+     1523250,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/2500": [
+     977550,
+     1.62840598,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/2500": [
+     1451300,
+     1.06473048,
+     "t1"
+    ],
+    "Threads/Fused/t4/2500": [
+     731100,
+     2.10119553,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/2500": [
+     1119450,
+     1.39115739,
+     "t1"
+    ],
+    "Threads/Fused/t8/2500": [
+     768900,
+     2.07099209,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/2500": [
+     987250,
+     1.6000489,
+     "t1"
+    ],
+    "Threads/Fused/t16/2500": [
+     851750,
+     1.87546466,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/2500": [
+     967550,
+     1.64423051,
+     "t1"
+    ],
+    "Threads/Fused/t24/2500": [
+     1019550,
+     1.50753463,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/2500": [
+     1037200,
+     1.50558023,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/2500": [
+     784900,
+     2.03193666,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/2500": [
+     981750,
+     1.51915652,
+     "t1"
+    ],
+    "Threads/Unfused/t1/12500": [
+     7138550,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/12500": [
+     4462400,
+     1.61520392,
+     "t1"
+    ],
+    "Threads/Unfused/t4/12500": [
+     2847800,
+     2.53383343,
+     "t1"
+    ],
+    "Threads/Unfused/t8/12500": [
+     2382950,
+     3.09463082,
+     "t1"
+    ],
+    "Threads/Unfused/t16/12500": [
+     2571050,
+     2.80845617,
+     "t1"
+    ],
+    "Threads/Unfused/t24/12500": [
+     2952450,
+     2.46882426,
+     "t1"
+    ],
+    "Threads/Fused/t1/12500": [
+     8048150,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/12500": [
+     4940800,
+     1.71419101,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/12500": [
+     6268050,
+     1.32032133,
+     "t1"
+    ],
+    "Threads/Fused/t4/12500": [
+     3058950,
+     2.65870737,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/12500": [
+     4074650,
+     2.02532258,
+     "t1"
+    ],
+    "Threads/Fused/t8/12500": [
+     2371650,
+     3.45224494,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/12500": [
+     3025950,
+     2.77827704,
+     "t1"
+    ],
+    "Threads/Fused/t16/12500": [
+     2553200,
+     3.24827791,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/12500": [
+     2833550,
+     2.80711196,
+     "t1"
+    ],
+    "Threads/Fused/t24/12500": [
+     3004550,
+     2.71547041,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/12500": [
+     3498750,
+     2.28333431,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/12500": [
+     2635450,
+     3.14041131,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/12500": [
+     2771800,
+     2.92844606,
+     "t1"
+    ]
+   }
+  },
+  {
+   "round": 3,
+   "build": "msvc",
+   "status": "ok",
+   "load_before": 6.2,
+   "load_after": 7.9,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-140047-838f576-rotation-threads\\samples\\CrogLegion\\20261006-140550-838f576-r3-msvc",
+   "results": {
+    "Threads/Unfused/t1/2500": [
+     1782100,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/2500": [
+     1041700,
+     1.65338912,
+     "t1"
+    ],
+    "Threads/Unfused/t4/2500": [
+     767000,
+     2.28350904,
+     "t1"
+    ],
+    "Threads/Unfused/t8/2500": [
+     852000,
+     2.0807527,
+     "t1"
+    ],
+    "Threads/Unfused/t16/2500": [
+     859000,
+     2.01569168,
+     "t1"
+    ],
+    "Threads/Unfused/t24/2500": [
+     1038350,
+     1.63123363,
+     "t1"
+    ],
+    "Threads/Fused/t1/2500": [
+     1695600,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/2500": [
+     1011000,
+     1.66348335,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/2500": [
+     1800950,
+     0.995273613,
+     "t1"
+    ],
+    "Threads/Fused/t4/2500": [
+     745100,
+     2.20904323,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/2500": [
+     1255700,
+     1.38178613,
+     "t1"
+    ],
+    "Threads/Fused/t8/2500": [
+     840100,
+     2.04562687,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/2500": [
+     998050,
+     1.73248821,
+     "t1"
+    ],
+    "Threads/Fused/t16/2500": [
+     997500,
+     1.73975853,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/2500": [
+     1144850,
+     1.47756943,
+     "t1"
+    ],
+    "Threads/Fused/t24/2500": [
+     1189700,
+     1.44094101,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/2500": [
+     1159300,
+     1.5029896,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/2500": [
+     720650,
+     2.34670633,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/2500": [
+     1035100,
+     1.63018618,
+     "t1"
+    ],
+    "Threads/Unfused/t1/12500": [
+     8254900,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/12500": [
+     4813750,
+     1.72266546,
+     "t1"
+    ],
+    "Threads/Unfused/t4/12500": [
+     3137350,
+     2.61437661,
+     "t1"
+    ],
+    "Threads/Unfused/t8/12500": [
+     2467750,
+     3.29131289,
+     "t1"
+    ],
+    "Threads/Unfused/t16/12500": [
+     3139050,
+     2.66183742,
+     "t1"
+    ],
+    "Threads/Unfused/t24/12500": [
+     3814900,
+     2.14127736,
+     "t1"
+    ],
+    "Threads/Fused/t1/12500": [
+     10509400,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/12500": [
+     6179600,
+     1.7602586,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/12500": [
+     8512300,
+     1.24867139,
+     "t1"
+    ],
+    "Threads/Fused/t4/12500": [
+     3602750,
+     2.85346776,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/12500": [
+     5663500,
+     1.88429466,
+     "t1"
+    ],
+    "Threads/Fused/t8/12500": [
+     2882100,
+     3.72727402,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/12500": [
+     4018100,
+     2.62113701,
+     "t1"
+    ],
+    "Threads/Fused/t16/12500": [
+     2906900,
+     3.64735383,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/12500": [
+     3493100,
+     2.98260628,
+     "t1"
+    ],
+    "Threads/Fused/t24/12500": [
+     3238750,
+     3.30332092,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/12500": [
+     3166950,
+     3.32254078,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/12500": [
+     2828500,
+     3.74226827,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/12500": [
+     3054400,
+     3.56282633,
+     "t1"
+    ]
+   }
+  },
+  {
+   "round": 3,
+   "build": "clangcl",
+   "status": "ok",
+   "load_before": 4.5,
+   "load_after": 9.5,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-140047-838f576-rotation-threads\\samples\\CrogLegion\\20261006-140631-838f576-r3-clangcl",
+   "results": {
+    "Threads/Unfused/t1/2500": [
+     1801700,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/2500": [
+     1004350,
+     1.78103035,
+     "t1"
+    ],
+    "Threads/Unfused/t4/2500": [
+     761500,
+     2.35396078,
+     "t1"
+    ],
+    "Threads/Unfused/t8/2500": [
+     765000,
+     2.2637517,
+     "t1"
+    ],
+    "Threads/Unfused/t16/2500": [
+     857950,
+     2.1777847,
+     "t1"
+    ],
+    "Threads/Unfused/t24/2500": [
+     1184050,
+     1.55821951,
+     "t1"
+    ],
+    "Threads/Fused/t1/2500": [
+     1721700,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/2500": [
+     1047000,
+     1.65148916,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/2500": [
+     1630100,
+     1.04298666,
+     "t1"
+    ],
+    "Threads/Fused/t4/2500": [
+     784500,
+     2.22125739,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/2500": [
+     1236400,
+     1.4275987,
+     "t1"
+    ],
+    "Threads/Fused/t8/2500": [
+     743050,
+     2.341165,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/2500": [
+     1082500,
+     1.61636264,
+     "t1"
+    ],
+    "Threads/Fused/t16/2500": [
+     869450,
+     1.95984582,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/2500": [
+     1067800,
+     1.6563785,
+     "t1"
+    ],
+    "Threads/Fused/t24/2500": [
+     1159300,
+     1.49265319,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/2500": [
+     1202650,
+     1.45735463,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/2500": [
+     843150,
+     2.00940709,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/2500": [
+     1040900,
+     1.61091078,
+     "t1"
+    ],
+    "Threads/Unfused/t1/12500": [
+     7750750,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/12500": [
+     4547400,
+     1.71819734,
+     "t1"
+    ],
+    "Threads/Unfused/t4/12500": [
+     2946500,
+     2.64690466,
+     "t1"
+    ],
+    "Threads/Unfused/t8/12500": [
+     2478850,
+     3.13848536,
+     "t1"
+    ],
+    "Threads/Unfused/t16/12500": [
+     2950900,
+     2.66575895,
+     "t1"
+    ],
+    "Threads/Unfused/t24/12500": [
+     3074650,
+     2.50354159,
+     "t1"
+    ],
+    "Threads/Fused/t1/12500": [
+     9314300,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/12500": [
+     5351800,
+     1.73510001,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/12500": [
+     7896100,
+     1.20564856,
+     "t1"
+    ],
+    "Threads/Fused/t4/12500": [
+     3242600,
+     2.7617027,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/12500": [
+     4792250,
+     1.9327702,
+     "t1"
+    ],
+    "Threads/Fused/t8/12500": [
+     2925250,
+     3.18328509,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/12500": [
+     3667100,
+     2.45518351,
+     "t1"
+    ],
+    "Threads/Fused/t16/12500": [
+     2934500,
+     3.01445777,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/12500": [
+     3138400,
+     2.81001973,
+     "t1"
+    ],
+    "Threads/Fused/t24/12500": [
+     2908300,
+     2.93422002,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/12500": [
+     3534750,
+     2.60914481,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/12500": [
+     2652700,
+     3.36695392,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/12500": [
+     2781950,
+     3.2286664,
+     "t1"
+    ]
+   }
+  },
+  {
+   "round": 4,
+   "build": "msvc",
+   "status": "ok",
+   "load_before": 4.7,
+   "load_after": 8.2,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-140047-838f576-rotation-threads\\samples\\CrogLegion\\20261006-140711-838f576-r4-msvc",
+   "results": {
+    "Threads/Unfused/t1/2500": [
+     1617200,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/2500": [
+     1030100,
+     1.5962968,
+     "t1"
+    ],
+    "Threads/Unfused/t4/2500": [
+     749550,
+     2.16358195,
+     "t1"
+    ],
+    "Threads/Unfused/t8/2500": [
+     842150,
+     2.01278957,
+     "t1"
+    ],
+    "Threads/Unfused/t16/2500": [
+     927750,
+     1.72007192,
+     "t1"
+    ],
+    "Threads/Unfused/t24/2500": [
+     1186300,
+     1.42471156,
+     "t1"
+    ],
+    "Threads/Fused/t1/2500": [
+     1653700,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/2500": [
+     1032500,
+     1.56929316,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/2500": [
+     1629250,
+     1.00642387,
+     "t1"
+    ],
+    "Threads/Fused/t4/2500": [
+     769400,
+     2.15628041,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/2500": [
+     1213100,
+     1.36629531,
+     "t1"
+    ],
+    "Threads/Fused/t8/2500": [
+     727600,
+     2.28773129,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/2500": [
+     1037250,
+     1.60913289,
+     "t1"
+    ],
+    "Threads/Fused/t16/2500": [
+     919400,
+     1.81991886,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/2500": [
+     1069700,
+     1.56458867,
+     "t1"
+    ],
+    "Threads/Fused/t24/2500": [
+     1143150,
+     1.40196487,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/2500": [
+     1213300,
+     1.36549796,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/2500": [
+     799450,
+     2.16107498,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/2500": [
+     1036150,
+     1.55421973,
+     "t1"
+    ],
+    "Threads/Unfused/t1/12500": [
+     8523650,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/12500": [
+     5267100,
+     1.62061607,
+     "t1"
+    ],
+    "Threads/Unfused/t4/12500": [
+     3177650,
+     2.73894385,
+     "t1"
+    ],
+    "Threads/Unfused/t8/12500": [
+     2836500,
+     3.19778304,
+     "t1"
+    ],
+    "Threads/Unfused/t16/12500": [
+     3075950,
+     2.80846488,
+     "t1"
+    ],
+    "Threads/Unfused/t24/12500": [
+     3635950,
+     2.60619805,
+     "t1"
+    ],
+    "Threads/Fused/t1/12500": [
+     10622350,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/12500": [
+     5491850,
+     1.90740329,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/12500": [
+     7830700,
+     1.38446534,
+     "t1"
+    ],
+    "Threads/Fused/t4/12500": [
+     3615850,
+     2.7087653,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/12500": [
+     4888300,
+     2.13183579,
+     "t1"
+    ],
+    "Threads/Fused/t8/12500": [
+     2812100,
+     3.74170793,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/12500": [
+     3986550,
+     2.38920506,
+     "t1"
+    ],
+    "Threads/Fused/t16/12500": [
+     2668250,
+     3.64327809,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/12500": [
+     3249900,
+     2.89871846,
+     "t1"
+    ],
+    "Threads/Fused/t24/12500": [
+     3158300,
+     3.13965986,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/12500": [
+     3367200,
+     3.00614682,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/12500": [
+     2702100,
+     3.81110176,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/12500": [
+     2878300,
+     3.50201643,
+     "t1"
+    ]
+   }
+  },
+  {
+   "round": 4,
+   "build": "clangcl",
+   "status": "ok",
+   "load_before": 1.8,
+   "load_after": 10.3,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-140047-838f576-rotation-threads\\samples\\CrogLegion\\20261006-140752-838f576-r4-clangcl",
+   "results": {
+    "Threads/Unfused/t1/2500": [
+     1490350,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/2500": [
+     902500,
+     1.69007515,
+     "t1"
+    ],
+    "Threads/Unfused/t4/2500": [
+     665250,
+     2.18795918,
+     "t1"
+    ],
+    "Threads/Unfused/t8/2500": [
+     777300,
+     2.00224751,
+     "t1"
+    ],
+    "Threads/Unfused/t16/2500": [
+     788450,
+     1.955688,
+     "t1"
+    ],
+    "Threads/Unfused/t24/2500": [
+     1007850,
+     1.45304757,
+     "t1"
+    ],
+    "Threads/Fused/t1/2500": [
+     1912900,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/2500": [
+     1114150,
+     1.69570831,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/2500": [
+     1962950,
+     0.980522414,
+     "t1"
+    ],
+    "Threads/Fused/t4/2500": [
+     791050,
+     2.36961338,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/2500": [
+     1268350,
+     1.40616752,
+     "t1"
+    ],
+    "Threads/Fused/t8/2500": [
+     767050,
+     2.43271186,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/2500": [
+     1042750,
+     1.77584415,
+     "t1"
+    ],
+    "Threads/Fused/t16/2500": [
+     921850,
+     2.09722917,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/2500": [
+     1062750,
+     1.69793641,
+     "t1"
+    ],
+    "Threads/Fused/t24/2500": [
+     1153400,
+     1.63819286,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/2500": [
+     1172150,
+     1.60916947,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/2500": [
+     809450,
+     2.30902051,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/2500": [
+     905600,
+     2.03901562,
+     "t1"
+    ],
+    "Threads/Unfused/t1/12500": [
+     7856200,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/12500": [
+     4996950,
+     1.58343601,
+     "t1"
+    ],
+    "Threads/Unfused/t4/12500": [
+     3116550,
+     2.56763152,
+     "t1"
+    ],
+    "Threads/Unfused/t8/12500": [
+     2540550,
+     3.2444645,
+     "t1"
+    ],
+    "Threads/Unfused/t16/12500": [
+     2803750,
+     2.9287744,
+     "t1"
+    ],
+    "Threads/Unfused/t24/12500": [
+     3257100,
+     2.44528391,
+     "t1"
+    ],
+    "Threads/Fused/t1/12500": [
+     10466850,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/12500": [
+     5581800,
+     1.85239021,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/12500": [
+     7835950,
+     1.27866485,
+     "t1"
+    ],
+    "Threads/Fused/t4/12500": [
+     3542300,
+     2.94346669,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/12500": [
+     4766200,
+     2.1072945,
+     "t1"
+    ],
+    "Threads/Fused/t8/12500": [
+     2489800,
+     4.08245555,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/12500": [
+     3604800,
+     2.86568811,
+     "t1"
+    ],
+    "Threads/Fused/t16/12500": [
+     2688900,
+     3.79356259,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/12500": [
+     3271300,
+     3.08507443,
+     "t1"
+    ],
+    "Threads/Fused/t24/12500": [
+     2975350,
+     3.5068973,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/12500": [
+     3162900,
+     3.19812086,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/12500": [
+     2666500,
+     3.77200526,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/12500": [
+     2995250,
+     3.43650669,
+     "t1"
+    ]
+   }
+  },
+  {
+   "round": 4,
+   "build": "gcc",
+   "status": "ok",
+   "load_before": 5.4,
+   "load_after": 6.7,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-140047-838f576-rotation-threads\\samples\\CrogLegion\\20261006-140833-838f576-r4-gcc",
+   "results": {
+    "Threads/Unfused/t1/2500": [
+     1500000,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/2500": [
+     939850,
+     1.58744081,
+     "t1"
+    ],
+    "Threads/Unfused/t4/2500": [
+     679300,
+     2.18198708,
+     "t1"
+    ],
+    "Threads/Unfused/t8/2500": [
+     791550,
+     1.8797166,
+     "t1"
+    ],
+    "Threads/Unfused/t16/2500": [
+     840600,
+     1.76967552,
+     "t1"
+    ],
+    "Threads/Unfused/t24/2500": [
+     1153550,
+     1.31998044,
+     "t1"
+    ],
+    "Threads/Fused/t1/2500": [
+     1585100,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/2500": [
+     955450,
+     1.66418572,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/2500": [
+     1504000,
+     1.07540849,
+     "t1"
+    ],
+    "Threads/Fused/t4/2500": [
+     701700,
+     2.243392,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/2500": [
+     1087900,
+     1.45133028,
+     "t1"
+    ],
+    "Threads/Fused/t8/2500": [
+     703950,
+     2.28231359,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/2500": [
+     939700,
+     1.69586973,
+     "t1"
+    ],
+    "Threads/Fused/t16/2500": [
+     881300,
+     1.7010776,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/2500": [
+     1060300,
+     1.47645596,
+     "t1"
+    ],
+    "Threads/Fused/t24/2500": [
+     1119850,
+     1.3881614,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/2500": [
+     1223100,
+     1.32417338,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/2500": [
+     680750,
+     2.29576437,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/2500": [
+     953300,
+     1.63739221,
+     "t1"
+    ],
+    "Threads/Unfused/t1/12500": [
+     7990400,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/12500": [
+     4583000,
+     1.76664384,
+     "t1"
+    ],
+    "Threads/Unfused/t4/12500": [
+     2930500,
+     2.74695571,
+     "t1"
+    ],
+    "Threads/Unfused/t8/12500": [
+     2357300,
+     3.3379124,
+     "t1"
+    ],
+    "Threads/Unfused/t16/12500": [
+     3070150,
+     2.70829313,
+     "t1"
+    ],
+    "Threads/Unfused/t24/12500": [
+     3366600,
+     2.44377056,
+     "t1"
+    ],
+    "Threads/Fused/t1/12500": [
+     7594800,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/12500": [
+     4566900,
+     1.65764122,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/12500": [
+     5724200,
+     1.31286596,
+     "t1"
+    ],
+    "Threads/Fused/t4/12500": [
+     2998200,
+     2.51122979,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/12500": [
+     4011700,
+     1.90272379,
+     "t1"
+    ],
+    "Threads/Fused/t8/12500": [
+     2278550,
+     3.30826313,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/12500": [
+     2885500,
+     2.66789431,
+     "t1"
+    ],
+    "Threads/Fused/t16/12500": [
+     2340350,
+     3.22131639,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/12500": [
+     2525900,
+     2.96747276,
+     "t1"
+    ],
+    "Threads/Fused/t24/12500": [
+     2644250,
+     2.87289236,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/12500": [
+     2776700,
+     2.73353956,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/12500": [
+     2245850,
+     3.37362233,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/12500": [
+     2829200,
+     2.66389025,
+     "t1"
+    ]
+   }
+  },
+  {
+   "round": 5,
+   "build": "clangcl",
+   "status": "ok",
+   "load_before": 6.2,
+   "load_after": 9.5,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-140047-838f576-rotation-threads\\samples\\CrogLegion\\20261006-140912-838f576-r5-clangcl",
+   "results": {
+    "Threads/Unfused/t1/2500": [
+     1736650,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/2500": [
+     1008000,
+     1.69525175,
+     "t1"
+    ],
+    "Threads/Unfused/t4/2500": [
+     731500,
+     2.41178319,
+     "t1"
+    ],
+    "Threads/Unfused/t8/2500": [
+     730700,
+     2.23232922,
+     "t1"
+    ],
+    "Threads/Unfused/t16/2500": [
+     831700,
+     2.07111712,
+     "t1"
+    ],
+    "Threads/Unfused/t24/2500": [
+     1316750,
+     1.3570727,
+     "t1"
+    ],
+    "Threads/Fused/t1/2500": [
+     1925650,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/2500": [
+     1101950,
+     1.70077923,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/2500": [
+     1830600,
+     1.04008636,
+     "t1"
+    ],
+    "Threads/Fused/t4/2500": [
+     789750,
+     2.27448593,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/2500": [
+     1369250,
+     1.32564752,
+     "t1"
+    ],
+    "Threads/Fused/t8/2500": [
+     750700,
+     2.41081251,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/2500": [
+     1048500,
+     1.83142982,
+     "t1"
+    ],
+    "Threads/Fused/t16/2500": [
+     970550,
+     1.90525072,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/2500": [
+     1141300,
+     1.70022626,
+     "t1"
+    ],
+    "Threads/Fused/t24/2500": [
+     1220200,
+     1.62469147,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/2500": [
+     1265000,
+     1.50661685,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/2500": [
+     783450,
+     2.31358844,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/2500": [
+     1029600,
+     1.89908018,
+     "t1"
+    ],
+    "Threads/Unfused/t1/12500": [
+     7765050,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/12500": [
+     4755950,
+     1.74738303,
+     "t1"
+    ],
+    "Threads/Unfused/t4/12500": [
+     2966800,
+     2.75150051,
+     "t1"
+    ],
+    "Threads/Unfused/t8/12500": [
+     2521850,
+     3.22855745,
+     "t1"
+    ],
+    "Threads/Unfused/t16/12500": [
+     3219650,
+     2.58698183,
+     "t1"
+    ],
+    "Threads/Unfused/t24/12500": [
+     3495900,
+     2.2978488,
+     "t1"
+    ],
+    "Threads/Fused/t1/12500": [
+     10646650,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/12500": [
+     5780600,
+     1.75731781,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/12500": [
+     8711700,
+     1.29513291,
+     "t1"
+    ],
+    "Threads/Fused/t4/12500": [
+     3726500,
+     2.67982555,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/12500": [
+     5009750,
+     2.04421737,
+     "t1"
+    ],
+    "Threads/Fused/t8/12500": [
+     2830950,
+     3.48966556,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/12500": [
+     3653050,
+     2.66843374,
+     "t1"
+    ],
+    "Threads/Fused/t16/12500": [
+     3068350,
+     3.56564772,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/12500": [
+     2987050,
+     3.31619648,
+     "t1"
+    ],
+    "Threads/Fused/t24/12500": [
+     2939700,
+     3.50152138,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/12500": [
+     3383050,
+     3.04623106,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/12500": [
+     2914900,
+     3.43674022,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/12500": [
+     3169600,
+     3.34439625,
+     "t1"
+    ]
+   }
+  },
+  {
+   "round": 5,
+   "build": "gcc",
+   "status": "ok",
+   "load_before": 5.8,
+   "load_after": 6.2,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-140047-838f576-rotation-threads\\samples\\CrogLegion\\20261006-140953-838f576-r5-gcc",
+   "results": {
+    "Threads/Unfused/t1/2500": [
+     1416000,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/2500": [
+     948900,
+     1.48479019,
+     "t1"
+    ],
+    "Threads/Unfused/t4/2500": [
+     759700,
+     1.9248672,
+     "t1"
+    ],
+    "Threads/Unfused/t8/2500": [
+     793150,
+     1.91269312,
+     "t1"
+    ],
+    "Threads/Unfused/t16/2500": [
+     935250,
+     1.53310441,
+     "t1"
+    ],
+    "Threads/Unfused/t24/2500": [
+     1161550,
+     1.21855635,
+     "t1"
+    ],
+    "Threads/Fused/t1/2500": [
+     1731150,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/2500": [
+     1019600,
+     1.66197864,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/2500": [
+     1599700,
+     1.06138284,
+     "t1"
+    ],
+    "Threads/Fused/t4/2500": [
+     746400,
+     2.2494787,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/2500": [
+     1177100,
+     1.41567291,
+     "t1"
+    ],
+    "Threads/Fused/t8/2500": [
+     722950,
+     2.27541653,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/2500": [
+     966750,
+     1.672872,
+     "t1"
+    ],
+    "Threads/Fused/t16/2500": [
+     1014350,
+     1.5619305,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/2500": [
+     1104550,
+     1.44261698,
+     "t1"
+    ],
+    "Threads/Fused/t24/2500": [
+     1413700,
+     1.16416796,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/2500": [
+     1236600,
+     1.34619738,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/2500": [
+     803800,
+     2.16299897,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/2500": [
+     898600,
+     1.7094547,
+     "t1"
+    ],
+    "Threads/Unfused/t1/12500": [
+     8221850,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/12500": [
+     4736750,
+     1.61604347,
+     "t1"
+    ],
+    "Threads/Unfused/t4/12500": [
+     3011300,
+     2.6157916,
+     "t1"
+    ],
+    "Threads/Unfused/t8/12500": [
+     2401600,
+     3.22400008,
+     "t1"
+    ],
+    "Threads/Unfused/t16/12500": [
+     2518100,
+     3.03987156,
+     "t1"
+    ],
+    "Threads/Unfused/t24/12500": [
+     2986450,
+     2.65663942,
+     "t1"
+    ],
+    "Threads/Fused/t1/12500": [
+     8455300,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/12500": [
+     4973150,
+     1.74275924,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/12500": [
+     6907750,
+     1.2137642,
+     "t1"
+    ],
+    "Threads/Fused/t4/12500": [
+     2888900,
+     2.90969304,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/12500": [
+     4227050,
+     2.00251663,
+     "t1"
+    ],
+    "Threads/Fused/t8/12500": [
+     2415750,
+     3.4586559,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/12500": [
+     3351250,
+     2.57491534,
+     "t1"
+    ],
+    "Threads/Fused/t16/12500": [
+     2458050,
+     3.44593082,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/12500": [
+     2663600,
+     3.13224615,
+     "t1"
+    ],
+    "Threads/Fused/t24/12500": [
+     2798300,
+     3.12378181,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/12500": [
+     3035100,
+     2.83361226,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/12500": [
+     2478550,
+     3.48077885,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/12500": [
+     2572950,
+     3.29637083,
+     "t1"
+    ]
+   }
+  },
+  {
+   "round": 5,
+   "build": "msvc",
+   "status": "ok",
+   "load_before": 6.0,
+   "load_after": 16.2,
+   "waited_s": 1,
+   "quiet": false,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-140047-838f576-rotation-threads\\samples\\CrogLegion\\20261006-141033-838f576-r5-msvc",
+   "results": {
+    "Threads/Unfused/t1/2500": [
+     1890250,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/2500": [
+     1082250,
+     1.69466297,
+     "t1"
+    ],
+    "Threads/Unfused/t4/2500": [
+     806500,
+     2.37916982,
+     "t1"
+    ],
+    "Threads/Unfused/t8/2500": [
+     792650,
+     2.19745548,
+     "t1"
+    ],
+    "Threads/Unfused/t16/2500": [
+     967950,
+     1.87410431,
+     "t1"
+    ],
+    "Threads/Unfused/t24/2500": [
+     1183050,
+     1.57673275,
+     "t1"
+    ],
+    "Threads/Fused/t1/2500": [
+     1753450,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/2500": [
+     1144300,
+     1.61389636,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/2500": [
+     1851700,
+     1.01909035,
+     "t1"
+    ],
+    "Threads/Fused/t4/2500": [
+     768500,
+     2.32545506,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/2500": [
+     1330350,
+     1.31211862,
+     "t1"
+    ],
+    "Threads/Fused/t8/2500": [
+     778750,
+     2.29191601,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/2500": [
+     1070400,
+     1.73075596,
+     "t1"
+    ],
+    "Threads/Fused/t16/2500": [
+     1002600,
+     1.73777516,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/2500": [
+     1117500,
+     1.65208103,
+     "t1"
+    ],
+    "Threads/Fused/t24/2500": [
+     1193550,
+     1.48025576,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/2500": [
+     1256000,
+     1.46407054,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/2500": [
+     764900,
+     2.31780668,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/2500": [
+     1046150,
+     1.7092999,
+     "t1"
+    ],
+    "Threads/Unfused/t1/12500": [
+     8775900,
+     1,
+     "t1"
+    ],
+    "Threads/Unfused/t2/12500": [
+     5043550,
+     1.74343117,
+     "t1"
+    ],
+    "Threads/Unfused/t4/12500": [
+     3327400,
+     2.66109638,
+     "t1"
+    ],
+    "Threads/Unfused/t8/12500": [
+     2664050,
+     3.26500333,
+     "t1"
+    ],
+    "Threads/Unfused/t16/12500": [
+     2766450,
+     3.1497175,
+     "t1"
+    ],
+    "Threads/Unfused/t24/12500": [
+     3208000,
+     2.7512643,
+     "t1"
+    ],
+    "Threads/Fused/t1/12500": [
+     9013450,
+     1,
+     "t1"
+    ],
+    "Threads/Fused/t2/12500": [
+     5360950,
+     1.65268742,
+     "t1"
+    ],
+    "Threads/Fused/t2+affinity/12500": [
+     7113550,
+     1.25125456,
+     "t1"
+    ],
+    "Threads/Fused/t4/12500": [
+     3368600,
+     2.63956466,
+     "t1"
+    ],
+    "Threads/Fused/t4+affinity/12500": [
+     4520100,
+     1.94522085,
+     "t1"
+    ],
+    "Threads/Fused/t8/12500": [
+     2665750,
+     3.26898984,
+     "t1"
+    ],
+    "Threads/Fused/t8+affinity/12500": [
+     3423500,
+     2.58756676,
+     "t1"
+    ],
+    "Threads/Fused/t16/12500": [
+     2555700,
+     3.42265686,
+     "t1"
+    ],
+    "Threads/Fused/t16+affinity/12500": [
+     2945050,
+     3.0353118,
+     "t1"
+    ],
+    "Threads/Fused/t24/12500": [
+     3056050,
+     2.93199858,
+     "t1"
+    ],
+    "Threads/Fused/t24+affinity/12500": [
+     3290100,
+     2.63430384,
+     "t1"
+    ],
+    "Threads/Fused/tAuto/12500": [
+     2764650,
+     3.2407036,
+     "t1"
+    ],
+    "Threads/Fused/tAuto+pin/12500": [
+     2847650,
+     3.03677739,
+     "t1"
+    ]
+   }
+  }
+ ]
+}

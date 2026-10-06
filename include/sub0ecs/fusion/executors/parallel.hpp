@@ -1,24 +1,41 @@
 #pragma once
-/** Parallel: persistent spin-then-park thread pool running contiguous row
- *  chunks (see docs/research/threading.md). */
+/** Parallel: a spin-then-park thread pool running contiguous row chunks (see
+ *  docs/research/threading.md).
+ *
+ *  - Sized to the machine it finds: by default one thread per performance core
+ *    the process may use, not one per logical CPU. Efficiency cores and
+ *    oversubscription both make data-parallel work slower, not faster. Threads
+ *    are not pinned unless asked (Options::pinToPerformanceCores): with the
+ *    right count the OS already places them on the performance cores, and on
+ *    the machine this was measured on an affinity mask was the same or slower.
+ *  - Grows on demand: no thread exists until a dispatch needs it. Work that is
+ *    only ever four ways parallel starts three workers, whatever the limit.
+ *  - Wakes only what a dispatch uses: each worker has its own signal, so a
+ *    narrow dispatch on a wide pool leaves the other workers parked.
+ *
+ *  Parking uses a mutex and condition variable per worker, not C++20 atomic
+ *  waiting: libstdc++ without futexes (MinGW) implements the latter with a shared
+ *  waiter pool, and the pool ran several times slower than one thread on it. */
 
 #include <algorithm>
 #include <atomic>
 #include <condition_variable>
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <mutex>
 #include <thread>
-#include <vector>
 #if defined(__SSE2__) || defined(_M_X64)
 #    include <immintrin.h>
 #endif
 
 #include "contract.hpp"
+#include "cpu_topology.hpp"
 
 namespace sub0ecs::fusion
 {
-    /** Persistent pool; the calling thread takes chunk 0. Small partitions run inline. */
+    /** Persistent pool; the calling thread takes part as worker 0. Small partitions run inline.
+     *  One thread dispatches at a time: a pool is not safe to use from two threads at once. */
     class Parallel
     {
     public:
@@ -26,29 +43,48 @@ namespace sub0ecs::fusion
         static constexpr bool kRequiresDeviceSafe = false;
         static constexpr std::size_t kMinRowsPerChunk = 4096;
 
-        /** affinity = true: static "owner computes" scheduling — worker w always
-         *  gets the same contiguous block of items, so data a worker wrote in one
-         *  system is still in its cache for the next (vs dynamic load balancing). */
-        explicit Parallel(unsigned threads = std::max(1u, std::thread::hardware_concurrency()), bool affinity = false)
-            : affinity_(affinity)
+        struct Options
         {
-            for (unsigned i = 1; i < threads; ++i) workers_.emplace_back([this, i] { loop(i); });
+            /** The most threads a dispatch may use, counting the caller. 0 means one per
+             *  performance core available to the process. An explicit count is taken as
+             *  given, even beyond the CPUs available. */
+            unsigned threads = 0;
+            /** Static "owner computes" scheduling: worker w always gets the same contiguous
+             *  block of items, so data a worker wrote in one system is still in its cache
+             *  for the next. Off: items are claimed dynamically, for load balance. */
+            bool ownerComputes = false;
+            /** Restrict the workers that fit on the performance cores to those cores (the
+             *  caller is assumed to hold one; workers beyond them are left to the OS). A
+             *  hint: it does nothing where the CPU is not hybrid or threads cannot be
+             *  restricted. Off by default, because the OS usually gets this right by
+             *  itself; turn it on when measurement on the target says it helps. */
+            bool pinToPerformanceCores = false;
+        };
+
+        explicit Parallel(const Options& options)
+            : options_(options), limit_(options.threads != 0 ? options.threads : std::max(1u, cpuTopology().performance)),
+              workers_(limit_ > 1 ? std::make_unique<Worker[]>(limit_) : nullptr)
+        {
         }
+
+        /** Shorthand for Options{ threads, ownerComputes }. */
+        explicit Parallel(unsigned threads = 0, bool ownerComputes = false) : Parallel(Options{ threads, ownerComputes, false }) {}
         ~Parallel()
         {
             stop_.store(true, std::memory_order_release);
-            gen_.fetch_add(1, std::memory_order_release);
-            {
-                std::lock_guard lk(m_);
-            }
-            cv_.notify_all();
-            for (auto& t : workers_) t.join();
+            for (unsigned i = 1; i <= started_; ++i) wake(workers_[i], true);
+            for (unsigned i = 1; i <= started_; ++i) workers_[i].thread.join();
         }
         Parallel(const Parallel&) = delete;
         Parallel& operator=(const Parallel&) = delete;
 
-        /** Threads taking part in a dispatch (workers + the calling thread). */
-        unsigned concurrency() const { return static_cast<unsigned>(workers_.size()) + 1u; }
+        /** The most threads a dispatch uses, counting the calling thread: the bound on the
+         *  worker index passed to callbacks. Fixed for the pool's lifetime. */
+        unsigned concurrency() const { return limit_; }
+
+        /** Worker threads created so far (the caller is not one of them). Starts at zero
+         *  and grows to the widest dispatch seen, never beyond concurrency() - 1. */
+        unsigned threadsStarted() const { return started_; }
 
         /** fn(item, worker) for every item in [0, items), dynamically claimed
          *  (atomic counter) for load balance; the caller runs as worker 0.
@@ -57,13 +93,14 @@ namespace sub0ecs::fusion
         void parallelFor(std::size_t items, F& fn)
         {
             if (items == 0) return;
-            if (items == 1 || workers_.empty())
+            const unsigned participants = static_cast<unsigned>(std::min<std::size_t>(items, limit_));
+            if (participants == 1)
             {
                 for (std::size_t i = 0; i < items; ++i) fn(i, 0u);
                 return;
             }
-            ForCtx<F> ctx{ &fn, items, {}, affinity_ ? concurrency() : 0u };
-            dispatch(&forThunk<F>, &ctx);
+            ForCtx<F> ctx{ &fn, items, {}, options_.ownerComputes ? participants : 0u };
+            dispatch(participants, &forThunk<F>, &ctx);
         }
 
         /** Fused-group executor contract: contiguous row chunks of one partition. */
@@ -124,46 +161,96 @@ namespace sub0ecs::fusion
 #endif
         }
 
-        /** Publish a job to all workers, run it on this thread too, wait for all.
-         *  Workers spin briefly between jobs (a tick issues many back-to-back
-         *  dispatches) and only then block, so hot dispatches avoid the
-         *  condition-variable wake-up latency. */
-        void dispatch(void (*fn)(void*, unsigned), void* ctx)
+        /** One slot per possible thread (slot 0, the caller's, is unused). Each worker
+         *  waits on its own signal, so a dispatch wakes exactly the workers it uses.
+         *  One cache line each, so workers do not share a line through their signals. */
+#if defined(_MSC_VER)
+#    pragma warning(push)
+#    pragma warning(disable : 4324)   // padded due to alignment: intended
+#endif
+        struct alignas(64) Worker
         {
-            job_ = Job{ fn, ctx };
-            remaining_.store(static_cast<int>(workers_.size()), std::memory_order_relaxed);
-            gen_.fetch_add(1, std::memory_order_release);
+            std::atomic<std::uint64_t> signal{ 0 };   // bumped once per job this worker takes part in
+            std::atomic<bool> parked{ false };        // blocked on `wakeUp`, so it needs a notify
+            std::mutex mutex;
+            std::condition_variable wakeUp;
+            std::thread thread;
+        };
+#if defined(_MSC_VER)
+#    pragma warning(pop)
+#endif
+
+        /** Starts workers until `count` exist. Called by the dispatching thread only. */
+        void grow(unsigned count)
+        {
+            while (started_ < count)
             {
-                std::lock_guard lk(m_);   // pairs with sleepers' predicate check (no lost wake-up)
+                const unsigned index = ++started_;
+                workers_[index].thread = std::thread([this, index] {
+                    if (options_.pinToPerformanceCores && index < cpuTopology().performance) keepThisThreadOnPerformanceCores();
+                    loop(index);
+                });
             }
-            cv_.notify_all();
+        }
+
+        /** Signals one worker. A worker still spinning sees the signal by itself; only a
+         *  parked one is notified. seq_cst on both sides: either the worker sees the new
+         *  signal before it blocks, or this sees it parked. The empty lock closes the gap
+         *  between the worker's last check and its wait. */
+        static void wake(Worker& worker, bool always = false)
+        {
+            worker.signal.fetch_add(1, std::memory_order_seq_cst);
+            if (always || worker.parked.load(std::memory_order_seq_cst))
+            {
+                {
+                    std::lock_guard lock(worker.mutex);
+                }
+                worker.wakeUp.notify_one();
+            }
+        }
+
+        /** Publish a job to the first `participants - 1` workers, run it on this thread
+         *  too, wait for all. Workers spin briefly between jobs (a tick issues many
+         *  back-to-back dispatches) and only then block, so hot dispatches avoid the
+         *  wake-up latency; a worker that is still spinning is not notified. */
+        void dispatch(unsigned participants, void (*fn)(void*, unsigned), void* ctx)
+        {
+            grow(participants - 1u);
+            job_ = Job{ fn, ctx };
+            remaining_.store(static_cast<int>(participants - 1u), std::memory_order_relaxed);
+            for (unsigned i = 1; i < participants; ++i) wake(workers_[i]);
             fn(ctx, 0u);
             for (int i = 0; i < kSpin && remaining_.load(std::memory_order_acquire) != 0; ++i) relax();
             if (remaining_.load(std::memory_order_acquire) != 0)
             {
-                std::unique_lock lk(m_);
-                done_.wait(lk, [&] { return remaining_.load(std::memory_order_acquire) == 0; });
+                std::unique_lock lock(doneMutex_);
+                done_.wait(lock, [&] { return remaining_.load(std::memory_order_acquire) == 0; });
             }
         }
 
         void loop(unsigned index)
         {
+            Worker& self = workers_[index];
             std::uint64_t seen = 0;
             for (;;)
             {
-                for (int i = 0; i < kSpin && gen_.load(std::memory_order_acquire) == seen; ++i) relax();
-                if (gen_.load(std::memory_order_acquire) == seen)
+                for (int i = 0; i < kSpin && self.signal.load(std::memory_order_acquire) == seen; ++i) relax();
+                if (self.signal.load(std::memory_order_acquire) == seen)
                 {
-                    std::unique_lock lk(m_);
-                    cv_.wait(lk, [&] { return gen_.load(std::memory_order_acquire) != seen; });
+                    self.parked.store(true, std::memory_order_seq_cst);
+                    {
+                        std::unique_lock lock(self.mutex);
+                        self.wakeUp.wait(lock, [&] { return self.signal.load(std::memory_order_seq_cst) != seen; });
+                    }
+                    self.parked.store(false, std::memory_order_seq_cst);
                 }
-                seen = gen_.load(std::memory_order_acquire);
+                seen = self.signal.load(std::memory_order_acquire);
                 if (stop_.load(std::memory_order_acquire)) return;
                 const Job job = job_;
                 job.fn(job.ctx, index);
                 if (remaining_.fetch_sub(1, std::memory_order_acq_rel) == 1)
                 {
-                    std::lock_guard lk(m_);
+                    std::lock_guard lock(doneMutex_);   // pairs with the dispatcher's predicate check
                     done_.notify_one();
                 }
             }
@@ -171,14 +258,15 @@ namespace sub0ecs::fusion
 
         static constexpr int kSpin = 4000;
 
-        bool affinity_ = false;
-        std::vector<std::thread> workers_;
-        std::mutex m_;
-        std::condition_variable cv_, done_;
-        std::atomic<std::uint64_t> gen_{ 0 };
+        Options options_;
+        unsigned limit_ = 1;
+        unsigned started_ = 0;               // worker threads created; slots 1..started_ are live
+        std::unique_ptr<Worker[]> workers_;   // limit_ slots, fixed: workers never move
         std::atomic<bool> stop_{ false };
         Job job_;
         std::atomic<int> remaining_{ 0 };
+        std::mutex doneMutex_;
+        std::condition_variable done_;
     };
 
 } // namespace sub0ecs::fusion

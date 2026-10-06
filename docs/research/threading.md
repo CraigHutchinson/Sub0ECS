@@ -110,6 +110,7 @@ per partition per group with a sleeping pool can erase the fusion gain entirely.
 | R5 | **Shrink the serial fraction:** parallel spatial-index build (per-worker counting, parallel per-cell sort) and **sharded parallel commit** (commands bucketed by target partition, each shard applied by one worker, still Id-sorted within a shard) | The serial fraction caps scaling (§2) |
 | R6 | **Pipeline read-only consumers across frames** (M5) from snapshots | Independent working without losing determinism |
 | R7 | **Embedded (ESP32-P4: 2 HP cores + LP core):** prefer task-level parallelism (subsystems pinned per core via Sub0Pipeline's FreeRTOS executor) over fine-grained data parallelism; data-parallel only for large groups; small spin budget (power) | N is small; threading loses at small row counts without these fixes |
+| R8 | **Size the pool by the machine and grow it on demand:** default to one thread per performance core the process may use, create threads only when a dispatch needs them, wake only the workers a dispatch uses. Pinning workers to the performance cores is an option, not the default | Implemented in `Parallel` (`cpu_topology.hpp`). Scaling peaks at the performance-core count; pinning measured the same or slower where the OS already schedules for hybrid CPUs |
 
 ## 6. Integration with the Sub0 family
 
