@@ -66,4 +66,6 @@ only (a GitHub rule) and tests that branch.
   each sample) and report the spread with the figure.
 - **API changes** to anything under `include/sub0ecs/` are described in the commit
   message.
-- Follow `STYLE_GUIDE.md`. Tests must pass before committing.
+- Follow `STYLE_GUIDE.md` (the Sub0 family profile, `style-profile: sub0`) for all C++:
+  camelCase functions, `camelCase_` members, `"sub0ecs/..."` includes, Doxygen tags on
+  public declarations. Tests must pass before committing.
