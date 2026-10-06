@@ -24,7 +24,7 @@ static_assert(FF::kGroups == 2, "FusionFrame: {Integrate, Forces, Wrap} + {RotHe
 static_assert(FF::groupOf[0] == 0 && FF::groupOf[1] == 0 && FF::groupOf[2] == 0 && FF::groupOf[3] == 1);
 
 using F3 = fz::Plan<fz::ShareColumns, PhysicsSys, RotHealthSys, PulseSys>;
-static_assert(F3::kGroups == 3, "Frame3 shares no columns: never fused (rule G2)");
+static_assert(F3::kGroups == 3, "Frame3 shares no columns: never fused");
 
 static_assert(fz::Plan<fz::NeverFuse, Integrate, Forces, Wrap>::kGroups == 3);
 static_assert(fz::Plan<fz::AlwaysFuse, PhysicsSys, RotHealthSys, PulseSys>::kGroups == 1);

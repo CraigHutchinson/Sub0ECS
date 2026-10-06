@@ -2,7 +2,7 @@
 /** Storage designs instantiated for the Skirmish component set.
  *
  * Query-partition designs need the game's system queries declared up front
- * (that is the point of H1): every each<...> signature used by sim.hpp.
+ * (that is the point of the design): every each<...> signature used by sim.hpp.
  */
 
 #include "../designs/archetype.hpp"

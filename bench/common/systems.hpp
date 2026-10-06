@@ -1,11 +1,10 @@
 #pragma once
-/** System definitions for the fusion spike (H7).
+/** System definitions for the fusion benchmarks and tests.
  *
  * A system is a row-local callable with a declared query:
  *   struct S { using Query = bench::Query<Cs...>; void operator()(Cs&...) const; };
  * "Row-local" means the kernel reads/writes only the current entity's
- * components — the property that makes fusion legal (research §4.C4,
- * design-review-pre-h2.md, fusion.md).
+ * components — the property that makes fusion legal (docs/research/fusion.md).
  */
 
 #include <sub0ecs/fusion/access.hpp>

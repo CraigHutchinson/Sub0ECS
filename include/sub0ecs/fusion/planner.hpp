@@ -9,7 +9,7 @@
  * One header per planner under planners/.
  *
  * Compile-time policies (zero runtime cost, static/embedded friendly):
- *   NeverFuse, AlwaysFuse, ShareColumns (the H7 rule G1/G2),
+ *   NeverFuse, AlwaysFuse, ShareColumns (the sharing rule),
  *   DeviceAware<Base> (never mix device-safe and host-only systems in a group).
  *
  * Runtime decision (FFTW-style "measure"): AutoTuner<Planners...> enumerates

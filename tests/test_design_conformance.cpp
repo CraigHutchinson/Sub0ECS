@@ -103,7 +103,7 @@ namespace
         if (structural) check(r.structural == ref.structural, tag + ": structural checksum");
     }
 
-    // ---- H7 fusion: fused passes must equal sequential passes bit-for-bit ----
+    // ---- Fusion: fused passes must equal sequential passes bit-for-bit ----
 
     enum class Exec { Sequential, Fused, Grouped, Update2Kernel };
 
@@ -163,7 +163,7 @@ TEST_CASE("every design reproduces the reference state bit-for-bit")
     }
 }
 
-TEST_CASE("H7 fused passes equal sequential passes bit-for-bit")
+TEST_CASE("fused passes equal sequential passes bit-for-bit")
 {
     using namespace bench;
     for (Pattern pattern : { Pattern::Coherent, Pattern::Fragmented })

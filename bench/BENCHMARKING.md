@@ -1,17 +1,18 @@
 # Benchmarking
 
-The first numbers came from a shared 4-core cloud VM. That was
-good enough to rank designs, but not to publish or to measure scaling. This
-harness makes runs **reproducible, self-describing and comparable**, so the
-same suites can run on dedicated hardware with more cores (and later on
-embedded targets).
+How to measure the library, and how to tell whether a measurement can be
+trusted. The harness makes runs **reproducible, self-describing and comparable**:
+the same suites run on any machine and record what they ran on.
+[README.md](README.md) describes what is being compared.
 
 ```
 bench/harness/            nanobench + names, --filter, paired group comparisons, results JSON
 bench/tools/suites.json   what can be run (suites) and how (profiles)
 bench/tools/run.py        build → fingerprint machine → run suites → result directory
 bench/tools/compare.py    A/B comparison with noise-aware verdicts
+bench/tools/summarize.py  per-group tables of one run (run.py writes them as summary.md)
 bench/tools/rotate.py     several interleaved samples of several builds: medians, spread, busy-machine check
+bench/tools/tables.py     a rotate.py capture as tables relative to each group's reference
 bench/tools/profile.py    one case under Intel VTune: hot functions, processor metrics
 CMakePresets.json         bench-native | bench-portable | sanitize
 ```
@@ -32,7 +33,7 @@ a **group**, and a group's designs are measured **against each other, paired**
 - that count is sized so the *fastest* design fills an epoch. Sized by the slowest,
   a group holding a very slow design times the fast ones on a single cold pass
   straight after the others have flushed the caches (Iter1 read 50 µs where it
-  takes 14);
+  takes 14–21);
 - each design gets a ratio to the group's **baseline** (the first registered: the
   hand-written loop for iteration and lookup, SparseSet elsewhere, 1 thread for
   thread scaling) with a 95% interval corrected for the group's size;
@@ -47,8 +48,9 @@ are measured alone, one call per epoch, with an untimed setup before each.
 ```bash
 python3 bench/tools/run.py --suites list                  # what exists
 python3 bench/tools/run.py --profile quick                # smoke test (~4 min, mostly build)
-python3 bench/tools/run.py --profile standard             # the published FINDINGS settings
+python3 bench/tools/run.py --profile standard --pin P     # one full run: summary.md with paired ratios
 python3 bench/tools/run.py --profile reference --pin 2-15 --no-aslr --label ref-box   # dedicated hardware
+python3 bench/tools/rotate.py --build a=build/a --build b=build/b --pin P   # compare builds (several samples)
 python3 bench/tools/compare.py bench/results/runs/<host>/<runA> bench/results/runs/<host>/<runB>
 ```
 
@@ -62,18 +64,19 @@ python3 bench/tools/compare.py bench/results/runs/<host>/<runA> bench/results/ru
 | `reference` | 52 | 5 ms | + 10M entities, + 200K units, thread ladder to all cores | Dedicated hardware |
 
 Every design of a group is alive at once during its comparison, so the largest
-group's memory is the sum of its worlds (about 8 worlds at the largest N).
+group's memory is the sum of its worlds (about a dozen at 1M entities, fewer above:
+the fixed-capacity and naive designs stop at 1M).
 
 ## Suites
 
 | Suite | Binary | Measures |
 |---|---|---|
-| `baseline` | `sub0ecs_bench` | Storage designs on micro scenarios (baseline + H1) |
-| `fusion` | `sub0ecs_bench` | H7 sequential vs fused vs hand-merged |
+| `baseline` | `sub0ecs_bench` | Every design and reference on the micro scenarios |
+| `fusion` | `sub0ecs_bench` | A four-system frame: separate passes vs fused vs hand-merged |
 | `fusion-exec` | `sub0ecs_bench` | Planners × executors |
 | `skirmish` | `sub0ecs_skirmish_bench` | RTS ms/tick per design, per-system counters |
 | `threads` | `sub0ecs_skirmish_bench` | Thread scaling: ladder 1, 2, 4 … up to `hardware_concurrency()` |
-| `dynamic` | `sub0ecs_dynamic_timeline` | H9 stall vs incremental relayout (worst frame, frames to flip) |
+| `dynamic` | `sub0ecs_dynamic_timeline` | Adding a query at runtime: one stall vs bounded migration per frame (worst frame, frames to finish) |
 | `spans` | `sub0ecs_spans_bench` | Partition-count (span) overhead |
 
 The binaries read these environment variables (set by the profiles, or
@@ -127,7 +130,9 @@ FINDINGS.md.
    **and** twice the larger err% of the two runs.
 
 Within one run, the paired ratios in `summary.md` are the sharper instrument:
-they cancel drift, which a comparison across runs cannot.
+they cancel drift, which a comparison across runs cannot. `compare.py` reads two
+single runs, so use it to look, not to conclude; for a conclusion take several
+interleaved samples (next section).
 
 `--fail-on-regression` returns exit code 1, so the same script can gate CI
 on a dedicated runner.
@@ -177,8 +182,10 @@ collect evidence in this order (cheapest first):
 | 5. A probe | Does the candidate fix work on every compiler? | The loop and its hand-written equivalent in one small file, built with each compiler |
 
 ```bash
-python bench/tools/profile.py --build-dir build/bench-native     --filter "^Update2/Fragmented/QPartHinted/100000$" --pin P --label update2
-python bench/tools/profile.py --build-dir build/bench-native --collect uarch     --filter "^RandomGet/Fragmented/QPartHinted/100000$" --pin P --label randomget
+python bench/tools/profile.py --build-dir build/bench-native \
+    --filter "^Update2/Fragmented/QPartHinted/100000$" --pin P --label update2
+python bench/tools/profile.py --build-dir build/bench-native --collect uarch \
+    --filter "^RandomGet/Fragmented/QPartHinted/100000$" --pin P --label randomget
 ```
 
 `profile.py` runs one benchmark case for about `--seconds` (default 10) under
@@ -204,7 +211,8 @@ headline metrics and the heaviest functions.
 
 Worked example (2026-10-05, MSVC): step 1 showed the store's Update2 at 1.24x the
 hand-written loop on MSVC and 1.0x on GCC and Clang. Step 2 puts the time in
-`kernel::updatePosition` (99% of it), not in library code. Step 4 found the cause: the assembly had a `call` to the kernel inside the row loop, where the
+`kernel::updatePosition` (99% of it), not in library code. Step 4 found the cause:
+the assembly had a `call` to the kernel inside the row loop, where the
 hand-written loop had it inlined. One statement attribute on the row call fixed it
 (FINDINGS, section 4).
 
@@ -255,6 +263,6 @@ python bench/tools/run.py --profile reference --pin P --label ref-msvc
   and write `{"rows": [...]}`).
 - **New machine class:** no code change; the fingerprint and thread ladder
   adapt to the machine.
-- **Embedded (ESP32-P4, H4/H8e):** use a separate runner that
+- **Embedded (ESP32-P4):** use a separate runner that
   flashes the device and captures serial output. It should keep the same
   `meta.json` schema (with device fields) so `compare.py` still works.

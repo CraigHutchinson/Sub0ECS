@@ -11,7 +11,7 @@ classic RTS style:
 - units march on enemy HQs, acquire targets and fire homing projectiles;
 - attacks can burn or stun, and killers gain veterancy.
 
-It is written against the spike's storage-adapter surface, so **every
+It is written against the benchmarks' storage-adapter surface, so **every
 storage design plays the same game**, and the conformance test proves it
 bit for bit.
 
@@ -34,7 +34,7 @@ micro-benchmarks:
 | Non-row-local reads | Spatial grid (separation, target acquisition); homing projectiles; random access to targets, mines and HQs |
 | Read-only snapshot shared by systems | Grid built once per tick, read by Separation (fused) and Acquire |
 | Structural churn on **queried** components | `MoveOrder`, `Target` (orders given, targets acquired and lost); `Stunned`, `Burning` |
-| Structural churn on **unqueried** components | `Carrying` (worker loop): the non-fragmenting case from H1 |
+| Structural churn on **unqueried** components | `Carrying` (worker loop): a component that never changes an entity's partition |
 | Spawn/destroy churn | Projectiles born and destroyed every tick; units die; buildings produce |
 | Rare components | `Selected` (~1%, reselected every 128 ticks), `Veteran`, status effects |
 | Reductions | Population per team/kind; selection centroid (float, Id-ordered); resources; kills |
@@ -83,7 +83,7 @@ QueryPart and QPartHinted (both sequential and **fused movement**).
 ## Roadmap for the parent project
 
 1. **Extract** into its own repository once named, depending on SubzeroECS
-   (and, through it, Sub0DataStore) instead of the spike's adapters.
+   (and, through it, Sub0DataStore) instead of the benchmark adapters.
 2. **Schedule systems with Sub0Pipeline**: derive DAG edges from declared
    access, fused groups as single jobs, parallel partitions. Emit
    add/remove events via **Sub0Pub** (e.g. a HUD subscribing to kills).
@@ -92,10 +92,9 @@ QueryPart and QPartHinted (both sequential and **fused movement**).
 4. **Optional front-end** (e.g. a raylib or terminal renderer) as a separate
    target; the simulation stays headless.
 5. **Embedded profile**: a 2-team, ≤ 512-unit variant on ESP32-P4 with the
-   static-capacity design (spike H4).
+   static-capacity design.
 6. **More scenarios on the same harness**: tower defence (paths, waves),
    boids (pure fusion), a particle-heavy variant (spawn/destroy stress),
-   and hierarchies (squads and garrisons, spike H6′).
+   and hierarchies (squads and garrisons).
 
 Name ideas: **Sub0Skirmish**, **Sub0Front**, **ZeroFront**, **Sub0Siege**.
-Your call.

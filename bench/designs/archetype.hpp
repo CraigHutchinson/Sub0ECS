@@ -9,7 +9,7 @@
  *          transition edges cached), destroy = swap-remove row.
  * Registry: runtime typeId<T>() -> bit in a 64-bit signature mask.
  *
- * Spike constraints: components must be trivially copyable (memcpy moves),
+ * Constraints: components must be trivially copyable (memcpy moves),
  * at most 64 component types per process.
  */
 
@@ -186,7 +186,7 @@ namespace bench::archetype
         template <typename T>
         void registerType()
         {
-            static_assert(std::is_trivially_copyable_v<T>, "archetype spike requires trivially copyable components");
+            static_assert(std::is_trivially_copyable_v<T>, "the archetype reference requires trivially copyable components");
             const std::uint32_t t = typeId<T>();
             assert(t < kMaxTypes);
             strides_[t] = sizeof(T);

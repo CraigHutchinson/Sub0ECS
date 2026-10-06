@@ -21,7 +21,7 @@ Keep the everyday loop fast; put breadth on demand.
 | Gate | `ctest --preset default` (label `gate`; includes the examples, label `example`) | ~5 s Release, ~60 s sanitizers (now 1.2 s / 35 s) | every push, any branch (`ci.yml`) |
 | Exhaustive | doctest `TEST_SUITE("exhaustive")`, label `exhaustive`: `ctest --preset exhaustive` | under a minute (now 24 s) | merges: PRs into and pushes to `master`/`v2` (`ci.yml`, Clang job); nightly, also under sanitizers |
 | Benchmark smoke | `bench/tools/run.py --profile quick` | ~10 s | `ci.yml` (Linux GCC) |
-| Benchmarks | `standard` / `reference` profiles | minutes / hours | by hand, dedicated hardware |
+| Benchmarks | `standard` / `reference` profiles; `rotate.py` (`compare` profile) for anything between builds | minutes / hours; ~1 min per sample | by hand |
 
 When a test outgrows the gate budget, move the heavy variant into the exhaustive
 suite and keep a small representative sample gated (see the churn test in
@@ -36,7 +36,7 @@ only (a GitHub rule) and tests that branch.
 | `include/sub0ecs/` | The library (header-only, `Sub0ECS::Sub0ECS`) |
 | `tests/` | doctest suites, one `sub0ecs_tests` binary |
 | `bench/` | Comparison benchmarks: reference designs, Skirmish testbed, harness, results |
-| `docs/` | FINDINGS (decision record), research notes, BACKLOG |
+| `docs/` | FINDINGS (design and evidence), EXAMPLES, BACKLOG (open work), research notes (exploration-phase design notes) |
 
 ## Rules
 

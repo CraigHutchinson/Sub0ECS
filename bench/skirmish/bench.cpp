@@ -79,7 +79,7 @@ namespace
                           } });
     }
 
-    /** H8 thread scaling on the recommended design; threads = 1 runs without a pool. */
+    /** Thread scaling on the store; threads = 1 runs without a pool. */
     void threads(int unitsPerTeam, unsigned threadCount, bool fused, bool affinity)
     {
         const std::string design = "t" + std::to_string(threadCount) + (affinity ? "+affinity" : "");

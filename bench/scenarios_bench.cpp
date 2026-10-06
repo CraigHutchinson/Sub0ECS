@@ -1,4 +1,4 @@
-/** Storage designs on micro scenarios, H7 fusion, and planners x executors.
+/** Storage designs on micro scenarios, fusion, and planners x executors.
  *
  * Case names: <Scenario>/<Pattern>/<Design>/<N>. One operation is one pass over
  * the whole world, so items_per_second is world entities per second and rows are
@@ -326,7 +326,7 @@ namespace
             });
     }
 
-    /** H7 fusion. Same world, same systems; only the execution strategy differs.
+    /** Fusion. Same world, same systems; only the execution strategy differs.
      *  FusionFrame = Integrate, Forces, Wrap (share Position/Velocity) + RotHealth.
      *  Frame3Sys   = Physics, RotHealth, Pulse (disjoint columns).
      *  "HandFused" = the single hand-written Update2 kernel + RotHealth pass:

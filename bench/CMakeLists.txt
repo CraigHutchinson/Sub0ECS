@@ -48,7 +48,7 @@ target_link_libraries(sub0ecs_bench PRIVATE sub0ecs_bench_harness)
 add_executable(sub0ecs_spans_bench spans_bench.cpp)
 target_link_libraries(sub0ecs_spans_bench PRIVATE sub0ecs_bench_harness)
 
-# H9 timeline: cost of paging a system in (degraded path, bounded migration, stall)
+# Runtime-query timeline: cost of paging a system in (degraded path, bounded migration, stall)
 add_executable(sub0ecs_dynamic_timeline dynamic_timeline.cpp)
 target_link_libraries(sub0ecs_dynamic_timeline PRIVATE sub0ecs_bench_support)
 

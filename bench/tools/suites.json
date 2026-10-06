@@ -8,7 +8,7 @@
       "filter": "^(Create|Iter1|Update2|Frame3|SparseQuery|RandomGet|AddRemove|TagChurn|DestroyCreate)/"
     },
     "fusion": {
-      "description": "H7 fusion: sequential vs fused vs hand-merged",
+      "description": "Fusion: sequential vs fused vs hand-merged",
       "kind": "harness",
       "exe": "bench/sub0ecs_bench",
       "filter": "^(FusionFrame|Frame3Sys)/"
@@ -26,7 +26,7 @@
       "filter": "^Tick/"
     },
     "threads": {
-      "description": "H8 thread scaling on Skirmish (thread ladder up to hardware concurrency)",
+      "description": "Thread scaling on Skirmish (thread ladder up to hardware concurrency)",
       "kind": "harness",
       "exe": "bench/sub0ecs_skirmish_bench",
       "filter": "^Threads/",
@@ -35,7 +35,7 @@
       }
     },
     "dynamic": {
-      "description": "H9 dynamic system timeline (stall vs incremental relayout)",
+      "description": "Runtime-query timeline (stall vs incremental relayout)",
       "kind": "timeline",
       "exe": "bench/sub0ecs_dynamic_timeline",
       "args": [
