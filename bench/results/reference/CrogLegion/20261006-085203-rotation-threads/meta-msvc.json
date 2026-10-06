@@ -1,7 +1,7 @@
 {
   "schema": "sub0ecs-bench/1",
-  "timestamp_utc": "2026-10-05T15:54:34+00:00",
-  "label": "ref-msvc-threads",
+  "timestamp_utc": "2026-10-06T07:52:24+00:00",
+  "label": "r1-msvc",
   "host": "CrogLegion",
   "os": {
     "system": "Windows",
@@ -33,18 +33,18 @@
   "power": {
     "power_plan": "Balanced",
     "on_ac_power": true,
-    "cpu_load_percent": 6
+    "cpu_load_percent": 7.7
   },
   "git": {
-    "sha": "a35bf9703ee74f13f26ac3ca97e9a6286cbcd0af",
-    "branch": "feature/component-capacity",
+    "sha": "6e8b77c963b2c5be098dc6a7b9100e7c8417f3bb",
+    "branch": "docs/current-numbers",
     "dirty": true,
-    "describe": "v1.0.0-35-ga35bf97-dirty"
+    "describe": "v1.0.0-45-g6e8b77c-dirty"
   },
   "build": {
-    "build_dir": "build\\bench-native",
+    "build_dir": "build\\msvc-native",
     "build_type": "Release",
-    "cxx": "C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe",
+    "cxx": "cl",
     "cxx_version": "MSVC 19.51.36246.0",
     "cxx_flags": "/DWIN32 /D_WINDOWS /EHsc",
     "cxx_flags_release": "/O2 /Ob2 /DNDEBUG",
@@ -52,14 +52,10 @@
     "generator": "Ninja"
   },
   "run": {
-    "profile": "reference",
+    "profile": "standard",
     "profile_settings": {
-      "description": "Dedicated hardware: more paired rounds, longer epochs, larger sizes",
-      "env": {
-        "BENCH_SIZES": "1000,100000,1000000,10000000",
-        "SKIRMISH_UPT": "250,2500,12500,50000",
-        "SKIRMISH_THREADS_UPT": "2500,12500,50000"
-      },
+      "description": "Everyday comparisons: every suite at the default sizes",
+      "env": {},
       "suites": [
         "baseline",
         "fusion",
@@ -69,8 +65,8 @@
         "dynamic",
         "spans"
       ],
-      "epochs": 52,
-      "min_epoch_ms": 5
+      "epochs": 22,
+      "min_epoch_ms": 1
     },
     "suites": [
       "threads"
@@ -88,18 +84,15 @@
     "threads": {
       "status": "ok",
       "returncode": 0,
-      "seconds": 73.8,
+      "seconds": 14.7,
       "command": [
-        "build\\bench-native\\bench\\sub0ecs_skirmish_bench.exe",
+        "build\\msvc-native\\bench\\sub0ecs_skirmish_bench.exe",
         "--filter=^Threads/",
-        "--epochs=52",
-        "--min-epoch-ms=5",
-        "--out=D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261005-165440-a35bf97-ref-msvc-threads\\threads.json"
+        "--epochs=22",
+        "--min-epoch-ms=1",
+        "--out=D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-085203-6e8b77c-rotation-threads\\samples\\CrogLegion\\20261006-085228-6e8b77c-r1-msvc\\threads.json"
       ],
       "env": {
-        "BENCH_SIZES": "1000,100000,1000000,10000000",
-        "SKIRMISH_UPT": "250,2500,12500,50000",
-        "SKIRMISH_THREADS_UPT": "2500,12500,50000",
         "SKIRMISH_THREADS": "auto"
       }
     }

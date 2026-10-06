@@ -1,6 +1,6 @@
 #pragma once
 /** AlwaysFuse: one group for the whole schedule. Wins when systems share
- *  columns; loses (~0.8x on Frame3) when they don't. */
+ *  columns; loses when they don't. */
 
 #include <array>
 

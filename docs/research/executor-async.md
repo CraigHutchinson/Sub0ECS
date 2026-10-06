@@ -1,11 +1,9 @@
 # Executors for accelerators: split-phase contract and column residency
 
-> **Design note from the exploration phase.** It records the reasoning behind a
-> decision; its numbers were measured on an earlier host (a 4-vCPU cloud VM, GCC 13)
-> and its result files are in the repository history, not the tree. Current,
-> re-measured figures are in [FINDINGS.md](../FINDINGS.md).
+> Design note: the reasoning behind a part of the library. Measurements are kept in
+> [FINDINGS.md](../FINDINGS.md), open work in [BACKLOG.md](../BACKLOG.md).
 
-Status: design note, not yet prototyped (see "H10" at the end).
+Status: design note, not yet prototyped (see the validation plan at the end).
 Builds on [fusion-extension-points.md](fusion-extension-points.md) §2.3
 (the executor extension point) and §5 (the determinism caveat).
 
@@ -165,13 +163,13 @@ for executors with host-identical floating-point semantics.
 
 | # | Question | How to resolve |
 |---|---|---|
-| E1 | `Completion`: type-erased small buffer, or a per-executor type? | Type-erased keeps planners and the pipeline executor-agnostic. Measure the cost in H10 |
+| E1 | `Completion`: type-erased small buffer, or a per-executor type? | Type-erased keeps planners and the pipeline executor-agnostic. Measure the cost in the prototype |
 | E2 | Residency granularity: per partition column or per column tile? | Per partition column first; tiles only if partial dirtiness shows up |
 | E3 | Eager vs lazy write-back | Lazy wins when the device writes and the next reader is also on the device; eager is simpler. Make it an executor property |
 | E4 | LP-core availability window (HP asleep) | Executor `available()` query; the planner's host fallback already covers declining work |
-| E5 | Does residency interact with H9 promotion and relayout? | Relayout moves rows between partitions, so it is a structural change and syncs first |
+| E5 | Does residency interact with runtime-query promotion and relayout? | Relayout moves rows between partitions, so it is a structural change and syncs first |
 
-## 7. Validation spike: H10 (backlog)
+## 7. Validation plan (backlog)
 
 Add an **async emulated device** to `executors/`: a worker thread as the "engine" and
 a second one as the "copy engine", with configurable transfer latency and bandwidth.
@@ -189,4 +187,4 @@ query-partition worlds. Then show:
    numbers (`Coherence::HostOnly`).
 
 Follow-ups: a real CUDA executor behind an off-by-default CMake option (needs the
-device-compiled TU, §4), and an ESP32-P4 async-memcpy `Offload` (H4/H8e).
+device-compiled TU, §4), and an ESP32-P4 async-memcpy `Offload`.
