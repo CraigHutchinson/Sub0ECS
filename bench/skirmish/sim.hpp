@@ -1,6 +1,6 @@
 #pragma once
 /** Skirmish — a deterministic, headless 4-team RTS simulation written against
- * the spike's storage-adapter surface, so every storage design runs the same
+ * the benchmarks' storage-adapter surface, so every storage design runs the same
  * game (see README.md).
  *
  * Determinism across storage designs (which iterate in different orders):
@@ -229,7 +229,7 @@ namespace skirmish
     {
         int teams = 4;
         int unitsPerTeam = 500;
-        /** H8 threading: when set (and the world supports eachParallel), every
+        /** Threading: when set (and the world supports eachParallel), every
          *  system runs data-parallel on this pool with lock-step commit points. */
         sub0ecs::fusion::Parallel* pool = nullptr;
         bool fuseMovement = true;   ///< with a pool: one fused parallel pass vs one parallel pass per system
@@ -442,7 +442,7 @@ namespace skirmish
             }
         }
 
-        // ---- threading helpers (H8) ------------------------------------------
+        // ---- threading helpers -----------------------------------------------
         unsigned workerCount() const { return cfg_.pool ? cfg_.pool->concurrency() : 1u; }
 
         /** Iterate a query; data-parallel on the pool when configured. f(worker, Cs&...). */

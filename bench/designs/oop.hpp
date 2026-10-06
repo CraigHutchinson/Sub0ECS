@@ -1,16 +1,16 @@
 #pragma once
-/** OOP comparator: v1's update_patterns "OOP" design (see the master branch), rebuilt on
- * the v2 benchmark workload.
+/** Classical inheritance: a class hierarchy with virtual updates.
  *
- * One heap object per entity, the component data as plain members, and a virtual
- * update() per object: the class-hierarchy design an ECS is usually measured
- * against. Entities are created through the shared populate() (scenarios.hpp), so the
- * entity mix and values are identical to every other design; Update2's work is
- * updateAll(), one virtual call per entity running the same kernel::updatePosition
- * with the same constant timestep.
+ * One heap object per entity, its data as plain members, and a virtual call per
+ * object per update: the design an ECS is usually measured against. The
+ * hierarchy is Small <- Medium <- Large, each level adding members and
+ * overriding the updates to include them. Entities are created through the
+ * shared populate() (scenarios.hpp), so the mix and values match every other
+ * design, and the updates run the shared kernels with the same constant timestep.
  *
- * Scope, as in v1: Create and Update2 only (no queries, structural change or
- * destroy). find<C>() exists so conformance can compare state; it is not timed.
+ * Scope: Create, Iter1, Update2, Frame3 and RandomGet. An object's class is fixed
+ * when it is created, so there are no queries and no adding or removing of
+ * components. find<C>() exists so conformance can compare state.
  */
 
 #include <cstddef>
@@ -40,11 +40,15 @@ namespace bench::oop
     {
     public:
         virtual ~Object() = default;
-        /** One Update2 step. The timestep is the workload's compile-time constant, exactly as
-         *  in every other design: passed at runtime instead, `9.8f * dt` is fused into the
-         *  add on FMA targets (ARM64, native x86) and rounds differently from the folded
-         *  constant, so the designs would no longer be bit-identical. */
+        /** Iter1: nudge the position. */
+        virtual void nudge() = 0;
+        /** Update2: one physics step. The timestep is the workload's compile-time constant,
+         *  exactly as in every other design: passed at runtime instead, `9.8f * dt` is fused
+         *  into the add on FMA targets (ARM64, native x86) and rounds differently from the
+         *  folded constant, so the designs would no longer be bit-identical. */
         virtual void update() = 0;
+        /** Frame3: everything this class does in a frame, in one call. */
+        virtual void frame() = 0;
         /** Address of the member for kSlot<C>, or nullptr if this class has none (conformance only). */
         virtual void* raw(int slot) = 0;
     };
@@ -53,7 +57,10 @@ namespace bench::oop
     {
     public:
         Small(Position p, Velocity v) : pos_(p), vel_(v) {}
+        void nudge() override { pos_.x += 1.0f; }
         void update() override { kernel::updatePosition(pos_, vel_, kDeltaTime); }
+        void frame() override { kernel::updatePosition(pos_, vel_, kDeltaTime); }
+        const Velocity& velocity() const { return vel_; }
         void* raw(int slot) override
         {
             switch (slot)
@@ -64,67 +71,61 @@ namespace bench::oop
             }
         }
 
-    private:
+    protected:
         Position pos_;
         Velocity vel_;
     };
 
-    class Medium : public Object
+    class Medium : public Small
     {
     public:
-        Medium(Position p, Velocity v, Health h, Rotation r, Scale s) : pos_(p), vel_(v), health_(h), rotation_(r), scale_(s) {}
-        void update() override { kernel::updatePosition(pos_, vel_, kDeltaTime); }
+        Medium(Position p, Velocity v, Health h, Rotation r, Scale s) : Small(p, v), health_(h), rotation_(r), scale_(s) {}
+        void frame() override
+        {
+            Small::frame();
+            kernel::updateRotationHealth(health_, rotation_, kDeltaTime);
+        }
         void* raw(int slot) override
         {
             switch (slot)
             {
-            case 0: return &pos_;
-            case 1: return &vel_;
             case 2: return &health_;
             case 3: return &rotation_;
             case 4: return &scale_;
-            default: return nullptr;
+            default: return Small::raw(slot);
             }
         }
 
-    private:
-        Position pos_;
-        Velocity vel_;
+    protected:
         Health health_;
         Rotation rotation_;
         Scale scale_;
     };
 
-    class Large : public Object
+    class Large : public Medium
     {
     public:
         Large(Position p, Velocity v, Health h, Rotation r, Scale s, Color c, Team t, Flags f)
-            : pos_(p), vel_(v), health_(h), rotation_(r), scale_(s), color_(c), team_(t), flags_(f)
+            : Medium(p, v, h, r, s), color_(c), team_(t), flags_(f)
         {
         }
-        void update() override { kernel::updatePosition(pos_, vel_, kDeltaTime); }
+        void frame() override
+        {
+            Medium::frame();
+            kernel::pulseScale(scale_, color_, kDeltaTime);
+        }
         void* raw(int slot) override
         {
             switch (slot)
             {
-            case 0: return &pos_;
-            case 1: return &vel_;
-            case 2: return &health_;
-            case 3: return &rotation_;
-            case 4: return &scale_;
             case 5: return &color_;
             case 6: return &team_;
             case 7: return &flags_;
-            default: return nullptr;
+            default: return Medium::raw(slot);
             }
         }
 
     private:
-        Position pos_;
-        Velocity vel_;
-        Health health_;
-        Rotation rotation_;
-        Scale scale_;
         Color color_;
         Team team_;
         Flags flags_;
@@ -148,11 +149,22 @@ namespace bench::oop
             return Entity::make(static_cast<std::uint32_t>(objects_.size() - 1u), 0);
         }
 
-        /** Update2: one virtual call per entity. */
+        /** One virtual call per entity for each scenario. */
+        void nudgeAll()
+        {
+            for (auto& o : objects_) o->nudge();
+        }
         void updateAll()
         {
             for (auto& o : objects_) o->update();
         }
+        void frameAll()
+        {
+            for (auto& o : objects_) o->frame();
+        }
+
+        /** RandomGet: every class has a velocity, so no virtual call is needed. */
+        const Velocity& velocity(Entity e) const { return static_cast<const Small&>(*objects_[e.index()]).velocity(); }
 
         template <typename C>
         C* find(Entity e)

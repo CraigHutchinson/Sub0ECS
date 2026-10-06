@@ -1,17 +1,19 @@
-# Threading: how systems scale across processors (H8)
+# Threading: how systems scale across processors
+
+> Design note: the reasoning behind a part of the library. Measurements are kept in
+> [FINDINGS.md](../FINDINGS.md), open work in [BACKLOG.md](../BACKLOG.md).
 
 Question: how should systems use multiple processors? Lock-step (all
 threads cooperate on each phase, with barriers) or independent working
 (threads or engines progress without global barriers)?
 
-Evidence comes from the real workload: the Skirmish RTS
-([testbed/skirmish](../../bench/skirmish/README.md)) on a 4-core VM
-(1 thread per core), plus the fusion micro-scenarios.
+The reasoning comes from a real workload, the Skirmish RTS
+([bench/skirmish](../../bench/skirmish/README.md)), plus the fusion micro-scenarios.
+Thread-scaling figures are in [FINDINGS.md](../FINDINGS.md), section 5.
 - Code: `Parallel` pool and `InlineRange` in
   [fusion/executors/parallel.hpp](../../include/sub0ecs/fusion/executors/parallel.hpp) and [fusion/executors/inline.hpp](../../include/sub0ecs/fusion/executors/inline.hpp); `eachParallel` and
-  `runFusedParallel` in [designs/query_partition.hpp](../../include/sub0ecs/store/world.hpp);
-  per-worker command buffers in [testbed/skirmish/sim.hpp](../../bench/skirmish/sim.hpp).
-- Numbers: [results/threading-skirmish-linux-gcc13.json](../../bench/results/threading-skirmish-linux-gcc13.json).
+  `runFusedParallel` in [store/world.hpp](../../include/sub0ecs/store/world.hpp);
+  per-worker command buffers in [bench/skirmish/sim.hpp](../../bench/skirmish/sim.hpp).
 
 ## 1. Answer in one paragraph
 
@@ -36,69 +38,42 @@ Fully barrier-free, free-running threads are rejected. They give up
 determinism (lock-step networking, replays, conformance) for gains this
 workload doesn't need.
 
-## 2. Measurements
+## 2. What limits scaling
 
-### 2.1 Whole game (Skirmish, ms per tick, fused movement)
+All threaded variants play the **bit-identical game** at every thread count,
+checked by Skirmish conformance.
 
-| Execution model | 10K units | 50K units |
-|---|---:|---:|
-| 1 thread | 2.25 | 11.99 |
-| **First cut:** lock-step fork-join per system, sleeping pool, per-partition fused split, 4 threads | 2.68 (**0.84×**) | 7.97 (1.50×) |
-| **Improved:** spin-then-park pool, grain control, chunk-level fused parallelism, 4 threads | **1.27–1.50 (1.45–1.77×)** | **5.51–5.92 (2.05–2.18×)** |
-| Same, 2 threads | 1.63 (1.38×) | 7.52 (1.59×) |
-| Static "owner computes" affinity, 4 threads | 2.23 (1.01×) | 8.00 (1.50×) |
+Per system, the pattern is stable across machines:
 
-The two numbers in the "Improved" row come from two separate runs: the
-first measurement and the archived JSON run. The spread shows
-run-to-run variance on this shared VM, which is largest for the short
-10K ticks.
+| System | Scales? | Why |
+|---|---|---|
+| movement (fused chain) | Well | Row-local, chunk-level, dynamically balanced |
+| acquire (spatial search) | Well | Compute-heavy, reads an immutable grid |
+| combat | Barely | Dominated by the serial commit (spawning projectiles) |
+| grid build | Gets slower | Serial merge and sort; reads positions other cores just wrote |
+| selection / status | Gets slower | Tiny work; serial phases pay cross-core cache traffic |
 
-All threaded variants play the **bit-identical game** at 2 and 4 threads,
-checked by Skirmish conformance. ThreadSanitizer is clean on both the
-game and the fusion tests.
-
-### 2.2 Per system at 50K units (µs per tick, 1 → 4 threads)
-
-| System | 1 T | 4 T | Scaling | Why |
-|---|---:|---:|---:|---|
-| movement (fused chain) | 5 465 | 1 561 | **3.50×** | Row-local, chunk-level, dynamically balanced |
-| acquire (spatial search) | 4 263 | 1 349 | **3.16×** | Compute-heavy, read-only grid |
-| combat | 739 | 604 | 1.22× | Dominated by serial commit (spawning projectiles) |
-| grid build | 896 | 1 201 | **0.75×** | Serial merge and sort; reads positions written by other cores |
-| selection / status | 21 / 5 | 146 / 134 | ≪ 1× | Tiny work; serial phases pay cross-core cache traffic |
-
-Amdahl view: at 4 threads about 2.4 ms of the 5.5 ms tick is still serial
-(grid finish, commit/apply, small systems). That serial fraction, not the
-systems, caps scaling at ~2.1–2.2× here.
-
-### 2.3 Fusion × threads (FusionFrame, fragmented)
-
-| | 100K rows | 1M rows |
-|---|---:|---:|
-| Unfused, 1 thread | 236 µs | 3.03 ms |
-| Fused, 1 thread | 66 µs (3.6×) | 0.91 ms (3.3×) |
-| Fused + 4 threads (per-partition fork-join, sleeping pool) | 234 µs (**1.0×**) | **0.51 ms (6.0×)** |
-
-At 1M, fusion and threads multiply. At 100K, one fork-join per partition
-per group with a sleeping pool *erases* the fusion gain. Synchronisation
-granularity is the real design variable.
+The serial fraction (grid finish, commit, the small systems), not the parallel
+systems, caps whole-tick scaling. And synchronisation granularity is the real
+design variable: with enough rows fusion and threads multiply, but one fork-join
+per partition per group with a sleeping pool can erase the fusion gain entirely.
 
 ## 3. What each experiment taught
 
 1. **Barrier cost dominates small work.** A condition-variable wake-up
-   costs tens of µs on this VM, and a tick issues ~15 dispatches. Fixes,
-   all measured:
-   - **spin-then-park** workers: a spin budget of 4 000 pauses beat 300,
+   costs tens of microseconds, and a tick issues about 15 dispatches. Fixes:
+   - **spin-then-park** workers: a long spin budget beat a short one,
      because back-to-back dispatches find workers awake;
    - **grain control**: fewer than 4 chunks → run inline;
    - **fusion**, which removes barriers between row-local systems.
 2. **Parallelise at chunk granularity across partitions, not per
    partition.** The game has many small partitions. Forking per partition
-   left most of them serial (movement 1.6× → 3.5× after the change).
+   left most of them serial; chunk-level work across all partitions more than
+   doubled the movement group's scaling.
 3. **Dynamic balancing beats affinity here.** Chunk cost varies by an order
    of magnitude: dense unit chunks run Separation's grid scans, projectile
-   chunks only integrate. Static contiguous blocks overloaded one worker
-   (movement 1.56 ms dynamic vs 2.80 ms static at 4 threads). Affinity
+   chunks only integrate. Static contiguous blocks overloaded one worker.
+   Affinity
    only pays with **cost-weighted** assignment; see R2.
 4. **Serial phases pay for parallel phases.** Once workers have written
    columns, the main thread's serial passes (grid merge, commit) incur
@@ -117,24 +92,24 @@ granularity is the real design variable.
 
 | Model | Description | Verdict |
 |---|---|---|
-| **M1 Lock-step fork-join per system** | Each system data-parallel, barrier after each | Simple, deterministic; barrier-bound for small systems (first cut 0.84× at 10K) |
-| **M2 Lock-step phases, fused chains, chunk-level** | Barriers only at commit points; each worker streams chunks through the fused chain | **Recommended backbone.** 3.5× on movement, 2.18× whole tick |
+| **M1 Lock-step fork-join per system** | Each system data-parallel, barrier after each | Simple, deterministic; barrier-bound for small systems (the first cut was slower than one thread at small sizes) |
+| **M2 Lock-step phases, fused chains, chunk-level** | Barriers only at commit points; each worker streams chunks through the fused chain | **Recommended backbone.** |
 | **M3 Task-parallel DAG** | Independent systems run concurrently (edges from declared Access) | Needed for the many *small* systems (status, regen, death, arrive, selection): one dispatch for all of them instead of one each. Maps onto Sub0Pipeline |
 | **M4 Owner-computes affinity** | Worker owns the same chunks across systems | Loses to imbalance without a cost model; keep as an executor option (`Parallel(threads, affinity)`) |
-| **M5 Pipelined frames** | Read-only consumers of frame N run while frame N+1 simulates | **Independent working where it is safe**: consumers read an immutable snapshot (the replica mechanism, research §4.3.4), so determinism holds |
+| **M5 Pipelined frames** | Read-only consumers of frame N run while frame N+1 simulates | **Independent working where it is safe**: consumers read an immutable snapshot (the replica mechanism, [holographic-storage.md](holographic-storage.md) §4.3), so determinism holds |
 | M6 Free-running threads | No barriers, eventual consistency | Rejected: non-deterministic; breaks lock-step networking, replays and conformance |
 
 ## 5. Recommendations
 
 | # | Recommendation | Rationale / evidence |
 |---|---|---|
-| R1 | **Phases + fused chunk-level data parallelism** as the default schedule | §2.1–2.2 |
+| R1 | **Phases + fused chunk-level data parallelism** as the default schedule | §2 |
 | R2 | **Dynamic chunk claiming by default**; affinity only with cost-weighted blocks from measured per-partition cost (the same measuring planner as fusion's AutoTuner) | §3.3 |
-| R3 | **Job system:** spin-then-park workers, grain control, and a *parallel planner* deciding inline vs parallel per group (an AutoTuner candidate: `{Inline, Parallel}`) | §3.1; spin 300 vs 4 000 measured |
-| R4 | **Batch small independent systems into one dispatch** (M3) using Access-derived conflicts; schedule through Sub0Pipeline | Removes ~6 barriers per tick in Skirmish |
-| R5 | **Shrink the serial fraction:** parallel spatial-index build (per-worker counting, parallel per-cell sort) and **sharded parallel commit** (commands bucketed by target partition, each shard applied by one worker, still Id-sorted within a shard) | ~2.4 ms of 5.5 ms is serial at 4 threads |
+| R3 | **Job system:** spin-then-park workers, grain control, and a *parallel planner* deciding inline vs parallel per group (an AutoTuner candidate: `{Inline, Parallel}`) | §3.1 |
+| R4 | **Batch small independent systems into one dispatch** (M3) using Access-derived conflicts; schedule through Sub0Pipeline | Removes about six barriers per tick in Skirmish |
+| R5 | **Shrink the serial fraction:** parallel spatial-index build (per-worker counting, parallel per-cell sort) and **sharded parallel commit** (commands bucketed by target partition, each shard applied by one worker, still Id-sorted within a shard) | The serial fraction caps scaling (§2) |
 | R6 | **Pipeline read-only consumers across frames** (M5) from snapshots | Independent working without losing determinism |
-| R7 | **Embedded (ESP32-P4: 2 HP cores + LP core):** prefer task-level parallelism (subsystems pinned per core via Sub0Pipeline's FreeRTOS executor) over fine-grained data parallelism; data-parallel only for large groups; small spin budget (power) | N is small; §2.1 shows threading loses below ~10K rows without these fixes |
+| R7 | **Embedded (ESP32-P4: 2 HP cores + LP core):** prefer task-level parallelism (subsystems pinned per core via Sub0Pipeline's FreeRTOS executor) over fine-grained data parallelism; data-parallel only for large groups; small spin budget (power) | N is small; threading loses at small row counts without these fixes |
 
 ## 6. Integration with the Sub0 family
 
@@ -150,12 +125,12 @@ granularity is the real design variable.
 - **Sub0Pub** events are emitted after commit on the main thread, so
   observers never see intra-phase state.
 
-## 7. Next spikes
+## 7. Next steps
 
-| Spike | Goal | Pass criterion |
-|---|---|---|
-| H8b | Parallel grid build + sharded commit | Serial fraction at 50K/4 T < 1 ms; whole tick ≥ 3× |
-| H8c | Task-parallel batch for small systems (one dispatch) via Access conflicts; Sub0Pipeline-backed pool | Small-system total at 4 T ≤ 1 T |
-| H8d | Cross-frame pipelined consumer (render-extract snapshot) | Consumer fully overlapped; game still bit-identical |
-| H8e | ESP32-P4: 2 HP cores + LP core, static plan | Speed-up and power reported; determinism holds |
-| — | Cost-weighted affinity | Beats dynamic on movement at 4 T |
+| Goal | Pass criterion |
+|---|---|
+| Parallel grid build and sharded commit | The serial fraction no longer dominates the tick |
+| Task-parallel batch for small systems (one dispatch) via Access conflicts; Sub0Pipeline-backed pool | Small-system total with threads ≤ single-threaded |
+| Cross-frame pipelined consumer (render-extract snapshot) | Consumer fully overlapped; game still bit-identical |
+| ESP32-P4: 2 HP cores + LP core, static plan | Speed-up and power reported; determinism holds |
+| Cost-weighted affinity | Beats dynamic claiming on movement |

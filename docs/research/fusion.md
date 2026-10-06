@@ -1,46 +1,37 @@
-# System fusion: design and H7 prototype
+# System fusion: design
 
-System fusion (C4 in [design-review-pre-h2.md](design-review-pre-h2.md)),
-brought forward by request. Several systems that visit the same entities run
+> Design note: the reasoning behind a part of the library. Measurements are kept in
+> [FINDINGS.md](../FINDINGS.md), open work in [BACKLOG.md](../BACKLOG.md).
+
+System fusion (option C4 in [design-review-pre-h2.md](design-review-pre-h2.md)).
+Several systems that visit the same entities run
 as **one pass per partition**, applying each system to a row in schedule
 order before moving to the next row. The data is loaded once and stays in
 registers for the next system, instead of making one full memory pass per
 system.
 
-- Prototype: `runFused(...)` in [designs/query_partition.hpp](../../include/sub0ecs/store/world.hpp).
-- Systems: [common/systems.hpp](../../bench/common/systems.hpp).
-- Results: [results/h7-fusion-linux-gcc13.md](../../bench/results/h7-fusion-linux-gcc13.md).
+- Code: `runFused(...)` in [store/world.hpp](../../include/sub0ecs/store/world.hpp).
+- Benchmark systems: [bench/common/systems.hpp](../../bench/common/systems.hpp).
+- Measurements: [FINDINGS.md](../FINDINGS.md), "Small systems and fusion".
 
-## 1. Result
-
-| FusionFrame (3 systems sharing Position/Velocity + 1 unrelated) | Sequential | Fused | vs hand-merged kernel |
-|---|---:|---:|---:|
-| Coherent, 100K | 195.9 µs | **44.0 µs (4.46×)** | 1.09× *faster* than hand-merged |
-| Fragmented, 100K | 235.7 µs | **63.9 µs (3.69×)** | 1.02× |
-| Coherent, 1M | 2.89 ms | **0.75 ms (3.84×)** | 0.88× |
-| Fragmented, 1M | 3.16 ms | **0.90 ms (3.52×)** | 1.07× |
-| Coherent, 1K | 1.77 µs | **0.34 µs (5.14×)** | 1.09× |
-
-| Frame3 (3 systems, **no shared columns**) | Sequential | Fused |
-|---|---:|---:|
-| Fragmented, 1K / 100K / 1M | 0.75 µs / 119.5 µs / 1.37 ms | 0.64× / 0.81× / 0.86× (**slower**) |
+## 1. What fusion is for
 
 - Fused output is **bit-identical** to sequential passes, verified by
-  conformance for both H1 variants and both patterns. That includes a
+  conformance for both store variants and both entity patterns. That includes a
   structural change between frames that alters which systems apply to
   which partition. It is also clean under ASan/UBSan.
-- Automatic fusion reaches the hand-merged kernel. Writing systems as
-  small, single-purpose kernels therefore costs nothing once they are fused.
-  That removes the usual ECS tension between small, composable systems and
-  fast code.
-- Fusion is not free: fusing systems that share no data is a net loss
-  (§4).
+- The claim fusion has to meet is that small single-purpose systems, fused, run
+  at the speed of the kernel a programmer would have merged by hand. Meeting it
+  removes the usual ECS tension between small, composable systems and fast code.
+  FINDINGS has the current measurement of that claim per compiler.
+- Fusion is not free: fusing systems that share no data is a net loss (§4), and
+  what separate passes cost in the first place depends on the compiler.
 
 ## 2. Model
 
 - **Fusion group:** an ordered list of systems `S1..Sk` run by one executor
   call. Order is the schedule (DAG) order.
-- **Per-partition subset:** each H1 partition's signature says which
+- **Per-partition subset:** each partition's signature says which
   declared queries it matches, so for each partition the set of group
   members that apply is known *before* the loop:
   `subset(P) = { j : Sj.query ∈ signature(P) }`.
@@ -82,15 +73,14 @@ same sequence of operations as in the sequential schedule.
 ## 4. Grouping (what the planner should fuse)
 
 Optimal fusion for locality is NP-hard in general (Kennedy & McKinley), so
-we use a rule plus a cost check. H7 gives the rule:
+we use a rule plus a cost check. The prototype gave the rule:
 
 - **G1. Fuse systems that share columns.** Take connected components of
   the "shares a component" graph over consecutive, legally fusable systems.
-  Shared columns are loaded once instead of once per system. Evidence:
-  FusionFrame, 3.5–5.3×.
+  Shared columns are loaded once instead of once per system.
 - **G2. Do not fuse groups that share nothing.** Frame3 (Physics,
-  RotHealth, Pulse touch disjoint columns) got 0.64–0.86× when fused.
-  There is no reuse to gain, and the combined loop streams six arrays of
+  RotHealth, Pulse touch disjoint columns) is slower fused than as separate
+  passes. There is no reuse to gain, and the combined loop streams six arrays of
   mixed element sizes (8 B, 4 B, 16 B) at once. The vector width is then
   set by the smallest element, the other streams pay for shuffles, and
   register and prefetch pressure rise. The loops still vectorise, as the
@@ -102,30 +92,31 @@ we use a rule plus a cost check. H7 gives the rule:
   all, not about every member having to share.
 - **G4. Cost check (next step).** Estimated bytes saved (shared-column
   footprint × (members − 1)) against the added number of streams. Only fuse
-  when the saving is positive. The spike leaves grouping to the caller;
+  when the saving is positive. `runFused` leaves grouping to the caller;
   the planner will derive it from declared access (§6).
 
 ## 5. Implementation lessons from the prototype
 
 1. **Fusion depends on full inlining.** The first working version was *no
-   faster* than sequential in the benchmark binary, yet 4× faster in a small
+   faster* than sequential in the benchmark binary, yet much faster in a small
    test file. In a large translation unit GCC's heuristics stopped inlining
    partway through the fused call chain, so the merged kernel never formed.
    Fix: `__attribute__((flatten))` on the fused loop. Production code needs
-   the equivalent per compiler (GCC/Clang `flatten`; MSVC equivalent to be
-   verified), plus a regression benchmark that fails if fused ≠ hand-merged.
+   the equivalent per compiler (GCC/Clang `flatten`; on MSVC the row-call hint
+   in `sub0ecs/detail/hints.hpp`), plus a regression benchmark that fails if
+   fused ≠ hand-merged.
 2. **Bind columns by type, not per system.** Per-system copies of the same
    column pointer defeat store-to-load forwarding and force alias versioning.
 3. **Subset dispatch costs code size.** `2^k` loop instantiations per group:
    fine at k ≤ 4–5. Larger groups should dispatch only the subsets that
    actually occur (known from the partition list at plan time), or split.
-   This matters for ESP32 flash (H4).
+   This matters for ESP32 flash.
 
 ## 6. Integration design
 
 - **Declared access.** Fusion legality (L1–L3) and grouping (G1) need
   per-system `Read<T>`/`Write<T>` and locality/reduction markers, not just a
-  query. The spike's systems declare only `Query<Cs...>` (all treated as
+  query. The benchmark's systems declare only `Query<Cs...>` (all treated as
   write). Action: introduce the `Access<Read<A>, Write<B>, ...>` declaration
   from the research note; it also gives `const T&` for read-only members.
 - **Sub0Pipeline.** A fusion group is **one job** in the DAG. The planner
@@ -133,7 +124,7 @@ we use a rule plus a cost check. H7 gives the rule:
   edges (the union of the members' edges). Commit points and reductions are
   group boundaries. Data parallelism is unchanged: a fused job splits by
   partition or row ranges exactly as an unfused one would.
-- **Partitions (H1).** Subsets come straight from partition signatures, so
+- **Partitions.** Subsets come straight from partition signatures, so
   partitioning and fusion reinforce each other. A system tree (C1) makes
   subsets nested, which reduces the number of distinct subsets and so the
   instantiations.
@@ -143,7 +134,7 @@ we use a rule plus a cost check. H7 gives the rule:
 - **Static / embedded.** In static mode, groups and subsets are known at
   compile time, so only occurring subsets are instantiated. On ESP32-class
   cores without wide SIMD, the gain comes from fewer memory passes and less
-  loop overhead. To be measured in H4.
+  loop overhead. To be measured on the device.
 - **Debuggability.** A `SUB0DATASTORE_NO_FUSION` build switch runs groups
   sequentially (same results, by L1–L4), so per-system profiling and
   stepping stay possible. Timing is reported per group when fused.
@@ -164,9 +155,9 @@ we use a rule plus a cost check. H7 gives the rule:
 
 ## 8. Next steps
 
-| Step | What | Pass criterion |
-|---|---|---|
-| H7b | Planner forms groups automatically from declared `Read/Write` access + DAG order (G1–G4) | Picks FusionFrame's grouping, declines Frame3; equals hand grouping |
-| H7c | Fusion as one Sub0Pipeline job; data-parallel split | Parallel fused ≥ parallel sequential × (single-thread speed-up) |
-| H4+ | Static mode on ESP32-P4 with occurring-subset instantiation | Speed-up without SIMD; flash growth reported |
-| — | Regression guard: fused ≡ hand-merged within 10% in CI benchmark | Catches inlining regressions (lesson 1) |
+| What | Pass criterion |
+|---|---|
+| The planner forms groups automatically from declared `Read/Write` access and schedule order (G1–G4) | Picks FusionFrame's grouping, declines Frame3; equals hand grouping |
+| Fusion as one Sub0Pipeline job; data-parallel split | Parallel fused ≥ parallel sequential × (single-thread speed-up) |
+| Static mode on ESP32-P4 with only the occurring subsets instantiated | Speed-up without SIMD; flash growth reported |
+| Regression guard in CI: fused ≡ hand-merged within 10% | Catches inlining regressions (lesson 1) |

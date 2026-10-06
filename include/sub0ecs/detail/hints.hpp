@@ -6,9 +6,8 @@
  * loop, where the body is a user callable the library cannot annotate.
  *
  * MSVC only. Its inliner stops one level short there: the callable is inlined
- * but a function it calls stays a call per row (Update2 ran 1.5x its
- * hand-written loop; 1.09x with the hint). GCC and Clang inline that chain
- * unaided (1.02x and 1.06x), and have no statement-level equivalent. */
+ * but a function it calls stays a call per row. GCC and Clang inline that
+ * chain unaided, and have no statement-level equivalent. */
 
 #if defined(_MSC_VER) && !defined(__clang__) && _MSC_VER >= 1937
 #    define SUB0ECS_FLATTEN_CALLS [[msvc::flatten]]

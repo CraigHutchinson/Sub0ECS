@@ -1,10 +1,11 @@
-/** Storage designs on micro scenarios, H7 fusion, and planners x executors.
+/** Storage designs on micro scenarios, fusion, and planners x executors.
  *
  * Case names: <Scenario>/<Pattern>/<Design>/<N>. One operation is one pass over
  * the whole world, so items_per_second is world entities per second and rows are
  * comparable across designs within a scenario. Designs of a group are measured
- * with a paired comparison against the first registered: v1 wherever v1 supports
- * the scenario (see bench/harness/runner.hpp).
+ * with a paired comparison against the first registered: the hand-written loop
+ * where one exists (iteration and lookup), the sparse set elsewhere (see
+ * bench/harness/runner.hpp).
  */
 #include <algorithm>
 #include <atomic>
@@ -23,15 +24,14 @@
 #include "common/scenarios.hpp"
 #include "common/systems.hpp"
 #include "designs/archetype.hpp"
+#include "designs/handwritten.hpp"
+#include "designs/naive_components.hpp"
 #include "designs/oop.hpp"
 #include "designs/query_partition.hpp"
 #include "designs/sorted_soa.hpp"
 #include "designs/sparse_set.hpp"
 #include "designs/static_bitmask.hpp"
 #include "harness/harness.hpp"
-#if SUB0ECS_HAS_V1_BASELINE
-#    include "designs/v1_adapter.hpp"
-#endif
 
 // ---- Heap accounting (glibc) ----------------------------------------------
 #if defined(__GLIBC__)
@@ -236,51 +236,97 @@ namespace
         }
     }
 
-    /** OOP comparator (v1's "OOP" column): one heap object and one virtual call per entity.
-     *  Create and Update2 only, as in v1; its Update2 work is updateAll(). */
+    /** Classical inheritance: one heap object per entity and one virtual call per
+     *  object per scenario. No queries or structural change (see designs/oop.hpp). */
     void registerOop(std::int64_t n)
     {
+        using Fixture = WorldFixture<oop::World>;
+        // Not populated<>(): the hierarchy has no add() to tag with.
+        const auto make = [](std::int64_t count, Pattern p) {
+            auto fx = std::make_shared<Fixture>();
+            fx->entities = populate(*fx->world, count, p);
+            return fx;
+        };
         for (Pattern p : { Pattern::Coherent, Pattern::Fragmented })
         {
             addCreate<oop::World>(p, n);
-            add("Update2", p, oop::World::kName, n,
-                [=] {
-                    auto fx = std::make_shared<WorldFixture<oop::World>>();   // not populated<>(): OOP has no add() to tag with
-                    fx->entities = populate(*fx->world, n, p);
-                    return fx;
-                },
-                [](WorldFixture<oop::World>& fx) { fx.world->updateAll(); });
+            add("Iter1", p, oop::World::kName, n, [=] { return make(n, p); }, [](Fixture& fx) { fx.world->nudgeAll(); });
+            add("Update2", p, oop::World::kName, n, [=] { return make(n, p); }, [](Fixture& fx) { fx.world->updateAll(); });
         }
+        const Pattern f = Pattern::Fragmented;
+        add("Frame3", f, oop::World::kName, n, [=] { return make(n, f); }, [](Fixture& fx) { fx.world->frameAll(); });
+        add("RandomGet", f, oop::World::kName, n,
+            [=] {
+                auto fx = make(n, f);
+                std::shuffle(fx->entities.begin(), fx->entities.end(), std::mt19937(123));
+                return fx;
+            },
+            [](Fixture& fx) {
+                float sum = 0.0f;
+                for (const auto& e : fx.entities) sum += fx.world->velocity(e).dx;
+                ankerl::nanobench::doNotOptimizeAway(sum);
+            });
     }
 
-    /** Hand-written SoA upper bound for Update2 (every entity has Position+Velocity). */
-    void registerRawSoA(std::int64_t n)
+    /** The bars: the workload written by hand with no ECS (designs/handwritten.hpp).
+     *  Registered first, so HandWritten is the paired baseline of these scenarios. */
+    template <typename H>
+    void registerHand(std::int64_t n)
     {
-        struct Soa
+        struct Fixture
         {
-            std::vector<Position> pos;
-            std::vector<Velocity> vel;
+            H world;
+            std::vector<std::uint32_t> handles;   // RandomGet: every entity, shuffled
+            Fixture(std::int64_t count, Pattern p) : world(count, p) {}
         };
         for (Pattern p : { Pattern::Coherent, Pattern::Fragmented })
-            add("Update2", p, "RawSoA", n,
-                [=] {
-                    auto fx = std::make_shared<Soa>();
-                    fx->pos.resize(static_cast<std::size_t>(n));
-                    fx->vel.resize(static_cast<std::size_t>(n));
-                    Rng rng;
-                    for (std::size_t i = 0; i < fx->pos.size(); ++i)
-                    {
-                        fx->pos[i] = { rng.next(), rng.next() };
-                        fx->vel[i] = { rng.next(), rng.next() };
-                    }
-                    return fx;
-                },
-                [](Soa& fx) {
-                    for (std::size_t i = 0; i < fx.pos.size(); ++i) kernel::updatePosition(fx.pos[i], fx.vel[i], kDeltaTime);
-                });
+        {
+            add("Iter1", p, H::kName, n, [=] { return std::make_shared<Fixture>(n, p); }, [](Fixture& fx) { fx.world.iter1(); });
+            add("Update2", p, H::kName, n, [=] { return std::make_shared<Fixture>(n, p); }, [](Fixture& fx) { fx.world.update2(); });
+        }
+        const Pattern f = Pattern::Fragmented;
+        add("Frame3", f, H::kName, n, [=] { return std::make_shared<Fixture>(n, f); }, [](Fixture& fx) { fx.world.frame3(); });
+        add("RandomGet", f, H::kName, n,
+            [=] {
+                auto fx = std::make_shared<Fixture>(n, f);
+                for (std::int64_t i = 0; i < n; ++i) fx->handles.push_back(hand::handleOf(hand::placeOf(static_cast<std::size_t>(i), f)));
+                std::shuffle(fx->handles.begin(), fx->handles.end(), std::mt19937(123));
+                return fx;
+            },
+            [](Fixture& fx) { ankerl::nanobench::doNotOptimizeAway(fx.world.randomGet(fx.handles)); });
     }
 
-    /** H7 fusion. Same world, same systems; only the execution strategy differs.
+    /** The store's own methodology beside the bars: the same work written as several
+     *  small single-purpose systems, run as separate passes and then fused.
+     *
+     *  Update2 becomes Integrate, Forces and Wrap (applied in order per row they equal
+     *  kernel::updatePosition, bit for bit); Frame3 becomes those three plus RotHealth
+     *  and Pulse. "Seq" is one pass per system: what small systems cost with no fusion.
+     *  "Fused" is what the library does with them: for Update2 one fused pass, for
+     *  Frame3 the ShareColumns plan (fuse what shares columns, leave the rest apart).
+     *  They join the Update2 and Frame3 groups, so each is paired with HandWritten. */
+    void registerSmallSystems(std::int64_t n)
+    {
+        using W = qpart::HintedWorld;
+        using Fixture = WorldFixture<W>;
+        for (Pattern p : { Pattern::Coherent, Pattern::Fragmented })
+        {
+            add("Update2", p, "QPartHinted3Seq", n, [=] { return populated<W>(n, p); },
+                [](Fixture& fx) { runSequential(*fx.world, Integrate{}, Forces{}, Wrap{}); });
+            add("Update2", p, "QPartHinted3Fused", n, [=] { return populated<W>(n, p); },
+                [](Fixture& fx) { fx.world->runFused(Integrate{}, Forces{}, Wrap{}); });
+        }
+        const Pattern f = Pattern::Fragmented;
+        add("Frame3", f, "QPartHinted5Seq", n, [=] { return populated<W>(n, f); },
+            [](Fixture& fx) { runSequential(*fx.world, Integrate{}, Forces{}, Wrap{}, RotHealthSys{}, PulseSys{}); });
+        add("Frame3", f, "QPartHinted5Fused", n, [=] { return populated<W>(n, f); },
+            [](Fixture& fx) {
+                fusion::Inline exec, host;
+                fusion::runPlanned<fusion::ShareColumns>(*fx.world, exec, host, Integrate{}, Forces{}, Wrap{}, RotHealthSys{}, PulseSys{});
+            });
+    }
+
+    /** Fusion. Same world, same systems; only the execution strategy differs.
      *  FusionFrame = Integrate, Forces, Wrap (share Position/Velocity) + RotHealth.
      *  Frame3Sys   = Physics, RotHealth, Pulse (disjoint columns).
      *  "HandFused" = the single hand-written Update2 kernel + RotHealth pass:
@@ -383,20 +429,21 @@ namespace
 
     void registerAll(std::int64_t n)
     {
-#if SUB0ECS_HAS_V1_BASELINE
-        registerDesign<v1::World>(n);   // first: the paired baseline wherever v1 supports the scenario
-#endif
+        registerHand<hand::Plain>(n);   // first: the paired baseline of the iteration and lookup scenarios
+        registerHand<hand::Tuned>(n);
+        registerDesign<sparse::World>(n);   // the paired baseline of the remaining scenarios
         registerDesign<sorted::World>(n);
-        registerDesign<sparse::World>(n);
         registerDesign<archetype::World>(n);
         registerDesign<qpart::World>(n);
         registerDesign<qpart::HintedWorld>(n);
+        registerSmallSystems(n);
         // Static design must be sized at compile time for each N; larger N has no instantiation.
         if (n <= 1024) registerDesign<fixed::World<1024>>(n);
         else if (n <= (1 << 17)) registerDesign<fixed::World<(1 << 17)>>(n);
         else if (n <= (1 << 20)) registerDesign<fixed::World<(1 << 20)>>(n);
         registerOop(n);
-        registerRawSoA(n);
+        // One allocation per component: ~300 bytes per entity, so not beyond 1M entities.
+        if (n <= (1 << 20)) registerDesign<naive::World>(n);
         registerFusion(n);
     }
 } // namespace

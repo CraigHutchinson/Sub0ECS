@@ -16,7 +16,7 @@
  *
  * One header per executor under executors/:
  *
- *   Inline            call the kernel once (the H7 fused loop)
+ *   Inline            call the kernel once (the fused loop)
  *   Tiled<N>          fixed-size tiles: the shape of DMA double-buffering,
  *                     cache blocking and work splitting
  *   Parallel          persistent thread pool, contiguous row chunks

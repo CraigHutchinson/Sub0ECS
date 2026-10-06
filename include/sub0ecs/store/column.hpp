@@ -23,7 +23,7 @@ namespace sub0ecs::store
     /** Copy one row of a column (stride bytes; the rows do not overlap).
      *  A stride is only known at run time, so memcpy alone is a library call per
      *  column per moved row. The common component sizes get a fixed-size copy,
-     *  which every compiler turns into one or two moves (add/remove 5-11% faster). */
+     *  which every compiler turns into one or two moves. */
     inline void copyRow(std::byte* dst, const std::byte* src, std::size_t stride)
     {
         switch (stride)

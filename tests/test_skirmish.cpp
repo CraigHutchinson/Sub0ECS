@@ -105,7 +105,7 @@ TEST_CASE("Skirmish: planners and executors play the identical game")
     compare("AutoTuned", ref, play<QPartHintedWorld, false, AutoTunedRunner>(cfg));
 }
 
-TEST_CASE("Skirmish: H8 lockstep with data-parallel systems and per-worker command buffers")
+TEST_CASE("Skirmish: lockstep with data-parallel systems and per-worker command buffers")
 {
     const Trace& ref = reference();
     for (unsigned threads : { 2u, 4u })

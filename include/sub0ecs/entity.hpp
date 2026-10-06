@@ -3,7 +3,6 @@
  *
  * 32-bit handle: low 24 bits = slot index (16M live entities), high 8 bits =
  * version. A destroyed slot bumps its version so stale handles are detected.
- * v1 has no equivalent: ids are monotonic and never recycled.
  */
 
 #include <cstdint>

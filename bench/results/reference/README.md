@@ -1,19 +1,22 @@
-# Reference runs
+# Reference captures
 
-Curated runs of `bench/tools/run.py`, kept because a claim in
-[docs/FINDINGS.md](../../../docs/FINDINGS.md) rests on them. Each directory is a
-complete run: `meta.json` (machine, compiler, flags, git, warnings), one results
-file per suite, and `summary.md`.
+The captures the figures in [docs/FINDINGS.md](../../../docs/FINDINGS.md) and the
+README rest on. Each was taken with `bench/tools/rotate.py`: several interleaved
+samples of MSVC 19.51, clang-cl 22.1 and GCC 16.2 builds (host-tuned, no
+floating-point contraction) on a Core Ultra 9 275HX, with a quiet-machine check
+before every sample.
 
-| Run | What |
-|---|---|
-| `CrogLegion/20261005-163357-a35bf97-ref-msvc-pcores` | MSVC 19.51, Core Ultra 9 275HX, `reference` profile, pinned to the 8 P-cores: storage scenarios up to 10M entities, fusion, planners x executors, Skirmish, H9 timeline, spans |
-| `CrogLegion/20261005-165440-a35bf97-ref-msvc-threads` | Same build, unpinned: thread scaling 1 to 24 threads across P- and E-cores |
+| Capture | Covers | Samples per build |
+|---|---|---:|
+| [`20261006-000543-rotation-bars`](CrogLegion/20261006-000543-rotation-bars/tables.md) | Every design against the hand-written references: iteration, lookup, structural change, small systems fused (`compare` profile, P-cores) | 5 |
+| [`20261006-084419-rotation-exec`](CrogLegion/20261006-084419-rotation-exec/rotation.md) | Fusion at larger sizes, planners and executors, Skirmish, partition count, the [runtime-query timeline](CrogLegion/20261006-084419-rotation-exec/dynamic.md) (`standard` profile, P-cores) | 3 |
+| [`20261006-085203-rotation-threads`](CrogLegion/20261006-085203-rotation-threads/rotation.md) | Thread scaling on Skirmish, 1 to 24 threads (`standard` profile, unpinned) | 3 |
 
-Notes on these two runs:
-- Power plan Balanced, on a laptop; the first run started straight after its build
-  (42% CPU load recorded). Ratios within a group are paired and interleaved, so
-  they are robust to that; absolute times are less so.
-- The thread run's `meta.json` records a dirty working tree. Its binaries were
-  built from clean `a35bf97` by the preceding run; unrelated library sources were
-  being edited when the second run started. The measured code is `a35bf97`.
+In each directory: `rotation.md` (every case: median time with its spread, and
+the ratio to the group's baseline with its range), `rotation.json` (every sample,
+with the machine load before and after it), and `meta-<build>.json` (machine,
+compiler and flags). `tables.md` is `bench/tools/tables.py` over the first
+capture.
+
+Older captures are in the repository history, not here: a figure belongs in the
+tree only while the current code produces it.

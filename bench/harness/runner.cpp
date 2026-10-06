@@ -2,6 +2,9 @@
 
 #include <algorithm>
 #include <array>
+#include <chrono>
+#include <cmath>
+#include <cstdint>
 #include <cstdlib>
 #include <functional>
 #include <iostream>
@@ -99,6 +102,40 @@ namespace bench::harness
             return r;
         }
 
+        /** Passes per epoch for a paired group: enough for the FASTEST design to fill an epoch.
+         *
+         *  compare() gives every design the same count, and left to itself picks the count
+         *  that suits the slowest. A group that holds a design a hundred times slower than
+         *  the rest then times the fast ones on a single pass, cold, straight after the
+         *  others have flushed the caches. Sizing by the fastest keeps every design warm;
+         *  the slow ones just run longer epochs. */
+        std::uint64_t pairedIterations(const std::vector<Prepared>& prepared, const Options& o)
+        {
+            using Clock = std::chrono::steady_clock;
+            const auto target = o.minEpochTime.count() > 0 ? std::chrono::duration_cast<std::chrono::nanoseconds>(o.minEpochTime)
+                                                           : std::chrono::nanoseconds(std::chrono::milliseconds(1));
+            double fastest = 0.0, slowest = 0.0;   // seconds per pass
+            for (const Prepared& p : prepared)
+            {
+                p.op();   // untimed: first touch
+                std::uint64_t passes = 0;
+                const auto start = Clock::now();
+                auto elapsed = Clock::duration::zero();
+                do
+                {
+                    p.op();
+                    ++passes;
+                    elapsed = Clock::now() - start;
+                } while (elapsed < target / 4 && passes < 1'000'000);
+                const double perPass = std::chrono::duration<double>(elapsed).count() / static_cast<double>(passes);
+                fastest = fastest == 0.0 ? perPass : std::min(fastest, perPass);
+                slowest = std::max(slowest, perPass);
+            }
+            const double wanted = std::chrono::duration<double>(target).count() / std::max(fastest, 1e-9);
+            const double affordable = 0.25 / std::max(slowest, 1e-9);   // no epoch longer than a quarter second
+            return static_cast<std::uint64_t>(std::max(1.0, std::ceil(std::min(wanted, affordable))));
+        }
+
         /** The group's other cases, prepared together and compared against the first. */
         void runPaired(const std::vector<const Case*>& cases, const Options& o, std::vector<Record>& out)
         {
@@ -108,6 +145,7 @@ namespace bench::harness
 
             nb::Bench b = configured(o, cases.front()->group(), cases.front()->unit);
             if (cases.front()->epochIterations > 0) b.epochIterations(cases.front()->epochIterations);   // no calibration
+            else if (cases.size() > 1) b.epochIterations(pairedIterations(prepared, o));
             if (cases.size() == 1)
             {
                 b.run(cases.front()->name(), [&] { prepared.front().op(); });

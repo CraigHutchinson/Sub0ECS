@@ -1,18 +1,21 @@
-# Design review: before H2
+# Design review: composing overlapping systems
 
-Scope: the Sub0DataStore / SubzeroECS storage design after H1, and the
+> Design note: the reasoning behind a part of the library. Measurements are kept in
+> [FINDINGS.md](../FINDINGS.md), open work in [BACKLOG.md](../BACKLOG.md).
+
+Scope: the query-partition storage design, and the
 proposal to resolve "an entity in two systems" by **composition** (system
 tree, parenting, DAG) instead of copies or references.
 
 Inputs:
-- [FINDINGS.md](../FINDINGS.md): baseline and H1 results.
-- [holographic-storage.md](holographic-storage.md): research note.
-- [designs/query_partition.hpp](../../include/sub0ecs/store/world.hpp): H1 PoC.
-- One new micro-benchmark, [bench/spans_micro.cpp](../../bench/spans_bench.cpp), run for this review.
+- [FINDINGS.md](../FINDINGS.md): design and measurements.
+- [holographic-storage.md](holographic-storage.md): the storage design.
+- [store/world.hpp](../../include/sub0ecs/store/world.hpp): the store.
+- The partition-count benchmark, [bench/spans_bench.cpp](../../bench/spans_bench.cpp).
 
 Outcome: a reframing of the "duplicate" problem, a ranked composition
-strategy, a re-scoped H2, and a list of issues to carry into the real
-implementation.
+strategy, the experiments that would settle it, and the review findings
+that are still open.
 
 ---
 
@@ -20,19 +23,19 @@ implementation.
 
 | Area | State | Evidence |
 |---|---|---|
-| Partition key = matched declared systems ("automatic archetypes") | Validated | H1: iteration at archetype speed, non-fragmenting churn at sparse-set speed |
-| Per-component choice: key bit / carry / side storage | Validated as *necessary* | H1: pure side storage +36% memory; carry +1.4% |
-| Non-fragmenting membership lives only in its pool | Validated | H1: 4.4× → 0.99× SparseSet on AddRemove |
-| Single-copy contiguity across partitions (PQ-tree ordering, old H2) | **Questioned by this review** | §3 below |
-| Reference bindings (reference sets, authority refs) | Proposed, unmeasured | research §4.3 |
-| Replicas | Fallback, unmeasured | research §4.3.4 |
-| Deferred mutation / commit points | Proposed, not in PoC (moves are immediate) | — |
+| Partition key = matched declared systems ("automatic archetypes") | Validated | Iteration at archetype speed, non-fragmenting churn at sparse-set speed |
+| Per-component choice: key bit / carry / side storage | Validated as *necessary* | Side-storing stable components costs memory for nothing; carrying them is close to free |
+| Non-fragmenting membership lives only in its pool | Validated | It is what brought AddRemove to sparse-set speed |
+| Single-copy contiguity across partitions (PQ-tree ordering) | **Questioned by this review** | §3 below |
+| Reference bindings (reference sets, authority refs) | Proposed, unmeasured | [holographic-storage.md](holographic-storage.md) §4.3 |
+| Replicas | Fallback, unmeasured | [holographic-storage.md](holographic-storage.md) §4.3.4 |
+| Deferred mutation / commit points | Proposed, not implemented (moves are immediate) | — |
 | Static constexpr planning (ESP32) | Proposed, unmeasured | — |
 
 ## 2. Reframing: in the partition model an entity is never duplicated
 
 The worry behind reference/replica bindings was that an entity used by
-two systems needs to "be in two places". H1 shows that is not how the model
+two systems needs to "be in two places". The store shows that is not how the model
 works:
 
 - An entity lives in exactly **one** partition, the one keyed by the set
@@ -55,22 +58,16 @@ duplication problem that does not exist.
 
 ## 3. Evidence: how much does contiguity across partitions matter?
 
-`sub0ecs_spans_bench` runs the Update2 kernel over 100K entities split
-evenly into K partitions (spans):
+`sub0ecs_spans_bench` runs the Update2 kernel over a fixed number of entities
+split evenly into K partitions (spans), from one span to thousands. Current
+figures are in [FINDINGS.md](../FINDINGS.md), section 3.
 
-| Entities per span | 100K | 16.7K | 1.56K | 195 | 24 | 6 |
-|---|---:|---:|---:|---:|---:|---:|
-| Spans (K) | 1 | 6 | 64 | 512 | 4 096 | 16 384 |
-| Time vs 1 span | 1.00× | 1.04× | 1.00× | 1.27× | 1.72× | 3.8× |
-
-(Linux, GCC 13, `-O3 -march=native`, median of 5.)
-
-**Conclusion.** Above roughly 1K entities per partition, span count is
+**Conclusion.** Above roughly a thousand entities per partition, span count is
 free. The per-span cost only shows below a few hundred entities per
-partition. The original H2 goal (a PQ-tree ordering so each system gets
-*one* span) solves a problem that only exists when partitions are tiny.
-The cheaper fix is to **not create tiny partitions** (§5.1). H2 is re-scoped
-accordingly (§6).
+partition. A PQ-tree ordering, so that each system gets *one* span, solves a
+problem that only exists when partitions are tiny. The cheaper fix is to
+**not create tiny partitions** (§5.1). The experiments are scoped accordingly
+(§6).
 
 ## 4. Composition options for overlapping systems
 
@@ -85,7 +82,7 @@ Running example: the "star" overlap, where C1P fails. Entity kinds:
 
 The partitions are P1(E1), P2(E2), P3(E3), P4(E4). Each system needs P1
 plus one other, and P1 can only have two neighbours in a linear order, so
-no single order makes all three systems contiguous. In the H1 model this
+no single order makes all three systems contiguous. In the partition model this
 costs one extra span for one system, which §3 shows is free at normal
 sizes. The options below matter for P1–P3 generally.
 
@@ -131,7 +128,7 @@ iteration:     for each parent p: v = p.value (load once)
 ```
 
 - **What it replaces.** It replaces the per-entity *authority reference*
-  (research §4.3.3): the relationship becomes run-length structure, not a
+  ([holographic-storage.md](holographic-storage.md) §4.3.3): the relationship becomes run-length structure, not a
   pointer per entity. The parent value is loaded once per run and hoisted
   out of the inner loop. There is no gather, no copy and no reference column
   in the hot loop.
@@ -167,8 +164,8 @@ a sort by material key before the render-extract phase.
   next phase is order-sensitive about. Incremental sorts (nearly sorted
   data from the previous frame) are cheap.
 - Handles stay valid (records updated). Spans are only valid between commit
-  points anyway (research §4.8).
-- Compared with a reference set (research §4.3.2): this pays a permute
+  points anyway ([holographic-storage.md](holographic-storage.md) §4.8).
+- Compared with a reference set ([holographic-storage.md](holographic-storage.md) §4.3.2): this pays a permute
   once per frame instead of a gather on every access. It wins when the
   reordered system touches many columns or runs more than once per frame.
   A cost model decides.
@@ -184,7 +181,7 @@ applied to systems ([Halide](https://dl.acm.org/doi/10.1145/2491956.2462176)).
 - Frame3 is the obvious case: Physics and RotHealth both visit the Medium
   and Large partitions.
 - The gain is memory bandwidth, which matters at 1M+ where every system in
-  the spike is memory-bound.
+  the benchmark is memory-bound.
 - Legality comes straight from declared access sets plus DAG ordering.
 - Cost: scheduler complexity and register pressure. It is an optimisation,
   not a storage feature.
@@ -206,14 +203,14 @@ applied to systems ([Halide](https://dl.acm.org/doi/10.1145/2491956.2462176)).
 ## 5. Recommendations
 
 1. **Adopt the reframing (§2).** The model has no duplicates, so drop "one
-   span per system" as a goal. Keep partition-per-system iteration from H1
+   span per system" as a goal. Keep partition-per-system iteration
    as the foundation.
 2. **5.1 Granularity control first.** When a natural partition would fall
-   below a threshold (start at ~512 entities, tunable; §3 suggests the knee
-   is around 200–1 000), **do not split it**. Merge it into its parent
+   below a threshold (a few hundred entities, tunable; §3 puts the knee
+   there), **do not split it**. Merge it into its parent
    partition and let the smaller system filter in the loop with an enable
-   bit (research §4.5). This bounds the P1 cost and also caps partition
-   explosion (Q3), which is the risk behind the old H5.
+   bit ([holographic-storage.md](holographic-storage.md) §4.5). This bounds the P1 cost and also caps partition
+   explosion (Q3).
 3. **C1 system tree as the ordering mechanism.** Infer it from query
    subset relations, and let users annotate priority. Replace the PQ-tree
    plan with it: simpler, constexpr-friendly, deterministic.
@@ -224,39 +221,35 @@ applied to systems ([Halide](https://dl.acm.org/doi/10.1145/2491956.2462176)).
 5. **C3 phases for order conflicts (P2).** Reference sets stay as the
    alternative when the permute cost is higher (few columns touched, large
    partitions). Replicas remain last resort, as before.
-6. **C4 fusion, prototyped early (H7) at your request:** 3.5–5.3× on
-   column-sharing systems, a loss on disjoint ones. See [fusion.md](fusion.md).
-7. The binding abstraction (research §4.3.5, one column-view type) **still
+6. **C4 fusion** is implemented: a gain on column-sharing systems, a loss on
+   disjoint ones. See [fusion.md](fusion.md).
+7. The binding abstraction ([holographic-storage.md](holographic-storage.md) §4.3.5, one column-view type) **still
    stands**. C2 adds a `per_run` accessor (the value is constant per run)
    next to `direct`, `indexed`, `referenced` and `uniform`.
 
-## 6. Re-scoped H2 (and knock-on changes)
+## 6. Experiments that would settle it
 
-| Spike | Question | Build | Pass criterion |
+| Experiment | Question | Build | Pass criterion |
 |---|---|---|---|
-| **H2a** Granularity | Does merging small partitions (enable-bit filter) beat splitting them? | H1 design + threshold merge; fragmentation stress with 2^k optional-component mixes (k = 4…10) at 100K | Update-class systems ≥ 0.9× "ideal" (all partitions ≥ threshold); partition count bounded; churn no worse than H1 |
-| **H2b** System tree | Does DFS order + boundary swaps give contiguity and O(1) adjacent moves? | Global columns ordered by an inferred system tree; star example plus nested example | Nested systems = 1 span; TagChurn (parent↔child move) ≥ 2× faster than H1 table move |
-| **H6′** Parent/child | Does per-run hoisting beat per-entity authority refs and match direct? | Parent table + children grouped by parent; material/transform-style kernel; run lengths 1, 8, 64 | ≥ direct-with-copied-value at run length ≥ 8; ≥ 1.5× faster than per-entity authority ref |
-| H3 Replica | unchanged: only if H2b/H6′ leave an order conflict unsolved | — | — |
+| **Granularity** | Does merging small partitions (enable-bit filter) beat splitting them? | The store plus a threshold merge; fragmentation stress with 2^k optional-component mixes (k = 4…10) | Update-class systems close to "ideal" (all partitions above the threshold); partition count bounded; churn no worse than today |
+| **System tree** | Does DFS order plus boundary swaps give contiguity and O(1) adjacent moves? | Global columns ordered by an inferred system tree; star example plus nested example | Nested systems = 1 span; a parent↔child move clearly faster than a table move |
+| **Parent/child** | Does per-run hoisting beat per-entity authority refs and match direct access? | Parent table plus children grouped by parent; material/transform-style kernel; run lengths 1, 8, 64 | At least direct-with-copied-value at run length ≥ 8; clearly faster than a per-entity authority ref |
+| Replica | Only if the two above leave an order conflict unsolved | — | — |
 
-H2a runs first, because it decides whether tiny partitions ever need
+Granularity runs first, because it decides whether tiny partitions ever need
 ordering at all.
 
-## 7. Other review findings (carry into implementation)
+## 7. Review findings still open
 
-| # | Finding | Severity | Action |
-|---|---|---|---|
-| F1 | `each<Cs...>` must exactly match a declared query (static_assert). Ad-hoc and tool queries (U5) have no path. | High | Undeclared queries iterate the partitions whose columns ⊇ Cs *plus* a side-storage fallback. Or: declaring is how you get fast access, and everything else is a slow path by design. |
-| F2 | Moves are immediate in the PoC; no command buffer or commit semantics. | High | Implement deferred mutation before any parallel scheduling (research §4.6); re-measure churn with batched moves. |
-| F3 | RandomGet 0.71× Archetype: record → partition table → column vector → bytes. | Medium | Cache column base pointers per partition in a flat array indexed by (partition, type); consider storing the partition's base pointers in the record path. |
-| F4 | Empty partitions are never freed; per-query partition lists only grow. | Medium | Reclaim empty partitions at commit; compact query lists (flecs "empty table" handling). |
-| F5 | Volatility (carry vs side) needs a hint; "automatic" is only partly true. | Medium | Default carry (safe on memory); add churn counters per component to feed adaptive mode; keep `Volatile<T>` as an override. |
-| F6 | Conformance only goes through the adapter surface; no randomised differential test. | Medium | Add a seeded random-operation fuzzer that compares every design to the SparseSet reference *before* H2. Cheap, and it guards all later spikes. |
-| F7 | 64-type / 32-query limits (bitmasks). | Low (spike) | Use wider or bitset masks in the implementation; keep 64/32 as the static-mode fast path. |
-| F8 | Planner runs at runtime even though the query list is compile-time. | Low | H4 (static constexpr plan) is still pending; C1 makes it simpler. |
-| F9 | Single host, noisy VM, GCC only. | Low | Re-run the baseline and H1 on reference hardware (i7/MSVC) and an ESP32-P4 before final decisions. |
+| Finding | Action |
+|---|---|
+| `each<Cs...>` must exactly match a declared query (static_assert). Ad-hoc and tool queries have no path. | Undeclared queries iterate the partitions whose columns ⊇ Cs *plus* a side-storage fallback. Or: declaring is how you get fast access, and everything else is a slow path by design. |
+| Moves are immediate; there is no command buffer or commit semantics in the store. | Implement deferred mutation before any parallel scheduling of structural changes ([holographic-storage.md](holographic-storage.md) §4.6); re-measure churn with batched moves. |
+| Empty partitions are never freed; per-query partition lists only grow. | Reclaim empty partitions at commit; compact query lists (flecs "empty table" handling). |
+| Volatility (carry vs side) needs a hint; "automatic" is only partly true. | Churn counters per component to feed an adaptive mode; `Volatile<T>` stays as the override. |
+| The planner runs at runtime even though the query list is known at compile time. | A static constexpr plan; the system tree (C1) makes it simpler. |
 
-## 8. Decisions requested
+## 8. Open decisions
 
 1. **Accept the reframing** (no duplication in the partition model; the
    targets are P1 granularity, P2 order, P3 shared data)?
@@ -264,4 +257,4 @@ ordering at all.
    declared explicitly?
 3. **Adopt parent/child composition (C2) as the default for shared data,**
    demoting per-entity authority refs?
-4. **Re-scoped H2 order: H2a → H2b → H6′**, with F6 (fuzzer) done first?
+4. **Experiment order: granularity → system tree → parent/child?**

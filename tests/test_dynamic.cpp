@@ -1,4 +1,4 @@
-/** H9 dynamic system lifetimes: a system registered at runtime whose query
+/** Runtime queries: a system registered at runtime whose query
  * requires a side-stored (Volatile) component forces a relayout. Whatever the
  * migration budget — never migrate (fully degraded), bounded incremental
  * steps, or one stall — results must equal a reference, every holder must be
@@ -105,7 +105,7 @@ namespace
     }
 } // namespace
 
-TEST_CASE("H9 paging a system in: every migration budget equals the reference")
+TEST_CASE("paging a system in: every migration budget equals the reference")
 {
     const Outcome ref = reference();
 
@@ -124,7 +124,7 @@ TEST_CASE("H9 paging a system in: every migration budget equals the reference")
 
 }
 
-TEST_CASE("H9 enable/disable of systems, in fused groups and as dynamic queries")
+TEST_CASE("enable/disable of systems, in fused groups and as dynamic queries")
 {
     // Enable/disable inside a fused group: disabling Forces == running the others.
     {

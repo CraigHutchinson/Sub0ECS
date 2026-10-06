@@ -1,8 +1,8 @@
 #pragma once
 /** BasicWorld / World: query-signature partitions ("automatic archetypes").
  *
- * Design and evidence: docs/research/holographic-storage.md §4.1 and
- * docs/FINDINGS.md (H1, H7-H9). The world is told its system
+ * Design and evidence: docs/FINDINGS.md; background in
+ * docs/research/holographic-storage.md. The world is told its system
  * queries up front. Physical partitions are keyed by the set of declared
  * queries an entity matches, not by its full component signature.
  *
@@ -176,10 +176,10 @@ namespace sub0ecs::store
             const Record& r = records_[e.index()];
             // Column first: columnsFor(has) is a subset of has, so a column
             // implies membership. Checking r.has before this dependent load cost
-            // RandomGet ~20% (measured), hence the order. (A fragmenting type has a
+            // find measurably, hence the order. (A fragmenting type has a
             // layout bit, so t indexes the partition's tables.)
             if (std::byte* column = partitions_[r.partition]->base[t]) return reinterpret_cast<C*>(column) + r.row;
-            if (!(r.has & bitC))   // H9: not yet migrated entities still hold it in side storage
+            if (!(r.has & bitC))   // runtime query: not yet migrated entities still hold it in side storage
                 return (migrating_ & bitC) ? poolOf<C>(t).find(e) : nullptr;
             return poolOf<C>(t).find(e);
         }
@@ -222,7 +222,7 @@ namespace sub0ecs::store
             Record& r = records_[e.index()];
             if (!(r.has & bitC))
             {
-                if (migrating_ & bitC) poolOf<C>(t).removeIfPresent(e);   // H9: unmigrated holder, still side-stored
+                if (migrating_ & bitC) poolOf<C>(t).removeIfPresent(e);   // runtime query: unmigrated holder, still side-stored
                 return;                                                  // otherwise: absent, nothing to do
             }
             const Mask newHas = r.has & ~bitC;
@@ -261,7 +261,7 @@ namespace sub0ecs::store
 
         void commit() {}
 
-        /** H7 system fusion: one pass per partition applying every system that
+        /** System fusion: one pass per partition applying every system that
          *  matches it, in argument (= schedule) order, row by row.
          *
          *  Legal because each system is row-local (touches only the current
@@ -286,7 +286,7 @@ namespace sub0ecs::store
             runFusedOnMasked(exec, ~0u, systems...);
         }
 
-        /** H9: runtime enable mask over the group's members (bit j = systems[j]).
+        /** Runtime enable mask over the group's members (bit j = systems[j]).
          *  A disabled member simply drops out of every partition's subset. */
         template <typename Exec, typename... Systems>
         void runFusedOnMasked(Exec& exec, unsigned enabled, const Systems&... systems)
@@ -312,7 +312,7 @@ namespace sub0ecs::store
             }
         }
 
-        /** H8: fused group, data-parallel at CHUNK granularity across ALL partitions.
+        /** Fused group, data-parallel at CHUNK granularity across ALL partitions.
          *  Work items are (partition, system subset, row range); each worker streams
          *  its chunks through the whole fused chain — no barrier between systems,
          *  one fork-join per group (vs one per partition in runFusedOn(Parallel)). */
@@ -347,7 +347,7 @@ namespace sub0ecs::store
             pool.parallelFor(fchunks_.size(), body);
         }
 
-        /** H8 data-parallel iteration: fixed-size row chunks across ALL partitions
+        /** Data-parallel iteration: fixed-size row chunks across ALL partitions
          *  matching the query become pool work items (one fork-join per system,
          *  not per partition). f(worker, Cs&...) — the worker index lets callers
          *  keep per-thread command buffers / accumulators without locks. */
@@ -380,7 +380,7 @@ namespace sub0ecs::store
             pool.parallelFor(chunks_.size(), body);
         }
 
-        // ---- H9: dynamic system lifetimes ------------------------------------
+        // ---- Runtime queries (systems added while running) ------------------------------------
         //
         // A system registered at runtime (e.g. paged in with a new world region)
         // declares its query here. Components it requires that are currently in
@@ -475,7 +475,7 @@ namespace sub0ecs::store
         std::size_t partitionCount() const { return partitions_.size(); }
 
     private:
-        // ---- H9 helpers ----
+        // ---- runtime-query helpers ----
         struct Record   // 16 bytes
         {
             std::uint32_t partition = 0;   // index into partitions_
@@ -635,7 +635,7 @@ namespace sub0ecs::store
 
         std::uint32_t signatureOf(Mask cols) const
         {
-            // A query matches iff its required set ⊆ columns (see §4.1 proof).
+            // A query matches iff its required set ⊆ columns (proof: docs/research/holographic-storage.md, section 4.1).
             std::uint32_t sig = 0;
             for (std::size_t i = 0; i < kQueries; ++i)
             {
@@ -655,7 +655,7 @@ namespace sub0ecs::store
         void registerType(std::uint32_t t)
         {
             static_assert(std::is_trivially_copyable_v<T>, "sub0ecs::store requires trivially copyable components");
-            static_assert(sizeof(T) <= 64, "H9 promotion scratch holds components up to 64 bytes");
+            static_assert(sizeof(T) <= 64, "components must be at most 64 bytes (promotion scratch size)");
             if (t < kMaxTypes)
             {
                 if (strides_[t] == 0)
@@ -794,8 +794,8 @@ namespace sub0ecs::store
         Mask queried_ = 0;
         Mask volatile_ = 0;
         Mask fragmenting_ = 0;
-        Mask migrating_ = 0;                          // H9: components being promoted to columns
-        std::vector<DynQuery> dyn_;                   // H9: runtime-registered queries
+        Mask migrating_ = 0;                          // components being promoted to columns
+        std::vector<DynQuery> dyn_;                   // runtime-registered queries
         std::array<std::array<std::byte, 64>, kMaxTypes> stash_{};   // promotion scratch (components <= 64 B)
         std::vector<std::uint32_t> nonFragmentingTypes_;
         std::array<std::size_t, kMaxTypes> strides_{};                    // by layout index; 0 = not stored here yet

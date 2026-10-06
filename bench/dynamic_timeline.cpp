@@ -1,4 +1,4 @@
-/** H9 timeline: cost of paging a system in at runtime.
+/** Runtime-query timeline: cost of paging a system in at runtime.
  *
  *   sub0ecs_dynamic_timeline [N=1000000] [frames=60] [out.json]
  *
@@ -80,7 +80,7 @@ int main(int argc, char** argv)
     const std::size_t kStall = std::numeric_limits<std::size_t>::max();
     const std::size_t budgets[] = { kStall, 65536, 16384, 4096, 0 };
 
-    std::printf("H9 dynamic system timeline: N=%lld, %lld holders promoted, %d frames, median of 3\n\n",
+    std::printf("Runtime-query timeline: N=%lld, %lld holders promoted, %d frames, median of 3\n\n",
                 static_cast<long long>(n), static_cast<long long>(n / 2), frames);
     std::printf("| Budget (entities/frame) | Degraded system µs/frame | Full-path system µs/frame | Worst frame µs | Frames to full path | Total migration ms |\n");
     std::printf("|---|---:|---:|---:|---:|---:|\n");

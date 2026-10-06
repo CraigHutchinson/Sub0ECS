@@ -1,16 +1,19 @@
 # System-driven ("holographic") storage for SubzeroECS
 
+> Design note: the reasoning behind a part of the library. Measurements are kept in
+> [FINDINGS.md](../FINDINGS.md), open work in [BACKLOG.md](../BACKLOG.md).
+
 Research note: use cases, prior art, design patterns and a proposed
-architecture. It follows the storage-model spike in [../FINDINGS.md](../FINDINGS.md).
+architecture. Measurements of the resulting design are in [../FINDINGS.md](../FINDINGS.md).
 
-> Status: historical research and proposal. Query-partition storage and fusion
-> were implemented; reference bindings, replicas, and the proposed library split
-> remain unimplemented design options, not current API guarantees.
+> Status: query-partition storage and fusion are implemented; reference
+> bindings, replicas, and the proposed library split remain unimplemented design
+> options, not current API guarantees.
 
-> **Design review before H2:** [design-review-pre-h2.md](design-review-pre-h2.md)
+> **Design review:** [design-review-pre-h2.md](design-review-pre-h2.md)
 > reframes the "entity in two systems" problem. The partition model has no
 > duplication. It proposes composition (system tree, parent/child runs, DAG
-> phases, fusion) ahead of reference/replica bindings, and re-scopes H2.
+> phases, fusion) ahead of reference/replica bindings.
 
 ## Decisions so far
 
@@ -66,12 +69,12 @@ architecture. It follows the storage-model spike in [../FINDINGS.md](../FINDINGS
 
 ## 1. Problem statement and vocabulary
 
-The spike ([FINDINGS.md](../FINDINGS.md)) showed:
+Measuring the established storage models ([FINDINGS.md](../FINDINGS.md)) showed:
 
-- Archetype tables are the only design that gets near the SoA roofline on
-  iteration (6× v1 on Update2 at 100K, 85–95% of hand-written code).
-- They are about 18× slower than a sparse set when components are added and
-  removed. That cost comes from the *keying*: every component in an entity's
+- Table-based storage is the only kind that iterates at the speed of a
+  hand-written loop when a system reads more than one component.
+- Archetype tables are an order of magnitude slower than a sparse set when
+  components are added and removed. That cost comes from the *keying*: every component in an entity's
   signature is a partition key, so any add/remove moves the entire row.
   This happens even when no system cares about that component.
 
@@ -220,7 +223,7 @@ Consequences:
    Replanning is a split or merge of existing partitions, never a full
    reshuffle, which keeps R5 tractable.
 
-**Worked example (the spike workload).**
+**Worked example (the benchmark workload).**
 
 Systems:
 - Physics{Pos, Vel}
@@ -235,9 +238,9 @@ Systems:
 | Large `1110` | Pos, Vel, Health, Rot, Scale, Color | Team, Flags | {…,Team,Flags}, {…,Frozen} |
 | Small+tag `1001`, Medium+tag `1101`, Large+tag `1111` | as above + Tag | as above | … |
 
-`Frozen`, `Team` and `Flags` appear in no filter, so the spike's AddRemove
-scenario (18× slower on archetypes) moves **no** data under this scheme and
-should cost about the same as the sparse set. That is hypothesis **H1** in §8.
+`Frozen`, `Team` and `Flags` appear in no filter, so the benchmark's AddRemove
+scenario, which archetype tables handle badly, moves **no** data under this
+scheme and costs about the same as a sparse set (confirmed, §8).
 Classic archetypes would have 12 or more tables here; the system-derived
 scheme has 6.
 
@@ -288,7 +291,7 @@ A cost model decides.
 **Chunked variant.** Global arrays make growth in a middle partition cost
 O(#partitions) in boundary rotations. Fixed-size chunks per partition (Unity's
 16 KiB, PAX pages) bound this at the price of "span list" iteration. The
-single-span vs chunked trade-off is spike **H2**.
+single-span vs chunked trade-off is an open experiment (§8).
 
 ### 4.3 Holographic access without copies: bindings
 
@@ -303,7 +306,7 @@ next; **replica** is the last resort.
 #### 4.3.1 Direct binding (normal case)
 
 The column is a contiguous `T*` range for the partition, as in §4.1–4.2. The
-kernel compiles to the RawSoA loop that the spike measured at the roofline.
+kernel compiles to the hand-written loop.
 
 #### 4.3.2 Partitioned reference set (indirection into the home copy)
 
@@ -405,15 +408,14 @@ mappings or Kokkos layouts:
 system's partitions, and for each batch it invokes the kernel with a
 concretely typed view: a variant resolved once per batch, or a compile-time
 instantiation in static mode. The inner loop therefore has no branches on
-binding kind, and the direct case compiles to exactly the RawSoA loop.
+binding kind, and the direct case compiles to exactly the hand-written loop.
 Constness is part of the type: a system without write access to `T` only
 ever receives `const T&`. That is how "only systems with write access can
 write" is enforced at compile time rather than by convention.
 
 ### 4.4 Inside a partition: column grouping
 
-- **Default: pure SoA** (one array per hot column). This is what vectorised in
-  the spike.
+- **Default: pure SoA** (one array per hot column).
 - **Co-access grouping (HYRISE, Data Morphing).** Components whose
   *accessing-system set* is identical are always touched together. They may be
   interleaved (AoSoA with lane width = SIMD width) when a cost model predicts
@@ -433,10 +435,11 @@ write" is enforced at compile time rather than by convention.
 The toggle rate is declared (a `churn::high` hint) or measured (adaptive mode).
 The decision can change at a replan.
 
-**H1 evidence.** Unqueried components need their own choice between
+**Found when it was built.** Unqueried components need their own choice between
 **carry** (dense column riding along as an extra key bit) and **side
-storage**. Side-storing stable, common components (Team, Flags) cost +36%
-memory versus archetypes; carrying them cost +1.4%. Default: carry, and
+storage**. Side-storing stable, common components (Team, Flags) costs
+noticeably more memory than archetype tables; carrying them costs almost
+nothing. Default: carry, and
 side-store only volatile components. Also, non-fragmenting membership must
 live only in the pool, never in the entity record, or churn pays an extra
 cache miss per operation.
@@ -458,7 +461,7 @@ cache miss per operation.
 
 | Mode | When | How | Targets |
 |---|---|---|---|
-| **Static** | System list known at compile time | `constexpr` planner: bitmask algebra over type lists gives partition types, column arrays and a fixed capacity per partition or a pool. No heap, no RTTI, no virtuals. The spike's StaticBitmask shows the memory/allocation profile. | U2, U3 (ESP32-P4) |
+| **Static** | System list known at compile time | `constexpr` planner: bitmask algebra over type lists gives partition types, column arrays and a fixed capacity per partition or a pool. No heap, no RTTI, no virtuals. The StaticBitmask reference design shows the memory/allocation profile. | U2, U3 (ESP32-P4) |
 | **Startup** | Systems registered at runtime before the first tick | Runtime planner (PQ-tree, cost model), then a frozen plan | U1, U4, U7 |
 | **Adaptive** | Tools, long-running servers | Startup plan plus statistics (per-column toggle rates, per-system run cost, optionally LLAMA-style instrumented access). Replans are applied incrementally as low-priority Sub0Pipeline jobs, H2O/cracking-style. | U5 |
 
@@ -469,14 +472,14 @@ rollback).
 
 ### 4.8 Handles, lookup and stability
 
-- A 32-bit generational handle (as in the spike's `common/entity.hpp`) maps to
+- A 32-bit generational handle (`sub0ecs/entity.hpp`) maps to
   a location record `{partition, row}`. That is O(1) random access (R8),
   updated on moves.
 - References and spans are valid **between commit points only**. The API
   should make this structural, e.g. spans are obtained inside a system
   invocation and cannot outlive it.
 - **Static-mode typing constraint.** Components must be *trivially
-  relocatable* (the spike's archetype design required trivially copyable).
+  relocatable* (the store requires trivially copyable).
   The dynamic mode may carry type-erased move/destroy function tables. This
   decision is still open (Q5).
 
@@ -562,7 +565,7 @@ world.schedule(pipeline);   // Sub0Pipeline jobs + commit edges derived from acc
 | Unit of work / command buffer | Deferred structural changes | Unity ECB, flecs deferred mode |
 | Snapshot isolation at barriers | Replica refresh at commit points | Double buffering, MVCC-lite |
 | Observer (post-commit) | Change events | Sub0Pub |
-| Generational index / slot map | Entity handles | Spike `common/entity.hpp` |
+| Generational index / slot map | Entity handles | `sub0ecs/entity.hpp` |
 | Swap-to-boundary | O(1) membership moves | EnTT groups |
 | Graph edge caching | Partition transition table | flecs archetype graph |
 | Adaptive reorganisation | Adaptive mode | Database cracking, H2O, Legion packing |
@@ -573,35 +576,28 @@ world.schedule(pipeline);   // Sub0Pipeline jobs + commit edges derived from acc
 | # | Risk / question | Mitigation / how to resolve |
 |---|---|---|
 | Q1 | **Planner complexity and debuggability.** The layout is no longer obvious from the code. | Plan is a printable artifact (`dump_plan()`); deterministic; explainable ("why is X a key bit?"). |
-| Q2 | **Replan cost** when systems are added at runtime (U5). | Refinement is splits only; incremental; background Sub0Pipeline jobs. Measure (H5). |
+| Q2 | **Replan cost** when systems are added at runtime (U5). | Refinement is splits only; incremental; background Sub0Pipeline jobs. Bounded per-frame migration is implemented. |
 | Q3 | **Combinatorial blow-up** of match signatures with many optional-heavy systems. | Bounded by entity diversity; enable bits instead of key bits for high-cardinality filters; warn above a threshold. |
 | Q4 | **Replica write amplification / staleness bugs.** | Reference bindings first (D3); replicas read-only by type, refreshed on the writer→reader edge, budgeted, off by default. |
 | Q11 | **Authority reference lifetime.** What happens when the authority row is destroyed while entities still reference it? | Generational handles detect staleness. Policy choice: forbid (debug assert), cascade, or re-point to a default. Decide with U8 hierarchies. |
-| Q12 | **Gather cost of reference sets** vs direct on real kernels. | Measure in H6; the planner prefers making written components direct. |
-| Q5 | **Component type constraints** (trivially relocatable?). | Required in static mode; type-erased vtables in dynamic mode. Decide after H1. |
+| Q12 | **Gather cost of reference sets** vs direct on real kernels. | To be measured; the planner prefers making written components direct. |
+| Q5 | **Component type constraints** (trivially relocatable?). | Required in static mode; type-erased vtables in dynamic mode. Open. |
 | Q6 | **Systems that write filter components** (a system removes its own filter tag). | Always deferred to commit, so iteration never sees its own moves. |
 | Q7 | **Relationships / hierarchies** (U8). | Out of scope for the first cut; relationships default to non-fragmenting side storage (flecs lesson). |
 | Q8 | **Is C1P usually satisfiable in real system sets?** | Measure on real system sets (a game sample plus an embedded sample) before building PQ-tree machinery; the fallback of k spans may be enough. |
-| Q9 | **Embedded code size** of a constexpr planner and templates on ESP32. | Measure in H4; keep a runtime-light static path. |
+| Q9 | **Embedded code size** of a constexpr planner and templates on ESP32. | To be measured on the device; keep a runtime-light static path. |
 | Q10 | **Does compile-time planning compose across translation units / modules?** | The world type is defined in one TU (the system list); the store is instantiated there. |
 
-## 8. Validation plan
+## 8. Validation
 
-These are spikes on the existing harness, compared to
-[baseline-linux-gcc13](../../bench/results/baseline-linux-gcc13.md) numbers.
-
-| Spike | Build | Success criterion |
+| Hypothesis | Experiment | Status |
 |---|---|---|
-| **H1** Query-signature partitions — ✅ **done**, see [FINDINGS § H1](../FINDINGS.md#h1-results-query-signature-partitions-automatic-archetypes): passes in hinted mode (carry stable unqueried components, side-store volatile); pure side storage fails memory (+36%) | Archetype spike keyed by match signature + side storage | AddRemove (Frozen, unfiltered) ≤ 1.2× SparseSet (~62 µs @100K); Update2/Frame3 within 10% of Archetype; memory ≤ Archetype +10% |
-| **H2** Partition ordering | Global columns + boundary swaps vs chunked partitions | Each system iterates 1 span (C1P case); tag-churn cost ≤ SparseSet ×2; Frame3 ≥ Archetype |
-| **H6** Reference bindings | Frame with a system needing a non-C1P or reordered projection: (a) reference set, (b) per-entity authority ref, (c) per-partition uniform authority; all through one accessor type | Direct binding identical to the H1 loop (no abstraction cost, verify asm); reference set within 2× direct on Update2-class kernels; uniform authority ≈ direct |
-| **H3** Replica (fallback) | Render-extract replica (sorted, compacted) | Refresh cost < saved iteration cost at 1 refresh/frame; staleness impossible by construction (tests) |
-| **H4** Static mode on ESP32-P4 | constexpr plan, fixed capacity, FreeRTOS executor | Zero heap after init; code size and SRAM reported; Update2 vs StaticBitmask |
-| **H5** Replan / fragmentation stress | 2^k optional-component mixes; add/remove systems at runtime | Partition count bounded as predicted; replan of 100K entities under a frame budget (target to be set) |
-
-Recommended order: **H1 → H2 → H6 → H4 → H5 → H3.** H3 only runs if H6 shows a
-reader where references lose badly. H1 is cheap (a variant of an
-existing spike) and decides whether the core idea is real.
+| Query-signature partitions give table-speed iteration and sparse-set-speed churn for unfiltered components | The store, against archetype tables and a sparse set | **Confirmed**, in hinted mode (carry stable unqueried components, side-store volatile ones). Pure side storage costs too much memory. Figures in [FINDINGS.md](../FINDINGS.md) |
+| Partition ordering | Global columns plus boundary swaps vs chunked partitions | Open. Each system should iterate one span in the consecutive-ones case; see the design review for why granularity comes first |
+| Reference bindings | A system needing a reordered projection: reference set, per-entity authority ref, per-partition uniform authority, through one accessor type | Open. The direct binding must stay identical to today's loop |
+| Replica (fallback) | Render-extract replica (sorted, compacted) | Open; only if references lose badly for some reader |
+| Static mode on ESP32-P4 | constexpr plan, fixed capacity, FreeRTOS executor | Open. Zero heap after init; code size and SRAM to be reported |
+| Replan and fragmentation stress | 2^k optional-component mixes; systems added and removed at runtime | Partly done: runtime queries with bounded migration are implemented; the fragmentation stress is open |
 
 ## References
 

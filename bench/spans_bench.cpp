@@ -1,6 +1,6 @@
 /** Micro: cost of iterating one system over K partitions (spans) vs 1 span, same
- * total N. Evidence for docs/research/design-review-pre-h2.md §3 (is cross-partition
- * contiguity worth H2?). One group; the baseline is 1 span, so each ratio is the
+ * total N. Evidence for docs/research/design-review-pre-h2.md, section 3 (is cross-partition
+ * contiguity worth pursuing?). One group; the baseline is 1 span, so each ratio is the
  * cost of splitting the same rows into K spans.
  */
 #include <memory>
