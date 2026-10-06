@@ -19,10 +19,16 @@ namespace sub0ecs::fusion
     struct EmulatedDevice
     {
         static constexpr const char* kName = "EmulatedDevice";
+        /** Runs a staged tile.
+         *  @param f The work to run on the device; here it is called at once. */
         template <typename F>
         void launch(F&& f) { f(); }
     };
 
+    /** Stages each tile of a device-safe group into device-local buffers, launches
+     *  it, and copies back only the columns the group writes.
+     *  @tparam Device A type with launch(f), such as EmulatedDevice.
+     *  @tparam Tile   Rows per tile; at least 1. */
     template <typename Device, std::size_t Tile>
     class Offload
     {
@@ -32,6 +38,12 @@ namespace sub0ecs::fusion
         static constexpr const char* kName = "Offload";
         static constexpr bool kRequiresDeviceSafe = true;
 
+        /** Runs a fused group's kernel over a partition's rows.
+         *  @tparam Info  GroupInfo of the group.
+         *  @param n      The number of rows.
+         *  @param cols   One column pointer per component type of the group (null
+         *                where the partition has no such column).
+         *  @param kernel Called as kernel(cols, count) over rows [0, count). */
         template <typename Info, typename Cols, typename K>
         void run(std::size_t n, const Cols& cols, K& kernel)
         {
@@ -45,8 +57,13 @@ namespace sub0ecs::fusion
             }
         }
 
-        std::size_t bytesIn() const { return bytesIn_; }
-        std::size_t bytesOut() const { return bytesOut_; }
+        /** Reports the traffic to the device so far.
+         *  @return Bytes staged in. */
+        [[nodiscard]] std::size_t bytesIn() const { return bytesIn_; }
+
+        /** Reports the traffic from the device so far.
+         *  @return Bytes copied back. */
+        [[nodiscard]] std::size_t bytesOut() const { return bytesOut_; }
 
     private:
         template <typename Info, typename... Ts>

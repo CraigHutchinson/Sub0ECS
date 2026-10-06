@@ -12,6 +12,10 @@
 
 namespace sub0ecs::fusion
 {
+    /** Picks a plan by timing the candidates in the live workload.
+     *  @tparam Planners The candidate planners.
+     *  @note Use one tuner per schedule: it decides once, after kTrialsPerCandidate
+     *        runs of each candidate, and keeps that choice. */
     template <typename... Planners>
     class AutoTuner
     {
@@ -19,6 +23,12 @@ namespace sub0ecs::fusion
         static constexpr std::size_t kCandidates = sizeof...(Planners);
         static constexpr int kTrialsPerCandidate = 5;
 
+        /** Runs the schedule once: under the next candidate while measuring, under the
+         *  chosen plan afterwards.
+         *  @param w       The world.
+         *  @param exec    The executor each group runs on.
+         *  @param host    The fallback executor for groups exec may not run.
+         *  @param systems The systems, in schedule order; the same on every call. */
         template <typename World, typename Exec, typename Host, typename... S>
         void run(World& w, Exec& exec, Host& host, const S&... systems)
         {
@@ -41,9 +51,17 @@ namespace sub0ecs::fusion
             dispatch(chosen_, w, exec, host, systems...);
         }
 
-        bool decided() const { return trial_ >= kCandidates * kTrialsPerCandidate; }
-        std::size_t chosen() const { return chosen_; }
-        static constexpr std::array<const char*, kCandidates> names() { return { Planners::kName... }; }
+        /** Tells whether measuring is over.
+         *  @return true once every candidate has had its trials. */
+        [[nodiscard]] bool decided() const { return trial_ >= kCandidates * kTrialsPerCandidate; }
+
+        /** Reports the chosen candidate.
+         *  @return Its index among Planners; meaningful once decided(). */
+        [[nodiscard]] std::size_t chosen() const { return chosen_; }
+
+        /** Lists the candidates' names.
+         *  @return Planners::kName, in order. */
+        [[nodiscard]] static constexpr std::array<const char*, kCandidates> names() { return { Planners::kName... }; }
 
     private:
         template <typename World, typename Exec, typename Host, typename... S>

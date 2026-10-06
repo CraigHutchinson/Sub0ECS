@@ -72,6 +72,17 @@
 
 namespace sub0ecs::store
 {
+    /** The store: entities, their components, and iteration over declared queries.
+     *
+     *  @tparam Carry     true: unqueried components are dense columns unless listed in
+     *                    Volatiles (the recommended layout, see World). false: every
+     *                    unqueried component is side-stored.
+     *  @tparam Queries   std::tuple<Query<...>...>: every query a system will iterate.
+     *                    They decide the storage layout.
+     *  @tparam Volatiles Volatile<...>: components that are added and removed often.
+     *  @note Not thread-safe. One thread may use a world at a time, except inside
+     *        eachParallel and runFusedParallel, whose callbacks run on several threads
+     *        and may touch only the components they are handed. */
     template <bool Carry, typename Queries, typename Volatiles = Volatile<>>
     class BasicWorld;
 
@@ -113,6 +124,7 @@ namespace sub0ecs::store
     public:
         using Entity = sub0ecs::Entity;
 
+        /** An empty world. */
         BasicWorld()
             : required_{ requiredMask(Qs{})... }
         {
@@ -123,25 +135,36 @@ namespace sub0ecs::store
             fragmenting_ = Carry ? ~volatile_ : queried_;
         }
 
-        /** Reserves the entity and record tables for n entities. Partitions still grow
-         *  as rows arrive: their sizes depend on which components entities get. */
+        /** Reserves the entity and record tables. Partitions still grow as rows arrive:
+         *  their sizes depend on which components entities get.
+         *  @param n The number of entities expected. */
         void reserve(std::size_t n)
         {
             entities_.reserve(n);
             records_.reserve(n);
         }
 
-        /** True while e refers to a live entity of this world (false once destroyed). */
-        bool alive(Entity e) const { return entities_.alive(e); }
+        /** Tells whether a handle still refers to a live entity of this world.
+         *  @param e The handle.
+         *  @return false once the entity is destroyed (see Entity for the reuse limit). */
+        [[nodiscard]] bool alive(Entity e) const { return entities_.alive(e); }
 
-        /** Live entity count. */
-        std::size_t size() const { return entities_.liveCount(); }
+        /** Counts the live entities.
+         *  @return The number of live entities. */
+        [[nodiscard]] std::size_t size() const { return entities_.liveCount(); }
 
+        /** Tells whether an entity holds a component.
+         *  @tparam C The component type.
+         *  @param e  The entity; a stale handle holds nothing.
+         *  @return true when find<C>(e) would return a value. */
         template <typename C>
-        bool has(Entity e) { return find<C>(e) != nullptr; }
+        [[nodiscard]] bool has(Entity e) { return find<C>(e) != nullptr; }
 
-        /** A new entity holding the given components. Terminates when the world already
-         *  holds Entity::kMaxEntities live entities. */
+        /** Creates an entity holding the given components.
+         *  @tparam Cs The component types, each at most once.
+         *  @param cs  The component values.
+         *  @return The new entity's handle.
+         *  @note Terminates when the world already holds Entity::kMaxEntities live entities. */
         template <typename... Cs>
         Entity create(Cs... cs)
         {
@@ -158,6 +181,10 @@ namespace sub0ecs::store
             return e;
         }
 
+        /** Calls f for every entity matching a declared query.
+         *  @tparam Cs The components of a declared Query<Cs...>, in its order.
+         *  @param f   Called as f(Cs&...) once per matching entity.
+         *  @note f must not create or destroy entities or add or remove components. */
         template <typename... Cs, typename F>
         void each(F&& f)
         {
@@ -172,8 +199,14 @@ namespace sub0ecs::store
             }
         }
 
+        /** Looks up one component of one entity.
+         *  @tparam C The component type.
+         *  @param e  The entity.
+         *  @return The component, or nullptr when e is stale or does not hold C.
+         *  @note The pointer is invalidated by the next structural change (create,
+         *        destroy, add, remove, migrateStep). */
         template <typename C>
-        C* find(Entity e)
+        [[nodiscard]] C* find(Entity e)
         {
             if (!entities_.alive(e)) return nullptr;
             // The index is resolved once: for a type numbered at runtime each lookup
@@ -196,6 +229,11 @@ namespace sub0ecs::store
             return poolOf<C>(t).find(e);
         }
 
+        /** Gives an entity a component, or overwrites the one it has.
+         *  @tparam C    The component type.
+         *  @param e     The entity; a stale handle is ignored.
+         *  @param value The value to store.
+         *  @note Moves the entity to another partition when C is queried or carried. */
         template <typename C>
         void add(Entity e, C value)
         {
@@ -219,6 +257,9 @@ namespace sub0ecs::store
             store(part(r), r.row, e, std::move(value));
         }
 
+        /** Takes a component away from an entity.
+         *  @tparam C The component type.
+         *  @param e  The entity; a stale handle, or one that does not hold C, is ignored. */
         template <typename C>
         void remove(Entity e)
         {
@@ -251,6 +292,8 @@ namespace sub0ecs::store
             r.has = newHas;
         }
 
+        /** Destroys an entity and every component it holds.
+         *  @param e The entity; a stale handle is ignored. */
         void destroy(Entity e)
         {
             if (!entities_.alive(e)) return;   // stale handle: must not release the slot twice
@@ -279,7 +322,9 @@ namespace sub0ecs::store
          *  group, so per-row interleaving equals running the passes back to back.
          *  The subset of systems per partition is resolved once per partition
          *  and dispatched to a compile-time specialised loop, so the inner loop
-         *  has no per-row branches on "does system j apply". */
+         *  has no per-row branches on "does system j apply".
+         *  @tparam Systems One to six system types, each naming a declared query.
+         *  @param systems  The systems, in schedule order. */
         template <typename... Systems>
         void runFused(const Systems&... systems)
         {
@@ -289,15 +334,24 @@ namespace sub0ecs::store
 
         /** Fusion with a pluggable executor (fusion/executors.hpp): the store
          *  supplies per-partition columns + the fused kernel; the executor
-         *  decides how rows are run (inline, tiled, threads, offload). */
+         *  decides how rows are run (inline, tiled, threads, offload).
+         *  @tparam Exec    The executor type.
+         *  @tparam Systems One to six system types, each naming a declared query.
+         *  @param exec     The executor.
+         *  @param systems  The systems, in schedule order. */
         template <typename Exec, typename... Systems>
         void runFusedOn(Exec& exec, const Systems&... systems)
         {
             runFusedOnMasked(exec, ~0u, systems...);
         }
 
-        /** Runtime enable mask over the group's members (bit j = systems[j]).
-         *  A disabled member simply drops out of every partition's subset. */
+        /** Runs a fused group with some of its members switched off. A disabled member
+         *  simply drops out of every partition's subset.
+         *  @tparam Exec    The executor type.
+         *  @tparam Systems One to six system types, each naming a declared query.
+         *  @param exec     The executor.
+         *  @param enabled  Bit j set = systems[j] runs.
+         *  @param systems  The systems, in schedule order. */
         template <typename Exec, typename... Systems>
         void runFusedOnMasked(Exec& exec, unsigned enabled, const Systems&... systems)
         {
@@ -325,7 +379,13 @@ namespace sub0ecs::store
         /** Fused group, data-parallel at CHUNK granularity across ALL partitions.
          *  Work items are (partition, system subset, row range); each worker streams
          *  its chunks through the whole fused chain — no barrier between systems,
-         *  one fork-join per group (vs one per partition in runFusedOn(Parallel)). */
+         *  one fork-join per group (vs one per partition in runFusedOn(Parallel)).
+         *  @tparam Pool    A type with parallelFor(items, fn(item, worker)), such as
+         *                  fusion::Parallel.
+         *  @tparam Systems One to six system types, each naming a declared query.
+         *  @param pool     The pool whose threads run the chunks.
+         *  @param systems  The systems, in schedule order.
+         *  @note The systems run on several threads at once, each on different rows. */
         template <typename Pool, typename... Systems>
         void runFusedParallel(Pool& pool, const Systems&... systems)
         {
@@ -362,8 +422,16 @@ namespace sub0ecs::store
 
         /** Data-parallel iteration: fixed-size row chunks across ALL partitions
          *  matching the query become pool work items (one fork-join per system,
-         *  not per partition). f(worker, Cs&...) — the worker index lets callers
-         *  keep per-thread command buffers / accumulators without locks. */
+         *  not per partition). The worker index lets callers keep per-thread command
+         *  buffers and accumulators without locks.
+         *  @tparam Cs  The components of a declared Query<Cs...>, in its order.
+         *  @tparam Pool A type with parallelFor(items, fn(item, worker)), such as
+         *              fusion::Parallel.
+         *  @param pool The pool whose threads run the chunks.
+         *  @param f    Called as f(worker, Cs&...) once per matching entity, with
+         *              worker < pool.concurrency().
+         *  @note f runs on several threads at once. It may touch only the components it
+         *        is handed; record structural changes per worker and apply them after. */
         template <typename... Cs, typename Pool, typename F>
         void eachParallel(Pool& pool, F&& f)
         {
@@ -406,8 +474,13 @@ namespace sub0ecs::store
         //   - when the side pools drain, the query flips to the full fast path.
         // migrateStep(SIZE_MAX) is the "stall acceptable" (level load) relayout.
 
+        /** Adds a query while the world is in use (see the comment above).
+         *  @tparam Cs The components the new system requires, each at most once.
+         *  @return The handle to iterate the query with.
+         *  @note Terminates when a component has no layout bit left (see "Type indices"
+         *        at the top of this file). */
         template <typename... Cs>
-        DynamicQuery<Cs...> addQuery()
+        [[nodiscard]] DynamicQuery<Cs...> addQuery()
         {
             static_assert(Carry, "dynamic queries are designed for the hinted (carry) layout");
             static_assert(detail::kDistinct<Cs...>, "addQuery: a component type is given twice");
@@ -433,25 +506,30 @@ namespace sub0ecs::store
             return DynamicQuery<Cs...>{ dyn_.size() - 1u };
         }
 
-        /** Scheduler-level enable/disable: no layout change (demotion back to side
-         *  storage is only done at stall points). */
+        /** Switches a runtime query on or off without changing the layout.
+         *  @param query The query's handle, from addQuery on this world.
+         *  @param on    false: eachDyn visits nothing. */
         template <typename... Cs>
         void setQueryEnabled(DynamicQuery<Cs...> query, bool on) { dynamic(query).enabled = on; }
 
-        /** True while some of the query's components are still being promoted, so
-         *  eachDyn takes the slower path for the entities not yet migrated. */
+        /** Tells whether a runtime query is still on the slower path.
+         *  @param query The query's handle, from addQuery on this world.
+         *  @return true while some of its components are still being promoted to columns. */
         template <typename... Cs>
-        bool queryDegraded(DynamicQuery<Cs...> query) const { return dynamic(query).pending != 0; }
+        [[nodiscard]] bool queryDegraded(DynamicQuery<Cs...> query) const { return dynamic(query).pending != 0; }
 
-        /** Entities still waiting to be migrated (upper bound: side-pool sizes). */
-        std::size_t pendingMigration() const
+        /** Counts the entities still waiting to be migrated.
+         *  @return An upper bound: the sizes of the pools being promoted. */
+        [[nodiscard]] std::size_t pendingMigration() const
         {
             std::size_t n = 0;
             for (Mask m = migrating_; m; m &= m - 1u) n += side_[std::countr_zero(m)]->size();
             return n;
         }
 
-        /** Migrate up to `budget` entities; returns entities still pending. */
+        /** Migrates some of the entities a runtime query is waiting for.
+         *  @param budget The most entities to move in this call; SIZE_MAX moves them all.
+         *  @return The entities still pending (see pendingMigration). */
         std::size_t migrateStep(std::size_t budget)
         {
             std::size_t moved = 0;
@@ -471,8 +549,11 @@ namespace sub0ecs::store
             return pendingMigration();
         }
 
-        /** f(Cs&...) for every entity matching a query added with addQuery. The handle
-         *  carries the component list, so it cannot be restated differently here. */
+        /** Calls f for every entity matching a query added with addQuery.
+         *  @param query The query's handle. It carries the component list, so the list
+         *               cannot be restated differently here.
+         *  @param f     Called as f(Cs&...) once per matching entity.
+         *  @note f must not make structural changes. */
         template <typename... Cs, typename F>
         void eachDyn(DynamicQuery<Cs...> query, F&& f)
         {
@@ -492,7 +573,9 @@ namespace sub0ecs::store
             }
         }
 
-        std::size_t partitionCount() const { return partitions_.size(); }
+        /** Counts the partitions created so far.
+         *  @return The number of partitions, empty ones included. */
+        [[nodiscard]] std::size_t partitionCount() const { return partitions_.size(); }
 
     private:
         // ---- runtime-query helpers ----
@@ -848,10 +931,13 @@ namespace sub0ecs::store
         std::array<std::vector<Partition*>, kQueries> byQuery_{};
     };
 
-    /** The recommended model: carry mode, with churn-heavy components declared Volatile.
+    /** The recommended world: carry mode, with churn-heavy components declared Volatile.
      *
      *   using Queries = std::tuple<sub0ecs::Query<Position, Velocity>, sub0ecs::Query<Health>>;
      *   sub0ecs::store::World<Queries, sub0ecs::store::Volatile<Selected>> world;
+     *
+     *  @tparam Queries   std::tuple<Query<...>...>: every query a system will iterate.
+     *  @tparam Volatiles Volatile<...>: components that are added and removed often.
      */
     template <typename Queries, typename Volatiles = Volatile<>>
     using World = BasicWorld<true, Queries, Volatiles>;

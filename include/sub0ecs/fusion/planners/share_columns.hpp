@@ -13,12 +13,18 @@ namespace sub0ecs::fusion
 {
     /** Row of the share matrix for system A against all S (kept separate: writing
      *  kShares<tuple_element_t<I, T>, S>... inline would expand I and S in
-     *  lockstep, silently producing kShares<Sj, Sj> == true everywhere). */
+     *  lockstep, silently producing kShares<Sj, Sj> == true everywhere).
+     *  @tparam A The system the row is for.
+     *  @tparam S Every system of the schedule.
+     *  @return One flag per system: true = it shares a component with A. */
     template <typename A, typename... S>
-    constexpr std::array<bool, sizeof...(S)> shareRow() { return { kShares<A, S>... }; }
+    [[nodiscard]] constexpr std::array<bool, sizeof...(S)> shareRow() { return { kShares<A, S>... }; }
 
+    /** Builds the "shares a component" matrix of a schedule.
+     *  @tparam S The systems, in schedule order.
+     *  @return m[i][j] = systems i and j share a component. */
     template <typename... S>
-    constexpr auto shareMatrix()
+    [[nodiscard]] constexpr auto shareMatrix()
     {
         using T = std::tuple<S...>;
         constexpr std::size_t K = sizeof...(S);
@@ -33,6 +39,9 @@ namespace sub0ecs::fusion
     struct ShareColumns
     {
         static constexpr const char* kName = "ShareColumns";
+        /** Decides where groups start.
+         *  @tparam S The systems, in schedule order.
+         *  @return One flag per system: true = this system starts a new group. */
         template <typename... S>
         static constexpr auto plan()
         {
