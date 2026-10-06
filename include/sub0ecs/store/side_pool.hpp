@@ -16,11 +16,11 @@ namespace sub0ecs::store
     /** Side storage: sparse set for components that are not columns.
      *  Typed (hot add/remove/find paths are inlined); the virtual interface
      *  is only used when values migrate between side storage and columns. */
-    class SidePoolBase
+    class ISidePool
     {
     public:
         static constexpr std::uint32_t kNull = ~0u;
-        virtual ~SidePoolBase() = default;
+        virtual ~ISidePool() = default;
         virtual const void* findRaw(Entity e) const = 0;
         virtual void emplaceRaw(Entity e, const void* src) = 0;
         virtual void remove(Entity e) = 0;
@@ -31,7 +31,7 @@ namespace sub0ecs::store
     };
 
     template <typename T>
-    class SidePool final : public SidePoolBase
+    class SidePool final : public ISidePool
     {
     public:
         T* find(Entity e)

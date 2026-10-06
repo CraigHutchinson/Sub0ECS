@@ -458,7 +458,7 @@ namespace sub0ecs::store
             while (migrating_ && moved < budget)
             {
                 const auto t = static_cast<std::uint32_t>(std::countr_zero(migrating_));
-                SidePoolBase& pool = *side_[t];
+                ISidePool& pool = *side_[t];
                 if (pool.size() == 0)
                 {
                     migrating_ &= ~(Mask{ 1 } << t);
@@ -713,7 +713,7 @@ namespace sub0ecs::store
         /** The side pool of a type index, or nullptr if this world has never stored that
          *  type. Indices with a layout bit sit in an inline array (one load, as before the
          *  limit was lifted); the rest in a table that grows with the types seen. */
-        SidePoolBase* poolAt(std::uint32_t index) const
+        ISidePool* poolAt(std::uint32_t index) const
         {
             if (index < kMaxTypes) return side_[index].get();
             const std::uint32_t slot = index - kMaxTypes;
@@ -777,7 +777,7 @@ namespace sub0ecs::store
                 else if (r.has & (Mask{ 1 } << col.type))
                 {
                     // promote: side storage -> column
-                    SidePoolBase& pool = *side_[col.type];
+                    ISidePool& pool = *side_[col.type];
                     copyRow(col.at(dstRow), static_cast<const std::byte*>(pool.findRaw(e)), col.stride);
                     pool.remove(e);
                 }
@@ -833,8 +833,8 @@ namespace sub0ecs::store
         std::array<std::array<std::byte, 64>, kMaxTypes> stash_{};   // promotion scratch (components <= 64 B)
         std::vector<std::uint32_t> nonFragmentingTypes_;
         std::array<std::size_t, kMaxTypes> strides_{};                    // by layout index; 0 = not stored here yet
-        std::array<std::unique_ptr<SidePoolBase>, kMaxTypes> side_{};     // by layout index
-        std::vector<std::unique_ptr<SidePoolBase>> sideBeyond_;           // types numbered beyond the layout bits
+        std::array<std::unique_ptr<ISidePool>, kMaxTypes> side_{};     // by layout index
+        std::vector<std::unique_ptr<ISidePool>> sideBeyond_;           // types numbered beyond the layout bits
 
         EntityAllocator entities_;
         std::vector<Record> records_;

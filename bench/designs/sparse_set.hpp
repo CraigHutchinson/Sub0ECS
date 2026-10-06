@@ -22,16 +22,16 @@
 
 namespace bench::sparse
 {
-    class PoolBase
+    class IPool
     {
     public:
-        virtual ~PoolBase() = default;
+        virtual ~IPool() = default;
         virtual void removeIfPresent(Entity e) = 0;
         virtual std::size_t size() const = 0;
     };
 
     template <typename T>
-    class Pool final : public PoolBase
+    class Pool final : public IPool
     {
     public:
         static constexpr std::uint32_t kNull = ~0u;
@@ -201,7 +201,7 @@ namespace bench::sparse
         }
 
         EntityAllocator entities_;
-        std::vector<std::unique_ptr<PoolBase>> pools_;
+        std::vector<std::unique_ptr<IPool>> pools_;
     };
 
 } // namespace bench::sparse

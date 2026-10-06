@@ -23,17 +23,17 @@ namespace bench::sorted
 {
     using Id = std::uint32_t;
 
-    class PoolBase
+    class IPool
     {
     public:
-        virtual ~PoolBase() = default;
+        virtual ~IPool() = default;
         virtual void stageRemove(Id id) = 0;
         virtual void flush() = 0;
         virtual std::size_t size() const = 0;
     };
 
     template <typename T>
-    class Pool final : public PoolBase
+    class Pool final : public IPool
     {
     public:
         void add(Id id, T value)
@@ -277,7 +277,7 @@ namespace bench::sorted
         }
 
         Id next_ = 0;
-        std::vector<std::unique_ptr<PoolBase>> pools_;
+        std::vector<std::unique_ptr<IPool>> pools_;
     };
 
 } // namespace bench::sorted
