@@ -3,10 +3,10 @@
  *  Story: a unit picks up a weapon, upgrades it, drops it, and dies; its slot is
  *  then reused by a new unit while the old handle stays safely dead.
  *  Keep in mind: handles are generational. Every operation on a destroyed entity's
- *  handle is a no-op and find() returns nullptr, so a stale handle can never reach
- *  the entity that reused its slot. Pointers from find() are invalidated by the
- *  next structural change. commit() marks the sync point for deferred designs; in
- *  this store changes apply immediately and commit() does nothing.
+ *  handle is a no-op and find() returns nullptr, so a stale handle does not reach
+ *  the entity that reused its slot (until that slot has been reused 256 times: see
+ *  sub0ecs/entity.hpp). Pointers from find() are invalidated by the next
+ *  structural change. Changes apply immediately; there is no commit step.
  *  Run: ctest --preset default -R Sub0ECS_Example_structural_changes
  */
 #include <cstddef>
@@ -62,7 +62,6 @@ int main()
     world.remove<Weapon>(unit);
     world.remove<Weapon>(bystander);
     expect(!world.has<Weapon>(unit) && armed(world) == 0, "dropping the weapon leaves the armed query");
-    world.commit();   // the sync point; a no-op here
 
     // destroy: the handle goes stale, and every use of it is harmless.
     world.destroy(unit);

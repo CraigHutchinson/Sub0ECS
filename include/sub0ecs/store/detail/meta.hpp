@@ -47,4 +47,8 @@ namespace sub0ecs::store::detail
         using type = typename UnionOf<typename AppendQuery<L, Q>::type, Rest...>::type;
     };
 
+    /** True when no type appears twice in Ts. */
+    template <typename... Ts>
+    inline constexpr bool kDistinct = Size<typename UnionOf<TypeList<>, Query<Ts...>>::type>::value == sizeof...(Ts);
+
 } // namespace sub0ecs::store::detail

@@ -26,6 +26,8 @@ namespace sub0ecs::fusion
     template <typename Device, std::size_t Tile>
     class Offload
     {
+        static_assert(Tile > 0, "Offload<Device, 0> would never advance");
+
     public:
         static constexpr const char* kName = "Offload";
         static constexpr bool kRequiresDeviceSafe = true;

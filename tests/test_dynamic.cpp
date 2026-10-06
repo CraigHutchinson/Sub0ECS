@@ -89,12 +89,12 @@ namespace
         auto w = std::make_unique<W>();
         auto es = populate(*w, kN, Pattern::Fragmented);
         for (std::size_t i = 0; i < es.size(); i += 2) w->add(es[i], Frozen{ 0 });
-        const std::size_t q = w->template addQuery<Position, Velocity, Frozen>();   // paged-in system
+        const auto q = w->template addQuery<Position, Velocity, Frozen>();   // paged-in system
         Outcome o;
         for (int f = 0; f < kFrames; ++f)
         {
             std::size_t n = 0;
-            w->template eachDyn<Position, Velocity, Frozen>(q, [&](Position& p, Velocity& v, Frozen& fr) { kernelFrozen(p, v, fr); ++n; });
+            w->eachDyn(q, [&](Position& p, Velocity& v, Frozen& fr) { kernelFrozen(p, v, fr); ++n; });
             o.visits.push_back(n);
             churn(*w, es, f);
             if (budget) w->migrateStep(budget);   // bounded restructuring per frame
@@ -140,10 +140,10 @@ TEST_CASE("enable/disable of systems, in fused groups and as dynamic queries")
         }
         check(checksum(*a, ea) == checksum(*b, eb), "disabled member of a fused group is skipped exactly");
 
-        const std::size_t q = a->template addQuery<Position, Velocity>();
+        const auto q = a->template addQuery<Position, Velocity>();
         a->setQueryEnabled(q, false);
         std::size_t n = 0;
-        a->template eachDyn<Position, Velocity>(q, [&](Position&, Velocity&) { ++n; });
+        a->eachDyn(q, [&](Position&, Velocity&) { ++n; });
         check(n == 0, "disabled dynamic system does not run");
         check(!a->queryDegraded(q), "query over already-dense components needs no relayout");
     }

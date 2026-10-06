@@ -39,7 +39,11 @@
  * Constraints: trivially copyable components of at most 64 bytes; at most 64
  * queried plus Volatile component types and at most 32 declared queries (both
  * compile-time errors); each<Cs...> must name a declared Query<Cs...> exactly;
- * a query added at runtime (addQuery) must name types that have a layout bit.
+ * a query added at runtime (addQuery) must name types that have a layout bit;
+ * at most Entity::kMaxEntities live entities (create terminates beyond that).
+ *
+ * This header needs only the inline executors. Include fusion/executors.hpp
+ * (or sub0ecs.hpp) for Parallel, Tiled and Offload.
  */
 
 
@@ -56,9 +60,10 @@
 
 #include "../detail/hints.hpp"
 #include "../entity.hpp"
-#include "../fusion/executors.hpp"
+#include "../fusion/executors/inline.hpp"
 #include "../query.hpp"
 #include "detail/meta.hpp"
+#include "dynamic_query.hpp"
 #include "mask.hpp"
 #include "partition.hpp"
 #include "side_pool.hpp"
@@ -107,9 +112,6 @@ namespace sub0ecs::store
 
     public:
         using Entity = sub0ecs::Entity;
-        static constexpr const char* kName = Carry ? "QPartHinted" : "QueryPart";
-        static constexpr bool kSupportsRemove = true;
-        static constexpr bool kSupportsDestroy = true;
 
         BasicWorld()
             : required_{ requiredMask(Qs{})... }
@@ -121,7 +123,13 @@ namespace sub0ecs::store
             fragmenting_ = Carry ? ~volatile_ : queried_;
         }
 
-        void reserve(std::size_t n) { records_.reserve(n); }
+        /** Reserves the entity and record tables for n entities. Partitions still grow
+         *  as rows arrive: their sizes depend on which components entities get. */
+        void reserve(std::size_t n)
+        {
+            entities_.reserve(n);
+            records_.reserve(n);
+        }
 
         /** True while e refers to a live entity of this world (false once destroyed). */
         bool alive(Entity e) const { return entities_.alive(e); }
@@ -132,11 +140,15 @@ namespace sub0ecs::store
         template <typename C>
         bool has(Entity e) { return find<C>(e) != nullptr; }
 
+        /** A new entity holding the given components. Terminates when the world already
+         *  holds Entity::kMaxEntities live entities. */
         template <typename... Cs>
         Entity create(Cs... cs)
         {
+            static_assert(detail::kDistinct<Cs...>, "create: a component type is given twice");
             (registerType<Cs>(), ...);
             const Entity e = entities_.create();
+            if (e == kNullEntity) std::abort();   // out of handles
             const Mask has = (Mask{ 0 } | ... | bit<Cs>()) & fragmenting_;
             const std::uint32_t pi = partitionFor(columnsFor(has));
             Partition& p = *partitions_[pi];
@@ -259,8 +271,6 @@ namespace sub0ecs::store
             entities_.release(e);
         }
 
-        void commit() {}
-
         /** System fusion: one pass per partition applying every system that
          *  matches it, in argument (= schedule) order, row by row.
          *
@@ -320,6 +330,9 @@ namespace sub0ecs::store
         void runFusedParallel(Pool& pool, const Systems&... systems)
         {
             constexpr std::size_t k = sizeof...(Systems);
+            static_assert(k >= 1 && k <= 6, "at most 6 systems per fused group (2^k loop specialisations)");
+            static_assert(((detail::indexOf<typename Systems::Query, Qs...>() < kQueries) && ...),
+                          "every fused system must use a declared query");
             constexpr std::array<std::size_t, k> qidx{ detail::indexOf<typename Systems::Query, Qs...>()... };
             constexpr std::size_t kChunk = 2048;
             fchunks_.clear();
@@ -394,9 +407,10 @@ namespace sub0ecs::store
         // migrateStep(SIZE_MAX) is the "stall acceptable" (level load) relayout.
 
         template <typename... Cs>
-        std::size_t addQuery()
+        DynamicQuery<Cs...> addQuery()
         {
             static_assert(Carry, "dynamic queries are designed for the hinted (carry) layout");
+            static_assert(detail::kDistinct<Cs...>, "addQuery: a component type is given twice");
             (registerType<Cs>(), ...);
             // A query's components become columns, so each needs a layout bit. Queried and
             // Volatile types always have one; a type first seen at runtime has one only
@@ -416,14 +430,18 @@ namespace sub0ecs::store
                 if ((p->columnsMask & req) == req) q.partitions.push_back(p.get());
             dyn_.push_back(std::move(q));
             refreshPending();
-            return dyn_.size() - 1u;
+            return DynamicQuery<Cs...>{ dyn_.size() - 1u };
         }
 
         /** Scheduler-level enable/disable: no layout change (demotion back to side
          *  storage is only done at stall points). */
-        void setQueryEnabled(std::size_t id, bool on) { dyn_[id].enabled = on; }
+        template <typename... Cs>
+        void setQueryEnabled(DynamicQuery<Cs...> query, bool on) { dynamic(query).enabled = on; }
 
-        bool queryDegraded(std::size_t id) const { return dyn_[id].pending != 0; }
+        /** True while some of the query's components are still being promoted, so
+         *  eachDyn takes the slower path for the entities not yet migrated. */
+        template <typename... Cs>
+        bool queryDegraded(DynamicQuery<Cs...> query) const { return dynamic(query).pending != 0; }
 
         /** Entities still waiting to be migrated (upper bound: side-pool sizes). */
         std::size_t pendingMigration() const
@@ -453,10 +471,12 @@ namespace sub0ecs::store
             return pendingMigration();
         }
 
+        /** f(Cs&...) for every entity matching a query added with addQuery. The handle
+         *  carries the component list, so it cannot be restated differently here. */
         template <typename... Cs, typename F>
-        void eachDyn(std::size_t id, F&& f)
+        void eachDyn(DynamicQuery<Cs...> query, F&& f)
         {
-            const DynQuery& q = dyn_[id];
+            const DynQuery& q = dynamic(query);
             if (!q.enabled) return;
             for (Partition* p : q.partitions)   // full path: dense columns
             {
@@ -493,6 +513,20 @@ namespace sub0ecs::store
             std::vector<Partition*> partitions;
             bool enabled = true;
         };
+
+        /** The registration behind a handle; the handle must come from this world. */
+        template <typename... Cs>
+        DynQuery& dynamic(DynamicQuery<Cs...> query)
+        {
+            assert(query.id < dyn_.size() && dyn_[query.id].required == requiredMask(Query<Cs...>{}));
+            return dyn_[query.id];
+        }
+        template <typename... Cs>
+        const DynQuery& dynamic(DynamicQuery<Cs...> query) const
+        {
+            assert(query.id < dyn_.size() && dyn_[query.id].required == requiredMask(Query<Cs...>{}));
+            return dyn_[query.id];
+        }
 
         void refreshPending()
         {
@@ -588,12 +622,12 @@ namespace sub0ecs::store
 
         // Fusion only pays if every system body is inlined into one loop body
         // (then the compiler sees a single merged kernel). Left to heuristics,
-        // GCC stopped inlining in large TUs (sub0ecs_bench) and the fused loop ran
+        // GCC stopped inlining in large translation units and the fused loop ran
         // at unfused speed, so force it: flatten = inline everything called here.
+        // GCC and Clang only: on MSVC the function-level form has to inline every
+        // system into each of the 2^k subset loops, which costs far more to compile
+        // than it gains.
         template <unsigned M, typename Exec, std::size_t... J, typename... Systems>
-        // GCC/Clang only. MSVC's [[msvc::flatten]] was tried (2026-10-01): no consistent gain in
-        // the paired fusion benchmarks, and +4 GB / +60 s compiling every file that
-        // includes the Skirmish systems (64 subset specialisations x full inlining).
 #if defined(__GNUC__)
         __attribute__((flatten))
 #endif

@@ -53,7 +53,7 @@ int main()
     }
 
     // The fire system arrives: it needs Position and Burning in the same row.
-    const std::size_t fire = world.addQuery<Position, Burning>();
+    const auto fire = world.addQuery<Position, Burning>();   // a typed handle: DynamicQuery<Position, Burning>
     expect(world.queryDegraded(fire), "the new query starts in degraded mode");
     expect(world.pendingMigration() == kBurning, "every burning tree is waiting to migrate");
 
@@ -62,7 +62,7 @@ int main()
     bool everyHolderOncePerFrame = true;
     const auto frame = [&] {
         std::size_t visited = 0;
-        world.eachDyn<Position, Burning>(fire, [&](Position& p, Burning& b) {
+        world.eachDyn(fire, [&](Position& p, Burning& b) {
             ++b.ticks;
             p.y += 1.0f;
             ++visited;

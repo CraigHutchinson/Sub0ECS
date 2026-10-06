@@ -12,7 +12,7 @@ observable check, and its own CTest entry named `Sub0ECS_Example_<name>`.
 | Core usage | `minimal_world` | Declare a query, create an entity, run a system | Build and run independently; resulting component values are checked |
 | Core usage | `rocket` | The first game loop: a movement system and a render system over different components | Rockets reach their expected cells; an entity without `Velocity` is drawn but never moved |
 | Core usage | `hinted_partitions` | Choose `Volatile<T>` for frequently changing, unqueried components | Compare carried and side-stored values and verify both query results |
-| Core usage | `structural_changes` | Add, overwrite, remove, destroy, stale handles, and commit points | Check membership, preserved values, and stale-handle behavior |
+| Core usage | `structural_changes` | Add, overwrite, remove, destroy and stale handles | Check membership, preserved values, and stale-handle behavior |
 | Core usage | `random_access` | Use `find<T>(entity)` and understand column/side-pool lookup | Check present and absent components, including after structural changes |
 | Scheduling | `fusion_planners` | Compare `NeverFuse`, `AlwaysFuse`, `ShareColumns`, and `DeviceAware` | Show the resulting groups and compare final state to sequential execution |
 | Scheduling | `auto_tuner` | Let measured candidates select a legal plan | Verify the selected plan and final state against the sequential reference |

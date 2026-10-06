@@ -41,14 +41,14 @@ namespace
         auto w = std::make_unique<qpart::HintedWorld>();
         auto es = populate(*w, n, Pattern::Fragmented);
         for (std::size_t i = 0; i < es.size(); i += 2) w->add(es[i], Frozen{ 0 });
-        const std::size_t q = w->template addQuery<Position, Velocity, Frozen>();
+        const auto q = w->template addQuery<Position, Velocity, Frozen>();
         Trial t;
         std::vector<double> degraded, full;
         for (int f = 0; f < frames; ++f)
         {
             const bool wasDegraded = w->queryDegraded(q);
             const auto t0 = Clock::now();
-            w->template eachDyn<Position, Velocity, Frozen>(q, [](Position& p, Velocity& v, Frozen& fr) {
+            w->eachDyn(q, [](Position& p, Velocity& v, Frozen& fr) {
                 ++fr.ticks;
                 p.x += v.dx * 0.016f;
             });
