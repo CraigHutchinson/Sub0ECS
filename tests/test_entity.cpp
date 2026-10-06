@@ -144,3 +144,31 @@ TEST_CASE("EntityAllocator: the 8-bit version wraps after 256 reuses of one slot
     ids.release(e);
     CHECK(ids.create() == first);
 }
+
+TEST_SUITE("exhaustive")
+{
+    TEST_CASE("EntityAllocator: hands out kMaxEntities slots, then the null handle, never a duplicate index")
+    {
+        // Past 2^24 - 1 slots an index would wrap and alias a live entity.
+        EntityAllocator ids;
+        ids.reserve(Entity::kMaxEntities);
+        Entity last = kNullEntity;
+        bool allValid = true;
+        for (std::uint32_t i = 0; i < Entity::kMaxEntities; ++i)
+        {
+            last = ids.create();
+            allValid = allValid && last.index() == i && !(last == kNullEntity);
+        }
+        CHECK(allValid);
+        CHECK(ids.liveCount() == Entity::kMaxEntities);
+        CHECK(ids.create() == kNullEntity);            // full: no wrapped index
+        CHECK(ids.liveCount() == Entity::kMaxEntities);
+
+        ids.release(last);                             // a freed slot can be handed out again
+        const Entity again = ids.create();
+        CHECK(again.index() == last.index());
+        CHECK(ids.alive(again));
+        CHECK_FALSE(ids.alive(last));
+        CHECK(ids.create() == kNullEntity);
+    }
+}

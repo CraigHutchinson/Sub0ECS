@@ -24,8 +24,9 @@ thread pool or on a device without changing their results.
   hardware.
 - **Systems added at runtime.** A query added while running works immediately,
   with a bounded per-frame migration budget instead of a level-load stall.
-- **No fixed limits to design around.** Any number of component types; generational
-  handles, so a stale handle is rejected rather than aliasing a new entity.
+- **Few limits to design around.** Any number of component types; up to 16.7M
+  live entities; generational handles, so a stale handle is rejected rather than
+  reaching the entity that reused its slot (for the first 255 reuses of that slot).
 
 ## Quick start
 

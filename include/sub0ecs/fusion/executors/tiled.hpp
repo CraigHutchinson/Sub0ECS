@@ -12,6 +12,7 @@ namespace sub0ecs::fusion
     template <std::size_t Tile>
     struct Tiled
     {
+        static_assert(Tile > 0, "Tiled<0> would never advance");
         static constexpr const char* kName = "Tiled";
         static constexpr bool kRequiresDeviceSafe = false;
         template <typename Info, typename Cols, typename K>

@@ -9,6 +9,7 @@
 #include <random>
 #include <set>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -581,4 +582,49 @@ TEST_CASE("store: in pure mode unqueried types need no layout bit, so their numb
     const Entity e2 = second.create(Many<0, 4>{ 0 }, Many<120, 4>{ 120 });
     CHECK(second.template find<Many<120, 4>>(e2)->value == 120);
     CHECK(second.template find<Many<121, 4>>(e2) == nullptr);
+}
+
+namespace
+{
+    /** Trivially copyable, but with no default constructor. */
+    struct Charge
+    {
+        explicit Charge(int v) : value(v) {}
+        int value;
+    };
+    using ChargeWorld = BasicWorld<false, std::tuple<Query<Position, Charge>>>;
+} // namespace
+
+TEST_CASE("store: a component need not be default-constructible")
+{
+    ChargeWorld w;
+    const Entity e = w.create(Position{ 1.0f, 2.0f }, Charge{ 7 });   // both are columns: the query matches
+    REQUIRE(w.template find<Charge>(e) != nullptr);
+    CHECK(w.template find<Charge>(e)->value == 7);
+
+    w.template remove<Position>(e);     // the query no longer matches: Charge moves to side storage, by bytes
+    REQUIRE(w.template find<Charge>(e) != nullptr);
+    CHECK(w.template find<Charge>(e)->value == 7);
+
+    w.add(e, Position{ 3.0f, 4.0f });   // and back into a column
+    CHECK(w.template find<Charge>(e)->value == 7);
+    std::size_t matched = 0;
+    w.template each<Position, Charge>([&](Position&, Charge& c) { matched += static_cast<std::size_t>(c.value); });
+    CHECK(matched == 7);
+}
+
+TEST_CASE("store: a runtime query's handle carries its component list")
+{
+    using W = sub0ecs::store::World<std::tuple<Query<Position>>, Volatile<Frozen>>;
+    W w;
+    const Entity e = w.create(Position{ 1.0f, 1.0f });
+    w.add(e, Frozen{ 3 });
+    const sub0ecs::store::DynamicQuery<Position, Frozen> q = w.template addQuery<Position, Frozen>();
+    static_assert(std::is_same_v<decltype(w.template addQuery<Position>()), sub0ecs::store::DynamicQuery<Position>>);
+    int seen = 0;
+    w.eachDyn(q, [&](Position&, Frozen& f) { seen += f.ticks; });   // no list to restate, so none to get wrong
+    CHECK(seen == 3);
+    w.setQueryEnabled(q, false);
+    w.eachDyn(q, [&](Position&, Frozen&) { ++seen; });
+    CHECK(seen == 3);
 }

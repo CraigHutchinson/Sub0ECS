@@ -37,8 +37,8 @@ namespace skirmish
     using SparseSetWorld = bench::sparse::World;
     using ArchetypeWorld = bench::archetype::World;
     using SortedWorld = bench::sorted::World;
-    using QueryPartWorld = sub0ecs::store::BasicWorld<false, SkirmishQueries>;
-    using QPartHintedWorld = sub0ecs::store::BasicWorld<true, SkirmishQueries, sub0ecs::store::Volatile<Carrying>>;
+    using QueryPartWorld = bench::qpart::Adapter<false, SkirmishQueries>;
+    using QPartHintedWorld = bench::qpart::Adapter<true, SkirmishQueries, sub0ecs::store::Volatile<Carrying>>;
 
     template <std::size_t Capacity>
     using StaticWorld = bench::fixed::BasicWorld<Capacity, Id, Position, Velocity, Team, UnitType, Health, Weapon,

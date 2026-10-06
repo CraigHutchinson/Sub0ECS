@@ -1,7 +1,10 @@
 #pragma once
 /** SidePool<T>: sparse-set side storage for components that are not columns. */
 
+#include <array>
+#include <bit>
 #include <cassert>
+#include <cstddef>
 #include <cstdint>
 #include <cstring>
 #include <vector>
@@ -83,9 +86,10 @@ namespace sub0ecs::store
 
         void emplaceRaw(Entity e, const void* src) override
         {
-            T value;
-            std::memcpy(&value, src, sizeof(T));
-            emplace(e, value);
+            // Through bytes, not `T value;`: a component need not be default-constructible.
+            std::array<std::byte, sizeof(T)> bytes;
+            std::memcpy(bytes.data(), src, sizeof(T));
+            emplace(e, std::bit_cast<T>(bytes));
         }
 
     private:

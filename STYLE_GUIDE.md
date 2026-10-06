@@ -1,6 +1,13 @@
 # SubzeroECS Code Style Guide
 
+style-profile: sub0
+
 The conventions the code already follows. When in doubt, match the surrounding code.
+This file summarises the Sub0 family style profile for this library; where the two
+disagree the profile wins, and the difference is tracked in
+[#12](https://github.com/CraigHutchinson/Sub0ECS/issues/12). Known differences
+today: include paths (the profile asks for `"sub0ecs/..."` everywhere) and Doxygen
+tags on interfaces.
 
 ## Files: one responsibility each
 
