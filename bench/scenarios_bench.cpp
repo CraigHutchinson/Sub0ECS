@@ -67,9 +67,9 @@ void operator delete(void* p) noexcept
 void operator delete(void* p, std::size_t) noexcept { operator delete(p); }
 void operator delete(void* p, std::align_val_t) noexcept { operator delete(p); }
 void operator delete(void* p, std::size_t, std::align_val_t) noexcept { operator delete(p); }
-#    define BENCH_HEAP_TRACKING 1
+#    define SUB0ECS_BENCH_HEAP_TRACKING 1
 #else
-#    define BENCH_HEAP_TRACKING 0
+#    define SUB0ECS_BENCH_HEAP_TRACKING 0
 #endif
 
 namespace
@@ -142,7 +142,7 @@ namespace
         };
         registry.add(Case{ "Create", toString(p), W::kName, n, static_cast<double>(n), "pass", true, 0, [p, n]() {
                               double bytesPerEntity = 0.0, allocsPerEntity = 0.0;
-#if BENCH_HEAP_TRACKING
+#if SUB0ECS_BENCH_HEAP_TRACKING
                               {
                                   const std::int64_t bytes0 = heap::liveBytes.load();
                                   auto w = std::make_unique<W>();
@@ -165,7 +165,7 @@ namespace
                                   ankerl::nanobench::doNotOptimizeAway(fx->entities.data());
                               };
                               prep.finish = [bytesPerEntity, allocsPerEntity](Record& r) {
-                                  if (BENCH_HEAP_TRACKING)
+                                  if (SUB0ECS_BENCH_HEAP_TRACKING)
                                   {
                                       r.counter("bytes_per_entity", bytesPerEntity);
                                       r.counter("allocs_per_entity", allocsPerEntity);
