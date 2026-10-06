@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <cstddef>
 
-#include "contract.hpp"
+#include "sub0ecs/fusion/executors/contract.hpp"
 
 namespace sub0ecs::fusion
 {

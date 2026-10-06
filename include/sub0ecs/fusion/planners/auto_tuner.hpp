@@ -8,7 +8,7 @@
 #include <limits>
 #include <utility>
 
-#include "plan.hpp"
+#include "sub0ecs/fusion/planners/plan.hpp"
 
 namespace sub0ecs::fusion
 {

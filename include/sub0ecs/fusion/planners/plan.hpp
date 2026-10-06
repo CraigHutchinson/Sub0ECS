@@ -9,7 +9,7 @@
 #include <type_traits>
 #include <utility>
 
-#include "../access.hpp"
+#include "sub0ecs/fusion/access.hpp"
 
 namespace sub0ecs::fusion
 {

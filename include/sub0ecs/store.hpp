@@ -14,11 +14,11 @@
  * Start with store/world.hpp; the rest are its building blocks.
  */
 
-#include "store/column.hpp"
-#include "store/dynamic_query.hpp"
-#include "store/mask.hpp"
-#include "store/partition.hpp"
-#include "store/side_pool.hpp"
-#include "store/type_index.hpp"
-#include "store/volatile.hpp"
-#include "store/world.hpp"
+#include "sub0ecs/store/column.hpp"
+#include "sub0ecs/store/dynamic_query.hpp"
+#include "sub0ecs/store/mask.hpp"
+#include "sub0ecs/store/partition.hpp"
+#include "sub0ecs/store/side_pool.hpp"
+#include "sub0ecs/store/type_index.hpp"
+#include "sub0ecs/store/volatile.hpp"
+#include "sub0ecs/store/world.hpp"

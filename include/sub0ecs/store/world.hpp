@@ -58,17 +58,17 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../detail/hints.hpp"
-#include "../entity.hpp"
-#include "../fusion/executors/inline.hpp"
-#include "../query.hpp"
-#include "detail/meta.hpp"
-#include "dynamic_query.hpp"
-#include "mask.hpp"
-#include "partition.hpp"
-#include "side_pool.hpp"
-#include "type_index.hpp"
-#include "volatile.hpp"
+#include "sub0ecs/detail/hints.hpp"
+#include "sub0ecs/entity.hpp"
+#include "sub0ecs/fusion/executors/inline.hpp"
+#include "sub0ecs/query.hpp"
+#include "sub0ecs/store/detail/meta.hpp"
+#include "sub0ecs/store/dynamic_query.hpp"
+#include "sub0ecs/store/mask.hpp"
+#include "sub0ecs/store/partition.hpp"
+#include "sub0ecs/store/side_pool.hpp"
+#include "sub0ecs/store/type_index.hpp"
+#include "sub0ecs/store/volatile.hpp"
 
 namespace sub0ecs::store
 {

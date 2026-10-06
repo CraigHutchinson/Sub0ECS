@@ -19,9 +19,9 @@
  * change the simulation.
  */
 
-#include "planners/always_fuse.hpp"
-#include "planners/auto_tuner.hpp"
-#include "planners/device_aware.hpp"
-#include "planners/never_fuse.hpp"
-#include "planners/plan.hpp"
-#include "planners/share_columns.hpp"
+#include "sub0ecs/fusion/planners/always_fuse.hpp"
+#include "sub0ecs/fusion/planners/auto_tuner.hpp"
+#include "sub0ecs/fusion/planners/device_aware.hpp"
+#include "sub0ecs/fusion/planners/never_fuse.hpp"
+#include "sub0ecs/fusion/planners/plan.hpp"
+#include "sub0ecs/fusion/planners/share_columns.hpp"

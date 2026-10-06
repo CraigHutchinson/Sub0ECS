@@ -17,8 +17,8 @@
 #include <vector>
 
 #include <nanobench.h>
-#include <sub0ecs/fusion/executors.hpp>
-#include <sub0ecs/fusion/planner.hpp>
+#include "sub0ecs/fusion/executors.hpp"
+#include "sub0ecs/fusion/planner.hpp"
 
 #include "common/env.hpp"
 #include "common/scenarios.hpp"

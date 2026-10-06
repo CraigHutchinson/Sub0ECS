@@ -9,7 +9,7 @@
 #include <cstring>
 #include <vector>
 
-#include "../entity.hpp"
+#include "sub0ecs/entity.hpp"
 
 namespace sub0ecs::store
 {

@@ -9,9 +9,9 @@
  *   fusion/executors.hpp where and how a fused group runs (fusion/executors/)
  */
 
-#include "entity.hpp"
-#include "fusion/access.hpp"
-#include "fusion/executors.hpp"
-#include "fusion/planner.hpp"
-#include "query.hpp"
-#include "store.hpp"
+#include "sub0ecs/entity.hpp"
+#include "sub0ecs/fusion/access.hpp"
+#include "sub0ecs/fusion/executors.hpp"
+#include "sub0ecs/fusion/planner.hpp"
+#include "sub0ecs/query.hpp"
+#include "sub0ecs/store.hpp"

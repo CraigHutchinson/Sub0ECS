@@ -29,8 +29,8 @@
 #    include <immintrin.h>
 #endif
 
-#include "contract.hpp"
-#include "cpu_topology.hpp"
+#include "sub0ecs/fusion/executors/contract.hpp"
+#include "sub0ecs/fusion/executors/cpu_topology.hpp"
 
 namespace sub0ecs::fusion
 {

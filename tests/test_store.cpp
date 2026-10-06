@@ -13,8 +13,8 @@
 #include <utility>
 #include <vector>
 
-#include <sub0ecs/fusion/executors.hpp>
-#include <sub0ecs/store.hpp>
+#include "sub0ecs/fusion/executors.hpp"
+#include "sub0ecs/store.hpp"
 
 #include "../bench/common/components.hpp"
 #include <doctest/doctest.h>
