@@ -25,14 +25,15 @@ system is a plain loop over arrays.
 | Declared `Volatile`, or beyond the 64 layout bits | A sparse-set side pool | A sparse-set operation; no data moves |
 
 The carried default exists because of a measurement: storing stable unqueried
-components in side pools cost about a third more memory per entity than columns,
+components in side pools costs noticeably more memory per entity than columns,
 for nothing. Volatility has to be declared, because only the program knows which
 components churn.
 
 **Churn isolation rests on one invariant:** an entity's record tracks only the
 components that can change its partition. Membership of the others lives solely in
-their pool, so adding or removing one touches the pool and nothing else. An early
-version updated the record as well and was 4× slower than a sparse set for it.
+their pool, so adding or removing one touches the pool and nothing else. Updating
+the record as well costs an extra cache line per operation, several times a
+sparse set's cost.
 
 **Systems can be fused.** Systems that share columns run as one loop over each
 partition; planners decide what fuses, executors where it runs. Results are
@@ -143,11 +144,9 @@ bit. Relative to the hand-written merged loop:
   the faster form, because each simple pass vectorises and the merged one does
   not; fusing them gives that up. A fixed "always fuse" rule is therefore wrong
   for some compiler, which is the case for a planner that measures (`AutoTuner`).
-- At 1M entities, where each pass is bound by memory rather than arithmetic, fused
-  against separate passes of the four-system FusionFrame measured 1.72× (MSVC),
-  1.54× (GCC) and 1.30× (clang-cl), three samples each.
-- Earlier figures of 3.5–5.3× came from another machine with GCC's fused
-  multiply-add enabled. They do not reproduce here and are withdrawn.
+- At 1M entities each pass is bound by memory rather than arithmetic, and fusion
+  pays on every compiler: the four-system frame fused against separate passes is
+  1.78× (MSVC), 1.30× (clang-cl) and 1.56× (GCC).
 
 Two rules came out of the prototype and still hold:
 
@@ -196,69 +195,110 @@ decided it:
 - **Keying by queries keeps the first and drops most of the second.** A component
   no system asks for does not need to partition anything.
 
-Partition count is not a concern at normal sizes: splitting 100K rows over up to
-512 partitions costs 4–11%, 4,096 costs 16% and 16,384 costs 25% (MSVC,
-[spans capture](../bench/results/reference/README.md)). Granularity matters only
-below a few hundred rows per partition.
+Partition count is not a concern at normal sizes: 100K rows split over up to 512
+partitions iterate within 10% of one partition on every compiler; 4,096
+partitions cost 12–24% and 16,384 cost 15–29%. Granularity matters only below a
+few hundred rows per partition.
 
 ## 4. Decisions inside the store, with their evidence
 
 | Decision | Why | Effect |
 |---|---|---|
-| Raw 64-byte-aligned column buffers owned by the partition, grown geometrically, never zero-filled | `vector<byte>::resize` on every row push and swap-remove did bookkeeping and zero-fill | TagChurn 1.5–1.9× faster, DestroyCreate 1.1–1.2× |
+| Raw 64-byte-aligned column buffers owned by the partition, grown geometrically, never zero-filled | `vector<byte>::resize` on every row push and swap-remove did bookkeeping and zero-fill | Faster structural change (TagChurn, DestroyCreate) |
 | A column base pointer per component type in each partition | `find`, `each` and fusion bind a column with one load | Simpler hot paths |
-| `find`: test for the column before testing membership (a column implies membership) | The membership branch sat in front of a dependent load | RandomGet about 20% faster |
-| Add/remove transition cache per partition, keyed by destination column mask | A hash lookup per structural move; the key includes the mask because carried components make the destination depend on more than (partition, component) | Part of the TagChurn gain; runtime-query migration 100–113 ms to 72–84 ms at 1M |
+| `find`: test for the column before testing membership (a column implies membership) | The membership branch sat in front of a dependent load | Faster `find` |
+| Add/remove transition cache per partition, keyed by destination column mask | A hash lookup per structural move; the key includes the mask because carried components make the destination depend on more than (partition, component) | Faster queried-component churn and runtime-query migration |
 | Type indices of queried and `Volatile` types are compile-time constants | A function-local static is a call on MSVC and a guard check elsewhere | RandomGet 1.6× faster on MSVC, 35–45% on clang-cl and GCC |
 | `[[msvc::flatten]]` on the row call of each iteration loop | MSVC inlined the system callable but not the kernel it calls: a call per row | Update2 and Frame3 1.2–1.35× faster on MSVC |
 | Fixed-size copies for 4/8/12/16-byte columns in row moves | `memcpy(stride)` is a library call per column per moved row | AddRemove 5–11% faster on all three compilers |
 | No runtime limit on component types | A 64-type cap per World is a wall users would hit; types beyond the 64 layout bits are side-stored | 200 types in one World tested in both modes |
 
-The first four effects were measured as before-and-after on an earlier GCC host,
-with the archetype design as the drift control; the rest on the machine above.
-
 Carried forward: reclaiming empty partitions (must invalidate the transition
 caches), bulk promotion sorted by source partition, batching queried-component
 moves at commit.
 
-## 5. Execution: planners, executors, threads, runtime systems
+## 5. Execution: planners, executors, threads, runtime queries
 
-These results are from one MSVC capture on the same machine
-([results/reference/](../bench/results/reference/README.md), 52 paired rounds per
-group, taken before the interleaved-sample procedure existed). Treat the ratios as
-indicative until they are re-measured that way; the correctness statements are
-tested.
+Captures: [rotation-exec](../bench/results/reference/CrogLegion/20261006-084419-rotation-exec/rotation.md)
+(pinned to the P-cores) and
+[rotation-threads](../bench/results/reference/CrogLegion/20261006-085203-rotation-threads/rotation.md)
+(unpinned), three interleaved samples per compiler. Figures are MSVC / clang-cl /
+GCC.
 
 **Planners and executors.** Fusion is pluggable on two axes: planners (`NeverFuse`,
 `AlwaysFuse`, `ShareColumns`, `DeviceAware`, the measuring `AutoTuner`) and
 executors (`Inline`, `Tiled`, `Parallel`, `Offload`). Every combination is
 bit-identical to sequential execution, including an auto-tuner that switches plans
-mid-run. On the four-system frame at 1M entities `ShareColumns` gave 1.72× over
-separate passes and `AutoTuner` 1.77×, while `AlwaysFuse` gave 0.61×: fusing an
-unrelated system into the loop made it slower.
+mid-run. Speed relative to `NeverFuse` (separate passes), on a frame of three
+systems that share columns plus one that does not:
+
+| Plan + executor | 100K entities | 1M entities |
+|---|---:|---:|
+| `ShareColumns` | 1.26× / 0.79× / 1.00× | 1.71× / 1.17× / 1.38× |
+| `AlwaysFuse` | 1.33× / 0.80× / 0.98× | 1.74× / 1.30× / 1.47× |
+| `AutoTuner` | 1.27× / 1.02× / 1.03× | 1.74× / 1.26× / 1.38× |
+| `ShareColumns` + `Tiled<4096>` | 1.25× / 0.82× / 0.98× | 1.71× / 1.21× / 1.40× |
+| `DeviceAware` + emulated `Offload` | 0.99× / 0.65× / 0.77× | 1.31× / 0.94× / 1.05× |
+
+- **A measuring planner is the only one that never loses.** At 100K the static
+  plans gain on MSVC, break even on GCC and lose 20% on clang-cl, where the
+  separate passes vectorise. `AutoTuner` takes the gain where there is one and
+  declines where there is not.
+- On a frame whose three systems share no columns, `ShareColumns` declines to fuse
+  (0.97–1.04×) and `AlwaysFuse` is within 0.95–1.16×: no gain to speak of, which
+  is why sharing is the rule.
+- Offload through the emulated device pays for staging every tile in and out; it
+  only breaks even where fusion's gain is large.
+- The `Parallel` executor is left out of this table. These runs were pinned to 8
+  cores and its pool starts one worker per hardware thread, so it ran 24 workers on
+  8 cores. Sizing the pool to the process affinity is on the backlog; thread
+  scaling is measured unpinned below.
 
 **Threads.** The Skirmish game stays bit-identical at every thread count. Fused
-movement at 50K units per team, against one thread: 2 → 1.74×, 4 → 2.89×,
-8 → 3.55×, 16 → 4.54×, 24 → 4.38×. Past the 8 P-cores the E-cores add little.
-Dynamic chunk claiming beats static "owner computes" affinity at every count
-(4.54× against 3.52× at 16 threads), because equal blocks suit equal cores and
-these are not. The remaining limit is the serial fraction: grid build, commit and
+movement at 12,500 units per team (50K units), against one thread:
+
+| Threads | 2 | 4 | 8 | 16 | 24 |
+|---|---:|---:|---:|---:|---:|
+| Dynamic chunk claiming | 1.67–1.79× | 2.66–2.91× | 3.45–3.83× | 3.27–3.56× | 2.56–3.20× |
+| Static "owner computes" affinity | 1.27–1.34× | 1.96–2.11× | 2.55–2.74× | 2.82–2.95× | 2.35–2.97× |
+
+Scaling peaks at 8 threads, the number of P-cores; the E-cores add nothing and 24
+threads is slower than 8. Dynamic claiming beats static affinity at every count,
+because equal blocks suit equal cores and these are not. At 10K units the peak is
+2.0–2.3× at 4–8 threads. The limit is the serial fraction: grid build, commit and
 the small systems. Free-running threads were rejected: they break determinism.
 
-**Runtime systems.** A query added at runtime that needs a side-stored component
+**Runtime queries.** A query added at runtime that needs a side-stored component
 runs immediately in a degraded mode (the fast path plus a sparse join over
 unmigrated holders) while `migrateStep(budget)` moves a bounded number of entities
 per frame. Results are bit-identical for every budget. At 1M entities with 500K to
-promote, migrating everything at once is one 40.7 ms frame; 16,384 entities per
-frame caps the worst frame at 7.8 ms and finishes in 30 frames. Degraded iteration
-costs 10–20× the full path, so it is a transition, not a steady state.
+promote ([timeline](../bench/results/reference/CrogLegion/20261006-084419-rotation-exec/dynamic.md)):
+
+| Budget | Worst frame | Frames to finish |
+|---|---:|---:|
+| Everything at once | 29–30 ms | 0 |
+| 65,536 entities per frame | 8.4–8.8 ms | 7 |
+| 16,384 entities per frame | 5.7–6.9 ms | 30 |
+
+Migration costs 54–63 ns per promoted entity. The degraded pass costs 5–11× the
+full pass (1.4–2.5 ms against 0.22–0.28 ms), so it is a transition, not a steady
+state.
 
 **A whole game compresses the differences.** In the
 [Skirmish testbed](../bench/skirmish/README.md) (an RTS with spatial queries, combat,
-projectiles and deaths) the store, archetype tables and fixed capacity are within
-2% of one another at 1.10–1.13× a sparse set, at 50K units per team. Most of a
-tick is spatial neighbour work, which no storage layout speeds up. That argues for
-a spatial index maintained by the store, which is on the backlog.
+projectiles and deaths), time per tick relative to a sparse set at 50K units:
+
+| Design | vs SparseSet |
+|---|---:|
+| Store | 1.14–1.27× |
+| Store, movement fused | 1.11–1.19× |
+| Archetype | 1.14–1.25× |
+| StaticBitmask | 1.13–1.14× |
+
+Table-based designs are 13–27% ahead of the sparse set and indistinguishable from
+one another. Most of a tick is spatial neighbour work, which no storage layout
+speeds up, and fusing the movement chain does not help here. That argues for a
+spatial index maintained by the store, which is on the backlog.
 
 ## 6. Compilers
 
@@ -326,14 +366,13 @@ exist because a number was once wrong without them:
 
 - **Conformance before numbers**: bit-identical state across every design,
   including the hand-tuned SIMD reference.
-- **One machine, named compiler.** An early comparison of MSVC with GCC used
-  numbers from two machines and was wrong by a factor of three.
+- **One machine, named compiler.** Figures from two machines are not a
+  compiler comparison.
 - **Several samples, interleaved, on a quiet machine** (`rotate.py`). Other work
   on the machine and thermal drift both move a single run by more than most of
   the differences of interest.
 - **The fastest design sizes a group's samples.** Sized by the slowest, a group
-  that includes a very slow design times the fast ones cold: Iter1 read 50 µs
-  where it takes 14–21.
+  that includes a very slow design times the fast ones on one cold pass.
 - **No fused multiply-add and no `-ffast-math`**, so every compiler and design
   computes the same values; denormals flushed, so long runs do not time the FPU's
   slow path.
@@ -347,5 +386,5 @@ exist because a number was once wrong without them:
 - Embedded targets (ESP32-P4): no `-march=native`, small N, in-order cores.
 - Many partitions with few entities each (2^k combinations of k optional
   components), and the cost of query-match invalidation there.
-- Planners, executors, threads, runtime systems and Skirmish under the
-  interleaved-sample procedure, and on GCC and Clang on this machine.
+- The `Parallel` executor outside Skirmish: its pool is not sized to the process
+  affinity, so the pinned captures cannot measure it.

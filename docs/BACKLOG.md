@@ -13,7 +13,7 @@ within a group.
 | **Cheaper churn on queried components.** Batch the row moves at commit; consider enable bits for components that toggle often | TagChurn is 0.12–0.21× of a sparse set |
 | **Side-pool add/remove on MSVC** | AddRemove and TagChurn are 1.4–1.5× behind GCC, with the time spread over `SidePool::emplace` / `remove` / `find`; profile first |
 | Reclaim empty partitions | Must also invalidate the add/remove transition caches, which hold partition indices |
-| Bulk promotion for runtime queries: sort pending entities by source partition so the moves stream | Migration is latency-bound (about 170 ns per promoted entity) |
+| Bulk promotion for runtime queries: sort pending entities by source partition so the moves stream | Migration is one general row move per entity (54–63 ns each) |
 | MSVC fusion inlining: a same-binary A/B of `[[msvc::forceinline_calls]]` on the fused kernel body | Function-level `[[msvc::flatten]]` cost 4 GB and 60 s per file for no consistent gain |
 
 ## Measurement
@@ -21,7 +21,7 @@ within a group.
 | Item | Why |
 |---|---|
 | **Benchmark against EnTT and flecs themselves**, through the same adapter and conformance check | SparseSet and Archetype in `bench/designs/` are our implementations of their storage models, not those libraries |
-| Re-measure planners, executors, thread scaling, runtime queries and Skirmish with `rotate.py` on all three compilers | FINDINGS section 5 rests on one MSVC run |
+| Measure the `Parallel` executor outside Skirmish | Its pool starts one worker per hardware thread, so pinned captures oversubscribe it (24 workers on 8 cores) |
 | Many partitions with few entities each (2^k combinations of k optional components), and query-match invalidation there | Not measured |
 | `bench/tools/profile.py`: wrap Linux `perf` for hosts without VTune; verify the `uarch` collection from an elevated prompt | Only the hotspots collection has been run |
 | A ThreadSanitizer job for the executors and the parallel store paths | Checked by hand once, not in CI |
@@ -54,6 +54,7 @@ Design: [research/executor-async.md](research/executor-async.md).
 | A `kBitExact` capability, plus a non-exact emulated device to exercise it |
 | Automatic grouping from declared `Access` over a whole schedule |
 | A `Parallel` executor backed by Sub0Pipeline; batch small systems into one dispatch; parallel commit |
+| Size the `Parallel` pool to the process affinity, not `hardware_concurrency()`; on a hybrid CPU prefer the performance cores (scaling peaks at their count and falls beyond it) |
 | Later: a CUDA executor behind an off-by-default option; an ESP32-P4 async-memcpy `Offload` |
 
 ## Platforms and ecosystem

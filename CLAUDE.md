@@ -52,6 +52,9 @@ only (a GitHub rule) and tests that branch.
 - **Record decisions with evidence.** A design choice backed by a measurement gets a
   FINDINGS section; ad-hoc benchmark runs stay in `bench/results/runs/`
   (ignored). Curate runs worth keeping into `bench/results/reference/<host>/`.
+- **No stale numbers.** A figure stays in the tree only while the current code
+  produces it. When a measurement is superseded, replace it everywhere (docs,
+  comments, curated captures); the history is in git.
 - **Profile before optimising.** A speed change starts from evidence, not from a
   guess: the paired ratio to the hand-written floor, then `bench/tools/profile.py`
   (VTune hot functions and processor metrics), then the compiler's vectoriser

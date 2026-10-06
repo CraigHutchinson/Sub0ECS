@@ -1,9 +1,7 @@
-# Dynamic system lifetimes (H9)
+# Systems added and removed at runtime
 
-> **Design note from the exploration phase.** It records the reasoning behind a
-> decision; its numbers were measured on an earlier host (a 4-vCPU cloud VM, GCC 13)
-> and its result files are in the repository history, not the tree. Current,
-> re-measured figures are in [FINDINGS.md](../FINDINGS.md).
+> Design note: the reasoning behind a part of the library. Measurements are kept in
+> [FINDINGS.md](../FINDINGS.md), open work in [BACKLOG.md](../BACKLOG.md).
 
 Systems are not all known at startup. A game pages systems in and out as
 it moves between levels and phases, or as new world regions and element
@@ -16,10 +14,9 @@ layout should be. This note defines how that change happens:
   incremental restructuring, flipping to the full path when done.
 
 - Code: `addQuery` / `eachDyn` / `migrateStep` / `setQueryEnabled` /
-  `runFusedOnMasked` in [designs/query_partition.hpp](../../include/sub0ecs/store/world.hpp).
-- Tests: [test/dynamic_test.cpp](../../tests/test_dynamic.cpp).
-- Timeline: [bench/dynamic_timeline.cpp](../../bench/dynamic_timeline.cpp).
-- Results: [results/h9-dynamic-*.json](../../bench/results/).
+  `runFusedOnMasked` in [store/world.hpp](../../include/sub0ecs/store/world.hpp).
+- Tests: [tests/test_dynamic.cpp](../../tests/test_dynamic.cpp).
+- Timeline benchmark: [bench/dynamic_timeline.cpp](../../bench/dynamic_timeline.cpp).
 
 ## 1. When does a new system need a relayout?
 
@@ -36,7 +33,7 @@ O(partitions) update of which partitions the new query matches.
 
 The pure-automatic layout (partitions keyed only by queries) would relayout
 far more often, since any new query can split partitions. That is another
-reason the hinted layout is the recommended default (FINDINGS § H1).
+reason the hinted layout is the default ([FINDINGS.md](../FINDINGS.md), section 1).
 
 ## 2. Lifecycle of a paged-in system
 
@@ -76,45 +73,25 @@ Rules that keep this correct while the game keeps running:
   where a disabled member drops out of every partition's subset. Verified
   equal to running the remaining systems sequentially.
 
-## 3. Evidence: stall vs incremental
+## 3. What the timeline benchmark shows
 
-A system over `<Position, Velocity, Frozen>` is added at frame 0; `Frozen`
-is in side storage on 50% of entities (fragmented pattern). Median of 3
-trials, 60 frames, 4-core VM.
+`sub0ecs_dynamic_timeline` adds a system over `<Position, Velocity, Frozen>` at
+frame 0, with `Frozen` in side storage on half the entities, and records every
+frame for a range of migration budgets. Current figures are in
+[FINDINGS.md](../FINDINGS.md), section 5. The shape of the result is what the
+design relies on:
 
-**1M entities (500K holders promoted)**
-
-| Budget (entities/frame) | Degraded system µs/frame | Full-path system µs/frame | Worst frame | Frames to full path | Total migration |
-|---|---:|---:|---:|---:|---:|
-| stall (all at once) | — | 438 | **149 ms** | 0 | 139 ms |
-| 65 536 | 6 478 | 417 | 28.9 ms | 7 | 127 ms |
-| 16 384 | 5 831 | 421 | **15.8 ms** | 30 | 118 ms |
-| 4 096 | 7 509 | — | 13.1 ms | not within 60 | — |
-| never | 9 551 | — | 12.3 ms | never | 0 |
-
-**100K entities (50K holders)**
-
-| Budget | Degraded | Full | Worst frame | Frames to full path |
-|---|---:|---:|---:|---:|
-| stall | — | 19 µs | 8.9 ms | 0 |
-| 16 384 | 608 µs | 19 µs | 3.4 ms | 3 |
-| 4 096 | 469 µs | 19 µs | 1.5 ms | 12 |
-| never | 833 µs | — | 1.0 ms | never |
-
-What the numbers say:
-
-- **Incremental migration bounds the hitch.** At 1M, a stall costs one
-  149 ms frame; 16 384 entities per frame caps frames at ~16 ms for about
-  half a second of game time.
-- **The degraded path is a real cost:** 14–22× the full path, because it is
-  a sparse join with random access to records. That is fine for a
-  transition but not as a steady state. Budgets must be large enough to
-  finish in a bounded time, or the system should be declared ahead of the
-  level where it is needed.
-- **Migration throughput is ~250 ns per entity** (one general row move per
-  entity). Bulk migration (moving runs of rows from the same source
-  partition with column slice copies) should be several times faster, and
-  it is the obvious next optimisation.
+- **Incremental migration bounds the hitch.** Migrating everything at once is one
+  long frame; a per-frame budget caps the worst frame at a fraction of it and
+  finishes within a bounded number of frames.
+- **The degraded path is a real cost**, an order of magnitude above the full
+  path, because it is a sparse join with random access to records. That is fine
+  for a transition but not as a steady state. Budgets must be large enough to
+  finish in a bounded time, or the system should be declared ahead of the level
+  where it is needed.
+- **Migration is one general row move per entity.** Bulk migration (moving runs
+  of rows from the same source partition with column slice copies) is the obvious
+  next optimisation.
 
 ## 4. Design decisions
 
@@ -129,9 +106,9 @@ What the numbers say:
 
 ## 5. Next steps
 
-| Step | Goal |
-|---|---|
-| H9b | Time-budgeted `migrateFor(µs)` driven by a frame-time governor; bulk row-slice migration per source partition |
-| H9c | Dynamic systems inside fused groups (re-plan on set change, AutoTuner re-measure after the flip) |
-| H9d | Skirmish scenario: a "phase 2" system paged in mid-game (e.g. supply-line telemetry over `Carrying`) playing the identical game across budgets |
-| H9e | Demotion at stall points; system set profiles for static/embedded mode |
+| Goal |
+|---|
+| Time-budgeted `migrateFor(µs)` driven by a frame-time governor; bulk row-slice migration per source partition |
+| Dynamic systems inside fused groups (re-plan on set change, AutoTuner re-measure after the flip) |
+| Skirmish scenario: a "phase 2" system paged in mid-game (e.g. supply-line telemetry over `Carrying`) playing the identical game across budgets |
+| Demotion at stall points; system set profiles for static/embedded mode |

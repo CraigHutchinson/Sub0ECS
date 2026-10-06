@@ -1,0 +1,5715 @@
+{
+ "schema": "sub0ecs-bench-rotation/1",
+ "builds": {
+  "msvc": "build\\msvc-native",
+  "clangcl": "build\\clangcl-native",
+  "gcc": "build\\gcc16-native"
+ },
+ "settings": {
+  "build": [
+   "msvc=build\\msvc-native",
+   "clangcl=build\\clangcl-native",
+   "gcc=build\\gcc16-native"
+  ],
+  "rounds": 3,
+  "profile": "standard",
+  "suites": "fusion,fusion-exec,skirmish,spans,dynamic",
+  "pin": "P",
+  "cooldown": 20,
+  "max_load": 10.0,
+  "quiet_timeout": 180,
+  "filter": ".",
+  "label": "exec",
+  "out": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs"
+ },
+ "samples": [
+  {
+   "round": 1,
+   "build": "msvc",
+   "status": "ok",
+   "load_before": 5.2,
+   "load_after": 6.1,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-084419-6e8b77c-rotation-exec\\samples\\CrogLegion\\20261006-084443-6e8b77c-r1-msvc",
+   "results": {
+    "FusionExec/Fragmented/NeverFuse/1000": [
+     1527.08538,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/1000": [
+     1287.92934,
+     1.17393981,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/1000": [
+     1217.71344,
+     1.2690468,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/1000": [
+     1247.59568,
+     1.22227248,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/1000": [
+     1200.78508,
+     1.2577653,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/1000": [
+     1262.6104,
+     1.24405311,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/1000": [
+     1482.72816,
+     1.01117341,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/1000": [
+     1988.46801,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/1000": [
+     1681.56566,
+     1.14227138,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/1000": [
+     1802.94613,
+     1.03548039,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/1000": [
+     1884.93266,
+     0.998882603,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/1000": [
+     1876.59933,
+     1.02560086,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/1000": [
+     1912.20539,
+     1.05264134,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/1000": [
+     2357.99663,
+     0.79820227,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/NeverFuse/100000": [
+     160550,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/100000": [
+     130125,
+     1.29509789,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/100000": [
+     133593.75,
+     1.23248328,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/100000": [
+     128743.75,
+     1.26692028,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/100000": [
+     135187.5,
+     1.21595337,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/100000": [
+     825175,
+     0.193189061,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/100000": [
+     163631.25,
+     0.967616999,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/100000": [
+     235230,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/100000": [
+     195240,
+     1.16524265,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/100000": [
+     213450,
+     1.07111466,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/100000": [
+     190410,
+     1.23052548,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/100000": [
+     220800,
+     1.06725364,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/100000": [
+     1090490,
+     0.213580575,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/100000": [
+     254240,
+     0.909581855,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/NeverFuse/1000000": [
+     2850050,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/1000000": [
+     1682250,
+     1.6812271,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/1000000": [
+     1649200,
+     1.70993835,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/1000000": [
+     1655900,
+     1.74425902,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/1000000": [
+     1624450,
+     1.71965016,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/1000000": [
+     1471050,
+     1.93690294,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/1000000": [
+     2187150,
+     1.3120936,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/1000000": [
+     2772100,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/1000000": [
+     2350450,
+     1.188104,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/1000000": [
+     2807400,
+     1.00459479,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/1000000": [
+     2354200,
+     1.21197322,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/1000000": [
+     2692250,
+     1.06888708,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/1000000": [
+     1790750,
+     1.56218673,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/1000000": [
+     3214300,
+     0.881611415,
+     "NeverFuse"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/1000": [
+     1273.29336,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/1000": [
+     1042.5738,
+     1.22943036,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/1000": [
+     1006.36531,
+     1.26525732,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/1000": [
+     983.256458,
+     1.24584998,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/1000": [
+     1266.05166,
+     0.969302648,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/1000": [
+     2535.60886,
+     0.496068229,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/1000": [
+     1369.16667,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/1000": [
+     1148.52941,
+     1.18005495,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/1000": [
+     1129.60784,
+     1.22904697,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/1000": [
+     1102.10784,
+     1.28419927,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/1000": [
+     1522.64706,
+     0.947546814,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/1000": [
+     3213.38235,
+     0.42009215,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/1000": [
+     1543.37662,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/1000": [
+     1877.79221,
+     0.827717085,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/100000": [
+     147150,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/100000": [
+     124440,
+     1.20159322,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/100000": [
+     120595,
+     1.2316558,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/100000": [
+     214720,
+     0.680328462,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/100000": [
+     149515,
+     1.01065185,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/100000": [
+     286445,
+     0.526763111,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/100000": [
+     171425,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/100000": [
+     124300,
+     1.35198009,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/100000": [
+     131331.25,
+     1.25610639,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/100000": [
+     127731.25,
+     1.30415773,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/100000": [
+     164337.5,
+     1.00509889,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/100000": [
+     382843.75,
+     0.462297753,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/100000": [
+     155383.333,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/100000": [
+     182600,
+     0.83266399,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/1000000": [
+     2808350,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/1000000": [
+     1511450,
+     1.83933667,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/1000000": [
+     1668350,
+     1.6389755,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/1000000": [
+     1597700,
+     1.74162647,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/1000000": [
+     2827850,
+     0.966699286,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/1000000": [
+     4085950,
+     0.670549111,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/1000000": [
+     3007950,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/1000000": [
+     1798750,
+     1.69388495,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/1000000": [
+     1894750,
+     1.60731227,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/1000000": [
+     1886550,
+     1.63390765,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/1000000": [
+     3000600,
+     1.00431459,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/1000000": [
+     4905650,
+     0.635499242,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/1000000": [
+     2579300,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/1000000": [
+     2672350,
+     0.964855985,
+     "QPartHintedSeq"
+    ],
+    "Tick/-/SparseSet/250": [
+     122550,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/250": [
+     113350,
+     1.07880222,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/250": [
+     107300,
+     1.15298152,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/250": [
+     104550,
+     1.16737729,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/250": [
+     109150,
+     1.15025847,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/250": [
+     110150,
+     1.10940113,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/250": [
+     107950,
+     1.14059309,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/250": [
+     111150,
+     1.10583971,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/250": [
+     111550,
+     1.10178653,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/250": [
+     110300,
+     1.14794517,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/250": [
+     120400,
+     1.01977889,
+     "SparseSet"
+    ],
+    "Tick/-/SortedSoA/250": [
+     213200,
+     0.575538353,
+     "SparseSet"
+    ],
+    "Tick/-/SparseSet/2500": [
+     1999450,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/2500": [
+     1915400,
+     1.04682968,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/2500": [
+     1960250,
+     1.03989278,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/2500": [
+     1943800,
+     1.04226772,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/2500": [
+     1875050,
+     1.09633934,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/2500": [
+     1950950,
+     1.02734289,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/2500": [
+     1959650,
+     1.02032297,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/2500": [
+     1940250,
+     1.03760259,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/2500": [
+     1964050,
+     1.02782136,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/2500": [
+     1907600,
+     1.05241149,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/2500": [
+     1904300,
+     1.05492473,
+     "SparseSet"
+    ],
+    "Tick/-/SparseSet/12500": [
+     10328300,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/12500": [
+     8982800,
+     1.1452284,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/12500": [
+     9271400,
+     1.13884462,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/12500": [
+     9325750,
+     1.09948666,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/12500": [
+     9000450,
+     1.15346997,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/12500": [
+     9294600,
+     1.12347321,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/12500": [
+     9376100,
+     1.12029839,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/12500": [
+     7038500,
+     1.48109664,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/12500": [
+     9231300,
+     1.11264104,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/12500": [
+     9261900,
+     1.12087722,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/12500": [
+     8887550,
+     1.14410651,
+     "SparseSet"
+    ],
+    "Spans/-/k1/100000": [
+     140470,
+     1,
+     "k1"
+    ],
+    "Spans/-/k6/100000": [
+     130145,
+     1.08492498,
+     "k1"
+    ],
+    "Spans/-/k64/100000": [
+     128480,
+     1.08283959,
+     "k1"
+    ],
+    "Spans/-/k512/100000": [
+     134310,
+     1.05331294,
+     "k1"
+    ],
+    "Spans/-/k4096/100000": [
+     172305,
+     0.806142445,
+     "k1"
+    ],
+    "Spans/-/k16384/100000": [
+     196400,
+     0.709799574,
+     "k1"
+    ]
+   }
+  },
+  {
+   "round": 1,
+   "build": "clangcl",
+   "status": "ok",
+   "load_before": 5.5,
+   "load_after": 13.5,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-084419-6e8b77c-rotation-exec\\samples\\CrogLegion\\20261006-084537-6e8b77c-r1-clangcl",
+   "results": {
+    "FusionExec/Fragmented/NeverFuse/1000": [
+     1083.19746,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/1000": [
+     1471.69384,
+     0.673052791,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/1000": [
+     1430.66123,
+     0.71607083,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/1000": [
+     1064.17572,
+     0.992233294,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/1000": [
+     1546.51268,
+     0.714729406,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/1000": [
+     1854.43841,
+     0.598976768,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/1000": [
+     1660.05435,
+     0.606294464,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/1000": [
+     1611.89591,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/1000": [
+     2013.56877,
+     0.832028421,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/1000": [
+     1590.79926,
+     1.0031832,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/1000": [
+     1502.88104,
+     0.991374956,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/1000": [
+     1508.17844,
+     0.998888683,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/1000": [
+     2017.19331,
+     0.822776078,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/1000": [
+     2297.58364,
+     0.658701124,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/NeverFuse/100000": [
+     134000,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/100000": [
+     164764.286,
+     0.797295735,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/100000": [
+     172271.429,
+     0.790223132,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/100000": [
+     126621.429,
+     1.03011518,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/100000": [
+     170800,
+     0.802584978,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/100000": [
+     779857.143,
+     0.166425017,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/100000": [
+     204514.286,
+     0.646537927,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/100000": [
+     182090,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/100000": [
+     199900,
+     0.905418776,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/100000": [
+     189850,
+     0.963758398,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/100000": [
+     190800,
+     0.9353703,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/100000": [
+     196390,
+     0.970097168,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/100000": [
+     958950,
+     0.188342929,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/100000": [
+     250080,
+     0.718550165,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/NeverFuse/1000000": [
+     2556700,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/1000000": [
+     1995250,
+     1.30732692,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/1000000": [
+     2172050,
+     1.17441694,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/1000000": [
+     2004700,
+     1.2643342,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/1000000": [
+     2106200,
+     1.20616025,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/1000000": [
+     1194550,
+     2.1206185,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/1000000": [
+     2732350,
+     0.961410075,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/1000000": [
+     2351950,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/1000000": [
+     2353400,
+     1.02090864,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/1000000": [
+     2404050,
+     0.970053054,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/1000000": [
+     2329050,
+     1.02149105,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/1000000": [
+     2354500,
+     0.991864238,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/1000000": [
+     1613950,
+     1.45399199,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/1000000": [
+     3139050,
+     0.724396638,
+     "NeverFuse"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/1000": [
+     1010.16334,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/1000": [
+     1458.93829,
+     0.707463917,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/1000": [
+     1395.87114,
+     0.707477316,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/1000": [
+     1411.66062,
+     0.706501875,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/1000": [
+     1033.52995,
+     0.964266268,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/1000": [
+     3076.27042,
+     0.351658906,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/1000": [
+     945.609982,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/1000": [
+     1461.82994,
+     0.65433358,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/1000": [
+     1379.80591,
+     0.695252776,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/1000": [
+     1314.37153,
+     0.717930098,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/1000": [
+     1058.45656,
+     0.902370358,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/1000": [
+     3267.60628,
+     0.288405488,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/1000": [
+     1843.47826,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/1000": [
+     2182.91925,
+     0.826022829,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/100000": [
+     130970,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/100000": [
+     178415,
+     0.745460381,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/100000": [
+     171680,
+     0.763473603,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/100000": [
+     177225,
+     0.765840892,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/100000": [
+     128995,
+     0.995496025,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/100000": [
+     334275,
+     0.399811537,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/100000": [
+     144643.75,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/100000": [
+     186500,
+     0.771234052,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/100000": [
+     182843.75,
+     0.803131263,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/100000": [
+     184950,
+     0.785687672,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/100000": [
+     149325,
+     0.980669736,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/100000": [
+     409875,
+     0.352046725,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/100000": [
+     166550,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/100000": [
+     189333.333,
+     0.880677081,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/1000000": [
+     2333100,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/1000000": [
+     1850200,
+     1.26786714,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/1000000": [
+     1875350,
+     1.25088595,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/1000000": [
+     1880150,
+     1.26535627,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/1000000": [
+     2345850,
+     0.982482814,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/1000000": [
+     4053250,
+     0.579740774,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/1000000": [
+     2430900,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/1000000": [
+     2007400,
+     1.13548398,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/1000000": [
+     1972950,
+     1.211794,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/1000000": [
+     1824200,
+     1.30945839,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/1000000": [
+     2437750,
+     0.983639517,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/1000000": [
+     4523650,
+     0.543655061,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/1000000": [
+     2179350,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/1000000": [
+     2097800,
+     1.04943756,
+     "QPartHintedSeq"
+    ],
+    "Tick/-/SparseSet/250": [
+     119000,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/250": [
+     104050,
+     1.1635495,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/250": [
+     95650,
+     1.24671863,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/250": [
+     101850,
+     1.1624801,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/250": [
+     97100,
+     1.22873499,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/250": [
+     102350,
+     1.15870169,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/250": [
+     95800,
+     1.26049353,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/250": [
+     104750,
+     1.14381729,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/250": [
+     101500,
+     1.18382728,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/250": [
+     99550,
+     1.20725064,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/250": [
+     114150,
+     1.02874526,
+     "SparseSet"
+    ],
+    "Tick/-/SortedSoA/250": [
+     189850,
+     0.619588927,
+     "SparseSet"
+    ],
+    "Tick/-/SparseSet/2500": [
+     1709300,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/2500": [
+     1467350,
+     1.1644155,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/2500": [
+     1448300,
+     1.1795588,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/2500": [
+     1524950,
+     1.10617776,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/2500": [
+     1411650,
+     1.19863267,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/2500": [
+     1514200,
+     1.12283394,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/2500": [
+     1472300,
+     1.15688416,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/2500": [
+     1539000,
+     1.11218005,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/2500": [
+     1472100,
+     1.17260276,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/2500": [
+     1467700,
+     1.16399826,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/2500": [
+     1561850,
+     1.08966288,
+     "SparseSet"
+    ],
+    "Tick/-/SparseSet/12500": [
+     10381550,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/12500": [
+     7932750,
+     1.26817398,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/12500": [
+     8111000,
+     1.26240475,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/12500": [
+     8742050,
+     1.1736583,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/12500": [
+     7947650,
+     1.28450448,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/12500": [
+     8714600,
+     1.17558768,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/12500": [
+     8266550,
+     1.23573445,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/12500": [
+     6231600,
+     1.63346361,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/12500": [
+     8227500,
+     1.26860431,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/12500": [
+     8240200,
+     1.25157049,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/12500": [
+     9294900,
+     1.12857381,
+     "SparseSet"
+    ],
+    "Spans/-/k1/100000": [
+     184983.333,
+     1,
+     "k1"
+    ],
+    "Spans/-/k6/100000": [
+     174291.667,
+     1.05856028,
+     "k1"
+    ],
+    "Spans/-/k64/100000": [
+     175175,
+     1.01670344,
+     "k1"
+    ],
+    "Spans/-/k512/100000": [
+     183866.667,
+     1.02247812,
+     "k1"
+    ],
+    "Spans/-/k4096/100000": [
+     206600,
+     0.875494188,
+     "k1"
+    ],
+    "Spans/-/k16384/100000": [
+     216250,
+     0.852325812,
+     "k1"
+    ]
+   }
+  },
+  {
+   "round": 1,
+   "build": "gcc",
+   "status": "ok",
+   "load_before": 6.0,
+   "load_after": 15.0,
+   "waited_s": 1,
+   "quiet": false,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-084419-6e8b77c-rotation-exec\\samples\\CrogLegion\\20261006-084630-6e8b77c-r1-gcc",
+   "results": {
+    "FusionExec/Fragmented/NeverFuse/1000": [
+     1093.41865,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/1000": [
+     1082.86106,
+     0.924731946,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/1000": [
+     1059.68921,
+     1.00360166,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/1000": [
+     952.833638,
+     1.03569901,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/1000": [
+     1209.04936,
+     0.976166584,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/1000": [
+     1011.01463,
+     1.0265548,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/1000": [
+     1443.32724,
+     0.750338199,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/1000": [
+     1415.20501,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/1000": [
+     1405.06834,
+     0.928760884,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/1000": [
+     1528.4738,
+     0.978102015,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/1000": [
+     1380.63781,
+     1.01496684,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/1000": [
+     1355.29613,
+     1.03078354,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/1000": [
+     1463.49658,
+     1.00107034,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/1000": [
+     1808.20046,
+     0.710883095,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/NeverFuse/100000": [
+     109634.884,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/100000": [
+     135590.698,
+     0.91131479,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/100000": [
+     118075.581,
+     0.976622506,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/100000": [
+     127252.326,
+     0.954341606,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/100000": [
+     127788.372,
+     0.919129814,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/100000": [
+     29211.6279,
+     3.60175516,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/100000": [
+     166260.465,
+     0.726242821,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/100000": [
+     134088.333,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/100000": [
+     137918.333,
+     0.947241034,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/100000": [
+     134248.333,
+     0.985942216,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/100000": [
+     132366.667,
+     0.993228676,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/100000": [
+     131143.333,
+     1.00358862,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/100000": [
+     373866.667,
+     0.379275703,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/100000": [
+     177425,
+     0.733499963,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/NeverFuse/1000000": [
+     2353700,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/1000000": [
+     1678450,
+     1.41268225,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/1000000": [
+     1587125,
+     1.48881716,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/1000000": [
+     1588350,
+     1.47256619,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/1000000": [
+     1745650,
+     1.31776688,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/1000000": [
+     725575,
+     3.15997654,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/1000000": [
+     2348075,
+     1.00172057,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/1000000": [
+     2176600,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/1000000": [
+     2015850,
+     1.09631455,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/1000000": [
+     2113050,
+     1.03579377,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/1000000": [
+     1999600,
+     1.08862618,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/1000000": [
+     2169200,
+     0.986818445,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/1000000": [
+     975800,
+     2.20028311,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/1000000": [
+     2869400,
+     0.74866889,
+     "NeverFuse"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/1000": [
+     845.606184,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/1000": [
+     858.950366,
+     0.975615646,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/1000": [
+     857.689178,
+     0.975357686,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/1000": [
+     885.435313,
+     0.971683327,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/1000": [
+     893.409276,
+     0.944556035,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/1000": [
+     1867.41253,
+     0.45217448,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/1000": [
+     1142,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/1000": [
+     1297.86667,
+     0.888299899,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/1000": [
+     1138.2,
+     0.994309054,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/1000": [
+     1096.06667,
+     1.00479404,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/1000": [
+     1176.06667,
+     0.948698433,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/1000": [
+     2922.53333,
+     0.392699686,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/1000": [
+     1143.80597,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/1000": [
+     1272.53731,
+     0.898453165,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/100000": [
+     101422.727,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/100000": [
+     99227.2727,
+     1.04138145,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/100000": [
+     96122.7273,
+     1.03854817,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/100000": [
+     95854.5455,
+     1.05681483,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/100000": [
+     99790.9091,
+     1.01992674,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/100000": [
+     232040.909,
+     0.433177593,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/100000": [
+     120918.75,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/100000": [
+     116037.5,
+     1.01835817,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/100000": [
+     108106.25,
+     1.04155001,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/100000": [
+     112331.25,
+     1.04434732,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/100000": [
+     116462.5,
+     0.996209725,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/100000": [
+     307818.75,
+     0.411825096,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/100000": [
+     160157.143,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/100000": [
+     171128.571,
+     0.940689146,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/1000000": [
+     2232700,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/1000000": [
+     1353500,
+     1.62304803,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/1000000": [
+     1357950,
+     1.66075871,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/1000000": [
+     1531800,
+     1.45984959,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/1000000": [
+     2241800,
+     0.971712795,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/1000000": [
+     3859550,
+     0.590493415,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/1000000": [
+     2423550,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/1000000": [
+     1541800,
+     1.57600603,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/1000000": [
+     1594750,
+     1.5123831,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/1000000": [
+     1670800,
+     1.50292824,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/1000000": [
+     2427850,
+     0.974824194,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/1000000": [
+     4670400,
+     0.520351491,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/1000000": [
+     2159300,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/1000000": [
+     1903400,
+     1.08963953,
+     "QPartHintedSeq"
+    ],
+    "Tick/-/SparseSet/250": [
+     136800,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/250": [
+     124000,
+     1.09001912,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/250": [
+     123450,
+     1.12389269,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/250": [
+     122100,
+     1.12278389,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/250": [
+     120200,
+     1.09897378,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/250": [
+     122550,
+     1.11020556,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/250": [
+     122700,
+     1.1137237,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/250": [
+     124800,
+     1.11054321,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/250": [
+     125500,
+     1.10183818,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/250": [
+     123550,
+     1.11690475,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/250": [
+     131900,
+     1.02888413,
+     "SparseSet"
+    ],
+    "Tick/-/SortedSoA/250": [
+     247250,
+     0.550132997,
+     "SparseSet"
+    ],
+    "Tick/-/SparseSet/2500": [
+     1584900,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/2500": [
+     1513250,
+     1.05131689,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/2500": [
+     1457100,
+     1.06039783,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/2500": [
+     1516050,
+     1.08287164,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/2500": [
+     1455100,
+     1.09621381,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/2500": [
+     1481350,
+     1.06284853,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/2500": [
+     1469650,
+     1.06535097,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/2500": [
+     1470300,
+     1.06221296,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/2500": [
+     1469750,
+     1.05247308,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/2500": [
+     1537450,
+     1.06362895,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/2500": [
+     1438250,
+     1.09229172,
+     "SparseSet"
+    ],
+    "Tick/-/SparseSet/12500": [
+     9083250,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/12500": [
+     8024650,
+     1.13869986,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/12500": [
+     7861300,
+     1.14714648,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/12500": [
+     7933400,
+     1.12509459,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/12500": [
+     7859650,
+     1.16494908,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/12500": [
+     7961900,
+     1.12696607,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/12500": [
+     7640400,
+     1.17391402,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/12500": [
+     6038550,
+     1.47963368,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/12500": [
+     7900450,
+     1.13617158,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/12500": [
+     8152700,
+     1.1228296,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/12500": [
+     7879850,
+     1.15157,
+     "SparseSet"
+    ],
+    "Spans/-/k1/100000": [
+     111495.455,
+     1,
+     "k1"
+    ],
+    "Spans/-/k6/100000": [
+     113009.091,
+     0.975445314,
+     "k1"
+    ],
+    "Spans/-/k64/100000": [
+     113063.636,
+     0.97414651,
+     "k1"
+    ],
+    "Spans/-/k512/100000": [
+     114359.091,
+     0.935431606,
+     "k1"
+    ],
+    "Spans/-/k4096/100000": [
+     140531.818,
+     0.764404315,
+     "k1"
+    ],
+    "Spans/-/k16384/100000": [
+     147986.364,
+     0.738364618,
+     "k1"
+    ]
+   }
+  },
+  {
+   "round": 2,
+   "build": "clangcl",
+   "status": "ok",
+   "load_before": 5.5,
+   "load_after": 10.2,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-084419-6e8b77c-rotation-exec\\samples\\CrogLegion\\20261006-084721-6e8b77c-r2-clangcl",
+   "results": {
+    "FusionExec/Fragmented/NeverFuse/1000": [
+     1272.59332,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/1000": [
+     1943.66405,
+     0.672263373,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/1000": [
+     1756.63065,
+     0.713343447,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/1000": [
+     1233.84086,
+     1.01317396,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/1000": [
+     1816.94499,
+     0.71447469,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/1000": [
+     2096.75835,
+     0.612802752,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/1000": [
+     2039.04715,
+     0.654454691,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/1000": [
+     1530.08535,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/1000": [
+     1870.55477,
+     0.837291335,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/1000": [
+     1586.77098,
+     0.996790832,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/1000": [
+     1594.38122,
+     0.987770996,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/1000": [
+     1569.06117,
+     1.00393523,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/1000": [
+     1866.71408,
+     0.817830991,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/1000": [
+     2308.46373,
+     0.677409954,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/NeverFuse/100000": [
+     134842.857,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/100000": [
+     173257.143,
+     0.783226419,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/100000": [
+     170800,
+     0.826782937,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/100000": [
+     136185.714,
+     0.998220251,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/100000": [
+     155871.429,
+     0.836026255,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/100000": [
+     739871.429,
+     0.192047543,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/100000": [
+     184592.857,
+     0.729120004,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/100000": [
+     213490,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/100000": [
+     213870,
+     0.983601448,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/100000": [
+     209430,
+     1.01930402,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/100000": [
+     201090,
+     1.03940083,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/100000": [
+     197430,
+     1.02012095,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/100000": [
+     904870,
+     0.249499558,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/100000": [
+     299200,
+     0.717206682,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/NeverFuse/1000000": [
+     2319000,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/1000000": [
+     1816050,
+     1.26256618,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/1000000": [
+     2364700,
+     0.947681208,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/1000000": [
+     1773250,
+     1.24109733,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/1000000": [
+     1967350,
+     1.16376579,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/1000000": [
+     1254950,
+     1.78434627,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/1000000": [
+     2473300,
+     0.905990644,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/1000000": [
+     2298350,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/1000000": [
+     2252950,
+     1.0373735,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/1000000": [
+     2504150,
+     0.912122083,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/1000000": [
+     2310750,
+     1.00786233,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/1000000": [
+     2693350,
+     0.86534831,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/1000000": [
+     1468950,
+     1.56417188,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/1000000": [
+     3153300,
+     0.723179387,
+     "NeverFuse"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/1000": [
+     1070.6095,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/1000": [
+     1567.97521,
+     0.698876735,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/1000": [
+     1492.20041,
+     0.702948125,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/1000": [
+     1559.50413,
+     0.717945401,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/1000": [
+     1167.7686,
+     0.96594968,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/1000": [
+     3313.94628,
+     0.340563541,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/1000": [
+     1214.125,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/1000": [
+     1869.5,
+     0.674775125,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/1000": [
+     1704,
+     0.718857316,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/1000": [
+     1717.375,
+     0.724835147,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/1000": [
+     1343.125,
+     0.922210157,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/1000": [
+     4121.5,
+     0.296675478,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/1000": [
+     1433.8843,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/1000": [
+     1756.71488,
+     0.822997817,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/100000": [
+     115260,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/100000": [
+     151040,
+     0.733324361,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/100000": [
+     151450,
+     0.757815565,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/100000": [
+     159355,
+     0.733304282,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/100000": [
+     116550,
+     0.971284708,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/100000": [
+     306110,
+     0.381062864,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/100000": [
+     146968.75,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/100000": [
+     191693.75,
+     0.797974277,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/100000": [
+     189287.5,
+     0.788163506,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/100000": [
+     184331.25,
+     0.78684646,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/100000": [
+     150450,
+     0.989573092,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/100000": [
+     437481.25,
+     0.351967982,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/100000": [
+     192912.5,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/100000": [
+     222412.5,
+     0.880489904,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/1000000": [
+     2443600,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/1000000": [
+     1990450,
+     1.22308303,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/1000000": [
+     1968450,
+     1.24809094,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/1000000": [
+     2558400,
+     0.955311079,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/1000000": [
+     2405050,
+     1.02319794,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/1000000": [
+     4119900,
+     0.593444575,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/1000000": [
+     2698950,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/1000000": [
+     2117200,
+     1.29706272,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/1000000": [
+     2163850,
+     1.24155978,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/1000000": [
+     2240400,
+     1.19067361,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/1000000": [
+     2738700,
+     0.966309292,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/1000000": [
+     5165650,
+     0.523274377,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/1000000": [
+     2824550,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/1000000": [
+     2710600,
+     1.01325428,
+     "QPartHintedSeq"
+    ],
+    "Tick/-/SparseSet/250": [
+     148550,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/250": [
+     129500,
+     1.13351566,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/250": [
+     121400,
+     1.21817506,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/250": [
+     125700,
+     1.17228684,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/250": [
+     121900,
+     1.22460522,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/250": [
+     126000,
+     1.17838544,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/250": [
+     121200,
+     1.22005015,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/250": [
+     128850,
+     1.14493791,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/250": [
+     127150,
+     1.16100747,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/250": [
+     123550,
+     1.20327656,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/250": [
+     146600,
+     1.01888073,
+     "SparseSet"
+    ],
+    "Tick/-/SortedSoA/250": [
+     238900,
+     0.626635675,
+     "SparseSet"
+    ],
+    "Tick/-/SparseSet/2500": [
+     2095100,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/2500": [
+     1818300,
+     1.15095314,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/2500": [
+     1772900,
+     1.19439524,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/2500": [
+     1868500,
+     1.10266028,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/2500": [
+     1855600,
+     1.13274381,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/2500": [
+     1859700,
+     1.14156534,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/2500": [
+     1794050,
+     1.16344201,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/2500": [
+     1826800,
+     1.11122086,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/2500": [
+     1714650,
+     1.19459918,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/2500": [
+     1797700,
+     1.14123938,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/2500": [
+     1964350,
+     1.08178414,
+     "SparseSet"
+    ],
+    "Tick/-/SparseSet/12500": [
+     9852350,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/12500": [
+     8302650,
+     1.23123092,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/12500": [
+     7411400,
+     1.27404491,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/12500": [
+     8468150,
+     1.20943607,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/12500": [
+     7963700,
+     1.26871629,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/12500": [
+     8481950,
+     1.19174745,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/12500": [
+     7978250,
+     1.27323859,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/12500": [
+     6376500,
+     1.56822606,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/12500": [
+     8110000,
+     1.24205951,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/12500": [
+     8047150,
+     1.27420931,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/12500": [
+     8684450,
+     1.1312087,
+     "SparseSet"
+    ],
+    "Spans/-/k1/100000": [
+     178507.143,
+     1,
+     "k1"
+    ],
+    "Spans/-/k6/100000": [
+     171485.714,
+     1.04587969,
+     "k1"
+    ],
+    "Spans/-/k64/100000": [
+     171664.286,
+     1.03819247,
+     "k1"
+    ],
+    "Spans/-/k512/100000": [
+     178842.857,
+     0.993662618,
+     "k1"
+    ],
+    "Spans/-/k4096/100000": [
+     206585.714,
+     0.847502496,
+     "k1"
+    ],
+    "Spans/-/k16384/100000": [
+     212521.429,
+     0.841916591,
+     "k1"
+    ]
+   }
+  },
+  {
+   "round": 2,
+   "build": "gcc",
+   "status": "ok",
+   "load_before": 6.9,
+   "load_after": 10.0,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-084419-6e8b77c-rotation-exec\\samples\\CrogLegion\\20261006-084814-6e8b77c-r2-gcc",
+   "results": {
+    "FusionExec/Fragmented/NeverFuse/1000": [
+     1178.60301,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/1000": [
+     1338.41733,
+     0.864721134,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/1000": [
+     1177.63042,
+     0.986345566,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/1000": [
+     1207.6481,
+     0.981310101,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/1000": [
+     1255.92396,
+     0.957773547,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/1000": [
+     1234.04067,
+     0.943428758,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/1000": [
+     1548.85057,
+     0.740131347,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/1000": [
+     1552.5463,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/1000": [
+     1622.29938,
+     0.93466113,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/1000": [
+     1546.6821,
+     0.998629948,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/1000": [
+     1518.75,
+     1.01144003,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/1000": [
+     1504.78395,
+     1.0239197,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/1000": [
+     1556.25,
+     0.986892883,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/1000": [
+     2240.66358,
+     0.685913729,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/NeverFuse/100000": [
+     133833.333,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/100000": [
+     135666.667,
+     0.989098794,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/100000": [
+     126850,
+     1.01337716,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/100000": [
+     121611.111,
+     1.04244958,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/100000": [
+     134550,
+     0.981123724,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/100000": [
+     36655.5556,
+     3.37477784,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/100000": [
+     174177.778,
+     0.779211705,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/100000": [
+     147866.667,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/100000": [
+     145025,
+     1.05037917,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/100000": [
+     152866.667,
+     0.971907248,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/100000": [
+     145575,
+     1.02167136,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/100000": [
+     138866.667,
+     1.05489552,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/100000": [
+     387966.667,
+     0.381221042,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/100000": [
+     186183.333,
+     0.79589244,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/NeverFuse/1000000": [
+     2102633.33,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/1000000": [
+     1445883.33,
+     1.41615032,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/1000000": [
+     1552483.33,
+     1.31551889,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/1000000": [
+     1583900,
+     1.31297566,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/1000000": [
+     1534816.67,
+     1.36770478,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/1000000": [
+     611116.667,
+     3.40709104,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/1000000": [
+     2062383.33,
+     0.996227768,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/1000000": [
+     2187150,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/1000000": [
+     2020950,
+     1.08877511,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/1000000": [
+     2067333.33,
+     1.05281289,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/1000000": [
+     1985516.67,
+     1.08488271,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/1000000": [
+     2095500,
+     1.05376434,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/1000000": [
+     645300,
+     3.26899496,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/1000000": [
+     2745116.67,
+     0.786034909,
+     "NeverFuse"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/1000": [
+     954.050523,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/1000": [
+     977.874564,
+     0.980942149,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/1000": [
+     1001.74216,
+     0.960455059,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/1000": [
+     993.249129,
+     0.957354123,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/1000": [
+     1030.27003,
+     0.938757277,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/1000": [
+     2245.29617,
+     0.44695949,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/1000": [
+     1115.80433,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/1000": [
+     1248.63594,
+     0.866468377,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/1000": [
+     1127.28128,
+     1.02200317,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/1000": [
+     1135.5127,
+     0.964551085,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/1000": [
+     1237.20602,
+     0.914994252,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/1000": [
+     2865.47507,
+     0.390640341,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/1000": [
+     1475.80386,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/1000": [
+     1629.74277,
+     0.901292339,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/100000": [
+     118736.364,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/100000": [
+     113822.727,
+     1.06099014,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/100000": [
+     107863.636,
+     1.08137232,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/100000": [
+     111822.727,
+     1.08032853,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/100000": [
+     113013.636,
+     1.02283864,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/100000": [
+     254827.273,
+     0.458143055,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/100000": [
+     133838.889,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/100000": [
+     132477.778,
+     0.979412694,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/100000": [
+     130966.667,
+     1.00695183,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/100000": [
+     128166.667,
+     1.0418133,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/100000": [
+     144555.556,
+     0.940652751,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/100000": [
+     333638.889,
+     0.406855616,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/100000": [
+     163492.857,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/100000": [
+     173864.286,
+     0.947319495,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/1000000": [
+     2209400,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/1000000": [
+     1402050,
+     1.57912383,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/1000000": [
+     1417550,
+     1.57052558,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/1000000": [
+     1319250,
+     1.64271773,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/1000000": [
+     2267350,
+     0.972249135,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/1000000": [
+     3759650,
+     0.582543342,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/1000000": [
+     2544400,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/1000000": [
+     1599250,
+     1.56908608,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/1000000": [
+     1708700,
+     1.50018431,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/1000000": [
+     1658900,
+     1.52532558,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/1000000": [
+     2542950,
+     1.00707173,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/1000000": [
+     4832650,
+     0.525982345,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/1000000": [
+     2248150,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/1000000": [
+     1871800,
+     1.21544021,
+     "QPartHintedSeq"
+    ],
+    "Tick/-/SparseSet/250": [
+     114950,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/250": [
+     106100,
+     1.07631771,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/250": [
+     105000,
+     1.11001918,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/250": [
+     104000,
+     1.1178606,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/250": [
+     101900,
+     1.1073552,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/250": [
+     105650,
+     1.08510859,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/250": [
+     105850,
+     1.09816557,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/250": [
+     107250,
+     1.11031139,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/250": [
+     107700,
+     1.07921635,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/250": [
+     108550,
+     1.10829142,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/250": [
+     110950,
+     1.03558437,
+     "SparseSet"
+    ],
+    "Tick/-/SortedSoA/250": [
+     211450,
+     0.538967433,
+     "SparseSet"
+    ],
+    "Tick/-/SparseSet/2500": [
+     1781800,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/2500": [
+     1657450,
+     1.08341561,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/2500": [
+     1645550,
+     1.09460879,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/2500": [
+     1671000,
+     1.08511083,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/2500": [
+     1649650,
+     1.07967213,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/2500": [
+     1677200,
+     1.06607278,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/2500": [
+     1691550,
+     1.07037718,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/2500": [
+     1672400,
+     1.06266298,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/2500": [
+     1663550,
+     1.06711585,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/2500": [
+     1681050,
+     1.0708007,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/2500": [
+     1647750,
+     1.1003617,
+     "SparseSet"
+    ],
+    "Tick/-/SparseSet/12500": [
+     8915700,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/12500": [
+     7803800,
+     1.14330856,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/12500": [
+     7832250,
+     1.1505041,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/12500": [
+     8003500,
+     1.1148103,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/12500": [
+     7777800,
+     1.16216329,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/12500": [
+     8012200,
+     1.09837955,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/12500": [
+     7835150,
+     1.14666136,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/12500": [
+     5888600,
+     1.48486209,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/12500": [
+     7934850,
+     1.11575091,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/12500": [
+     7892050,
+     1.12239299,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/12500": [
+     7771150,
+     1.14933115,
+     "SparseSet"
+    ],
+    "Spans/-/k1/100000": [
+     94918.1818,
+     1,
+     "k1"
+    ],
+    "Spans/-/k6/100000": [
+     92563.6364,
+     0.987815819,
+     "k1"
+    ],
+    "Spans/-/k64/100000": [
+     97290.9091,
+     0.981318858,
+     "k1"
+    ],
+    "Spans/-/k512/100000": [
+     102145.455,
+     0.931772666,
+     "k1"
+    ],
+    "Spans/-/k4096/100000": [
+     129759.091,
+     0.755794828,
+     "k1"
+    ],
+    "Spans/-/k16384/100000": [
+     133581.818,
+     0.723636111,
+     "k1"
+    ]
+   }
+  },
+  {
+   "round": 2,
+   "build": "msvc",
+   "status": "ok",
+   "load_before": 7.0,
+   "load_after": 5.8,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-084419-6e8b77c-rotation-exec\\samples\\CrogLegion\\20261006-084905-6e8b77c-r2-msvc",
+   "results": {
+    "FusionExec/Fragmented/NeverFuse/1000": [
+     1336.7679,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/1000": [
+     1113.99132,
+     1.18317821,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/1000": [
+     1093.00434,
+     1.23501635,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/1000": [
+     1060.30369,
+     1.22959638,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/1000": [
+     1101.78959,
+     1.201153,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/1000": [
+     1073.42733,
+     1.21429408,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/1000": [
+     1334.43601,
+     0.991039457,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/1000": [
+     1787.83186,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/1000": [
+     1628.09735,
+     1.12203841,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/1000": [
+     1831.26844,
+     0.978805439,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/1000": [
+     1756.71091,
+     1.0076033,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/1000": [
+     1767.77286,
+     1.00121729,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/1000": [
+     1705.30973,
+     1.05244875,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/1000": [
+     2286.9469,
+     0.789068858,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/NeverFuse/100000": [
+     160293.75,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/100000": [
+     121706.25,
+     1.33092704,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/100000": [
+     123650,
+     1.26475772,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/100000": [
+     128293.75,
+     1.2539663,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/100000": [
+     126681.25,
+     1.24710286,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/100000": [
+     895368.75,
+     0.19051887,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/100000": [
+     167237.5,
+     0.98933051,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/100000": [
+     228366.667,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/100000": [
+     192858.333,
+     1.15804251,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/100000": [
+     223666.667,
+     1.00514539,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/100000": [
+     200575,
+     1.1112843,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/100000": [
+     233750,
+     0.981774158,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/100000": [
+     1047858.33,
+     0.22294824,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/100000": [
+     268858.333,
+     0.81263417,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/NeverFuse/1000000": [
+     2831700,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/1000000": [
+     1604150,
+     1.74167812,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/1000000": [
+     1762600,
+     1.59045933,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/1000000": [
+     1635300,
+     1.73923582,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/1000000": [
+     1710750,
+     1.6981819,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/1000000": [
+     1520800,
+     1.93910329,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/1000000": [
+     2206650,
+     1.29704875,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/1000000": [
+     2633450,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/1000000": [
+     2301300,
+     1.14054205,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/1000000": [
+     2681950,
+     0.964342682,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/1000000": [
+     2348000,
+     1.10393199,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/1000000": [
+     2657250,
+     0.981313134,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/1000000": [
+     1593400,
+     1.6568654,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/1000000": [
+     3094750,
+     0.851332122,
+     "NeverFuse"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/1000": [
+     1215.29175,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/1000": [
+     984.808853,
+     1.23398264,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/1000": [
+     989.134809,
+     1.24368424,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/1000": [
+     979.627767,
+     1.25946426,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/1000": [
+     1251.35815,
+     0.974301616,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/1000": [
+     2441.7505,
+     0.498776803,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/1000": [
+     1313.11395,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/1000": [
+     1113.55599,
+     1.17647245,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/1000": [
+     1046.16896,
+     1.25791455,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/1000": [
+     1030.84479,
+     1.27721954,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/1000": [
+     1345.9725,
+     0.970232822,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/1000": [
+     3009.72495,
+     0.429165117,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/1000": [
+     1429.2887,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/1000": [
+     1675.87169,
+     0.841467704,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/100000": [
+     149281.25,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/100000": [
+     123062.5,
+     1.18666295,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/100000": [
+     120056.25,
+     1.21509721,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/100000": [
+     121643.75,
+     1.19631334,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/100000": [
+     146468.75,
+     1.02217862,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/100000": [
+     279956.25,
+     0.519419714,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/100000": [
+     158600,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/100000": [
+     115793.75,
+     1.37007032,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/100000": [
+     123900,
+     1.2992223,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/100000": [
+     128518.75,
+     1.25851767,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/100000": [
+     151731.25,
+     1.03199254,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/100000": [
+     334212.5,
+     0.471022491,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/100000": [
+     160635.714,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/100000": [
+     186778.571,
+     0.850141029,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/1000000": [
+     2610600,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/1000000": [
+     1563850,
+     1.68833275,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/1000000": [
+     1536350,
+     1.669297,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/1000000": [
+     1552550,
+     1.68044537,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/1000000": [
+     2820600,
+     0.93408348,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/1000000": [
+     4533700,
+     0.57917988,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/1000000": [
+     3040400,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/1000000": [
+     1684900,
+     1.77653063,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/1000000": [
+     1865700,
+     1.6302167,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/1000000": [
+     1881150,
+     1.62287578,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/1000000": [
+     3201000,
+     0.967103933,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/1000000": [
+     4917800,
+     0.620313686,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/1000000": [
+     2382550,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/1000000": [
+     2461100,
+     0.957697248,
+     "QPartHintedSeq"
+    ],
+    "Tick/-/SparseSet/250": [
+     121900,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/250": [
+     114200,
+     1.07974391,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/250": [
+     104550,
+     1.17942807,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/250": [
+     104850,
+     1.19163072,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/250": [
+     105200,
+     1.15385661,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/250": [
+     106950,
+     1.15239472,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/250": [
+     105900,
+     1.16455844,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/250": [
+     108350,
+     1.12347458,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/250": [
+     112350,
+     1.08977914,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/250": [
+     110950,
+     1.13431714,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/250": [
+     120950,
+     1.01093788,
+     "SparseSet"
+    ],
+    "Tick/-/SortedSoA/250": [
+     209950,
+     0.5782473,
+     "SparseSet"
+    ],
+    "Tick/-/SparseSet/2500": [
+     1721900,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/2500": [
+     1590600,
+     1.06644187,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/2500": [
+     1571350,
+     1.08707918,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/2500": [
+     1589550,
+     1.08481593,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/2500": [
+     1582450,
+     1.08405699,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/2500": [
+     1625900,
+     1.04298612,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/2500": [
+     1624650,
+     1.05700884,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/2500": [
+     1630500,
+     1.05065167,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/2500": [
+     1652000,
+     1.03592647,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/2500": [
+     1601550,
+     1.0597123,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/2500": [
+     1549000,
+     1.10848139,
+     "SparseSet"
+    ],
+    "Tick/-/SparseSet/12500": [
+     8776000,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/12500": [
+     7905900,
+     1.12776896,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/12500": [
+     7857600,
+     1.12797442,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/12500": [
+     8053700,
+     1.09929343,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/12500": [
+     7737900,
+     1.13872377,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/12500": [
+     7935800,
+     1.11329745,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/12500": [
+     8053300,
+     1.10435625,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/12500": [
+     6240500,
+     1.42869106,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/12500": [
+     8091050,
+     1.10100139,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/12500": [
+     7970900,
+     1.11752927,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/12500": [
+     7750750,
+     1.14225475,
+     "SparseSet"
+    ],
+    "Spans/-/k1/100000": [
+     112440.909,
+     1,
+     "k1"
+    ],
+    "Spans/-/k6/100000": [
+     103381.818,
+     1.08795566,
+     "k1"
+    ],
+    "Spans/-/k64/100000": [
+     103877.273,
+     1.09551465,
+     "k1"
+    ],
+    "Spans/-/k512/100000": [
+     110259.091,
+     1.04235888,
+     "k1"
+    ],
+    "Spans/-/k4096/100000": [
+     142559.091,
+     0.782360687,
+     "k1"
+    ],
+    "Spans/-/k16384/100000": [
+     158763.636,
+     0.712935638,
+     "k1"
+    ]
+   }
+  },
+  {
+   "round": 3,
+   "build": "gcc",
+   "status": "ok",
+   "load_before": 4.1,
+   "load_after": 6.0,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-084419-6e8b77c-rotation-exec\\samples\\CrogLegion\\20261006-084956-6e8b77c-r3-gcc",
+   "results": {
+    "FusionExec/Fragmented/NeverFuse/1000": [
+     914.96844,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/1000": [
+     1037.87196,
+     0.884211312,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/1000": [
+     908.701533,
+     0.988315411,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/1000": [
+     920.288548,
+     0.984026166,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/1000": [
+     962.173129,
+     0.940461236,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/1000": [
+     949.413886,
+     0.939355654,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/1000": [
+     1196.844,
+     0.750064435,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/1000": [
+     1212.05674,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/1000": [
+     1294.68085,
+     0.932505872,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/1000": [
+     1203.6052,
+     1.00862884,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/1000": [
+     1202.18676,
+     0.997313064,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/1000": [
+     1172.51773,
+     1.03294861,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/1000": [
+     1214.47991,
+     0.995495139,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/1000": [
+     1759.16076,
+     0.684692638,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/NeverFuse/100000": [
+     102980,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/100000": [
+     105525,
+     0.977758497,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/100000": [
+     103420,
+     0.989696062,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/100000": [
+     101015,
+     1.01084552,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/100000": [
+     103275,
+     0.98150102,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/100000": [
+     79140,
+     1.29911166,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/100000": [
+     135240,
+     0.757155813,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/100000": [
+     143935.714,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/100000": [
+     143350,
+     1.03232438,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/100000": [
+     149828.571,
+     0.98179919,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/100000": [
+     140900,
+     1.01128357,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/100000": [
+     145507.143,
+     1.02486761,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/100000": [
+     390592.857,
+     0.376248317,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/100000": [
+     184207.143,
+     0.773681355,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/NeverFuse/1000000": [
+     2233475,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/1000000": [
+     1474250,
+     1.52180531,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/1000000": [
+     1548425,
+     1.4383268,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/1000000": [
+     1523550,
+     1.45217637,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/1000000": [
+     1549375,
+     1.43715292,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/1000000": [
+     675575,
+     3.27595087,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/1000000": [
+     2017275,
+     1.10493908,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/1000000": [
+     2073700,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/1000000": [
+     1979275,
+     1.06956355,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/1000000": [
+     2042975,
+     0.996826027,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/1000000": [
+     1916475,
+     1.08506271,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/1000000": [
+     2103425,
+     0.96741128,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/1000000": [
+     960275,
+     2.2250533,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/1000000": [
+     2714075,
+     0.766208274,
+     "NeverFuse"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/1000": [
+     823.876872,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/1000": [
+     864.392679,
+     0.951333692,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/1000": [
+     859.193012,
+     0.961236074,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/1000": [
+     857.113145,
+     0.961628902,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/1000": [
+     873.294509,
+     0.945451018,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/1000": [
+     1852.57903,
+     0.446631474,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/1000": [
+     895.192308,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/1000": [
+     1005.24476,
+     0.875011046,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/1000": [
+     911.013986,
+     0.99805848,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/1000": [
+     897.071678,
+     1.0092709,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/1000": [
+     944.973776,
+     0.933012598,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/1000": [
+     2250.30594,
+     0.394685275,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/1000": [
+     1455.39033,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/1000": [
+     1608.17844,
+     0.898738581,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/100000": [
+     98522.2222,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/100000": [
+     95377.7778,
+     1.05953151,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/100000": [
+     93677.7778,
+     1.04313979,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/100000": [
+     91800,
+     1.06584217,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/100000": [
+     98616.6667,
+     0.992919227,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/100000": [
+     212788.889,
+     0.438910836,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/100000": [
+     104735,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/100000": [
+     106170,
+     0.995926434,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/100000": [
+     103040,
+     1.01548131,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/100000": [
+     103035,
+     1.02375212,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/100000": [
+     108325,
+     0.96559666,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/100000": [
+     257155,
+     0.410095546,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/100000": [
+     123625,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/100000": [
+     131250,
+     0.932800311,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/1000000": [
+     2209750,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/1000000": [
+     1337250,
+     1.64399077,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/1000000": [
+     1347050,
+     1.66990607,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/1000000": [
+     1353600,
+     1.69164831,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/1000000": [
+     2236850,
+     0.974070442,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/1000000": [
+     3706550,
+     0.602859476,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/1000000": [
+     2260200,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/1000000": [
+     1457000,
+     1.54340865,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/1000000": [
+     1494950,
+     1.50115222,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/1000000": [
+     1516250,
+     1.48870006,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/1000000": [
+     2353300,
+     0.981345966,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/1000000": [
+     4477100,
+     0.499842045,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/1000000": [
+     1978800,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/1000000": [
+     1788550,
+     1.1121125,
+     "QPartHintedSeq"
+    ],
+    "Tick/-/SparseSet/250": [
+     110700,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/250": [
+     102650,
+     1.06852407,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/250": [
+     98400,
+     1.11280225,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/250": [
+     100200,
+     1.09763508,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/250": [
+     98400,
+     1.12646675,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/250": [
+     101150,
+     1.0861919,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/250": [
+     99250,
+     1.10630077,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/250": [
+     101350,
+     1.09388654,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/250": [
+     102300,
+     1.08469346,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/250": [
+     101000,
+     1.08891129,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/250": [
+     108900,
+     1.00742626,
+     "SparseSet"
+    ],
+    "Tick/-/SortedSoA/250": [
+     204100,
+     0.545230566,
+     "SparseSet"
+    ],
+    "Tick/-/SparseSet/2500": [
+     1533250,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/2500": [
+     1429400,
+     1.07982605,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/2500": [
+     1403450,
+     1.10290511,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/2500": [
+     1394500,
+     1.0891335,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/2500": [
+     1399500,
+     1.0883212,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/2500": [
+     1415850,
+     1.09020037,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/2500": [
+     1415900,
+     1.0808943,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/2500": [
+     1395600,
+     1.09505384,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/2500": [
+     1419700,
+     1.08293055,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/2500": [
+     1407300,
+     1.09130063,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/2500": [
+     1388200,
+     1.10264872,
+     "SparseSet"
+    ],
+    "Tick/-/SparseSet/12500": [
+     7798300,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/12500": [
+     6856150,
+     1.12700495,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/12500": [
+     6907300,
+     1.1355613,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/12500": [
+     6904250,
+     1.12953912,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/12500": [
+     6851950,
+     1.14207024,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/12500": [
+     6955600,
+     1.12089035,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/12500": [
+     6812900,
+     1.13827229,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/12500": [
+     5485600,
+     1.42250839,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/12500": [
+     6959800,
+     1.1094415,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/12500": [
+     6941950,
+     1.12566744,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/12500": [
+     6796250,
+     1.13868442,
+     "SparseSet"
+    ],
+    "Spans/-/k1/100000": [
+     87754.1667,
+     1,
+     "k1"
+    ],
+    "Spans/-/k6/100000": [
+     90158.3333,
+     0.971019961,
+     "k1"
+    ],
+    "Spans/-/k64/100000": [
+     90604.1667,
+     0.974955078,
+     "k1"
+    ],
+    "Spans/-/k512/100000": [
+     97425,
+     0.911273359,
+     "k1"
+    ],
+    "Spans/-/k4096/100000": [
+     114700,
+     0.760933668,
+     "k1"
+    ],
+    "Spans/-/k16384/100000": [
+     118675,
+     0.748785541,
+     "k1"
+    ]
+   }
+  },
+  {
+   "round": 3,
+   "build": "msvc",
+   "status": "ok",
+   "load_before": 4.6,
+   "load_after": 7.3,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-084419-6e8b77c-rotation-exec\\samples\\CrogLegion\\20261006-085044-6e8b77c-r3-msvc",
+   "results": {
+    "FusionExec/Fragmented/NeverFuse/1000": [
+     1295.93933,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/1000": [
+     1081.55577,
+     1.21014297,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/1000": [
+     1028.47358,
+     1.26217578,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/1000": [
+     1024.95108,
+     1.26981542,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/1000": [
+     1027.73973,
+     1.26793476,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/1000": [
+     1027.05479,
+     1.26176423,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/1000": [
+     1291.48728,
+     1.00262086,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/1000": [
+     1874.3025,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/1000": [
+     1740.89574,
+     1.07820658,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/1000": [
+     1893.31865,
+     0.986512478,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/1000": [
+     1869.97063,
+     0.992298806,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/1000": [
+     1877.31278,
+     0.998405075,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/1000": [
+     1833.25991,
+     1.01614821,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/1000": [
+     2415.71219,
+     0.77257435,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/NeverFuse/100000": [
+     153444.444,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/100000": [
+     111583.333,
+     1.34717411,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/100000": [
+     118850,
+     1.26535387,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/100000": [
+     114372.222,
+     1.29592421,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/100000": [
+     117794.444,
+     1.28774917,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/100000": [
+     800127.778,
+     0.194454263,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/100000": [
+     152811.111,
+     0.988438815,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/100000": [
+     227183.333,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/100000": [
+     196200,
+     1.13003186,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/100000": [
+     210333.333,
+     1.04457031,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/100000": [
+     205225,
+     1.14773802,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/100000": [
+     234566.667,
+     1.01348162,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/100000": [
+     1053750,
+     0.221274536,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/100000": [
+     258441.667,
+     0.870497416,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/NeverFuse/1000000": [
+     2739200,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/1000000": [
+     1542000,
+     1.78548675,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/1000000": [
+     1587000,
+     1.71519121,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/1000000": [
+     1599300,
+     1.70738785,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/1000000": [
+     1597400,
+     1.71434417,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/1000000": [
+     1254950,
+     2.1055328,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/1000000": [
+     2073950,
+     1.32696559,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/1000000": [
+     2650850,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/1000000": [
+     2286300,
+     1.15069279,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/1000000": [
+     2664400,
+     0.980867795,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/1000000": [
+     2242350,
+     1.18037852,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/1000000": [
+     2638750,
+     1.00797764,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/1000000": [
+     1571850,
+     1.67253959,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/1000000": [
+     3130100,
+     0.846878933,
+     "NeverFuse"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/1000": [
+     1378.87463,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/1000": [
+     1156.46594,
+     1.23496315,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/1000": [
+     1143.23791,
+     1.23624932,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/1000": [
+     1182.03356,
+     1.23446307,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/1000": [
+     1482.42843,
+     0.956460232,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/1000": [
+     2910.95755,
+     0.482573606,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/1000": [
+     1311.00783,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/1000": [
+     1126.41879,
+     1.18897143,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/1000": [
+     1025.09785,
+     1.25960938,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/1000": [
+     1035.07828,
+     1.28359001,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/1000": [
+     1387.76908,
+     0.934560851,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/1000": [
+     3078.03327,
+     0.431146384,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/1000": [
+     1404.53258,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/1000": [
+     1697.80453,
+     0.82860139,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/100000": [
+     142172.222,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/100000": [
+     118016.667,
+     1.18893651,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/100000": [
+     126827.778,
+     1.10695417,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/100000": [
+     116361.111,
+     1.19076507,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/100000": [
+     139583.333,
+     0.997268874,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/100000": [
+     268416.667,
+     0.515775603,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/100000": [
+     143410,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/100000": [
+     112905,
+     1.27855584,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/100000": [
+     114505,
+     1.25694351,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/100000": [
+     120405,
+     1.2084726,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/100000": [
+     143790,
+     0.995796837,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/100000": [
+     322485,
+     0.449558055,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/100000": [
+     146535.714,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/100000": [
+     172207.143,
+     0.841361687,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/1000000": [
+     2596550,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/1000000": [
+     1439400,
+     1.81272063,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/1000000": [
+     1484450,
+     1.74692911,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/1000000": [
+     1608900,
+     1.60921494,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/1000000": [
+     2611850,
+     0.999892705,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/1000000": [
+     3744050,
+     0.702475884,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/1000000": [
+     2845400,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/1000000": [
+     1584700,
+     1.7970648,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/1000000": [
+     2004000,
+     1.41691419,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/1000000": [
+     1616050,
+     1.74211931,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/1000000": [
+     2775000,
+     1.02414398,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/1000000": [
+     4452100,
+     0.637251066,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/1000000": [
+     2224700,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/1000000": [
+     2386850,
+     0.919339032,
+     "QPartHintedSeq"
+    ],
+    "Tick/-/SparseSet/250": [
+     122650,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/250": [
+     111350,
+     1.09260906,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/250": [
+     103050,
+     1.20123634,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/250": [
+     105250,
+     1.15648709,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/250": [
+     100850,
+     1.20834432,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/250": [
+     105350,
+     1.1771332,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/250": [
+     108550,
+     1.12821705,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/250": [
+     109250,
+     1.13292804,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/250": [
+     111150,
+     1.08673601,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/250": [
+     109000,
+     1.13984095,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/250": [
+     119300,
+     1.02835996,
+     "SparseSet"
+    ],
+    "Tick/-/SortedSoA/250": [
+     206250,
+     0.587887927,
+     "SparseSet"
+    ],
+    "Tick/-/SparseSet/2500": [
+     1699350,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/2500": [
+     1604200,
+     1.07731664,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/2500": [
+     1557150,
+     1.09345629,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/2500": [
+     1627450,
+     1.06125155,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/2500": [
+     1590100,
+     1.07394913,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/2500": [
+     1567900,
+     1.0764607,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/2500": [
+     1593950,
+     1.07213074,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/2500": [
+     1611250,
+     1.06075036,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/2500": [
+     1620250,
+     1.03978672,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/2500": [
+     1618650,
+     1.06074652,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/2500": [
+     1528300,
+     1.1162075,
+     "SparseSet"
+    ],
+    "Tick/-/SparseSet/12500": [
+     9183350,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/12500": [
+     7980800,
+     1.14188385,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/12500": [
+     8189800,
+     1.142216,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/12500": [
+     8037800,
+     1.1164209,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/12500": [
+     7978350,
+     1.13043192,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/12500": [
+     8809350,
+     1.03682286,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/12500": [
+     8121950,
+     1.10913489,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/12500": [
+     6257250,
+     1.43065138,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/12500": [
+     8186150,
+     1.12291913,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/12500": [
+     8083850,
+     1.10172288,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/12500": [
+     8032350,
+     1.1601931,
+     "SparseSet"
+    ],
+    "Spans/-/k1/100000": [
+     125972.727,
+     1,
+     "k1"
+    ],
+    "Spans/-/k6/100000": [
+     114845.455,
+     1.13097652,
+     "k1"
+    ],
+    "Spans/-/k64/100000": [
+     116581.818,
+     1.10797656,
+     "k1"
+    ],
+    "Spans/-/k512/100000": [
+     118495.455,
+     1.08125927,
+     "k1"
+    ],
+    "Spans/-/k4096/100000": [
+     149536.364,
+     0.83763748,
+     "k1"
+    ],
+    "Spans/-/k16384/100000": [
+     173918.182,
+     0.748918343,
+     "k1"
+    ]
+   }
+  },
+  {
+   "round": 3,
+   "build": "clangcl",
+   "status": "ok",
+   "load_before": 5.6,
+   "load_after": 9.7,
+   "waited_s": 1,
+   "quiet": true,
+   "run_dir": "D:\\Craig\\GitHub\\Sub0ECS\\bench\\results\\runs\\CrogLegion\\20261006-084419-6e8b77c-rotation-exec\\samples\\CrogLegion\\20261006-085135-6e8b77c-r3-clangcl",
+   "results": {
+    "FusionExec/Fragmented/NeverFuse/1000": [
+     1172.39173,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/1000": [
+     1685.1378,
+     0.673645805,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/1000": [
+     1560.72835,
+     0.708765641,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/1000": [
+     1122.93307,
+     1.03900228,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/1000": [
+     1614.51772,
+     0.698082382,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/1000": [
+     1884.99016,
+     0.593640177,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/1000": [
+     1875.98425,
+     0.618767317,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/1000": [
+     1495.80966,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/1000": [
+     1946.30682,
+     0.823127162,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/1000": [
+     1676.5625,
+     1.0011376,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/1000": [
+     1651.49148,
+     0.978454049,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/1000": [
+     1634.23295,
+     0.998128139,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/1000": [
+     1827.76989,
+     0.82478096,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/1000": [
+     2509.51705,
+     0.656635838,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/NeverFuse/100000": [
+     122850,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/100000": [
+     149350,
+     0.823749585,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/100000": [
+     161600,
+     0.765778418,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/100000": [
+     116718.75,
+     1.02086003,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/100000": [
+     152656.25,
+     0.820242901,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/100000": [
+     798218.75,
+     0.156789396,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/100000": [
+     202575,
+     0.617726516,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/100000": [
+     186175,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/100000": [
+     196158.333,
+     0.949718055,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/100000": [
+     187116.667,
+     0.989510137,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/100000": [
+     191541.667,
+     1.00038903,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/100000": [
+     190875,
+     0.976307451,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/100000": [
+     877050,
+     0.222905135,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/100000": [
+     260383.333,
+     0.714722796,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/NeverFuse/1000000": [
+     2360800,
+     1,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AlwaysFuse/1000000": [
+     1732400,
+     1.3005145,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns/1000000": [
+     1826850,
+     1.21921851,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/AutoTuned/1000000": [
+     1717250,
+     1.32641138,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Tiled4K/1000000": [
+     1820050,
+     1.22942043,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/ShareColumns+Parallel/1000000": [
+     1201050,
+     1.95686674,
+     "NeverFuse"
+    ],
+    "FusionExec/Fragmented/DeviceAware+Offload1K/1000000": [
+     2416000,
+     0.940429286,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/NeverFuse/1000000": [
+     2457250,
+     1,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AlwaysFuse/1000000": [
+     2394550,
+     1.05215283,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns/1000000": [
+     2617800,
+     0.983653286,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/AutoTuned/1000000": [
+     2286650,
+     1.05841455,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Tiled4K/1000000": [
+     2464000,
+     1.01393683,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/ShareColumns+Parallel/1000000": [
+     1378750,
+     1.79960066,
+     "NeverFuse"
+    ],
+    "Frame3Exec/Fragmented/DeviceAware+Offload1K/1000000": [
+     3471750,
+     0.735880315,
+     "NeverFuse"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/1000": [
+     912.751092,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/1000": [
+     1300.87336,
+     0.704382182,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/1000": [
+     1287.68559,
+     0.708528099,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/1000": [
+     1265.41485,
+     0.715241393,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/1000": [
+     943.231441,
+     0.963224971,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/1000": [
+     2639.56332,
+     0.345383099,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/1000": [
+     1173.17416,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/1000": [
+     1751.82584,
+     0.683966872,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/1000": [
+     1638.57678,
+     0.707431354,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/1000": [
+     1698.50187,
+     0.708453166,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/1000": [
+     1248.78277,
+     0.909478794,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/1000": [
+     3959.3633,
+     0.299822593,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/1000": [
+     1815.73359,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/1000": [
+     2199.80695,
+     0.825665204,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/100000": [
+     114920,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/100000": [
+     151915,
+     0.748968279,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/100000": [
+     149980,
+     0.750427022,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/100000": [
+     149745,
+     0.750818108,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/100000": [
+     110655,
+     1.00151296,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/100000": [
+     278370,
+     0.390413217,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/100000": [
+     147706.25,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/100000": [
+     179831.25,
+     0.808189024,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/100000": [
+     189631.25,
+     0.783334461,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/100000": [
+     186706.25,
+     0.787194838,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/100000": [
+     144431.25,
+     1.01611495,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/100000": [
+     419468.75,
+     0.35851522,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/100000": [
+     208941.667,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/100000": [
+     234991.667,
+     0.900445529,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedSeq/1000000": [
+     2401050,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFused/1000000": [
+     1810350,
+     1.27845956,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedFusedGrouped/1000000": [
+     1920000,
+     1.27090675,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/QPartHintedHandFused/1000000": [
+     1867950,
+     1.28080677,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/ArchetypeSeq/1000000": [
+     2475450,
+     0.96323285,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Coherent/SparseSetSeq/1000000": [
+     4124750,
+     0.572460952,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedSeq/1000000": [
+     2696250,
+     1,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFused/1000000": [
+     2044000,
+     1.31856836,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedFusedGrouped/1000000": [
+     2246350,
+     1.19060072,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/QPartHintedHandFused/1000000": [
+     2255750,
+     1.19618095,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/ArchetypeSeq/1000000": [
+     2718150,
+     1.00506926,
+     "QPartHintedSeq"
+    ],
+    "FusionFrame/Fragmented/SparseSetSeq/1000000": [
+     4965050,
+     0.542552618,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedSeq/1000000": [
+     2255800,
+     1,
+     "QPartHintedSeq"
+    ],
+    "Frame3Sys/Fragmented/QPartHintedFused/1000000": [
+     2138350,
+     1.04150912,
+     "QPartHintedSeq"
+    ],
+    "Tick/-/SparseSet/250": [
+     144800,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/250": [
+     128000,
+     1.13894516,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/250": [
+     119500,
+     1.20953516,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/250": [
+     122750,
+     1.18328168,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/250": [
+     117950,
+     1.23757779,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/250": [
+     125500,
+     1.15576271,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/250": [
+     118800,
+     1.23312184,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/250": [
+     125850,
+     1.13416711,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/250": [
+     126100,
+     1.17340133,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/250": [
+     118650,
+     1.22619591,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/250": [
+     138100,
+     1.03661281,
+     "SparseSet"
+    ],
+    "Tick/-/SortedSoA/250": [
+     235650,
+     0.61951431,
+     "SparseSet"
+    ],
+    "Tick/-/SparseSet/2500": [
+     1728750,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/2500": [
+     1550500,
+     1.14748351,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/2500": [
+     1539300,
+     1.16830106,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/2500": [
+     1581700,
+     1.12476276,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/2500": [
+     1479400,
+     1.18293605,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/2500": [
+     1637050,
+     1.12378556,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/2500": [
+     1490650,
+     1.17774402,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/2500": [
+     1591050,
+     1.11517395,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/2500": [
+     1565800,
+     1.17754899,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/2500": [
+     1631750,
+     1.17977107,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/2500": [
+     1651050,
+     1.1061263,
+     "SparseSet"
+    ],
+    "Tick/-/SparseSet/12500": [
+     10624650,
+     1,
+     "SparseSet"
+    ],
+    "Tick/-/Archetype/12500": [
+     8307100,
+     1.24643063,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPart/12500": [
+     8259950,
+     1.25879052,
+     "SparseSet"
+    ],
+    "Tick/-/QueryPartFused/12500": [
+     8589550,
+     1.21197129,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHinted/12500": [
+     8152250,
+     1.26967993,
+     "SparseSet"
+    ],
+    "Tick/-/QPartHintedFused/12500": [
+     8581600,
+     1.20947044,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+NeverFuse/12500": [
+     7984800,
+     1.28953385,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Parallel/12500": [
+     6328700,
+     1.61102432,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+Offload/12500": [
+     8232900,
+     1.24931499,
+     "SparseSet"
+    ],
+    "Tick/-/QPH+AutoTuned/12500": [
+     8155450,
+     1.27691216,
+     "SparseSet"
+    ],
+    "Tick/-/StaticBitmask/12500": [
+     9548100,
+     1.12080004,
+     "SparseSet"
+    ],
+    "Spans/-/k1/100000": [
+     137122.222,
+     1,
+     "k1"
+    ],
+    "Spans/-/k6/100000": [
+     129683.333,
+     1.05072947,
+     "k1"
+    ],
+    "Spans/-/k64/100000": [
+     131133.333,
+     1.04649099,
+     "k1"
+    ],
+    "Spans/-/k512/100000": [
+     135061.111,
+     1.01621718,
+     "k1"
+    ],
+    "Spans/-/k4096/100000": [
+     150677.778,
+     0.903467261,
+     "k1"
+    ],
+    "Spans/-/k16384/100000": [
+     154655.556,
+     0.882303009,
+     "k1"
+    ]
+   }
+  }
+ ]
+}

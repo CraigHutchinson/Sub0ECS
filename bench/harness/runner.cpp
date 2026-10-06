@@ -107,8 +107,8 @@ namespace bench::harness
          *  compare() gives every design the same count, and left to itself picks the count
          *  that suits the slowest. A group that holds a design a hundred times slower than
          *  the rest then times the fast ones on a single pass, cold, straight after the
-         *  others have flushed the caches: Iter1 read 50 us where it takes 14. Sizing by
-         *  the fastest keeps every design warm; the slow ones just run longer epochs. */
+         *  others have flushed the caches. Sizing by the fastest keeps every design warm;
+         *  the slow ones just run longer epochs. */
         std::uint64_t pairedIterations(const std::vector<Prepared>& prepared, const Options& o)
         {
             using Clock = std::chrono::steady_clock;

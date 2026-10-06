@@ -176,7 +176,7 @@ namespace sub0ecs::store
             const Record& r = records_[e.index()];
             // Column first: columnsFor(has) is a subset of has, so a column
             // implies membership. Checking r.has before this dependent load cost
-            // RandomGet ~20% (measured), hence the order. (A fragmenting type has a
+            // find measurably, hence the order. (A fragmenting type has a
             // layout bit, so t indexes the partition's tables.)
             if (std::byte* column = partitions_[r.partition]->base[t]) return reinterpret_cast<C*>(column) + r.row;
             if (!(r.has & bitC))   // runtime query: not yet migrated entities still hold it in side storage

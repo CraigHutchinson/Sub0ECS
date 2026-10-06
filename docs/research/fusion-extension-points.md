@@ -1,18 +1,16 @@
 # Fusion as a first-class feature: extension points
 
-> **Design note from the exploration phase.** It records the reasoning behind a
-> decision; its numbers were measured on an earlier host (a 4-vCPU cloud VM, GCC 13)
-> and its result files are in the repository history, not the tree. Current,
-> re-measured figures are in [FINDINGS.md](../FINDINGS.md).
+> Design note: the reasoning behind a part of the library. Measurements are kept in
+> [FINDINGS.md](../FINDINGS.md), open work in [BACKLOG.md](../BACKLOG.md).
 
 Fusion is a headline feature. This note designs it as **two extension
-points**, each usable at compile time or at runtime. H7 (research/fusion.md)
+points**, each usable at compile time or at runtime. The fusion prototype ([fusion.md](fusion.md))
 proved the mechanism; this note turns it into architecture.
 
 - Prototype: [fusion/access.hpp](../../include/sub0ecs/fusion/access.hpp),
   [fusion/planners/](../../include/sub0ecs/fusion/planners/),
   [fusion/executors/](../../include/sub0ecs/fusion/executors/) (one header per executor), and `runFusedOn()` in
-  [designs/query_partition.hpp](../../include/sub0ecs/store/world.hpp).
+  [store/world.hpp](../../include/sub0ecs/store/world.hpp).
 - Tests: [test/fusion_test.cpp](../../tests/test_fusion.cpp) (compile-time plan
   asserts, equivalence of every combination) and the Skirmish conformance
   test (the real game with four runners).
@@ -27,7 +25,7 @@ proved the mechanism; this note turns it into architecture.
 
 Three properties back this up:
 - **No cost for small systems.** Fusion reaches hand-merged kernel speed
-  (H7: 3.5–5.3×).
+  ([FINDINGS.md](../FINDINGS.md) has the measurements).
 - **Plans are interchangeable.** Every legal plan produces the same state,
   so the plan can be chosen at compile time, at startup, or switched live.
 - **Capability-aware placement.** Systems declare what they need; the plan
@@ -78,8 +76,8 @@ struct MyPlanner {
 ```
 
 - **Compile time.** A plan is a `constexpr` value, so group structure lives
-  in the type system. The spike ships `NeverFuse`, `AlwaysFuse`,
-  `ShareColumns` (the H7 rule: extend a group while the next system shares
+  in the type system. The library ships `NeverFuse`, `AlwaysFuse`,
+  `ShareColumns` (the sharing rule: extend a group while the next system shares
   a column) and `DeviceAware<Base>` (never mix device-safe and host-only
   systems in one group). `fusion_test.cpp` checks the decisions with
   `static_assert`:
@@ -121,7 +119,7 @@ struct MyExecutor {
 - **Contract.** Every row is processed exactly once. Rows may be split,
   tiled, reordered or run in parallel, because row-locality (L1) makes all
   of those equivalent. Written columns must end up back in the store.
-- **Shipped in the spike:** `Inline`, `Tiled<N>`, `Parallel` (a persistent
+- **Shipped:** `Inline`, `Tiled<N>`, `Parallel` (a persistent
   pool; clean under ThreadSanitizer) and `Offload<Device, N>` (stage a tile
   into device-local buffers → `Device::launch` → copy back written columns
   only).
@@ -141,7 +139,7 @@ struct MyExecutor {
 | **ESP32-P4 LP core** | low-power RISC-V coprocessor ([Zephyr ESP32-P4 features](https://docs.zephyrproject.org/latest/boards/espressif/common/soc-esp32p4-features.html)) | `Offload<LpCore, N>` for background groups while the HP cores sleep | Shared memory, so staging can be skipped; slow clock |
 | **ESP32-P4 2D-DMA** | DMA engine | The copy-in/out inside `Offload`, double-buffered tiles | `Tiled` is the right shape already |
 | **ESP32-P4 PPA** | pixel-processing accelerator | Domain-specific: render-extract groups only | Not general compute |
-| Desktop | thread pool | `Parallel` / Sub0Pipeline workers | Proven in spike |
+| Desktop | thread pool | `Parallel` / Sub0Pipeline workers | Implemented |
 | Desktop GPU | SYCL / CUDA / Metal | `Offload<Gpu, N>` with kernel variants; unified memory avoids staging | FP semantics differ (see §5) |
 
 ## 4. Integration
@@ -157,7 +155,7 @@ struct MyExecutor {
   there is zero runtime planning cost and only the chosen instantiations
   are compiled.
 - **Adaptive mode (desktop).** The auto-tuner re-measures on a trigger
-  (entity counts change by 2×, a system is added, a power mode changes).
+  (entity counts double, a system is added, a power mode changes).
   Switching is always safe (§5).
 
 ## 5. The determinism invariant, and its one caveat
@@ -182,73 +180,40 @@ GPU or DSP generally is not. The design therefore needs:
   time;
 - other worlds opting into tolerance explicitly.
 
-## 6. Evidence
+## 6. What the measurements established
 
-Raw data:
-- `results/fusion-extension-points-linux-gcc13.json`
-- `results/fusion-extension-points-skirmish-linux-gcc13.json`
+Figures per planner and executor are in [FINDINGS.md](../FINDINGS.md), section 5.
+The conclusions the design rests on:
 
-Median of 5, random interleaving. Speed-up is relative to `NeverFuse`.
-
-| FusionFrame (shares Position/Velocity) | 100K | 1M |
-|---|---:|---:|
-| NeverFuse | 236 µs | 3.03 ms |
-| ShareColumns (Inline) | 66 µs (3.59×) | 0.91 ms (3.33×) |
-| AlwaysFuse | 65 µs (3.66×) | 0.91 ms (3.34×) |
-| **AutoTuned** (measure mode) | 62 µs (3.82×), chose AlwaysFuse | 0.94 ms (3.22×) |
-| ShareColumns + Tiled4K | 65 µs (3.63×) | 0.95 ms (3.18×) |
-| ShareColumns + Parallel (4 threads) | 234 µs (1.01×) | **0.51 ms (6.00×)** |
-| DeviceAware + Offload1K (emulated) | 121 µs (1.95×) | 1.80 ms (1.68×) |
-
-| Frame3 (no shared columns) | 100K | 1M |
-|---|---:|---:|
-| NeverFuse | 119 µs | 1.44 ms |
-| ShareColumns (declines to fuse) | 1.01× | 1.00× |
-| AlwaysFuse | **0.83×** | **0.80×** |
-| AutoTuned | 1.05× | 1.02× |
-| ShareColumns + Parallel | 0.42× | 2.14× |
-
-Observations:
-- **The static planner gets it right, and the measuring planner never
-  loses.** `ShareColumns` fuses FusionFrame and declines Frame3.
-  `AlwaysFuse` would cost 17–20% on Frame3. `AutoTuned` lands on or near
-  the best plan in every row, which is the safety net for workloads the
-  static rule misjudges.
-- **Executors compose with fusion.** Threads multiply the fusion gain at
-  1M (6.0×). At 100K the first-cut pool, which forked per partition and
-  slept between jobs, erased it. That motivated the chunk-level,
-  spin-then-park pool in [threading.md](threading.md).
-- **Offload's cost is data movement.** The emulated device still keeps
-  about half of the fusion gain after staging every tile in and out.
-  Access-driven write-back already halves the return traffic for
-  read-only columns (verified in the tests). On real hardware, DMA overlap
-  (double-buffered `Tiled`) and unified memory decide whether offload
-  wins.
-- **Real game (Skirmish, 50K units, movement µs per tick):**
-
-  | Runner | Movement |
-  |---|---:|
-  | Unfused | 6 069 |
-  | NeverFuse | 5 509 |
-  | Offload (DeviceAware) | 5 529 |
-  | Built-in fused | 5 374 |
-  | AutoTuned | 5 370 |
-  | ShareColumns + Parallel (first-cut pool) | 3 742 |
-
-  Capability splitting keeps Offload correct, but isolating Separation
+- **A static planner can get it right, and a measuring planner is the safety
+  net.** `ShareColumns` fuses a frame whose systems share columns and declines one
+  whose systems do not, where `AlwaysFuse` loses. Which separate passes are cheap
+  differs by compiler, so no static rule is right everywhere; `AutoTuner` lands on
+  or near the best plan by measuring.
+- **Executors compose with fusion.** With enough rows, threads multiply the fusion
+  gain. With too few, a pool that forks per partition and sleeps between jobs
+  erases it, which motivated the chunk-level, spin-then-park pool in
+  [threading.md](threading.md).
+- **Offload's cost is data movement.** An emulated device that stages every tile
+  in and out keeps only part of the fusion gain. Access-driven write-back removes
+  the return traffic for read-only columns (verified in the tests). On real
+  hardware, DMA overlap (double-buffered `Tiled`) and unified memory decide
+  whether offload wins.
+- **In the real game, capability splitting keeps Offload correct but costly.**
+  Isolating Separation (which reads the spatial grid) from the movement group
   costs most of the fusion benefit. The fix is kernel variants that make
-  Separation device-safe (e.g. the grid view as an input column), not a
-  weaker planner.
+  Separation device-safe (e.g. the grid view as an input column), not a weaker
+  planner.
 
 ## 7. Risks and next steps
 
 | Risk | Mitigation |
 |---|---|
-| Code size: plans × subsets × executors instantiations | Instantiate only occurring subsets; bound candidate lists; measure flash on ESP32 (H4) |
-| Capability splits reduce fusion (Separation isolated → movement fused less) | Kernel variants make more systems device-safe (e.g. a grid view passed as a column); measured in §6 |
+| Code size: plans × subsets × executors instantiations | Instantiate only occurring subsets; bound candidate lists; measure flash on ESP32 |
+| Capability splits reduce fusion (Separation isolated → movement fused less) | Kernel variants make more systems device-safe (e.g. a grid view passed as a column) |
 | Async offload and commit points | Executors return completion; groups end at commit points; stage buffers are per executor |
 | Debuggability | `NeverFuse` + `Inline` is always available as a build or runtime switch |
 
-Next: H7b (auto-grouping from Access over a whole schedule, not a hand
+Next: auto-grouping from Access over a whole schedule (not a hand
 list), the `kBitExact` capability plus a non-exact emulated device, a
 Sub0Pipeline-backed `Parallel`, and an ESP32-P4 LP-core `Offload` prototype.

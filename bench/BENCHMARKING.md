@@ -32,8 +32,7 @@ a **group**, and a group's designs are measured **against each other, paired**
   and cancel out of the ratios;
 - that count is sized so the *fastest* design fills an epoch. Sized by the slowest,
   a group holding a very slow design times the fast ones on a single cold pass
-  straight after the others have flushed the caches (Iter1 read 50 µs where it
-  takes 14–21);
+  straight after the others have flushed the caches;
 - each design gets a ratio to the group's **baseline** (the first registered: the
   hand-written loop for iteration and lookup, SparseSet elsewhere, 1 thread for
   thread scaling) with a 95% interval corrected for the group's size;
@@ -209,9 +208,9 @@ headline metrics and the heaviest functions.
 - VTune credits inlined code to the function it came from, so a kernel shows under
   its own name whether or not it was inlined. Use the assembly (step 4) to tell.
 
-Worked example (2026-10-05, MSVC): step 1 showed the store's Update2 at 1.24x the
-hand-written loop on MSVC and 1.0x on GCC and Clang. Step 2 puts the time in
-`kernel::updatePosition` (99% of it), not in library code. Step 4 found the cause:
+Worked example: step 1 showed the store's Update2 slower than the hand-written
+loop on MSVC only. Step 2 put nearly all the time in `kernel::updatePosition`, not
+in library code. Step 4 found the cause:
 the assembly had a `call` to the kernel inside the row loop, where the
 hand-written loop had it inlined. One statement attribute on the row call fixed it
 (FINDINGS, section 4).
