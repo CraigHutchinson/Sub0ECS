@@ -1,6 +1,6 @@
 #pragma once
 /** Inline executors: run the fused kernel on the calling thread, over all
- *  rows (Inline, the H7 fused loop) or over one row range (InlineRange, used by
+ *  rows (Inline, the fused loop) or over one row range (InlineRange, used by
  *  runFusedParallel to hand chunks of many partitions to one kernel). */
 
 #include <cstddef>

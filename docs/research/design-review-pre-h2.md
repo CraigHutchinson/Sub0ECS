@@ -1,5 +1,10 @@
 # Design review: before H2
 
+> **Design note from the exploration phase.** It records the reasoning behind a
+> decision; its numbers were measured on an earlier host (a 4-vCPU cloud VM, GCC 13)
+> and its result files are in the repository history, not the tree. Current,
+> re-measured figures are in [FINDINGS.md](../FINDINGS.md).
+
 Scope: the Sub0DataStore / SubzeroECS storage design after H1, and the
 proposal to resolve "an entity in two systems" by **composition** (system
 tree, parenting, DAG) instead of copies or references.

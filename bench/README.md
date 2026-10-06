@@ -1,100 +1,125 @@
 # Comparison benchmarks
 
-Keeps the library store honest. The query-partition store ([`sub0ecs::store`](../include/sub0ecs/store/world.hpp),
-*QueryPart* / *QPartHinted* below) is driven through one workload and adapter surface
-alongside the alternatives it was chosen over, including v1 itself, unmodified. The
-storage model is the only variable.
+These keep the library honest. The store ([`sub0ecs::store`](../include/sub0ecs/store/world.hpp),
+*QueryPart* / *QPartHinted* below) runs one fixed workload beside reference
+implementations, and every figure the project quotes is a ratio to one of them,
+measured in the same run.
 
-The comparators are **reference implementations, not library code**:
-[`designs/`](designs/) (archetype, sparse set, sorted SoA, static bitmask) and
-[`baselines/v1/`](baselines/v1/) (v1, frozen byte-identical). Findings and the
-decision record are in [FINDINGS.md](../docs/FINDINGS.md); raw numbers in
-[results/](results/).
+The references are **not library code**. They live in [`designs/`](designs/).
+Findings are in [FINDINGS.md](../docs/FINDINGS.md); curated runs in
+[results/reference/](results/reference/README.md).
 
-## Candidates
+## What the store is measured against
 
-| Id | Design | Storage | Query | add/remove component | destroy | Registry |
-|---|---|---|---|---|---|---|
-| **V1** | SubzeroECS v1 (unmodified, [`v1_adapter.hpp`](designs/v1_adapter.hpp)) | per-type sorted id vector + parallel data vector | N-way galloping sorted intersection, `.at()` access | add only (O(n) if not appended) | ✗ | static per-type table, max 32 worlds |
-| **C** | Sorted SoA, "v1-evolved" ([`sorted_soa.hpp`](designs/sorted_soa.hpp)) | same as v1 | smallest-set leader + linear-step/gallop followers, raw pointers | staged, merged in one O(n) pass at `commit()` | staged | per-world runtime |
-| **A** | Sparse set, EnTT-style ([`sparse_set.hpp`](designs/sparse_set.hpp)) | per-type sparse index + packed dense entities/data | smallest-pool leader, O(1) `contains` on others | O(1) swap-and-pop | O(#pools) | per-world runtime |
-| **B** | Archetype tables, flecs/Bevy-style ([`archetype.hpp`](designs/archetype.hpp)) | tables per exact signature, SoA columns | cached archetype match, tight typed-column loop | row move between tables (memcpy), cached edges | swap-remove row | runtime, 64-bit signature |
-| **D** | Static bitmask, fixed capacity ([`static_bitmask.hpp`](designs/static_bitmask.hpp)) | compile-time component list, `Capacity` dense arrays indexed by slot, 32-bit signature per slot | linear scan of signatures | set/clear bit O(1) | O(1) | compile-time |
-| OOP | class hierarchy ([`oop.hpp`](designs/oop.hpp)): one heap object per entity, a virtual `update()` each | per-object members | — (Create and Update2 only) | — | — | v1's "OOP" column |
-| RawSoA | hand-written `vector<Position>` + `vector<Velocity>` loop | — | — | — | — | roofline for Update2 only |
+**The bars: no ECS at all** ([`handwritten.hpp`](designs/handwritten.hpp)). They
+know the workload in advance and support nothing else: no queries, no adding or
+removing components, no destroying entities.
 
-All generational designs (A, B, D) share the 32-bit handle in
-[`common/entity.hpp`](../include/sub0ecs/entity.hpp) (24-bit slot + 8-bit version) so stale
-handles are rejected. C keeps v1's monotonic, never-recycled ids.
+| Id | What it is | Role |
+|---|---|---|
+| **HandWritten** | One array per component per entity shape, and a plain loop calling the shared kernel | What a programmer writes first. The paired baseline of the iteration and lookup scenarios: a ratio of 1.0 means the library costs nothing over it |
+| **HandTuned** | One array per field, branch-free kernels, explicit AVX2 where the build targets it | The ceiling: what the hardware allows for this arithmetic. The distance from the store to this is what layout and SIMD could still buy |
 
-## Workloads
+**What an ECS replaces.**
 
-Entity mix is identical to `benchmarks/update_patterns`: **Coherent** = all
-Small (Position, Velocity); **Fragmented** = rotating Small / Medium (+Health,
-Rotation, Scale) / Large (+Color, Team, Flags). Kernels are copied verbatim
-from v1's benchmark ([`common/components.hpp`](common/components.hpp)).
+| Id | What it is | Scope |
+|---|---|---|
+| **OOP** | Class hierarchy ([`oop.hpp`](designs/oop.hpp)): one heap object per entity, Small ← Medium ← Large, one virtual call per object per update | Create, Iter1, Update2, Frame3, RandomGet. A class is fixed at creation, so no queries or structural change |
+| **NaiveObjects** | Game objects owning a list of separately allocated components ([`naive_components.hpp`](designs/naive_components.hpp)); a system visits every object and looks its components up | Every scenario, up to 1M entities |
+
+**The store's own way of working.** Besides one system per scenario, the store
+also runs the same work as several small single-purpose systems, which is how the
+library is meant to be used. These are not like-for-like with the bars (the bars
+have one hand-merged loop), but they compute bit-identical results and sit in the
+same groups, so the cost of small systems and what fusion recovers are both
+visible against hand-written code.
+
+| Id | What it is |
+|---|---|
+| **QPartHinted3Seq** / **QPartHinted3Fused** | Update2 as three systems (Integrate, Forces, Wrap): one pass each, or fused into one pass |
+| **QPartHinted5Seq** / **QPartHinted5Fused** | Frame3 as five systems (those three, RotHealth, Pulse): one pass each, or fused by the `ShareColumns` plan |
+
+**Other storage designs.** Reference implementations of the established ECS
+models, driven through the same adapter as the store.
+
+| Id | Design | Storage | Query | Add/remove component |
+|---|---|---|---|---|
+| **SparseSet** | Sparse set per component, EnTT-style ([`sparse_set.hpp`](designs/sparse_set.hpp)) | sparse index + packed dense entities and data | smallest pool leads, O(1) membership test on the others | O(1) swap-and-pop |
+| **Archetype** | Archetype tables, flecs/Bevy-style ([`archetype.hpp`](designs/archetype.hpp)) | one table per exact component set, a column per component | cached table match, typed-column loop | row moves between tables |
+| **SortedSoA** | Sorted id vectors ([`sorted_soa.hpp`](designs/sorted_soa.hpp)) | per component a sorted id vector + parallel data | smallest set leads, the others gallop | staged, merged at `commit()` |
+| **StaticBitmask** | Fixed capacity ([`static_bitmask.hpp`](designs/static_bitmask.hpp)) | compile-time component list, dense arrays by slot, a signature per slot | linear scan of signatures | set or clear a bit |
+
+These are our own implementations of each model, not the libraries they are named
+after. Benchmarks against EnTT and flecs themselves are on the
+[backlog](../docs/BACKLOG.md).
+
+The designs with recycled ids share the 32-bit generational handle in
+[`sub0ecs/entity.hpp`](../include/sub0ecs/entity.hpp) (24-bit slot, 8-bit version), so
+stale handles are rejected. SortedSoA uses monotonic ids that are never recycled.
+
+## Workload
+
+**Coherent** = every entity is Small (Position, Velocity). **Fragmented** =
+rotating Small / Medium (+Health, Rotation, Scale) / Large (+Color, Team, Flags).
+The kernels are fixed ([`common/components.hpp`](common/components.hpp)).
 
 | Scenario | What it measures | Pattern(s) |
 |---|---|---|
-| `Create` | populate N entities (manual timer, excludes world construction); also reports heap bytes/entity and allocations/entity | both |
-| `Iter1` | single-component read/write loop — pure storage streaming cost | both |
-| `Update2` | Position+Velocity physics — **v1's headline benchmark** | both |
-| `Frame3` | three systems per frame (Physics, Health+Rotation, Scale+Color) | Fragmented |
-| `SparseQuery` | Position+Velocity+Tag where Tag is on 1% of entities — does the rare component drive iteration? | Fragmented |
-| `RandomGet` | `find<Velocity>(e)` over a shuffled handle list — random access | Fragmented |
-| `AddRemove` | add then remove a component on 10% of entities | Fragmented |
-| `DestroyCreate` | destroy 10% of entities and create 10% new | Fragmented |
+| `Iter1` | one field of one component: the cost of streaming storage | both |
+| `Update2` | Position + Velocity physics with wrap-around | both |
+| `Frame3` | three systems per frame (physics, health + rotation, scale + colour) | Fragmented |
+| `RandomGet` | `find<Velocity>(e)` over a shuffled handle list | Fragmented |
+| `SparseQuery` | Position + Velocity + Tag where 1% of entities have Tag: does the rare component drive iteration? | Fragmented |
+| `AddRemove` | add then remove a component no system queries, on 10% of entities | Fragmented |
+| `TagChurn` | add then remove a queried component on 10% of entities | Fragmented |
+| `DestroyCreate` | destroy 10% of entities and create as many | Fragmented |
+| `Create` | populate N entities; also heap bytes and allocations per entity (glibc) | both |
 
-`items_per_second` is always *world entities per second* (N per iteration),
-so rows are comparable across designs within a scenario.
+The first four have hand-written bars. The rest are about flexibility, which the
+bars do not have, so their baseline is SparseSet.
 
-### Fairness guards
+`items_per_second` is always *world entities per second* (N per pass), so rows
+compare across designs within a scenario.
 
-- **Conformance first.** [`tests/test_design_conformance.cpp`](../tests/test_design_conformance.cpp) runs
-  the same sequence (systems, tagging, churn, destroy/create, stale-handle
-  checks) on every design and requires *bit-identical* checksums against the
-  sparse-set reference. It also runs clean under ASan/UBSan
-  (`cmake --preset sanitize`).
-- **Denormals flushed (FTZ/DAZ).** The kernel damps velocity each step, so
-  long benchmark runs drift into denormal floats and end up measuring the FPU
-  microcode path (10–30× slower, varying with iteration count). v1's own
-  benchmark avoids this only implicitly through `-ffast-math`. The benchmarks set
-  FTZ/DAZ explicitly instead, and builds without `-ffast-math` so conformance
-  stays bit-exact.
+## Fairness guards
+
+- **Conformance first.** [`tests/test_design_conformance.cpp`](../tests/test_design_conformance.cpp)
+  runs the same sequence on every design and requires *bit-identical* state against
+  the sparse-set reference. That includes the bars: HandTuned's SIMD kernels must
+  give exactly the results of the scalar ones, or they would be measuring different
+  arithmetic.
+- **No fused multiply-add** (`-ffp-contract=off`; MSVC's default) and no
+  `-ffast-math`, so every compiler and every design computes the same values.
+- **Denormals flushed (FTZ/DAZ).** The kernel damps velocity each step, so long
+  runs drift into denormal floats and would time the FPU's microcode path.
 - **Same flags for all**: `-O3` (GCC/Clang) or `/O2` (MSVC), plus `-march=native` /
   `/arch:AVX2` with `SUB0ECS_NATIVE=ON` (the `bench-native` preset).
-- v1 is compiled from [`baselines/v1/`](baselines/v1/) unmodified; its warnings are
-  silenced as SYSTEM headers only.
-  v1 does not compile with Clang (it calls members of an incomplete type), so
-  Clang builds compare every design except v1 (`SUB0ECS_HAS_V1_BASELINE`).
+- **The same inlining hint** on every design's row loop, so MSVC's inliner does not
+  favour one of them.
+- **Name the machine and the compiler** with any figure. Ratios move between
+  compilers; compare them on one machine, in rotated runs (BENCHMARKING.md).
 
-## Benchmark harness
+## Running
 
-For reproducible runs (and dedicated hardware) use the harness rather than
-invoking binaries by hand: see [BENCHMARKING.md](BENCHMARKING.md)
-(`tools/run.py`, `tools/compare.py`, CMake presets).
-
-## Build & run
-
-From the repository root (on Windows, in a VS developer prompt):
+Use the harness, not the binaries by hand: [BENCHMARKING.md](BENCHMARKING.md)
+(`tools/run.py`, `tools/compare.py`, `tools/profile.py`, CMake presets).
 
 ```bash
 cmake --preset bench-native
 cmake --build --preset bench-native
-ctest --preset default                                   # or: build/bench-native/tests/sub0ecs_tests
+ctest --preset default                                   # conformance
+python3 bench/tools/run.py --profile standard --pin P    # results + summary.md
 build/bench-native/bench/sub0ecs_bench --filter='^Update2/Fragmented/' --epochs=22
-python3 bench/tools/summarize.py <run>.json > <run>.md
 ```
 
-Options: `--filter=REGEX` (on case names; `--list` shows them), `--epochs=N`,
-`--min-epoch-ms=X`, `--out=FILE`; environment:
-`BENCH_SIZES=small` (N=1000 only, fast smoke run).
+Binary options: `--filter=REGEX` (on case names; `--list` shows them), `--epochs=N`,
+`--min-epoch-ms=X`, `--out=FILE`; environment: `BENCH_SIZES=small` (N = 1000 only).
 
-## Adding a candidate
+## Adding a design
 
 Implement the adapter surface (see the top of
 [`common/scenarios.hpp`](common/scenarios.hpp)): `Entity`, `kName`,
 `kSupportsRemove`, `kSupportsDestroy`, `reserve`, `create(Cs...)`,
 `each<Cs...>(f)`, `find<C>(e)`, `add<C>(e, c)`, `remove<C>(e)`, `destroy(e)`,
 `commit()`. Then add it to `registerAll()` in [`scenarios_bench.cpp`](scenarios_bench.cpp)
-and to the conformance test in [`tests/test_design_conformance.cpp`](../tests/test_design_conformance.cpp).
+and to the conformance test.

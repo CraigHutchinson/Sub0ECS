@@ -7,7 +7,7 @@
  * Mutation: add/remove O(1) (swap-and-pop), destroy O(#pools).
  * Registry: runtime, per-world vector indexed by process-wide typeId<T>().
  *
- * Spike simplification: sparse arrays are flat (not paged), so a rare
+ * Simplification: sparse arrays are flat (not paged), so a rare
  * component on a high entity index costs 4 bytes * max-index.
  */
 

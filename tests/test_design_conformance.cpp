@@ -5,18 +5,19 @@
 #include <string>
 
 #include <doctest/doctest.h>
+#include <sub0ecs/fusion/executors.hpp>
+#include <sub0ecs/fusion/planner.hpp>
 
 #include "../bench/common/scenarios.hpp"
 #include "../bench/common/systems.hpp"
 #include "../bench/designs/archetype.hpp"
+#include "../bench/designs/handwritten.hpp"
+#include "../bench/designs/naive_components.hpp"
 #include "../bench/designs/oop.hpp"
 #include "../bench/designs/query_partition.hpp"
 #include "../bench/designs/sorted_soa.hpp"
 #include "../bench/designs/sparse_set.hpp"
 #include "../bench/designs/static_bitmask.hpp"
-#if SUB0ECS_HAS_V1_BASELINE
-#    include "../bench/designs/v1_adapter.hpp"
-#endif
 
 namespace
 {
@@ -102,7 +103,7 @@ namespace
         if (structural) check(r.structural == ref.structural, tag + ": structural checksum");
     }
 
-    // ---- H7 fusion: fused passes must equal sequential passes bit-for-bit ----
+    // ---- Fusion: fused passes must equal sequential passes bit-for-bit ----
 
     enum class Exec { Sequential, Fused, Grouped, Update2Kernel };
 
@@ -153,9 +154,7 @@ TEST_CASE("every design reproduces the reference state bit-for-bit")
         const Result ref = run<sparse::World>(pattern);
         check(ref.matchedSparse == static_cast<std::size_t>((kN + 99) / 100), "reference sparse match count");
 
-#if SUB0ECS_HAS_V1_BASELINE   // v1 does not compile with Clang (bench/CMakeLists.txt)
-        compare<v1::World>("V1", pattern, ref, false);
-#endif
+        compare<naive::World>("NaiveObjects", pattern, ref, true);
         compare<sorted::World>("SortedSoA", pattern, ref, true);
         compare<archetype::World>("Archetype", pattern, ref, true);
         compare<fixed::World<16384>>("StaticBitmask", pattern, ref, true);
@@ -164,7 +163,7 @@ TEST_CASE("every design reproduces the reference state bit-for-bit")
     }
 }
 
-TEST_CASE("H7 fused passes equal sequential passes bit-for-bit")
+TEST_CASE("fused passes equal sequential passes bit-for-bit")
 {
     using namespace bench;
     for (Pattern pattern : { Pattern::Coherent, Pattern::Fragmented })
@@ -179,24 +178,94 @@ TEST_CASE("H7 fused passes equal sequential passes bit-for-bit")
     }
 }
 
-TEST_CASE("the OOP comparator reproduces the reference Update2 state")
+namespace
 {
-    // OOP takes part in Create and Update2 only; its Update2 work is updateAll()
-    // (one virtual call per entity) instead of a query, so it is checked on its own.
+    /** Runs the scenarios a non-ECS reference takes part in, side by side with the
+     *  sparse-set reference, and requires identical state after each. */
+    template <typename Nudge, typename Update, typename Frame, typename Checksum>
+    void checkAgainstReference(bench::Pattern pattern, Nudge nudge, Update update, Frame frame, Checksum sum)
+    {
+        using namespace bench;
+        auto reference = std::make_unique<sparse::World>();
+        const auto entities = populate(*reference, kN, pattern);
+        CHECK(sum() == checksum(*reference, entities));   // created alike
+        for (int step = 0; step < 5; ++step)
+        {
+            systemPhysics(*reference);
+            update();
+        }
+        CHECK(sum() == checksum(*reference, entities));
+        // Enough frames for the wrap-around and the scale reset to happen.
+        for (int step = 0; step < 800; ++step)
+        {
+            systemFrame3(*reference);
+            frame();
+        }
+        systemIter1(*reference);
+        nudge();
+        CHECK(sum() == checksum(*reference, entities));
+    }
+} // namespace
+
+TEST_CASE("the class hierarchy reproduces the reference state")
+{
+    // No queries: its work is one virtual call per object, so it is checked on its own.
+    using namespace bench;
+    for (Pattern pattern : { Pattern::Coherent, Pattern::Fragmented })
+    {
+        CAPTURE(toString(pattern));
+        auto objects = std::make_unique<oop::World>();
+        const auto entities = populate(*objects, kN, pattern);
+        checkAgainstReference(
+            pattern, [&] { objects->nudgeAll(); }, [&] { objects->updateAll(); }, [&] { objects->frameAll(); },
+            [&] { return checksum(*objects, entities); });
+    }
+}
+
+TEST_CASE("the hand-written bars reproduce the reference state bit for bit")
+{
+    // HandTuned stores one array per field and uses explicit SIMD where the build
+    // targets it; it is only a fair ceiling if it computes exactly the same values.
+    using namespace bench;
+    for (Pattern pattern : { Pattern::Coherent, Pattern::Fragmented })
+    {
+        CAPTURE(toString(pattern));
+        hand::Plain plain(kN, pattern);
+        checkAgainstReference(
+            pattern, [&] { plain.iter1(); }, [&] { plain.update2(); }, [&] { plain.frame3(); }, [&] { return plain.checksum(kN, pattern); });
+        hand::Tuned tuned(kN, pattern);
+        checkAgainstReference(
+            pattern, [&] { tuned.iter1(); }, [&] { tuned.update2(); }, [&] { tuned.frame3(); }, [&] { return tuned.checksum(kN, pattern); });
+    }
+}
+
+TEST_CASE("small systems, sequential or fused by plan, equal the whole kernels")
+{
+    // The benchmark's QPartHinted3*/QPartHinted5* cases: only a fair data point beside
+    // the hand-written bars if the split systems compute exactly what the kernels do.
     using namespace bench;
     for (Pattern pattern : { Pattern::Coherent, Pattern::Fragmented })
     {
         CAPTURE(toString(pattern));
         auto reference = std::make_unique<sparse::World>();
         const auto referenceEntities = populate(*reference, kN, pattern);
-        auto objects = std::make_unique<oop::World>();
-        const auto objectEntities = populate(*objects, kN, pattern);
-        CHECK(checksum(*objects, objectEntities) == checksum(*reference, referenceEntities));   // created alike
-        for (int step = 0; step < 5; ++step)
+        auto sequential = std::make_unique<qpart::HintedWorld>();
+        const auto sequentialEntities = populate(*sequential, kN, pattern);
+        auto fused = std::make_unique<qpart::HintedWorld>();
+        const auto fusedEntities = populate(*fused, kN, pattern);
+        fusion::Inline exec, host;
+        for (int step = 0; step < 300; ++step)
         {
             systemPhysics(*reference);
-            objects->updateAll();
+            runSequential(*sequential, Integrate{}, Forces{}, Wrap{});
+            fused->runFused(Integrate{}, Forces{}, Wrap{});
+
+            systemFrame3(*reference);
+            runSequential(*sequential, Integrate{}, Forces{}, Wrap{}, RotHealthSys{}, PulseSys{});
+            fusion::runPlanned<fusion::ShareColumns>(*fused, exec, host, Integrate{}, Forces{}, Wrap{}, RotHealthSys{}, PulseSys{});
         }
-        CHECK(checksum(*objects, objectEntities) == checksum(*reference, referenceEntities));
+        const double expected = checksum(*reference, referenceEntities);
+        CHECK(checksum(*sequential, sequentialEntities) == expected);
+        CHECK(checksum(*fused, fusedEntities) == expected);
     }
 }

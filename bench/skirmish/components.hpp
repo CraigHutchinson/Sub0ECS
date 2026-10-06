@@ -2,7 +2,7 @@
 /** Skirmish testbed — components and shared unit data.
  *
  * All components are small trivially-copyable PODs (a requirement of the
- * archetype / query-partition spike designs, and realistic for an ECS).
+ * archetype / query-partition designs, and realistic for an ECS).
  */
 
 #include <cstdint>

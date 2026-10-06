@@ -1,5 +1,10 @@
 # Threading: how systems scale across processors (H8)
 
+> **Design note from the exploration phase.** It records the reasoning behind a
+> decision; its numbers were measured on an earlier host (a 4-vCPU cloud VM, GCC 13)
+> and its result files are in the repository history, not the tree. Current,
+> re-measured figures are in [FINDINGS.md](../FINDINGS.md).
+
 Question: how should systems use multiple processors? Lock-step (all
 threads cooperate on each phase, with barriers) or independent working
 (threads or engines progress without global barriers)?
@@ -11,7 +16,7 @@ Evidence comes from the real workload: the Skirmish RTS
   [fusion/executors/parallel.hpp](../../include/sub0ecs/fusion/executors/parallel.hpp) and [fusion/executors/inline.hpp](../../include/sub0ecs/fusion/executors/inline.hpp); `eachParallel` and
   `runFusedParallel` in [designs/query_partition.hpp](../../include/sub0ecs/store/world.hpp);
   per-worker command buffers in [testbed/skirmish/sim.hpp](../../bench/skirmish/sim.hpp).
-- Numbers: [results/threading-skirmish-linux-gcc13.json](../../bench/results/threading-skirmish-linux-gcc13.json).
+- Numbers: `results/threading-skirmish-linux-gcc13.json`.
 
 ## 1. Answer in one paragraph
 

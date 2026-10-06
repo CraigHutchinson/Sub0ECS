@@ -3,7 +3,7 @@
  *  Demonstrates: a frame loop with a movement system and a render system that
  *  reads a different pair of components, drawing to a text grid.
  *  Story: three rockets fly across a 40x8 terminal at different speeds; one of them
- *  has no Velocity and stays parked. (A clean-room successor to v1's rocket sample.)
+ *  has no Velocity and stays parked.
  *  Keep in mind: a system only sees entities that have every component its query
  *  names, so the parked rocket is drawn but never moved. The render system writes
  *  to its own buffer, not to the world, so it could run alongside other readers.

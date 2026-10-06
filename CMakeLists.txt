@@ -57,7 +57,7 @@ endif()
 
 if(SUB0ECS_SANITIZE)
     # On the shared flags, not just the test binary: MSVC's ASan annotates STL
-    # containers and refuses to link objects built without it (the v1 baseline).
+    # containers and refuses to link objects built without it.
     if(MSVC)
         target_compile_options(sub0ecs_dev_flags INTERFACE /fsanitize=address)
     else()
@@ -69,8 +69,8 @@ endif()
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 find_package(Threads REQUIRED)
 
-# bench/ also provides the comparator designs and the frozen v1 baseline the
-# conformance tests check against, so it is added whenever tests are built.
+# bench/ also provides the reference designs the conformance tests check
+# against, so it is added whenever tests are built.
 add_subdirectory(bench)
 
 if(SUB0ECS_BUILD_TESTING)

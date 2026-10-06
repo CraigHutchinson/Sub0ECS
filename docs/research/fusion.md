@@ -1,5 +1,10 @@
 # System fusion: design and H7 prototype
 
+> **Design note from the exploration phase.** It records the reasoning behind a
+> decision; its numbers were measured on an earlier host (a 4-vCPU cloud VM, GCC 13)
+> and its result files are in the repository history, not the tree. Current,
+> re-measured figures are in [FINDINGS.md](../FINDINGS.md).
+
 System fusion (C4 in [design-review-pre-h2.md](design-review-pre-h2.md)),
 brought forward by request. Several systems that visit the same entities run
 as **one pass per partition**, applying each system to a row in schedule
@@ -9,7 +14,7 @@ system.
 
 - Prototype: `runFused(...)` in [designs/query_partition.hpp](../../include/sub0ecs/store/world.hpp).
 - Systems: [common/systems.hpp](../../bench/common/systems.hpp).
-- Results: [results/h7-fusion-linux-gcc13.md](../../bench/results/h7-fusion-linux-gcc13.md).
+- Results: `results/h7-fusion-linux-gcc13.md`.
 
 ## 1. Result
 

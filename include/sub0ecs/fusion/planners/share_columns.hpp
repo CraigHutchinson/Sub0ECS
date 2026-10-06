@@ -1,5 +1,5 @@
 #pragma once
-/** ShareColumns: the H7 rule — extend the current group while the next system
+/** ShareColumns: the sharing rule. Extend the current group while the next system
  *  shares a column with it. The recommended static default. */
 
 #include <array>
@@ -29,7 +29,7 @@ namespace sub0ecs::fusion
         return m;
     }
 
-    /** H7 rule: extend the current group while the next system shares a column with it. */
+    /** Extend the current group while the next system shares a column with it. */
     struct ShareColumns
     {
         static constexpr const char* kName = "ShareColumns";

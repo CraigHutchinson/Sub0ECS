@@ -18,9 +18,9 @@ namespace bench::qpart
     using sub0ecs::store::BasicWorld;
     using sub0ecs::store::Volatile;
 
-    using SpikeQueries = std::tuple<Query<Position>, Query<Position, Velocity>, Query<Health, Rotation>,
+    using BenchQueries = std::tuple<Query<Position>, Query<Position, Velocity>, Query<Health, Rotation>,
                                     Query<Scale, Color>, Query<Position, Velocity, Tag>>;
 
-    using World = BasicWorld<false, SpikeQueries>;
-    using HintedWorld = BasicWorld<true, SpikeQueries, Volatile<Frozen>>;
+    using World = BasicWorld<false, BenchQueries>;
+    using HintedWorld = BasicWorld<true, BenchQueries, Volatile<Frozen>>;
 } // namespace bench::qpart

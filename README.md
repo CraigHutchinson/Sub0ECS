@@ -3,26 +3,29 @@
 A header-only C++20 Entity Component System whose storage is laid out by the
 **systems you declare**, not only by the components entities happen to have.
 
-The current API is the successor to the historical v1 API, preserved at the
-[`v1.0.0` tag](https://github.com/CraigHutchinson/Sub0ECS/tree/v1.0.0). The
-design evidence is in [docs/FINDINGS.md](docs/FINDINGS.md); implementation
-examples and remaining work are tracked in [docs/EXAMPLES.md](docs/EXAMPLES.md)
-and [docs/BACKLOG.md](docs/BACKLOG.md).
+You get the iteration speed of a hand-written loop and keep the flexibility that a
+hand-written loop gives up: any entity can gain or lose any component at any time,
+systems can be added while the program runs, and the same systems run inline, on a
+thread pool or on a device without changing their results.
 
-## Why this design
+## What it gives you
 
-- **Iteration at hand-written-SoA speed.** Every declared query iterates whole
-  partitions of dense, typed columns. The compiler sees a plain loop and
-  vectorises it.
-- **Cheap churn where it matters.** Components no query filters on never move an
-  entity between partitions, so adding and removing them is a sparse-set operation.
-  Declare churn-heavy components `Volatile` and they stay out of the layout.
-- **System fusion.** Small single-purpose systems that share columns run as one
-  pass: planners decide what fuses, executors decide where it runs (inline, tiled,
-  thread pool, offload). Results are bit-identical whichever plan or executor is
-  chosen.
-- **Runtime systems.** Queries added at runtime work immediately, with a bounded
-  per-frame migration budget (no level-load stall).
+- **Storage shaped by your queries.** Each declared query iterates whole
+  partitions of dense, typed columns, so a system is a plain loop over arrays.
+- **Cheap change where it matters.** A component no query filters on never moves
+  an entity between partitions: adding and removing it is a sparse-set operation.
+  Declare churn-heavy components `Volatile` and they stay out of the layout
+  altogether.
+- **Many small systems at the cost of one pass.** Systems that share columns can be
+  fused into one loop. *Planners* decide what fuses; *executors* decide where it
+  runs (inline, tiled, thread pool, offload).
+- **The same answer however it runs.** Results are bit-identical whichever plan or
+  executor is chosen, so lockstep simulation and replay survive a change of
+  hardware.
+- **Systems added at runtime.** A query added while running works immediately,
+  with a bounded per-frame migration budget instead of a level-load stall.
+- **No fixed limits to design around.** Any number of component types; generational
+  handles, so a stale handle is rejected rather than aliasing a new entity.
 
 ## Quick start
 
@@ -59,6 +62,9 @@ int main()
 }
 ```
 
+Twelve runnable examples, one per feature, are in [examples/](examples/) and
+described in [docs/EXAMPLES.md](docs/EXAMPLES.md).
+
 ## Library layout
 
 | Header | Contents |
@@ -82,28 +88,60 @@ further type is kept in side storage, where everything still works and only
 
 ## Performance
 
-The current store against the v1 API at 100K entities of mixed shapes (GCC 13,
-`-O3 -march=native`, median of 5;
-[full tables](bench/results/h1-query-partition-linux-gcc13.md)):
+The bar is **code written by hand for exactly this workload**, with no ECS: a
+plain loop over arrays, and a hand-tuned version of it with one array per field
+and explicit SIMD. Those have none of the library's flexibility, which is the
+point of measuring against them. Figures are speed relative to the plain
+hand-written loop (1.00 = equal, above 1 = faster), at 100,000 entities of three
+mixed shapes, as the range across MSVC 19.51, clang-cl 22 and GCC 16.2 on one
+machine (Core Ultra 9 275HX, P-cores, AVX2). Every design computes bit-identical
+results.
 
-| Scenario | v1 API | Current store | |
-|---|---:|---:|---:|
-| Update two components (v1's headline benchmark) | 294 µs | 42.9 µs | **6.9×**, equal to hand-written SoA |
-| Three systems per frame | 459 µs | 118 µs | 3.9× |
-| Query on a tag held by 1% of entities | 79 µs | 0.39 µs | 203× |
-| Random `find` | 11.1 ms | 1.8 ms | 6.1× |
-| Add + remove a component on 10% of entities | unsupported | 89 µs | |
+| | One field | Two-component physics | Three systems per frame | Random lookup |
+|---|---:|---:|---:|---:|
+| Hand-tuned SIMD (the ceiling) | 2.8–4.0× | 3.7–5.7× | 2.7–4.8× | 1.2–1.3× |
+| **Plain hand-written loop** | **1.00** | **1.00** | **1.00** | **1.00** |
+| **SubzeroECS** | **0.96–1.02×** | **1.00–1.07×** | **1.02–1.35×** | **0.23–0.28×** |
+| SubzeroECS, same work as 3 / 5 small systems, fused | | 0.99–1.03× | 0.95–1.39× | |
+| Class hierarchy, virtual update | 0.10–0.14× | 0.42–0.60× | 0.45–0.81× | 0.44–0.50× |
+| Game objects owning components | 0.02–0.03× | 0.07–0.09× | 0.03–0.05× | 0.04–0.06× |
 
-Every number comes from the comparison suite in [bench/](bench/). It runs the
-current store beside the alternatives it was chosen over, and v1 unmodified, and
-checks they all produce bit-identical results first.
-[bench/BENCHMARKING.md](bench/BENCHMARKING.md) explains how to reproduce the
-numbers on your hardware.
+What that says, honestly:
 
-The size of the gap depends on the machine and the compiler. On a Core Ultra 9
-275HX with MSVC the same benchmark was 1.5× v1 (hand-written SoA: 1.9×); the
-structural-change and lookup results carry over. See "Reference capture" in
-[docs/FINDINGS.md](docs/FINDINGS.md).
+- **Iteration costs nothing over a hand-written loop**, on all three compilers,
+  and stays there when the work is split into small systems and fused. It is
+  1.7–10× faster than a class hierarchy and 12–40× faster than objects that own
+  their components.
+- **The ceiling is a further 3–6× up** (2.7–5.7× measured). Hand-tuned code gets it from storing one
+  array per field and from SIMD. The library does neither yet; closing that gap is
+  on the [backlog](docs/BACKLOG.md).
+- **Random lookup by handle is 4× slower than indexing an array**, and about half
+  the speed of following a pointer to an object. A handle is checked and resolved
+  through two tables; that is the price of entities that can change shape and be
+  destroyed safely.
+
+Flexibility is where the hand-written code has no answer at all, so here the
+reference is a sparse-set ECS (our own implementation of the EnTT model):
+
+| | SubzeroECS vs sparse set |
+|---|---:|
+| Query on a component 1% of entities have | 3.2–4.0× |
+| Create entities | 1.8–2.6× |
+| Destroy and create 10% of entities | 1.1–1.5× |
+| Add and remove a component no system queries | 0.84–1.23× |
+| Add and remove a component a system does query | 0.12–0.21× |
+
+Changing a component that a system queries moves the entity between partitions,
+and is 5–8× slower than a sparse set. Mark such components `Volatile`, or expect
+that cost.
+
+Every figure is the median of five interleaved runs per compiler; the spread and
+the full tables are in
+[bench/results/reference/](bench/results/reference/README.md), the design evidence
+in [docs/FINDINGS.md](docs/FINDINGS.md), and the method (and how to reproduce it on
+your hardware) in [bench/BENCHMARKING.md](bench/BENCHMARKING.md). The references
+are described in [bench/README.md](bench/README.md). Comparisons with EnTT and
+flecs themselves have not been run yet.
 
 ## Build
 
@@ -126,9 +164,12 @@ The examples are built and registered with CTest whenever
 include/sub0ecs/   the library (header-only)
 examples/          runnable feature examples, registered with CTest
 tests/             unit and conformance tests (doctest)
-bench/             comparison benchmarks, comparator designs, v1 baseline, harness, results
-docs/              design evidence, example plan, research notes, backlog
+bench/             benchmarks, the reference designs they compare against, harness, results
+docs/              design and evidence, examples guide, research notes, backlog
 ```
+
+Design and evidence: [docs/FINDINGS.md](docs/FINDINGS.md). Open work:
+[docs/BACKLOG.md](docs/BACKLOG.md).
 
 ## Related projects
 
@@ -149,7 +190,8 @@ Ensures improvements used in network-accessible deployments remain available to 
 Open a GitHub issue titled "Commercial License Request: [Your Organization Name]" with your intended use, scale, and timeline.
 
 **Historical Versions:**
-Releases prior to v1.0 were published under the Unlicense (public domain).
+Releases prior to v1.0 were published under the Unlicense (public domain). The
+earlier API is available at the [`v1.0.0` tag](https://github.com/CraigHutchinson/Sub0ECS/tree/v1.0.0).
 
 **Contributions:**
 See [CONTRIBUTING.md](CONTRIBUTING.md) for dual-license inbound contribution terms.

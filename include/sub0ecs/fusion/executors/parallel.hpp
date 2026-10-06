@@ -1,6 +1,6 @@
 #pragma once
 /** Parallel: persistent spin-then-park thread pool running contiguous row
- *  chunks (H8; see research/threading.md). */
+ *  chunks (see docs/research/threading.md). */
 
 #include <algorithm>
 #include <atomic>

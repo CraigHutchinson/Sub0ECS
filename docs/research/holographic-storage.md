@@ -1,5 +1,10 @@
 # System-driven ("holographic") storage for SubzeroECS
 
+> **Design note from the exploration phase.** It records the reasoning behind a
+> decision; its numbers were measured on an earlier host (a 4-vCPU cloud VM, GCC 13)
+> and its result files are in the repository history, not the tree. Current,
+> re-measured figures are in [FINDINGS.md](../FINDINGS.md).
+
 Research note: use cases, prior art, design patterns and a proposed
 architecture. It follows the storage-model spike in [../FINDINGS.md](../FINDINGS.md).
 
@@ -69,7 +74,7 @@ architecture. It follows the storage-model spike in [../FINDINGS.md](../FINDINGS
 The spike ([FINDINGS.md](../FINDINGS.md)) showed:
 
 - Archetype tables are the only design that gets near the SoA roofline on
-  iteration (6× v1 on Update2 at 100K, 85–95% of hand-written code).
+  iteration (at the speed of a hand-written loop on Update2).
 - They are about 18× slower than a sparse set when components are added and
   removed. That cost comes from the *keying*: every component in an entity's
   signature is a partition key, so any add/remove moves the entire row.
@@ -303,7 +308,7 @@ next; **replica** is the last resort.
 #### 4.3.1 Direct binding (normal case)
 
 The column is a contiguous `T*` range for the partition, as in §4.1–4.2. The
-kernel compiles to the RawSoA loop that the spike measured at the roofline.
+kernel compiles to the hand-written loop that the spike measured at the roofline.
 
 #### 4.3.2 Partitioned reference set (indirection into the home copy)
 
@@ -405,7 +410,7 @@ mappings or Kokkos layouts:
 system's partitions, and for each batch it invokes the kernel with a
 concretely typed view: a variant resolved once per batch, or a compile-time
 instantiation in static mode. The inner loop therefore has no branches on
-binding kind, and the direct case compiles to exactly the RawSoA loop.
+binding kind, and the direct case compiles to exactly the hand-written loop.
 Constness is part of the type: a system without write access to `T` only
 ever receives `const T&`. That is how "only systems with write access can
 write" is enforced at compile time rather than by convention.
@@ -588,7 +593,7 @@ world.schedule(pipeline);   // Sub0Pipeline jobs + commit edges derived from acc
 ## 8. Validation plan
 
 These are spikes on the existing harness, compared to
-[baseline-linux-gcc13](../../bench/results/baseline-linux-gcc13.md) numbers.
+`baseline-linux-gcc13` numbers.
 
 | Spike | Build | Success criterion |
 |---|---|---|
