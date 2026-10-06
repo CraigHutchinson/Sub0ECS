@@ -48,7 +48,7 @@ unaffected.
   functions and control flow (`if`, `else`, `for`, `while`, `switch`). `else`
   starts its own line after the closing brace. Single-line bodies
   (`if (x) return;`, `{ return x_; }`) and lambda bodies are not covered.
-- Line width: about 140 characters, soft limit.
+- Line width: about 120 characters, soft limit.
 - Pointer and reference: `Type* name`, `const Type& name`.
 
 ```cpp
