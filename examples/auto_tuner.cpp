@@ -15,7 +15,7 @@
 #include <tuple>
 #include <vector>
 
-#include <sub0ecs/sub0ecs.hpp>
+#include "sub0ecs/sub0ecs.hpp"
 
 namespace fz = sub0ecs::fusion;
 

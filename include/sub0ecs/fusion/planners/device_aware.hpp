@@ -5,16 +5,20 @@
 #include <array>
 #include <cstddef>
 
-#include "../access.hpp"
+#include "sub0ecs/fusion/access.hpp"
 
 namespace sub0ecs::fusion
 {
-    /** Capability-aware refinement: split wherever device-safety changes, so a
-     *  group is either entirely device-safe (offloadable) or entirely host-only. */
+    /** Refines a planner: splits wherever device-safety changes, so a group is either
+     *  entirely device-safe (offloadable) or entirely host-only.
+     *  @tparam Base The planner to refine. */
     template <typename Base>
     struct DeviceAware
     {
         static constexpr const char* kName = "DeviceAware";
+        /** Decides where groups start.
+         *  @tparam S The systems, in schedule order.
+         *  @return One flag per system: true = this system starts a new group. */
         template <typename... S>
         static constexpr auto plan()
         {

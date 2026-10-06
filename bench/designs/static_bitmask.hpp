@@ -20,8 +20,8 @@
 #include <type_traits>
 
 #include "../common/components.hpp"
-#include <sub0ecs/detail/hints.hpp>
-#include <sub0ecs/entity.hpp>
+#include "sub0ecs/detail/hints.hpp"
+#include "sub0ecs/entity.hpp"
 
 namespace bench::fixed
 {

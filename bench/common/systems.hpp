@@ -7,9 +7,9 @@
  * components — the property that makes fusion legal (docs/research/fusion.md).
  */
 
-#include <sub0ecs/fusion/access.hpp>
+#include "sub0ecs/fusion/access.hpp"
 #include "components.hpp"
-#include <sub0ecs/query.hpp>
+#include "sub0ecs/query.hpp"
 #include "scenarios.hpp"
 
 namespace bench

@@ -19,6 +19,7 @@
 
 namespace sub0ecs
 {
+    /** A handle to an entity: a slot index and the slot's version when the handle was made. */
     struct Entity
     {
         static constexpr std::uint32_t kIndexBits = 24;
@@ -26,27 +27,43 @@ namespace sub0ecs
         /** Slots available; index kIndexMask is kept for the null handle. */
         static constexpr std::uint32_t kMaxEntities = kIndexMask;
 
-        std::uint32_t value = ~0u;
+        std::uint32_t value = ~0u;   ///< Index and version packed; all ones is the null handle.
 
-        constexpr std::uint32_t index() const { return value & kIndexMask; }
-        constexpr std::uint32_t version() const { return value >> kIndexBits; }
+        /** Extracts the slot index.
+         *  @return The low kIndexBits bits. */
+        [[nodiscard]] constexpr std::uint32_t index() const { return value & kIndexMask; }
+
+        /** Extracts the version.
+         *  @return The slot's version when this handle was made (8 bits). */
+        [[nodiscard]] constexpr std::uint32_t version() const { return value >> kIndexBits; }
+
         constexpr bool operator==(const Entity&) const = default;
 
-        static constexpr Entity make(std::uint32_t index, std::uint32_t version)
+        /** Packs an index and a version into a handle.
+         *  @param index   The slot index; only its low kIndexBits bits are kept.
+         *  @param version The slot's version; only its low 8 bits are kept.
+         *  @return The handle. */
+        [[nodiscard]] static constexpr Entity make(std::uint32_t index, std::uint32_t version)
         {
             return Entity{ (index & kIndexMask) | (version << kIndexBits) };
         }
     };
 
+    /** The handle that refers to no entity. */
     inline constexpr Entity kNullEntity{};
 
+    /** Hands out entity handles and recycles the slots of released ones.
+     *  @note Not thread-safe. */
     class EntityAllocator
     {
     public:
+        /** Reserves the slot table.
+         *  @param n The number of slots expected. */
         void reserve(std::size_t n) { versions_.reserve(n); }
 
-        /** A new handle, or kNullEntity when all Entity::kMaxEntities slots are live. */
-        Entity create()
+        /** Allocates a handle, reusing the most recently released slot if there is one.
+         *  @return The handle, or kNullEntity when all Entity::kMaxEntities slots are live. */
+        [[nodiscard]] Entity create()
         {
             if (!free_.empty())
             {
@@ -60,19 +77,29 @@ namespace sub0ecs
             return Entity::make(index, 0);
         }
 
+        /** Releases a live handle's slot for reuse and makes the handle stale.
+         *  @param e A handle for which alive(e) is true. */
         void release(Entity e)
         {
             versions_[e.index()] = (versions_[e.index()] + 1u) & 0xFFu;
             free_.push_back(e.index());
         }
 
-        bool alive(Entity e) const
+        /** Tells whether a handle is current.
+         *  @param e The handle.
+         *  @return true when e's slot exists and still has e's version. */
+        [[nodiscard]] bool alive(Entity e) const
         {
             return e.index() < versions_.size() && versions_[e.index()] == e.version();
         }
 
-        std::size_t slots() const { return versions_.size(); }
-        std::size_t liveCount() const { return versions_.size() - free_.size(); }
+        /** Counts the slots ever allocated.
+         *  @return Live and free slots together. */
+        [[nodiscard]] std::size_t slots() const { return versions_.size(); }
+
+        /** Counts the live handles.
+         *  @return Slots minus the free ones. */
+        [[nodiscard]] std::size_t liveCount() const { return versions_.size() - free_.size(); }
 
     private:
         std::vector<std::uint32_t> versions_;

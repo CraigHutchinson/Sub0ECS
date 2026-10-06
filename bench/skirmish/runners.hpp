@@ -2,8 +2,8 @@
 /** Movement runners for Skirmish: fusion planner x executor combinations
  *  (fusion/planner.hpp, fusion/executors.hpp). Query-partition worlds only. */
 
-#include <sub0ecs/fusion/executors.hpp>
-#include <sub0ecs/fusion/planner.hpp>
+#include "sub0ecs/fusion/executors.hpp"
+#include "sub0ecs/fusion/planner.hpp"
 
 namespace skirmish
 {

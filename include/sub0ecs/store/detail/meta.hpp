@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <type_traits>
 
-#include "../../query.hpp"
+#include "sub0ecs/query.hpp"
 
 namespace sub0ecs::store::detail
 {

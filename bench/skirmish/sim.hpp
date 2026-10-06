@@ -19,9 +19,9 @@
 #include <type_traits>
 #include <vector>
 
-#include <sub0ecs/query.hpp>
-#include <sub0ecs/fusion/access.hpp>
-#include <sub0ecs/fusion/executors.hpp>
+#include "sub0ecs/query.hpp"
+#include "sub0ecs/fusion/access.hpp"
+#include "sub0ecs/fusion/executors.hpp"
 #include "components.hpp"
 
 namespace skirmish

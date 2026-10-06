@@ -3,7 +3,7 @@
 #include <set>
 #include <vector>
 
-#include <sub0ecs/entity.hpp>
+#include "sub0ecs/entity.hpp"
 
 #include <doctest/doctest.h>
 
