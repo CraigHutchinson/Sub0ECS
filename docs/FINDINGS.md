@@ -146,7 +146,7 @@ bit. Relative to the hand-written merged loop:
   for some compiler, which is the case for a planner that measures (`AutoTuner`).
 - At 1M entities each pass is bound by memory rather than arithmetic, and fusion
   pays on every compiler: the four-system frame fused against separate passes is
-  1.78× (MSVC), 1.30× (clang-cl) and 1.56× (GCC).
+  1.71× (MSVC), 1.33× (clang-cl) and 1.55× (GCC).
 
 Two rules came out of the prototype and still hold:
 
@@ -197,7 +197,7 @@ decided it:
 
 Partition count is not a concern at normal sizes: 100K rows split over up to 512
 partitions iterate within 10% of one partition on every compiler; 4,096
-partitions cost 12–24% and 16,384 cost 15–29%. Granularity matters only below a
+partitions cost 9–21% and 16,384 cost 12–26%. Granularity matters only below a
 few hundred rows per partition.
 
 ## 4. Decisions inside the store, with their evidence
@@ -219,11 +219,10 @@ moves at commit.
 
 ## 5. Execution: planners, executors, threads, runtime queries
 
-Captures: [rotation-exec](../bench/results/reference/CrogLegion/20261006-084419-rotation-exec/rotation.md)
-(pinned to the P-cores) and
-[rotation-threads](../bench/results/reference/CrogLegion/20261006-085203-rotation-threads/rotation.md)
-(unpinned), three interleaved samples per compiler. Figures are MSVC / clang-cl /
-GCC.
+Captures: [rotation-exec](../bench/results/reference/CrogLegion/20261006-135259-rotation-exec/rotation.md)
+(pinned to the P-cores, three interleaved samples per compiler) and
+[rotation-threads](../bench/results/reference/CrogLegion/20261006-140047-rotation-threads/rotation.md)
+(unpinned, five). Figures are MSVC / clang-cl / GCC.
 
 **Planners and executors.** Fusion is pluggable on two axes: planners (`NeverFuse`,
 `AlwaysFuse`, `ShareColumns`, `DeviceAware`, the measuring `AutoTuner`) and
@@ -234,54 +233,71 @@ systems that share columns plus one that does not:
 
 | Plan + executor | 100K entities | 1M entities |
 |---|---:|---:|
-| `ShareColumns` | 1.26× / 0.79× / 1.00× | 1.71× / 1.17× / 1.38× |
-| `AlwaysFuse` | 1.33× / 0.80× / 0.98× | 1.74× / 1.30× / 1.47× |
-| `AutoTuner` | 1.27× / 1.02× / 1.03× | 1.74× / 1.26× / 1.38× |
-| `ShareColumns` + `Tiled<4096>` | 1.25× / 0.82× / 0.98× | 1.71× / 1.21× / 1.40× |
-| `DeviceAware` + emulated `Offload` | 0.99× / 0.65× / 0.77× | 1.31× / 0.94× / 1.05× |
+| `ShareColumns` | 1.29× / 0.78× / 1.01× | 1.46× / 1.13× / 1.41× |
+| `AlwaysFuse` | 1.32× / 0.77× / 0.96× | 1.59× / 1.26× / 1.41× |
+| `AutoTuner` | 1.30× / 1.01× / 1.05× | 1.55× / 1.00× / 1.39× |
+| `ShareColumns` + `Tiled<4096>` | 1.28× / 0.77× / 1.00× | 1.47× / 1.16× / 1.38× |
+| `DeviceAware` + emulated `Offload` | 1.01× / 0.64× / 0.76× | 1.17× / 0.90× / 1.05× |
+| `ShareColumns` + `Parallel` (8 threads) | 0.59× / 0.47× / 0.43× | 4.18× / 2.94× / 2.96× |
 
 - **A measuring planner is the only one that never loses.** At 100K the static
-  plans gain on MSVC, break even on GCC and lose 20% on clang-cl, where the
-  separate passes vectorise. `AutoTuner` takes the gain where there is one and
-  declines where there is not.
+  plans gain on MSVC, break even on GCC and lose over 20% on clang-cl, where the
+  separate passes vectorise. `AutoTuner` takes the gain where it finds one and
+  otherwise declines; on clang-cl at 1M it declined a gain the static plans did
+  get, so it is safe rather than optimal.
 - On a frame whose three systems share no columns, `ShareColumns` declines to fuse
-  (0.97–1.04×) and `AlwaysFuse` is within 0.95–1.16×: no gain to speak of, which
+  (0.99–1.04×) and `AlwaysFuse` is within 0.93–1.15×: no gain to speak of, which
   is why sharing is the rule.
 - Offload through the emulated device pays for staging every tile in and out; it
   only breaks even where fusion's gain is large.
-- The `Parallel` executor is left out of this table. These runs were pinned to 8
-  cores and its pool starts one worker per hardware thread, so it ran 24 workers on
-  8 cores. Sizing the pool to the process affinity is on the backlog; thread
-  scaling is measured unpinned below.
+- **`Parallel` is worth 3–4× at 1M entities and is a loss at 100K.** It splits a
+  partition into chunks of at least 4,096 rows whatever the kernel costs. For
+  this kernel that is about 5 µs of work per chunk, less than waking a parked
+  worker, and the 100K figure swings between 0.4× and 3× from sample to sample
+  depending on whether the workers were still spinning. The width should follow
+  the work per chunk, not the row count; that is on the backlog.
 
-**Threads.** The Skirmish game stays bit-identical at every thread count. Fused
-movement at 12,500 units per team (50K units), against one thread:
+**The thread pool.** `Parallel` sizes itself to the machine: by default one thread
+per performance core the process may use, which here is 8 of 24 logical CPUs. It
+creates no thread until a dispatch needs one, so work that is only four ways
+parallel starts three workers, and a dispatch wakes only the workers it uses.
+Pinning the workers to the performance cores is an option, off by default.
 
-| Threads | 2 | 4 | 8 | 16 | 24 |
-|---|---:|---:|---:|---:|---:|
-| Dynamic chunk claiming | 1.67–1.79× | 2.66–2.91× | 3.45–3.83× | 3.27–3.56× | 2.56–3.20× |
-| Static "owner computes" affinity | 1.27–1.34× | 1.96–2.11× | 2.55–2.74× | 2.82–2.95× | 2.35–2.97× |
+The Skirmish game stays bit-identical at every thread count. Fused movement at
+12,500 units per team (50K units), against one thread:
 
-Scaling peaks at 8 threads, the number of P-cores; the E-cores add nothing and 24
-threads is slower than 8. Dynamic claiming beats static affinity at every count,
-because equal blocks suit equal cores and these are not. At 10K units the peak is
-2.0–2.3× at 4–8 threads. The limit is the serial fraction: grid build, commit and
-the small systems. Free-running threads were rejected: they break determinism.
+| Threads | 2 | 4 | 8 | 16 | 24 | Default (8) | Default, pinned |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Dynamic chunk claiming | 1.71–1.76× | 2.66–2.92× | 3.44–3.52× | 3.22–3.39× | 2.97–3.38× | 3.37–3.77× | 2.93–3.45× |
+| Static "owner computes" | 1.29–1.31× | 1.91–2.04× | 2.43–2.67× | 2.72–2.93× | 2.69–2.92× | | |
+
+- **Scaling peaks at the performance-core count** and is no better with 16 or 24
+  threads, so the default lands on the best rung without being told.
+- **Pinning to the performance cores is slower here** (2.93–3.45× against
+  3.37–3.77×, and 1.6–1.9× against 2.2–2.3× at 10K units). With the right thread
+  count Windows already puts the workers on performance cores; a mask only takes
+  away its room to move them. It stays an option for platforms where the
+  scheduler does worse.
+- Dynamic claiming beats static "owner computes" at every count, because equal
+  blocks suit equal cores and these are not.
+- At 10K units the gain is 2.2–2.3× from 4 threads up. The limit is the serial
+  fraction: grid build, commit and the small systems. Free-running threads were
+  rejected: they break determinism.
 
 **Runtime queries.** A query added at runtime that needs a side-stored component
 runs immediately in a degraded mode (the fast path plus a sparse join over
 unmigrated holders) while `migrateStep(budget)` moves a bounded number of entities
 per frame. Results are bit-identical for every budget. At 1M entities with 500K to
-promote ([timeline](../bench/results/reference/CrogLegion/20261006-084419-rotation-exec/dynamic.md)):
+promote ([timeline](../bench/results/reference/CrogLegion/20261006-135259-rotation-exec/dynamic.md)):
 
 | Budget | Worst frame | Frames to finish |
 |---|---:|---:|
-| Everything at once | 29–30 ms | 0 |
-| 65,536 entities per frame | 8.4–8.8 ms | 7 |
-| 16,384 entities per frame | 5.7–6.9 ms | 30 |
+| Everything at once | 27–35 ms | 0 |
+| 65,536 entities per frame | 8.0–9.1 ms | 7 |
+| 16,384 entities per frame | 5.6–6.3 ms | 30 |
 
-Migration costs 54–63 ns per promoted entity. The degraded pass costs 5–11× the
-full pass (1.4–2.5 ms against 0.22–0.28 ms), so it is a transition, not a steady
+Migration costs 49–64 ns per promoted entity. The degraded pass costs 5–10× the
+full pass (1.1–2.6 ms against 0.22–0.32 ms), so it is a transition, not a steady
 state.
 
 **A whole game compresses the differences.** In the
@@ -290,15 +306,17 @@ projectiles and deaths), time per tick relative to a sparse set at 50K units:
 
 | Design | vs SparseSet |
 |---|---:|
-| Store | 1.14–1.27× |
-| Store, movement fused | 1.11–1.19× |
-| Archetype | 1.14–1.25× |
-| StaticBitmask | 1.13–1.14× |
+| Store | 1.15–1.26× |
+| Store, movement fused | 1.11–1.20× |
+| Store, movement on the thread pool | 1.44–1.56× |
+| Archetype | 1.12–1.26× |
+| StaticBitmask | 1.13–1.17× |
 
-Table-based designs are 13–27% ahead of the sparse set and indistinguishable from
-one another. Most of a tick is spatial neighbour work, which no storage layout
-speeds up, and fusing the movement chain does not help here. That argues for a
-spatial index maintained by the store, which is on the backlog.
+Single-threaded, the table-based designs are 12–26% ahead of the sparse set and
+indistinguishable from one another. Most of a tick is spatial neighbour work,
+which no storage layout speeds up, and fusing the movement chain does not help
+here. That argues for a spatial index maintained by the store, which is on the
+backlog.
 
 ## 6. Compilers
 
@@ -386,5 +404,5 @@ exist because a number was once wrong without them:
 - Embedded targets (ESP32-P4): no `-march=native`, small N, in-order cores.
 - Many partitions with few entities each (2^k combinations of k optional
   components), and the cost of query-match invalidation there.
-- The `Parallel` executor outside Skirmish: its pool is not sized to the process
-  affinity, so the pinned captures cannot measure it.
+- A cost model for the `Parallel` executor's width. It splits by row count, which
+  is right at 1M entities and wrong at 100K (section 5).
