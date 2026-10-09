@@ -6,9 +6,13 @@
 
 namespace sub0ecs::fusion
 {
+    /** Puts every system in a group of its own. */
     struct NeverFuse
     {
         static constexpr const char* kName = "NeverFuse";
+        /** Decides where groups start.
+         *  @tparam S The systems, in schedule order.
+         *  @return One flag per system: true = this system starts a new group. */
         template <typename... S>
         static constexpr auto plan()
         {

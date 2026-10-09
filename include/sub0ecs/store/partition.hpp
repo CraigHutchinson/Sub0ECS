@@ -8,9 +8,9 @@
 #include <new>
 #include <vector>
 
-#include "../entity.hpp"
-#include "column.hpp"
-#include "mask.hpp"
+#include "sub0ecs/entity.hpp"
+#include "sub0ecs/store/column.hpp"
+#include "sub0ecs/store/mask.hpp"
 
 namespace sub0ecs::store
 {

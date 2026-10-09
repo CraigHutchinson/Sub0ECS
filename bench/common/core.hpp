@@ -5,9 +5,9 @@
 
 #include <cstdint>
 
-#include <sub0ecs/entity.hpp>
-#include <sub0ecs/fusion/access.hpp>
-#include <sub0ecs/query.hpp>
+#include "sub0ecs/entity.hpp"
+#include "sub0ecs/fusion/access.hpp"
+#include "sub0ecs/query.hpp"
 
 namespace bench
 {

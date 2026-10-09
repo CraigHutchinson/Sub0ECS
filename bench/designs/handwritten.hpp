@@ -174,9 +174,9 @@ namespace bench::hand
     };
 
 #if defined(_MSC_VER) && !defined(__clang__)
-#    define BENCH_RESTRICT __restrict
+#    define SUB0ECS_BENCH_RESTRICT __restrict
 #else
-#    define BENCH_RESTRICT __restrict__
+#    define SUB0ECS_BENCH_RESTRICT __restrict__
 #endif
 
     namespace tuned
@@ -187,7 +187,7 @@ namespace bench::hand
         inline constexpr float kHealthStep = 0.01f * kDeltaTime;
         inline constexpr float kScaleStep = 1.0f + 0.001f * kDeltaTime;
 
-        inline void iter1(float* BENCH_RESTRICT x, std::size_t n)
+        inline void iter1(float* SUB0ECS_BENCH_RESTRICT x, std::size_t n)
         {
 #if defined(__AVX2__)
             const __m256 one = _mm256_set1_ps(1.0f);
@@ -198,7 +198,7 @@ namespace bench::hand
         }
 
         /** kernel::updatePosition: the wrap-around tests as selects, in the same order. */
-        inline void update2(float* BENCH_RESTRICT x, float* BENCH_RESTRICT y, float* BENCH_RESTRICT dx, float* BENCH_RESTRICT dy, std::size_t n)
+        inline void update2(float* SUB0ECS_BENCH_RESTRICT x, float* SUB0ECS_BENCH_RESTRICT y, float* SUB0ECS_BENCH_RESTRICT dx, float* SUB0ECS_BENCH_RESTRICT dy, std::size_t n)
         {
 #if defined(__AVX2__)
             const __m256 dt = _mm256_set1_ps(kDeltaTime), gravity = _mm256_set1_ps(kGravityStep), damp = _mm256_set1_ps(0.99f);
@@ -232,7 +232,7 @@ namespace bench::hand
         }
 
         /** kernel::updateRotationHealth. */
-        inline void rotationHealth(float* BENCH_RESTRICT health, float* BENCH_RESTRICT angle, std::size_t n)
+        inline void rotationHealth(float* SUB0ECS_BENCH_RESTRICT health, float* SUB0ECS_BENCH_RESTRICT angle, std::size_t n)
         {
 #if defined(__AVX2__)
             const __m256 angleStep = _mm256_set1_ps(kAngleStep), healthStep = _mm256_set1_ps(kHealthStep);
@@ -251,7 +251,7 @@ namespace bench::hand
         }
 
         /** kernel::pulseScale. */
-        inline void pulse(float* BENCH_RESTRICT scale, float* BENCH_RESTRICT r, float* BENCH_RESTRICT g, float* BENCH_RESTRICT b, std::size_t n)
+        inline void pulse(float* SUB0ECS_BENCH_RESTRICT scale, float* SUB0ECS_BENCH_RESTRICT r, float* SUB0ECS_BENCH_RESTRICT g, float* SUB0ECS_BENCH_RESTRICT b, std::size_t n)
         {
 #if defined(__AVX2__)
             const __m256 step = _mm256_set1_ps(kScaleStep), one = _mm256_set1_ps(1.0f), two = _mm256_set1_ps(2.0f), half = _mm256_set1_ps(0.5f);

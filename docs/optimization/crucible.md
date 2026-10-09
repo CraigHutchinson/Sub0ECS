@@ -35,6 +35,10 @@ acceptance receipts. Pub issue5 remains open although its comments and current
 remaining acceptance before administrative closure. Pub main also has a newer
 configuration change (PR36) than Crucible's pin: receive migration separately.
 
+PR17 subsequently received the existing conversion on master at
+`703d97f216d413049e6de7c7999e5fb08aecca3b` after exact-head CI passed. The branch
+inventory above records the initial audit, before that recovery.
+
 ## Actual consumer and hypothesis
 
 At the frozen Crucible source, `src/simulation.cpp` uses `World::each` to gather,

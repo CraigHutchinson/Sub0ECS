@@ -32,7 +32,7 @@ thread pool or on a device without changing their results.
 
 ```cpp
 #include <tuple>
-#include <sub0ecs/sub0ecs.hpp>
+#include "sub0ecs/sub0ecs.hpp"
 
 struct Position { float x, y; };
 struct Velocity { float dx, dy; };

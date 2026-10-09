@@ -12,7 +12,7 @@
 #include <cstdio>
 #include <tuple>
 
-#include <sub0ecs/sub0ecs.hpp>
+#include "sub0ecs/sub0ecs.hpp"
 
 struct Position { float x = 0.0f, y = 0.0f; };
 struct Velocity { float dx = 0.0f, dy = 0.0f; };

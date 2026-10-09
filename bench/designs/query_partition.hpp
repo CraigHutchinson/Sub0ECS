@@ -9,7 +9,7 @@
 
 #include <tuple>
 
-#include <sub0ecs/store.hpp>
+#include "sub0ecs/store.hpp"
 
 #include "../common/components.hpp"
 
