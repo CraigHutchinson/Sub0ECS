@@ -191,13 +191,21 @@ python bench/tools/profile.py --build-dir build/bench-native --collect uarch \
 [Intel VTune](https://www.intel.com/content/www/us/en/developer/tools/oneapi/vtune-profiler.html)
 and writes `bench/results/profiles/<host>/<stamp>-<sha>[-label]/` (git-ignored):
 the VTune result, `summary.txt`, `hotspots.csv` and the command. It prints the
-headline metrics and the heaviest functions.
+headline metrics and the heaviest functions. `receipt.json` preserves source/binary
+identity, commands, stdout/stderr paths and exit codes. Failed reports or unusable
+samples return nonzero with `no-profile`; `samples-exported` still requires manual
+verification of workload coverage and source attribution. Software Hotspots is
+requested explicitly. The collection duration is **not** a finalization deadline:
+use an owned external supervisor and preserve stalled results; do not run the
+wrapper unattended. See the [consumer campaign](../docs/optimization/crucible.md)
+for the remaining supervision and qualification gates.
 
 - **Name one design in `--filter`.** A filter that matches a whole group profiles
   every design in it, and the hot-function list mixes them.
-- **`hotspots` needs no privileges** (user-mode sampling). **`uarch` reads the
-  hardware counters:** on Windows run it from an elevated prompt, or install VTune's
-  sampling driver; on Linux lower `kernel.perf_event_paranoid`.
+- **`hotspots` requests user-mode sampling**; verify installed capability and usable
+  samples. **`uarch` needs hardware-counter support and access**; receive those
+  separately on the profiling host. Do not change system security settings just
+  to turn an unavailable counter collection into a pass.
 - The benchmark binaries carry debug information (`/Z7`, `-g`), which is what lets
   a profiler name functions. It does not change the generated code.
 - Read `uarch` on a hybrid CPU per core type, and pin (`--pin P`): a P-core and an

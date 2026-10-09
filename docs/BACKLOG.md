@@ -4,6 +4,9 @@ Open work, grouped by what it is for. What exists today, and the measurements
 behind these items, are in [FINDINGS.md](FINDINGS.md). Items are not ordered
 within a group.
 
+For the current consumer-led sequence, architecture/adapter review and evidence
+gates, see [the Crucible optimization campaign](optimization/crucible.md).
+
 ## Readiness: audit findings
 
 Two issues hold the findings of the 2026-10-06 audits; work through them before
@@ -12,7 +15,7 @@ the next release.
 | Issue | Covers | State |
 |---|---|---|
 | [#13](https://github.com/CraigHutchinson/Sub0ECS/issues/13) | Design and correctness findings on the library headers, and the style tally | The two MUST findings and findings 4, 5, 7, 10, 11, 14, 16 and 17 are fixed. Open: stale-handle horizon (3: reuse order or a wider version), enforcing declared access (6), paged side-pool index (8), destroy cost per side type (9), concepts for system / executor / planner (12), read-only access (13), re-tuning (15), `Partition` encapsulation (18), the NICE items |
-| [#12](https://github.com/CraigHutchinson/Sub0ECS/issues/12) | Conversion to the Sub0 family style profile | Profile declared in `STYLE_GUIDE.md`. Open, one rule per change: include rooting (188 lines), Doxygen tags on the entry-point API, `[[nodiscard]]` (25 candidates), macro prefixes (4), `ISidePool`; and the executor naming and pool-interface points raised there |
+| [#12](https://github.com/CraigHutchinson/Sub0ECS/issues/12) | Conversion to the Sub0 family style profile | PR15 completed the conversion on `fix/audit-correctness`, but its seven commits have not reached master. Integrate and validate that existing work first. On master, still absent: include rooting (188 lines), Doxygen tags on the entry-point API, `[[nodiscard]]` (25 candidates), macro prefixes (4), `ISidePool`; and the executor naming and pool-interface points raised there |
 
 ## Performance: the gaps the benchmarks show
 
