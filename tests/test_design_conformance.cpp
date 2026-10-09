@@ -5,8 +5,8 @@
 #include <string>
 
 #include <doctest/doctest.h>
-#include <sub0ecs/fusion/executors.hpp>
-#include <sub0ecs/fusion/planner.hpp>
+#include "sub0ecs/fusion/executors.hpp"
+#include "sub0ecs/fusion/planner.hpp"
 
 #include "../bench/common/scenarios.hpp"
 #include "../bench/common/systems.hpp"

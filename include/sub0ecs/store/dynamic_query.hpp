@@ -9,10 +9,12 @@
 
 namespace sub0ecs::store
 {
+    /** Identifies a query added to a World at runtime.
+     *  @tparam Cs The query's components, as given to BasicWorld::addQuery. */
     template <typename... Cs>
     struct DynamicQuery
     {
-        std::size_t id = ~std::size_t{ 0 };
+        std::size_t id = ~std::size_t{ 0 };   ///< Index of the registration in its world.
     };
 
 } // namespace sub0ecs::store

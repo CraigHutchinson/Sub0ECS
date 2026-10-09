@@ -11,14 +11,14 @@
 
 #if defined(__SSE__) || defined(_M_X64) || (defined(_M_IX86_FP) && _M_IX86_FP >= 1)
 #    include <xmmintrin.h>
-#    define BENCH_X86_MXCSR 1
+#    define SUB0ECS_BENCH_X86_MXCSR 1
 #endif
 
 namespace bench
 {
     inline void flushDenormals()
     {
-#if defined(BENCH_X86_MXCSR)
+#if defined(SUB0ECS_BENCH_X86_MXCSR)
         _mm_setcsr(_mm_getcsr() | 0x8040u);   // FTZ (bit 15) + DAZ (bit 6)
 #elif defined(__aarch64__)
         std::uint64_t fpcr = 0;

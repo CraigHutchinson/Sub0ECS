@@ -25,8 +25,8 @@
  *                     requires device-safe systems (capability)
  */
 
-#include "executors/contract.hpp"
-#include "executors/inline.hpp"
-#include "executors/offload.hpp"
-#include "executors/parallel.hpp"
-#include "executors/tiled.hpp"
+#include "sub0ecs/fusion/executors/contract.hpp"
+#include "sub0ecs/fusion/executors/inline.hpp"
+#include "sub0ecs/fusion/executors/offload.hpp"
+#include "sub0ecs/fusion/executors/parallel.hpp"
+#include "sub0ecs/fusion/executors/tiled.hpp"

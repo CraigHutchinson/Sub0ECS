@@ -36,6 +36,7 @@
 
 namespace sub0ecs::fusion
 {
+    /** What cpuTopology() found. */
     struct CpuTopology
     {
         /** Logical CPUs this process may run on, most capable class first. */
@@ -43,8 +44,9 @@ namespace sub0ecs::fusion
         /** How many of `cpus` are in the most capable class (all of them on a uniform CPU). */
         unsigned performance = 1;
 
-        /** True when the process may use CPUs of more than one class. */
-        bool hybrid() const { return performance < cpus.size(); }
+        /** Tells whether the process may use CPUs of more than one class.
+         *  @return true on a hybrid CPU whose slower cores are available too. */
+        [[nodiscard]] bool hybrid() const { return performance < cpus.size(); }
     };
 
     namespace detail
@@ -143,17 +145,19 @@ namespace sub0ecs::fusion
         }
     } // namespace detail
 
-    /** The topology, detected on first use. It does not follow later affinity changes. */
-    inline const CpuTopology& cpuTopology()
+    /** Reports the CPUs this process may use, detected on first use.
+     *  @return The topology. It does not follow later affinity changes.
+     *  @note Thread-safe. */
+    [[nodiscard]] inline const CpuTopology& cpuTopology()
     {
         static const CpuTopology topology = detail::detectTopology();
         return topology;
     }
 
-    /** Restricts the calling thread to the performance cores the process may use, leaving
-     *  the choice among them to the OS. Returns false and changes nothing when the CPU is
-     *  not hybrid, a CPU cannot be addressed by a 64-bit mask, or the platform has no
-     *  thread affinity. */
+    /** Restricts the calling thread to the performance cores the process may use,
+     *  leaving the choice among them to the OS.
+     *  @return false, with nothing changed, when the CPU is not hybrid, a CPU cannot
+     *          be addressed by a 64-bit mask, or the platform has no thread affinity. */
     inline bool keepThisThreadOnPerformanceCores()
     {
         const CpuTopology& topology = cpuTopology();

@@ -29,8 +29,8 @@
 #    include <immintrin.h>
 #endif
 
-#include "contract.hpp"
-#include "cpu_topology.hpp"
+#include "sub0ecs/fusion/executors/contract.hpp"
+#include "sub0ecs/fusion/executors/cpu_topology.hpp"
 
 namespace sub0ecs::fusion
 {
@@ -61,13 +61,17 @@ namespace sub0ecs::fusion
             bool pinToPerformanceCores = false;
         };
 
+        /** Creates a pool. No thread is started until a dispatch needs one.
+         *  @param options Size and scheduling choices. */
         explicit Parallel(const Options& options)
             : options_(options), limit_(options.threads != 0 ? options.threads : std::max(1u, cpuTopology().performance)),
               workers_(limit_ > 1 ? std::make_unique<Worker[]>(limit_) : nullptr)
         {
         }
 
-        /** Shorthand for Options{ threads, ownerComputes }. */
+        /** Creates a pool; shorthand for Options{ threads, ownerComputes }.
+         *  @param threads       See Options::threads.
+         *  @param ownerComputes See Options::ownerComputes. */
         explicit Parallel(unsigned threads = 0, bool ownerComputes = false) : Parallel(Options{ threads, ownerComputes, false }) {}
         ~Parallel()
         {
@@ -78,17 +82,24 @@ namespace sub0ecs::fusion
         Parallel(const Parallel&) = delete;
         Parallel& operator=(const Parallel&) = delete;
 
-        /** The most threads a dispatch uses, counting the calling thread: the bound on the
-         *  worker index passed to callbacks. Fixed for the pool's lifetime. */
-        unsigned concurrency() const { return limit_; }
+        /** Reports the most threads a dispatch uses, counting the calling thread.
+         *  @return The bound on the worker index passed to callbacks; fixed for the
+         *          pool's lifetime. */
+        [[nodiscard]] unsigned concurrency() const { return limit_; }
 
-        /** Worker threads created so far (the caller is not one of them). Starts at zero
-         *  and grows to the widest dispatch seen, never beyond concurrency() - 1. */
-        unsigned threadsStarted() const { return started_; }
+        /** Reports the worker threads created so far (the caller is not one of them).
+         *  @return A count that starts at zero and grows to the widest dispatch seen,
+         *          never beyond concurrency() - 1. */
+        [[nodiscard]] unsigned threadsStarted() const { return started_; }
 
-        /** fn(item, worker) for every item in [0, items), dynamically claimed
-         *  (atomic counter) for load balance; the caller runs as worker 0.
-         *  Items are independent (row-local), so claim order never affects results. */
+        /** Runs fn for every item, on up to concurrency() threads, and waits for all.
+         *  Items are claimed dynamically for load balance unless the pool was made
+         *  with ownerComputes; they must be independent, so the order never matters.
+         *  @param items The number of items; 0 does nothing, 1 runs on the caller.
+         *  @param fn    Called as fn(item, worker) once per item in [0, items), with
+         *               worker < concurrency(); the caller takes part as worker 0.
+         *  @note One thread dispatches at a time: do not call from two threads or
+         *        from inside fn. */
         template <typename F>
         void parallelFor(std::size_t items, F& fn)
         {
@@ -103,7 +114,12 @@ namespace sub0ecs::fusion
             dispatch(participants, &forThunk<F>, &ctx);
         }
 
-        /** Fused-group executor contract: contiguous row chunks of one partition. */
+        /** Runs a fused group's kernel over contiguous row chunks of one partition,
+         *  one chunk per thread; a partition under two chunks' worth of rows runs inline.
+         *  @tparam Info  GroupInfo of the group.
+         *  @param n      The number of rows.
+         *  @param cols   One column pointer per component type of the group.
+         *  @param kernel Called as kernel(cols, count), concurrently on disjoint rows. */
         template <typename Info, typename Cols, typename K>
         void run(std::size_t n, const Cols& cols, K& kernel)
         {

@@ -13,8 +13,8 @@
 #include <utility>
 #include <vector>
 
-#include <sub0ecs/fusion/executors.hpp>
-#include <sub0ecs/store.hpp>
+#include "sub0ecs/fusion/executors.hpp"
+#include "sub0ecs/store.hpp"
 
 #include "../bench/common/components.hpp"
 #include <doctest/doctest.h>
@@ -43,9 +43,9 @@ namespace
     }
 } // namespace
 
-#define WORLDS PureWorld, HintedWorld
+#define SUB0ECS_TEST_WORLDS PureWorld, HintedWorld
 
-TEST_CASE_TEMPLATE("store: an empty world", W, WORLDS)
+TEST_CASE_TEMPLATE("store: an empty world", W, SUB0ECS_TEST_WORLDS)
 {
     W w;
     CHECK(w.size() == 0);
@@ -55,7 +55,7 @@ TEST_CASE_TEMPLATE("store: an empty world", W, WORLDS)
     CHECK(w.template find<Position>(Entity::make(0, 0)) == nullptr);
 }
 
-TEST_CASE_TEMPLATE("store: create stores every component and reports membership", W, WORLDS)
+TEST_CASE_TEMPLATE("store: create stores every component and reports membership", W, SUB0ECS_TEST_WORLDS)
 {
     W w;
     const Entity e = w.create(Position{ 1, 2 }, Velocity{ 3, 4 }, Scale{ 5 });
@@ -76,7 +76,7 @@ TEST_CASE_TEMPLATE("store: create stores every component and reports membership"
     CHECK(w.size() == 2);
 }
 
-TEST_CASE_TEMPLATE("store: each visits exactly the entities matching the declared query", W, WORLDS)
+TEST_CASE_TEMPLATE("store: each visits exactly the entities matching the declared query", W, SUB0ECS_TEST_WORLDS)
 {
     W w;
     for (int i = 0; i < 10; ++i) w.create(Position{ float(i), 0 });                        // Position only
@@ -90,7 +90,7 @@ TEST_CASE_TEMPLATE("store: each visits exactly the entities matching the declare
     CHECK(count<W, Health, Rotation>(w) == 7);
 }
 
-TEST_CASE_TEMPLATE("store: writes through each are visible to find", W, WORLDS)
+TEST_CASE_TEMPLATE("store: writes through each are visible to find", W, SUB0ECS_TEST_WORLDS)
 {
     W w;
     std::vector<Entity> es;
@@ -103,7 +103,7 @@ TEST_CASE_TEMPLATE("store: writes through each are visible to find", W, WORLDS)
     }
 }
 
-TEST_CASE_TEMPLATE("store: add makes an entity match a query; remove makes it stop", W, WORLDS)
+TEST_CASE_TEMPLATE("store: add makes an entity match a query; remove makes it stop", W, SUB0ECS_TEST_WORLDS)
 {
     W w;
     const Entity e = w.create(Position{ 1, 1 }, Scale{ 9 });
@@ -123,7 +123,7 @@ TEST_CASE_TEMPLATE("store: add makes an entity match a query; remove makes it st
     CHECK(w.template find<Scale>(e)->value == 9);
 }
 
-TEST_CASE_TEMPLATE("store: add of a component the entity already has overwrites it", W, WORLDS)
+TEST_CASE_TEMPLATE("store: add of a component the entity already has overwrites it", W, SUB0ECS_TEST_WORLDS)
 {
     // One case per storage kind: queried column, unqueried (column or side
     // storage by mode), Volatile side storage, and a never-queried pool.
@@ -156,7 +156,7 @@ TEST_CASE_TEMPLATE("store: add of a component the entity already has overwrites 
     CHECK(w.template find<Health>(other)->value == 7);
 }
 
-TEST_CASE_TEMPLATE("store: remove of a component the entity lacks is a no-op", W, WORLDS)
+TEST_CASE_TEMPLATE("store: remove of a component the entity lacks is a no-op", W, SUB0ECS_TEST_WORLDS)
 {
     W w;
     const Entity e = w.create(Position{ 1, 2 });
@@ -171,7 +171,7 @@ TEST_CASE_TEMPLATE("store: remove of a component the entity lacks is a no-op", W
     CHECK(count<W, Position>(w) == 2);
 }
 
-TEST_CASE_TEMPLATE("store: destroy removes the entity and keeps the others' values", W, WORLDS)
+TEST_CASE_TEMPLATE("store: destroy removes the entity and keeps the others' values", W, SUB0ECS_TEST_WORLDS)
 {
     W w;
     std::vector<Entity> es;
@@ -192,7 +192,7 @@ TEST_CASE_TEMPLATE("store: destroy removes the entity and keeps the others' valu
     }
 }
 
-TEST_CASE_TEMPLATE("store: operations on a stale handle are no-ops", W, WORLDS)
+TEST_CASE_TEMPLATE("store: operations on a stale handle are no-ops", W, SUB0ECS_TEST_WORLDS)
 {
     W w;
     const Entity e = w.create(Position{ 1, 1 });
@@ -212,7 +212,7 @@ TEST_CASE_TEMPLATE("store: operations on a stale handle are no-ops", W, WORLDS)
     CHECK(w.size() == 2);
 }
 
-TEST_CASE_TEMPLATE("store: worlds are independent", W, WORLDS)
+TEST_CASE_TEMPLATE("store: worlds are independent", W, SUB0ECS_TEST_WORLDS)
 {
     W a, b;
     const Entity ea = a.create(Position{ 1, 0 }, Frozen{ 1 });
@@ -256,7 +256,7 @@ TEST_CASE("store: churn of a non-queried component moves no data")
     }
 }
 
-TEST_CASE_TEMPLATE("store: eachParallel visits every matching entity exactly once", W, WORLDS)
+TEST_CASE_TEMPLATE("store: eachParallel visits every matching entity exactly once", W, SUB0ECS_TEST_WORLDS)
 {
     W w;
     constexpr int kN = 50'000;   // enough chunks for a real fork-join
@@ -289,7 +289,7 @@ namespace
     };
 } // namespace
 
-TEST_CASE_TEMPLATE("store: runFused applies each system to exactly the entities it matches", W, WORLDS)
+TEST_CASE_TEMPLATE("store: runFused applies each system to exactly the entities it matches", W, SUB0ECS_TEST_WORLDS)
 {
     W w;
     const Entity moving = w.create(Position{ 0, 0 }, Velocity{ 2, 0 });
@@ -455,7 +455,7 @@ namespace
 } // namespace
 
 // Gated sample: one seed, 10,000 operations per storage mode.
-TEST_CASE_TEMPLATE("store: random structural churn matches a reference model", W, WORLDS)
+TEST_CASE_TEMPLATE("store: random structural churn matches a reference model", W, SUB0ECS_TEST_WORLDS)
 {
     randomWalk<W>(12345, 40);
 }
@@ -463,7 +463,7 @@ TEST_CASE_TEMPLATE("store: random structural churn matches a reference model", W
 // On demand (ctest -L exhaustive): many seeds, longer walks.
 TEST_SUITE("exhaustive")
 {
-    TEST_CASE_TEMPLATE("store: random structural churn, many seeds and long walks", W, WORLDS)
+    TEST_CASE_TEMPLATE("store: random structural churn, many seeds and long walks", W, SUB0ECS_TEST_WORLDS)
     {
         for (std::uint32_t seed = 1; seed <= 24; ++seed) randomWalk<W>(seed, 200);
     }
