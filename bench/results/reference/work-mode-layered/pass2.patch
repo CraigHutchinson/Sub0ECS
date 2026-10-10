@@ -1,0 +1,32 @@
+--- a/include/sub0ecs/store/world.hpp
++++ b/include/sub0ecs/store/world.hpp
+@@ -440,6 +440,29 @@
+             constexpr std::size_t qi = detail::indexOf<Query<Cs...>, Qs...>();
+             static_assert(qi < kQueries, "eachParallel<Cs...> must name a declared Query<Cs...>");
+             constexpr std::size_t kChunk = Rows;
++            // A single span needs no materialized (partition, begin, end) list.
++            // Keep pool ordinals and the inline threshold identical to the general
++            // path; resolve typed columns once rather than once per chunk.
++            if (byQuery_[qi].size() == 1)
++            {
++                Partition& p = *byQuery_[qi].front();
++                const std::size_t n = p.size();
++                if (n == 0) return;
++                const std::size_t count = 1 + (n - 1) / kChunk;
++                const std::tuple<Cs*...> cols{ col<Cs>(p)... };
++                if (count < 4)
++                {
++                    for (std::size_t i = 0; i < n; ++i) SUB0ECS_FLATTEN_CALLS f(0u, std::get<Cs*>(cols)[i]...);
++                    return;
++                }
++                auto body = [&](std::size_t item, unsigned worker) {
++                    const auto begin = static_cast<std::uint32_t>(item * kChunk);
++                    const auto end = static_cast<std::uint32_t>(begin + std::min(kChunk, n - begin));
++                    for (std::uint32_t i = begin; i < end; ++i) SUB0ECS_FLATTEN_CALLS f(worker, std::get<Cs*>(cols)[i]...);
++                };
++                pool.parallelFor(count, body);
++                return;
++            }
+             chunks_.clear();
+             for (Partition* p : byQuery_[qi])
+             {

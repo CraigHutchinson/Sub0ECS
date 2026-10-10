@@ -17,10 +17,10 @@ namespace
 using bench::harness::Case;
 using bench::harness::Prepared;
 using bench::harness::Record;
-template <std::size_t Rows = 1024>
+template <std::size_t Rows = 1024, typename Simulation = bench::nbody::Ecs>
 struct Native
 {
-    bench::nbody::Ecs simulation;
+    Simulation simulation;
     sub0ecs::fusion::Parallel pool;
     Native(std::size_t n, unsigned workers) : simulation(n), pool(workers) {}
     void tick() { simulation.template tick<Rows>(pool); }
@@ -28,10 +28,10 @@ struct Native
     auto ticks() const { return simulation.ticks(); }
 };
 #if defined(SUB0ECS_TEST_PIPELINE)
-template <std::size_t Rows = 1024>
+template <std::size_t Rows = 1024, typename Simulation = bench::nbody::Ecs>
 struct Bridged
 {
-    bench::nbody::Ecs simulation;
+    Simulation simulation;
     sub0pipeline::PriorityExecutor executor;
     sub0ecs::adapters::PipelinePool pool;
     Bridged(std::size_t n, unsigned workers)
@@ -85,6 +85,19 @@ int main(int argc, char** argv)
                 [n, workers] { return prepare(std::make_shared<Native<64>>(n, static_cast<unsigned>(workers))); }});
 #if defined(SUB0ECS_TEST_PIPELINE)
             registry.add(Case{"NBody", "Ordered", "PipelineG64x" + std::to_string(workers), n, 1, "tick", false, 1,
+                [n, workers] { return prepare(std::make_shared<Bridged<64>>(n, static_cast<unsigned>(workers))); }});
+#endif
+            // Separate groups preserve a same-resource handwritten baseline.
+            const auto nativePattern = "MatchedNative" + std::to_string(workers);
+            registry.add(Case{"NBody", nativePattern, "HandWritten", n, 1, "tick", false, 1,
+                [n, workers] { return prepare(std::make_shared<Native<64, bench::nbody::Plain>>(n, static_cast<unsigned>(workers))); }});
+            registry.add(Case{"NBody", nativePattern, "ECS", n, 1, "tick", false, 1,
+                [n, workers] { return prepare(std::make_shared<Native<64>>(n, static_cast<unsigned>(workers))); }});
+#if defined(SUB0ECS_TEST_PIPELINE)
+            const auto pipelinePattern = "MatchedPipeline" + std::to_string(workers);
+            registry.add(Case{"NBody", pipelinePattern, "HandWritten", n, 1, "tick", false, 1,
+                [n, workers] { return prepare(std::make_shared<Bridged<64, bench::nbody::Plain>>(n, static_cast<unsigned>(workers))); }});
+            registry.add(Case{"NBody", pipelinePattern, "ECS", n, 1, "tick", false, 1,
                 [n, workers] { return prepare(std::make_shared<Bridged<64>>(n, static_cast<unsigned>(workers))); }});
 #endif
         }

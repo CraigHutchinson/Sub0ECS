@@ -1,0 +1,997 @@
+{
+ "schema": "sub0ecs-bench-rotation/1",
+ "builds": {
+  "control": "build/control",
+  "candidate": "build/candidate"
+ },
+ "settings": {
+  "build": [
+   "control=build/control",
+   "candidate=build/candidate"
+  ],
+  "rounds": 3,
+  "profile": "compare",
+  "suites": "rows",
+  "pin": "0-3",
+  "cooldown": 1,
+  "max_load": 10.0,
+  "quiet_timeout": 0,
+  "filter": ".",
+  "label": "offset-columns",
+  "out": "/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs"
+ },
+ "samples": [
+  {
+   "round": 1,
+   "build": "control",
+   "status": "ok",
+   "load_before": 3.9,
+   "load_after": 3.9,
+   "waited_s": 0,
+   "quiet": true,
+   "run_dir": "/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs/0e19da0ca84a/20261010-090901-459a0d0-rotation-offset-columns/samples/0e19da0ca84a/20261010-090902-459a0d0-r1-control",
+   "results": {
+    "RowDispatch/Coherent/HandWritten/64": [
+     15.4414294,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/64": [
+     22.888965,
+     0.692357602,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/64": [
+     151.763412,
+     0.101199353,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/64": [
+     24.1529379,
+     0.685969636,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/64": [
+     18.1693875,
+     0.85237739,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/64": [
+     16.2529063,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/64": [
+     24.0210392,
+     0.678934185,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/64": [
+     153.31187,
+     0.107593241,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/64": [
+     25.0846595,
+     0.647922142,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/64": [
+     22.8919897,
+     0.71108355,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/4096": [
+     799.237078,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/4096": [
+     1256.36458,
+     0.591800135,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/4096": [
+     10044.7464,
+     0.076701307,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/4096": [
+     1190.12405,
+     0.627789646,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/4096": [
+     731.298415,
+     0.993257989,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/4096": [
+     675.113667,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/4096": [
+     1167.29838,
+     0.582171424,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/4096": [
+     8660.00947,
+     0.0777890742,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/4096": [
+     1049.84777,
+     0.64305863,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/4096": [
+     691.322733,
+     0.977516029,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/100000": [
+     25045.6863,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/100000": [
+     33561.1176,
+     0.676904354,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/100000": [
+     248514.314,
+     0.0907737208,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/100000": [
+     28158.0588,
+     0.770211862,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/100000": [
+     24104.2549,
+     0.985811843,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/100000": [
+     22760.8649,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/100000": [
+     32303.7027,
+     0.745467147,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/100000": [
+     255368.622,
+     0.0923003077,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/100000": [
+     31890.6216,
+     0.764957491,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/100000": [
+     25697.7568,
+     0.99387393,
+     "HandWritten"
+    ]
+   }
+  },
+  {
+   "round": 1,
+   "build": "candidate",
+   "status": "ok",
+   "load_before": 3.9,
+   "load_after": 4.5,
+   "waited_s": 0,
+   "quiet": true,
+   "run_dir": "/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs/0e19da0ca84a/20261010-090901-459a0d0-rotation-offset-columns/samples/0e19da0ca84a/20261010-090904-459a0d0-r1-candidate",
+   "results": {
+    "RowDispatch/Coherent/HandWritten/64": [
+     16.6029079,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/64": [
+     19.4410121,
+     0.829352843,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/64": [
+     19.9255287,
+     0.812913546,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/64": [
+     24.3279456,
+     0.62687817,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/64": [
+     24.3574018,
+     0.636086444,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/64": [
+     19.2140039,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/64": [
+     22.3010116,
+     0.871487381,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/64": [
+     153.197748,
+     0.123524687,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/64": [
+     30.0581536,
+     0.607097529,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/64": [
+     27.8804797,
+     0.661623938,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/4096": [
+     822.511229,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/4096": [
+     757.168428,
+     1.07223342,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/4096": [
+     735.927345,
+     1.13541136,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/4096": [
+     782.721929,
+     1.0573386,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/4096": [
+     746.981506,
+     1.10544792,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/4096": [
+     844.767725,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/4096": [
+     695.738015,
+     1.19367691,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/4096": [
+     10946.1445,
+     0.0784569435,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/4096": [
+     1237.60972,
+     0.746012255,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/4096": [
+     766.762998,
+     1.05471339,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/100000": [
+     25018.6458,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/100000": [
+     24334.6875,
+     0.984731948,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/100000": [
+     25711.5625,
+     1.04166344,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/100000": [
+     23740.6667,
+     1.03102769,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/100000": [
+     23275.7917,
+     1.03224776,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/100000": [
+     26790.8627,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/100000": [
+     23503.1765,
+     1.12230058,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/100000": [
+     268433.529,
+     0.0926780456,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/100000": [
+     31466.1765,
+     0.827550391,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/100000": [
+     24470.902,
+     1.02854451,
+     "HandWritten"
+    ]
+   }
+  },
+  {
+   "round": 2,
+   "build": "candidate",
+   "status": "ok",
+   "load_before": 4.5,
+   "load_after": 4.5,
+   "waited_s": 0,
+   "quiet": true,
+   "run_dir": "/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs/0e19da0ca84a/20261010-090901-459a0d0-rotation-offset-columns/samples/0e19da0ca84a/20261010-090906-459a0d0-r2-candidate",
+   "results": {
+    "RowDispatch/Coherent/HandWritten/64": [
+     14.5593892,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/64": [
+     16.5637102,
+     0.875287383,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/64": [
+     18.5533788,
+     0.7798957,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/64": [
+     23.6962963,
+     0.628645441,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/64": [
+     22.3762508,
+     0.668082258,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/64": [
+     17.278601,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/64": [
+     19.8374854,
+     0.855363589,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/64": [
+     158.127863,
+     0.113160694,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/64": [
+     28.0953798,
+     0.608485595,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/64": [
+     26.905882,
+     0.654532216,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/4096": [
+     729.086387,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/4096": [
+     696.157068,
+     1.01627701,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/4096": [
+     733.64856,
+     1.0284972,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/4096": [
+     753.573298,
+     1.00089438,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/4096": [
+     728.686518,
+     1.03789932,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/4096": [
+     784.919891,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/4096": [
+     805.426341,
+     0.975272901,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/4096": [
+     10015.8296,
+     0.0799655458,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/4096": [
+     1247.37067,
+     0.669959463,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/4096": [
+     751.271555,
+     1.04398953,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/100000": [
+     22303.3137,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/100000": [
+     22492.8039,
+     1.01376559,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/100000": [
+     22468.2745,
+     0.984733199,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/100000": [
+     22375.1961,
+     1.00564722,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/100000": [
+     24276.098,
+     0.924646304,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/100000": [
+     22365.8,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/100000": [
+     22347.18,
+     1.04221604,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/100000": [
+     237261.78,
+     0.0927663654,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/100000": [
+     29129.42,
+     0.73970633,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/100000": [
+     22958.5,
+     1.00777533,
+     "HandWritten"
+    ]
+   }
+  },
+  {
+   "round": 2,
+   "build": "control",
+   "status": "ok",
+   "load_before": 4.5,
+   "load_after": 4.5,
+   "waited_s": 0,
+   "quiet": true,
+   "run_dir": "/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs/0e19da0ca84a/20261010-090901-459a0d0-rotation-offset-columns/samples/0e19da0ca84a/20261010-090908-459a0d0-r2-control",
+   "results": {
+    "RowDispatch/Coherent/HandWritten/64": [
+     19.2043901,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/64": [
+     37.009106,
+     0.565641958,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/64": [
+     223.156304,
+     0.0909376575,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/64": [
+     26.4656528,
+     0.558765451,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/64": [
+     20.4894562,
+     0.781056827,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/64": [
+     16.3244698,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/64": [
+     22.3764286,
+     0.769580599,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/64": [
+     159.889872,
+     0.10978347,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/64": [
+     26.2489595,
+     0.621909217,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/64": [
+     21.4054965,
+     0.778467514,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/4096": [
+     783.310014,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/4096": [
+     1296.3834,
+     0.5967532,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/4096": [
+     9772.02538,
+     0.0796345278,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/4096": [
+     1182.91975,
+     0.691383886,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/4096": [
+     772.607682,
+     0.959842339,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/4096": [
+     748.355649,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/4096": [
+     1221.70711,
+     0.623515775,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/4096": [
+     9068.71269,
+     0.0816566004,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/4096": [
+     1049.91283,
+     0.718063784,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/4096": [
+     711.389121,
+     1.04084079,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/100000": [
+     22983.94,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/100000": [
+     29356.76,
+     0.805993064,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/100000": [
+     215936.14,
+     0.107571139,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/100000": [
+     27416.84,
+     0.83358322,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/100000": [
+     21869.06,
+     1.04232372,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/100000": [
+     22323.1224,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/100000": [
+     29131.9796,
+     0.757996901,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/100000": [
+     215603.796,
+     0.102655876,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/100000": [
+     27591.2857,
+     0.789401219,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/100000": [
+     23455.0408,
+     0.937838319,
+     "HandWritten"
+    ]
+   }
+  },
+  {
+   "round": 3,
+   "build": "control",
+   "status": "ok",
+   "load_before": 4.2,
+   "load_after": 4.2,
+   "waited_s": 0,
+   "quiet": true,
+   "run_dir": "/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs/0e19da0ca84a/20261010-090901-459a0d0-rotation-offset-columns/samples/0e19da0ca84a/20261010-090911-459a0d0-r3-control",
+   "results": {
+    "RowDispatch/Coherent/HandWritten/64": [
+     15.9350118,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/64": [
+     28.6287942,
+     0.629405016,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/64": [
+     159.897853,
+     0.0968173865,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/64": [
+     25.4541504,
+     0.608331991,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/64": [
+     20.1569749,
+     0.797326121,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/64": [
+     17.232381,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/64": [
+     21.308036,
+     0.773629407,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/64": [
+     153.94127,
+     0.111218216,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/64": [
+     26.629849,
+     0.616121287,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/64": [
+     21.5493873,
+     0.759176273,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/4096": [
+     761.717647,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/4096": [
+     1247.58382,
+     0.620420061,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/4096": [
+     10023.7963,
+     0.079593259,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/4096": [
+     1117.29853,
+     0.68174944,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/4096": [
+     738.468382,
+     1.0935621,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/4096": [
+     761.285714,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/4096": [
+     1368.88016,
+     0.561286789,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/4096": [
+     9906.62424,
+     0.0744934002,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/4096": [
+     1235.75423,
+     0.619252493,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/4096": [
+     848.241706,
+     0.840766847,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/100000": [
+     26227.6667,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/100000": [
+     35095.8039,
+     0.657342694,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/100000": [
+     310091,
+     0.083047859,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/100000": [
+     34091.3333,
+     0.808666799,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/100000": [
+     24991.1176,
+     0.985455715,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/100000": [
+     25286.6471,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/100000": [
+     33880.2157,
+     0.75195966,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/100000": [
+     256682.824,
+     0.0950461687,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/100000": [
+     33481.7843,
+     0.7552845,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/100000": [
+     25173.7255,
+     0.987964437,
+     "HandWritten"
+    ]
+   }
+  },
+  {
+   "round": 3,
+   "build": "candidate",
+   "status": "ok",
+   "load_before": 4.2,
+   "load_after": 4.2,
+   "waited_s": 0,
+   "quiet": true,
+   "run_dir": "/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs/0e19da0ca84a/20261010-090901-459a0d0-rotation-offset-columns/samples/0e19da0ca84a/20261010-090914-459a0d0-r3-candidate",
+   "results": {
+    "RowDispatch/Coherent/HandWritten/64": [
+     14.2734592,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/64": [
+     16.7232499,
+     0.845474293,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/64": [
+     17.5727979,
+     0.806478372,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/64": [
+     23.6911722,
+     0.602480074,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/64": [
+     23.5129557,
+     0.607403394,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/64": [
+     16.0993331,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/64": [
+     19.8457003,
+     0.820433294,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/64": [
+     150.332539,
+     0.111435177,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/64": [
+     27.7259722,
+     0.608386817,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/64": [
+     27.2319167,
+     0.621130891,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/4096": [
+     741.460483,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/4096": [
+     684.993468,
+     1.0625319,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/4096": [
+     667.233181,
+     1.09961881,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/4096": [
+     711.819726,
+     1.011571,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/4096": [
+     718.499673,
+     1.05734748,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/4096": [
+     729.934381,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/4096": [
+     699.834586,
+     1.04227558,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/4096": [
+     9580.15858,
+     0.077370964,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/4096": [
+     1153.96582,
+     0.659294683,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/4096": [
+     743.975393,
+     0.958936614,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/100000": [
+     22659.1569,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/100000": [
+     22291.5294,
+     0.984503918,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/100000": [
+     21488.3529,
+     1.0298247,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/100000": [
+     21680.2157,
+     1.02907189,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/100000": [
+     22133.0588,
+     1.00815924,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/100000": [
+     23001.76,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/100000": [
+     23646.54,
+     0.97718503,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/100000": [
+     253690.02,
+     0.0869129184,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/100000": [
+     32435.02,
+     0.745199683,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/100000": [
+     24283.5,
+     0.931670272,
+     "HandWritten"
+    ]
+   }
+  }
+ ]
+}

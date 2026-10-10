@@ -1,0 +1,5545 @@
+{
+ "schema": "sub0ecs-bench-rotation/1",
+ "builds": {
+  "control": "build/control",
+  "candidate": "build/candidate"
+ },
+ "settings": {
+  "build": [
+   "control=build/control",
+   "candidate=build/candidate"
+  ],
+  "rounds": 5,
+  "profile": "compare",
+  "suites": "rows,nbody",
+  "pin": "0-3",
+  "cooldown": 1,
+  "max_load": 10.0,
+  "quiet_timeout": 0,
+  "filter": ".",
+  "label": "final-layered",
+  "out": "/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs"
+ },
+ "samples": [
+  {
+   "round": 1,
+   "build": "control",
+   "status": "ok",
+   "load_before": 8.2,
+   "load_after": 10.1,
+   "waited_s": 0,
+   "quiet": true,
+   "run_dir": "/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs/0e19da0ca84a/20261010-091439-459a0d0-rotation-final-layered/samples/0e19da0ca84a/20261010-091440-459a0d0-r1-control",
+   "results": {
+    "NBody/Ordered/HandWritten/64": [
+     15924,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/64": [
+     15714,
+     1.01158365,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/64": [
+     15523.5,
+     1.02454955,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/64": [
+     15563.5,
+     1.01569769,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/64": [
+     15544,
+     1.01288784,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/64": [
+     15553.5,
+     1.01852499,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/64": [
+     15613.5,
+     1.01094774,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/64": [
+     15593.5,
+     1.01546808,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/64": [
+     15874,
+     1.01195837,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/64": [
+     15509,
+     1.01903484,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/64": [
+     15558.5,
+     1.01517287,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/64": [
+     15508.5,
+     1.02264537,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/64": [
+     15588.5,
+     1.01854896,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/64": [
+     15593,
+     1.01586109,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/64": [
+     16059,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/64": [
+     15584,
+     1.02725383,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/64": [
+     15338,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/64": [
+     15488,
+     0.990914105,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/64": [
+     16059,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/64": [
+     15483,
+     1.03588734,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/64": [
+     15328,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/64": [
+     15483,
+     0.989711685,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/64": [
+     16144.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/64": [
+     15498.5,
+     1.04100978,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/64": [
+     15323,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/64": [
+     15478,
+     0.990562023,
+     "HandWritten"
+    ],
+    "NBody/Ordered/HandWritten/1024": [
+     4474613,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/1024": [
+     4406395,
+     1.00594265,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/1024": [
+     4381542.5,
+     1.03412134,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/1024": [
+     4201345,
+     1.06595362,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/1024": [
+     4387817,
+     1.03666036,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/1024": [
+     4307355,
+     1.05654826,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/1024": [
+     4448037.5,
+     1.06254657,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/1024": [
+     4353780.5,
+     1.06517306,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/1024": [
+     2436803.5,
+     1.78833237,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/1024": [
+     2322786,
+     1.95055096,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/1024": [
+     4310024.5,
+     1.05629139,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/1024": [
+     4332143,
+     1.07057603,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/1024": [
+     1567414.5,
+     3.06824462,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/1024": [
+     2118502,
+     2.09810754,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/1024": [
+     4481594,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/1024": [
+     4578160,
+     0.94586864,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/1024": [
+     4396635,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/1024": [
+     4476671.5,
+     0.957651954,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/1024": [
+     2289035,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/1024": [
+     2340567,
+     1.0054204,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/1024": [
+     4174607,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/1024": [
+     2585778,
+     1.43237912,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/1024": [
+     2420698.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/1024": [
+     2022604.5,
+     1.32126758,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/1024": [
+     2077615.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/1024": [
+     2039553,
+     1.03705336,
+     "HandWritten"
+    ],
+    "NBody/Ordered/HandWritten/4096": [
+     70837129.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/4096": [
+     72051952,
+     0.967300503,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/4096": [
+     70212279.5,
+     1.0054314,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/4096": [
+     72006736.5,
+     0.970885316,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/4096": [
+     72127930.5,
+     0.97540927,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/4096": [
+     69228745,
+     1.0054664,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/4096": [
+     36398861.5,
+     1.93771348,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/4096": [
+     37425385,
+     1.86889208,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/4096": [
+     35923137,
+     1.94226453,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/4096": [
+     41190275.5,
+     1.8402237,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/4096": [
+     29068206.5,
+     2.73046777,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/4096": [
+     32432681.5,
+     2.26120915,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/4096": [
+     20896042,
+     3.63097503,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/4096": [
+     29941388.5,
+     2.58309902,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/4096": [
+     74486834,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/4096": [
+     73556539,
+     1.00951909,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/4096": [
+     77404129,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/4096": [
+     74979474.5,
+     1.03398911,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/4096": [
+     55995171,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/4096": [
+     42671393.5,
+     1.20177167,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/4096": [
+     55082085.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/4096": [
+     54239486.5,
+     1.10941682,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/4096": [
+     32393649.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/4096": [
+     32436063.5,
+     0.995979885,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/4096": [
+     33023826.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/4096": [
+     32709810,
+     1.00776828,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/64": [
+     15.1207997,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/64": [
+     22.5528635,
+     0.724273514,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/64": [
+     157.115474,
+     0.0985556117,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/64": [
+     26.319579,
+     0.585028663,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/64": [
+     19.8568403,
+     0.82152835,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/64": [
+     18.6353105,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/64": [
+     20.9484973,
+     0.893514104,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/64": [
+     148.409473,
+     0.126132597,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/64": [
+     25.650801,
+     0.725149645,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/64": [
+     21.2843241,
+     0.825518526,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/4096": [
+     722.541209,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/4096": [
+     1305.71635,
+     0.584330789,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/4096": [
+     10152.5838,
+     0.0744577132,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/4096": [
+     1206.9478,
+     0.636891719,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/4096": [
+     727.418269,
+     0.991199758,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/4096": [
+     683.045527,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/4096": [
+     1174.24281,
+     0.567663072,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/4096": [
+     9593.28514,
+     0.071798639,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/4096": [
+     1055.67732,
+     0.640117938,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/4096": [
+     744.527955,
+     0.917289925,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/100000": [
+     21146.0784,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/100000": [
+     29446.6667,
+     0.738407204,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/100000": [
+     225639.667,
+     0.0973860569,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/100000": [
+     28190.4314,
+     0.780706813,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/100000": [
+     21925.6863,
+     0.983560479,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/100000": [
+     21370.3,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/100000": [
+     28985.55,
+     0.735176533,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/100000": [
+     240051.075,
+     0.0957377749,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/100000": [
+     28924.475,
+     0.771197723,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/100000": [
+     22475.475,
+     0.963292744,
+     "HandWritten"
+    ]
+   }
+  },
+  {
+   "round": 1,
+   "build": "candidate",
+   "status": "ok",
+   "load_before": 10.1,
+   "load_after": 11.4,
+   "waited_s": 0,
+   "quiet": false,
+   "run_dir": "/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs/0e19da0ca84a/20261010-091439-459a0d0-rotation-final-layered/samples/0e19da0ca84a/20261010-091504-459a0d0-r1-candidate",
+   "results": {
+    "NBody/Ordered/HandWritten/64": [
+     15834,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/64": [
+     15564,
+     1.01702093,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/64": [
+     16229.5,
+     0.976203416,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/64": [
+     16245,
+     0.975343957,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/64": [
+     16154.5,
+     0.979881455,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/64": [
+     16225,
+     0.976169343,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/64": [
+     16085,
+     0.9840749,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/64": [
+     16099.5,
+     0.98438221,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/64": [
+     16149.5,
+     0.982823886,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/64": [
+     16209.5,
+     0.978899943,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/64": [
+     16249.5,
+     0.980187477,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/64": [
+     16155,
+     0.982541101,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/64": [
+     16189.5,
+     0.976805992,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/64": [
+     16174,
+     0.978944491,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/64": [
+     16039.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/64": [
+     16124.5,
+     0.995362783,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/64": [
+     15343,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/64": [
+     16124,
+     0.949441012,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/64": [
+     15889,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/64": [
+     16019,
+     0.988809823,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/64": [
+     15338,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/64": [
+     16039,
+     0.95692001,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/64": [
+     15984.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/64": [
+     16064.5,
+     0.998432924,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/64": [
+     15378,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/64": [
+     16144.5,
+     0.952987095,
+     "HandWritten"
+    ],
+    "NBody/Ordered/HandWritten/1024": [
+     4666738.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/1024": [
+     4719372.5,
+     0.976019762,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/1024": [
+     4737195,
+     1.04197865,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/1024": [
+     4685502,
+     0.987729338,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/1024": [
+     4551473.5,
+     1.01705115,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/1024": [
+     4755131.5,
+     0.997875906,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/1024": [
+     4705847.5,
+     0.998431733,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/1024": [
+     4752622.5,
+     0.979333622,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/1024": [
+     2433623,
+     1.99281662,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/1024": [
+     3508323,
+     1.72119488,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/1024": [
+     4434672,
+     1.05168689,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/1024": [
+     4403595.5,
+     1.01459786,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/1024": [
+     1805829.5,
+     2.61998062,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/1024": [
+     2197125.5,
+     2.06991006,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/1024": [
+     4390015,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/1024": [
+     4629978,
+     0.953404615,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/1024": [
+     4418032.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/1024": [
+     4742943,
+     0.908333787,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/1024": [
+     2373427,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/1024": [
+     2363482,
+     1.03517069,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/1024": [
+     2363993,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/1024": [
+     2713251,
+     0.915161506,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/1024": [
+     1955310,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/1024": [
+     1600796.5,
+     1.01211849,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/1024": [
+     2113459.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/1024": [
+     2066083,
+     1.01097046,
+     "HandWritten"
+    ],
+    "NBody/Ordered/HandWritten/4096": [
+     70772018,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/4096": [
+     71640121,
+     0.995739861,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/4096": [
+     73350961,
+     0.982075147,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/4096": [
+     75118778,
+     0.951691437,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/4096": [
+     75086002.5,
+     0.975146986,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/4096": [
+     73987823,
+     0.970878704,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/4096": [
+     49678981,
+     1.46553176,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/4096": [
+     38291574.5,
+     1.89835766,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/4096": [
+     53364143,
+     1.34035367,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/4096": [
+     38298580,
+     1.83634588,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/4096": [
+     32551762.5,
+     2.19701159,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/4096": [
+     32437692,
+     2.28910811,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/4096": [
+     23816145.5,
+     2.98181937,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/4096": [
+     32538823.5,
+     2.16017662,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/4096": [
+     77233150,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/4096": [
+     76517132,
+     0.986733631,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/4096": [
+     69860393.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/4096": [
+     70751238,
+     0.986050949,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/4096": [
+     34173193,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/4096": [
+     36452562.5,
+     0.944423187,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/4096": [
+     38927126,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/4096": [
+     37715044,
+     0.98651542,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/4096": [
+     19793564,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/4096": [
+     23183523,
+     0.980612188,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/4096": [
+     20658972.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/4096": [
+     19743561.5,
+     1.02810445,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/64": [
+     14.4454335,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/64": [
+     17.6330345,
+     0.820132094,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/64": [
+     18.7104254,
+     0.783669172,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/64": [
+     24.0440016,
+     0.615319955,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/64": [
+     26.6309754,
+     0.603661076,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/64": [
+     19.6668523,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/64": [
+     19.3316084,
+     0.998987698,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/64": [
+     154.206138,
+     0.127344545,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/64": [
+     28.6038057,
+     0.728956117,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/64": [
+     26.2601775,
+     0.73559278,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/4096": [
+     746.967635,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/4096": [
+     682.630119,
+     1.04051535,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/4096": [
+     663.334214,
+     1.06472868,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/4096": [
+     791.711361,
+     0.976429953,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/4096": [
+     695.575958,
+     1.01774283,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/4096": [
+     723.027341,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/4096": [
+     737.615174,
+     1.02671247,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/4096": [
+     10200.6671,
+     0.0708803976,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/4096": [
+     1083.10663,
+     0.680688489,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/4096": [
+     753.435407,
+     0.930175383,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/100000": [
+     22888.1373,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/100000": [
+     23405.3725,
+     1.01815486,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/100000": [
+     22072,
+     1.03359784,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/100000": [
+     21845.3725,
+     1.02019576,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/100000": [
+     22730.8235,
+     1.02172986,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/100000": [
+     22767.9412,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/100000": [
+     22724.549,
+     1.06320452,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/100000": [
+     242743.745,
+     0.0957412278,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/100000": [
+     30476.0588,
+     0.758047086,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/100000": [
+     22336.1176,
+     1.0108625,
+     "HandWritten"
+    ]
+   }
+  },
+  {
+   "round": 2,
+   "build": "candidate",
+   "status": "ok",
+   "load_before": 11.4,
+   "load_after": 13.5,
+   "waited_s": 0,
+   "quiet": false,
+   "run_dir": "/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs/0e19da0ca84a/20261010-091439-459a0d0-rotation-final-layered/samples/0e19da0ca84a/20261010-091528-459a0d0-r2-candidate",
+   "results": {
+    "NBody/Ordered/HandWritten/64": [
+     15889,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/64": [
+     15643,
+     1.01700463,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/64": [
+     16359.5,
+     0.978515391,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/64": [
+     16400,
+     0.976863072,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/64": [
+     16364.5,
+     0.981239706,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/64": [
+     16375,
+     0.980391539,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/64": [
+     16325,
+     0.977852686,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/64": [
+     16375,
+     0.974138322,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/64": [
+     16360,
+     0.972795271,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/64": [
+     16324.5,
+     0.971263568,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/64": [
+     16385,
+     0.973562112,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/64": [
+     16395,
+     0.96908709,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/64": [
+     16430,
+     0.970630624,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/64": [
+     16370,
+     0.969040336,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/64": [
+     15864,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/64": [
+     15674,
+     1.00835902,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/64": [
+     15293,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/64": [
+     16259,
+     0.939694915,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/64": [
+     16249.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/64": [
+     16354.5,
+     0.987634624,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/64": [
+     15288,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/64": [
+     16345,
+     0.936495795,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/64": [
+     16424.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/64": [
+     16289.5,
+     1.00277405,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/64": [
+     15298,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/64": [
+     16435,
+     0.931769448,
+     "HandWritten"
+    ],
+    "NBody/Ordered/HandWritten/1024": [
+     4163963,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/1024": [
+     4259903,
+     0.994005094,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/1024": [
+     4401261.5,
+     0.970632051,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/1024": [
+     4260213.5,
+     1.00175296,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/1024": [
+     4139000,
+     1.00156989,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/1024": [
+     4338336.5,
+     0.975094509,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/1024": [
+     4182961.5,
+     0.983394376,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/1024": [
+     4327500,
+     0.988882438,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/1024": [
+     4056050,
+     1.02345135,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/1024": [
+     2371729.5,
+     1.83576411,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/1024": [
+     4175820.5,
+     1.01282811,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/1024": [
+     4271180,
+     0.985165818,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/1024": [
+     1579607.5,
+     2.63505962,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/1024": [
+     2115818,
+     1.96427735,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/1024": [
+     4035379,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/1024": [
+     4024012,
+     1.001159,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/1024": [
+     4068733.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/1024": [
+     4039179,
+     0.996632925,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/1024": [
+     4027116.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/1024": [
+     2210546.5,
+     1.69796782,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/1024": [
+     2172456,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/1024": [
+     2327202,
+     0.980754007,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/1024": [
+     2119278,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/1024": [
+     1534444,
+     1.40273334,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/1024": [
+     2097174.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/1024": [
+     2077484.5,
+     1.00558523,
+     "HandWritten"
+    ],
+    "NBody/Ordered/HandWritten/4096": [
+     71849636.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/4096": [
+     70868356.5,
+     1.00749744,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/4096": [
+     70300669,
+     1.00687794,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/4096": [
+     70974708.5,
+     0.98706927,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/4096": [
+     70869693,
+     1.01233099,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/4096": [
+     71815408.5,
+     0.980902475,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/4096": [
+     36436129,
+     1.89364744,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/4096": [
+     36480970,
+     1.99251222,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/4096": [
+     35562183,
+     1.96790796,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/4096": [
+     38169728,
+     1.84631308,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/4096": [
+     32369556.5,
+     2.21555036,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/4096": [
+     32419893,
+     2.20746381,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/4096": [
+     25658955,
+     2.80222759,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/4096": [
+     32402000.5,
+     2.22400717,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/4096": [
+     73084785,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/4096": [
+     72757314.5,
+     1.00739679,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/4096": [
+     70237261,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/4096": [
+     70452040.5,
+     0.989073284,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/4096": [
+     39245905.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/4096": [
+     36350895.5,
+     0.998062008,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/4096": [
+     47201390,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/4096": [
+     58558109,
+     1.00161699,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/4096": [
+     22406169.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/4096": [
+     22292057,
+     0.995395194,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/4096": [
+     26801022.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/4096": [
+     25832588.5,
+     1.01932181,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/64": [
+     14.5231943,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/64": [
+     16.4567237,
+     0.860843368,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/64": [
+     17.0861147,
+     0.836048203,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/64": [
+     22.6812224,
+     0.639011929,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/64": [
+     22.7297695,
+     0.641216864,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/64": [
+     16.394803,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/64": [
+     18.980694,
+     0.867210409,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/64": [
+     145.891129,
+     0.110234147,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/64": [
+     26.0519067,
+     0.63436257,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/64": [
+     25.2631914,
+     0.618068242,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/4096": [
+     728.963036,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/4096": [
+     663.220462,
+     1.10383591,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/4096": [
+     699.149175,
+     1.04182404,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/4096": [
+     729.108911,
+     1.00512865,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/4096": [
+     668.614521,
+     1.03837678,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/4096": [
+     730.103311,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/4096": [
+     720.592053,
+     1.0223449,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/4096": [
+     9925.03311,
+     0.0766090827,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/4096": [
+     1111.17616,
+     0.654098407,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/4096": [
+     743.534437,
+     0.978814724,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/100000": [
+     22596.2941,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/100000": [
+     21950.8039,
+     0.960490204,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/100000": [
+     21985.9804,
+     0.994038152,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/100000": [
+     22088.098,
+     1.04193206,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/100000": [
+     20840.3137,
+     1.00263912,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/100000": [
+     22276.0196,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/100000": [
+     21884.6471,
+     0.982528713,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/100000": [
+     251640.098,
+     0.0885568815,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/100000": [
+     28430.8039,
+     0.743885944,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/100000": [
+     23086.4706,
+     0.986096683,
+     "HandWritten"
+    ]
+   }
+  },
+  {
+   "round": 2,
+   "build": "control",
+   "status": "ok",
+   "load_before": 12.5,
+   "load_after": 13.0,
+   "waited_s": 0,
+   "quiet": false,
+   "run_dir": "/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs/0e19da0ca84a/20261010-091439-459a0d0-rotation-final-layered/samples/0e19da0ca84a/20261010-091551-459a0d0-r2-control",
+   "results": {
+    "NBody/Ordered/HandWritten/64": [
+     15879,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/64": [
+     15584,
+     1.01829371,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/64": [
+     15563.5,
+     1.01931421,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/64": [
+     15553.5,
+     1.02092791,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/64": [
+     15573.5,
+     1.01991792,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/64": [
+     15553,
+     1.02290134,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/64": [
+     15569,
+     1.02031042,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/64": [
+     15558,
+     1.0216053,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/64": [
+     15579,
+     1.01930181,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/64": [
+     15578.5,
+     1.02024602,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/64": [
+     15598,
+     1.01926906,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/64": [
+     15573.5,
+     1.01991136,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/64": [
+     15568.5,
+     1.02003482,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/64": [
+     15568.5,
+     1.02194338,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/64": [
+     15669,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/64": [
+     15513.5,
+     1.00904982,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/64": [
+     15388.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/64": [
+     15503.5,
+     0.992287065,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/64": [
+     15608.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/64": [
+     15524,
+     1.00483656,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/64": [
+     15353,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/64": [
+     15498.5,
+     0.989998551,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/64": [
+     15698.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/64": [
+     15499,
+     1.01359705,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/64": [
+     15373,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/64": [
+     15528,
+     0.990691375,
+     "HandWritten"
+    ],
+    "NBody/Ordered/HandWritten/1024": [
+     4328231.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/1024": [
+     4171570,
+     1.02220025,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/1024": [
+     4408563,
+     0.964134622,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/1024": [
+     4314080,
+     0.997868754,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/1024": [
+     4346569.5,
+     0.996755524,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/1024": [
+     4264475.5,
+     1.01341865,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/1024": [
+     4350134.5,
+     0.998867168,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/1024": [
+     4328001.5,
+     0.994948728,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/1024": [
+     2368870,
+     1.82758214,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/1024": [
+     2344152.5,
+     1.87237323,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/1024": [
+     4284505.5,
+     1.03682303,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/1024": [
+     4283749,
+     0.993206974,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/1024": [
+     1365759,
+     3.12579625,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/1024": [
+     2197872,
+     1.96257987,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/1024": [
+     4317540,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/1024": [
+     4437487,
+     0.984370747,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/1024": [
+     4374566.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/1024": [
+     4442279,
+     0.955446225,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/1024": [
+     2233030,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/1024": [
+     3147762.5,
+     0.790760506,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/1024": [
+     4147674,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/1024": [
+     2259245,
+     1.67483416,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/1024": [
+     1992521.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/1024": [
+     1864753.5,
+     0.996871016,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/1024": [
+     2092392.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/1024": [
+     2101947,
+     0.988415682,
+     "HandWritten"
+    ],
+    "NBody/Ordered/HandWritten/4096": [
+     71221172,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/4096": [
+     69653261.5,
+     1.04376508,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/4096": [
+     70877331.5,
+     1.01052233,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/4096": [
+     73042439.5,
+     0.97165334,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/4096": [
+     69757680,
+     1.00579257,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/4096": [
+     71730155.5,
+     0.997685711,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/4096": [
+     36593125.5,
+     1.91906364,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/4096": [
+     36378872,
+     1.94410225,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/4096": [
+     35729535.5,
+     2.01553142,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/4096": [
+     37167309,
+     1.94543934,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/4096": [
+     32444545.5,
+     2.36283884,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/4096": [
+     31040098.5,
+     2.5555718,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/4096": [
+     20667006,
+     3.3825345,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/4096": [
+     20705581,
+     3.35492179,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/4096": [
+     77485759.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/4096": [
+     79602063,
+     0.980985499,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/4096": [
+     70421398,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/4096": [
+     70431307,
+     0.998669154,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/4096": [
+     35481265,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/4096": [
+     35967861,
+     0.992590618,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/4096": [
+     35460418.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/4096": [
+     36392525,
+     1.01050039,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/4096": [
+     22019557,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/4096": [
+     21960300.5,
+     0.983508536,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/4096": [
+     18387135,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/4096": [
+     18402027,
+     0.991667525,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/64": [
+     15.7929059,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/64": [
+     22.9109028,
+     0.716339753,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/64": [
+     154.872972,
+     0.10375993,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/64": [
+     23.6504002,
+     0.656596062,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/64": [
+     18.9355361,
+     0.809174237,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/64": [
+     17.9686534,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/64": [
+     21.8839962,
+     0.825755196,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/64": [
+     153.279596,
+     0.11134116,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/64": [
+     25.4199453,
+     0.650301165,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/64": [
+     21.4415894,
+     0.828583215,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/4096": [
+     721.475157,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/4096": [
+     1240.31421,
+     0.581372086,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/4096": [
+     9736.74528,
+     0.0742933371,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/4096": [
+     1117.49685,
+     0.618771969,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/4096": [
+     730.635409,
+     0.990311317,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/4096": [
+     708.13977,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/4096": [
+     1211.23633,
+     0.574562305,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/4096": [
+     9544.60095,
+     0.0762993303,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/4096": [
+     1118.6185,
+     0.649013381,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/4096": [
+     789.964889,
+     0.914702789,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/100000": [
+     24489.62,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/100000": [
+     33143.9,
+     0.701107877,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/100000": [
+     269152.18,
+     0.0873848345,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/100000": [
+     31602.38,
+     0.826880934,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/100000": [
+     27859.1,
+     0.990006509,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/100000": [
+     22963,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/100000": [
+     33642.9787,
+     0.73823942,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/100000": [
+     253683,
+     0.0919287356,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/100000": [
+     30619.8936,
+     0.79644143,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/100000": [
+     24210.4255,
+     0.913073407,
+     "HandWritten"
+    ]
+   }
+  },
+  {
+   "round": 3,
+   "build": "control",
+   "status": "ok",
+   "load_before": 13.0,
+   "load_after": 17.3,
+   "waited_s": 0,
+   "quiet": false,
+   "run_dir": "/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs/0e19da0ca84a/20261010-091439-459a0d0-rotation-final-layered/samples/0e19da0ca84a/20261010-091614-459a0d0-r3-control",
+   "results": {
+    "NBody/Ordered/HandWritten/64": [
+     15714,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/64": [
+     15523.5,
+     1.01167376,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/64": [
+     15499,
+     1.01297485,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/64": [
+     15533,
+     1.01227571,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/64": [
+     15513,
+     1.01327913,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/64": [
+     15503.5,
+     1.01232815,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/64": [
+     15564,
+     1.01192954,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/64": [
+     15488,
+     1.01461956,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/64": [
+     15548.5,
+     1.0109657,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/64": [
+     15493.5,
+     1.01486365,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/64": [
+     15548,
+     1.01128733,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/64": [
+     15499,
+     1.01519987,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/64": [
+     15534,
+     1.01036172,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/64": [
+     15508.5,
+     1.01296224,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/64": [
+     15969,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/64": [
+     15473.5,
+     1.03191636,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/64": [
+     15318,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/64": [
+     15453.5,
+     0.990341156,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/64": [
+     15984,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/64": [
+     15484,
+     1.03029791,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/64": [
+     15323,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/64": [
+     15544,
+     0.98545053,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/64": [
+     16015,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/64": [
+     15523,
+     1.03421732,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/64": [
+     15323,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/64": [
+     15508.5,
+     0.988346635,
+     "HandWritten"
+    ],
+    "NBody/Ordered/HandWritten/1024": [
+     4122376,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/1024": [
+     4312297.5,
+     0.952196769,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/1024": [
+     4318106,
+     0.950909623,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/1024": [
+     4314686.5,
+     0.980219571,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/1024": [
+     4303208.5,
+     0.97225345,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/1024": [
+     4303314,
+     0.961612725,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/1024": [
+     4297580,
+     0.967393526,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/1024": [
+     4096837,
+     1.01080258,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/1024": [
+     2227126,
+     1.85530688,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/1024": [
+     2244507.5,
+     1.8617871,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/1024": [
+     4326529,
+     0.971382673,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/1024": [
+     4189747,
+     0.98650494,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/1024": [
+     1232192.5,
+     3.31592144,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/1024": [
+     1399790.5,
+     3.01713064,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/1024": [
+     4222591.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/1024": [
+     4349604,
+     0.956827731,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/1024": [
+     4113742.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/1024": [
+     4125660.5,
+     1.00330558,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/1024": [
+     2134165,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/1024": [
+     4050190.5,
+     0.528028728,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/1024": [
+     2243268.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/1024": [
+     2304152,
+     0.946947581,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/1024": [
+     1557624,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/1024": [
+     1563383,
+     1.00117503,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/1024": [
+     2116523.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/1024": [
+     2188627.5,
+     0.979265471,
+     "HandWritten"
+    ],
+    "NBody/Ordered/HandWritten/4096": [
+     68494950.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/4096": [
+     69520190.5,
+     0.992340689,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/4096": [
+     69265510.5,
+     0.987736326,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/4096": [
+     69738110,
+     0.985949617,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/4096": [
+     69525193,
+     1.00325967,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/4096": [
+     70532124.5,
+     0.972866453,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/4096": [
+     35970304.5,
+     1.90941701,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/4096": [
+     36082248.5,
+     1.92330247,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/4096": [
+     35171873,
+     1.97774526,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/4096": [
+     34623544,
+     1.9615691,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/4096": [
+     32489112.5,
+     2.11619026,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/4096": [
+     32373844,
+     2.13301464,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/4096": [
+     22924126.5,
+     2.99901397,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/4096": [
+     32388757,
+     2.11844836,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/4096": [
+     74881371.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/4096": [
+     72022912,
+     1.01453143,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/4096": [
+     73130114.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/4096": [
+     74271454.5,
+     0.97891784,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/4096": [
+     47834509.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/4096": [
+     37937258,
+     1.10246153,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/4096": [
+     37481527.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/4096": [
+     38845253,
+     0.93595074,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/4096": [
+     23917112,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/4096": [
+     24049016.5,
+     0.988785453,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/4096": [
+     32048526,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/4096": [
+     21046308,
+     1.11579338,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/64": [
+     14.5802235,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/64": [
+     20.4443826,
+     0.697195822,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/64": [
+     139.940205,
+     0.103226687,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/64": [
+     22.4004128,
+     0.65041344,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/64": [
+     17.7398512,
+     0.815748644,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/64": [
+     17.0175183,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/64": [
+     20.4976083,
+     0.830374254,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/64": [
+     142.829347,
+     0.120302395,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/64": [
+     24.689961,
+     0.687768093,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/64": [
+     22.4275351,
+     0.762500088,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/4096": [
+     681.036415,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/4096": [
+     1154.61625,
+     0.589694711,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/4096": [
+     8820.13725,
+     0.077389158,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/4096": [
+     1035.9986,
+     0.655005522,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/4096": [
+     688.309524,
+     0.984326496,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/4096": [
+     667.607923,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/4096": [
+     1213.24727,
+     0.551195022,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/4096": [
+     8999.82445,
+     0.0763994795,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/4096": [
+     1094.40642,
+     0.64280124,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/4096": [
+     703.043716,
+     0.957958866,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/100000": [
+     20895.96,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/100000": [
+     28631.28,
+     0.733635925,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/100000": [
+     217411.4,
+     0.0971338495,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/100000": [
+     26951.32,
+     0.782109794,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/100000": [
+     21323.22,
+     0.985286698,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/100000": [
+     20888.56,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/100000": [
+     28719.62,
+     0.720237848,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/100000": [
+     225465.76,
+     0.0939004591,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/100000": [
+     28890.86,
+     0.753061136,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/100000": [
+     21599.26,
+     0.978226376,
+     "HandWritten"
+    ]
+   }
+  },
+  {
+   "round": 3,
+   "build": "candidate",
+   "status": "ok",
+   "load_before": 17.3,
+   "load_after": 16.4,
+   "waited_s": 0,
+   "quiet": false,
+   "run_dir": "/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs/0e19da0ca84a/20261010-091439-459a0d0-rotation-final-layered/samples/0e19da0ca84a/20261010-091637-459a0d0-r3-candidate",
+   "results": {
+    "NBody/Ordered/HandWritten/64": [
+     15769,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/64": [
+     15558.5,
+     1.01424601,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/64": [
+     16359,
+     0.962630215,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/64": [
+     16410,
+     0.961770421,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/64": [
+     16375,
+     0.963315919,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/64": [
+     16365,
+     0.962260514,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/64": [
+     16400,
+     0.961662397,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/64": [
+     16400,
+     0.958440701,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/64": [
+     16419.5,
+     0.962610481,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/64": [
+     16394.5,
+     0.963946091,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/64": [
+     16370,
+     0.963908274,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/64": [
+     16500,
+     0.956734064,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/64": [
+     16475,
+     0.958585369,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/64": [
+     16380,
+     0.963446928,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/64": [
+     16124,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/64": [
+     16214.5,
+     0.997838845,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/64": [
+     15323.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/64": [
+     16345,
+     0.942208135,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/64": [
+     16249,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/64": [
+     16415,
+     0.989579439,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/64": [
+     15323,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/64": [
+     16284.5,
+     0.941508019,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/64": [
+     16179,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/64": [
+     16244.5,
+     0.995075085,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/64": [
+     15293,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/64": [
+     16309.5,
+     0.938825971,
+     "HandWritten"
+    ],
+    "NBody/Ordered/HandWritten/1024": [
+     4361712,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/1024": [
+     4559470.5,
+     0.939363876,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/1024": [
+     4459414,
+     0.989075112,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/1024": [
+     4773018.5,
+     0.91656295,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/1024": [
+     4719422,
+     0.937502198,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/1024": [
+     4869759.5,
+     0.906265531,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/1024": [
+     4547132,
+     0.960700027,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/1024": [
+     4713448,
+     0.925373524,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/1024": [
+     2328699.5,
+     1.88416964,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/1024": [
+     2608642,
+     1.64427094,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/1024": [
+     4529585,
+     0.967948977,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/1024": [
+     4624924.5,
+     0.947669507,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/1024": [
+     1565155.5,
+     2.93684101,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/1024": [
+     2242934.5,
+     1.94599635,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/1024": [
+     4196753,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/1024": [
+     4129110,
+     0.99971617,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/1024": [
+     4085604,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/1024": [
+     4266718,
+     0.983130397,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/1024": [
+     2187255.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/1024": [
+     2337713,
+     0.950157542,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/1024": [
+     2281477.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/1024": [
+     2198883,
+     1.02056979,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/1024": [
+     1578260,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/1024": [
+     1579432,
+     1.00690554,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/1024": [
+     2100935.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/1024": [
+     2087845.5,
+     1.00925389,
+     "HandWritten"
+    ],
+    "NBody/Ordered/HandWritten/4096": [
+     69840709.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/4096": [
+     70625875.5,
+     0.989029464,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/4096": [
+     72196878.5,
+     0.97136374,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/4096": [
+     71851272.5,
+     0.976255612,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/4096": [
+     70965622,
+     0.990050003,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/4096": [
+     71020009,
+     0.975766573,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/4096": [
+     37015547.5,
+     1.86714761,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/4096": [
+     35365348.5,
+     1.96529834,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/4096": [
+     35092381,
+     1.96380388,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/4096": [
+     35427905,
+     1.98816617,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/4096": [
+     32460833.5,
+     2.17544839,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/4096": [
+     32340472.5,
+     2.17194587,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/4096": [
+     23132937,
+     2.96812422,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/4096": [
+     32464539,
+     2.30189974,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/4096": [
+     71832609.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/4096": [
+     73692050.5,
+     0.987184452,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/4096": [
+     68685190.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/4096": [
+     70784117,
+     0.978928159,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/4096": [
+     34730900,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/4096": [
+     37211138,
+     0.937332158,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/4096": [
+     35594094.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/4096": [
+     36278398.5,
+     0.988838603,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/4096": [
+     18317083.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/4096": [
+     18529063.5,
+     0.98592941,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/4096": [
+     19687159.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/4096": [
+     19019404.5,
+     1.00676541,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/64": [
+     15.0315937,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/64": [
+     16.7063406,
+     0.888075458,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/64": [
+     18.6625954,
+     0.809204413,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/64": [
+     24.4819442,
+     0.617878953,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/64": [
+     22.4595731,
+     0.674578527,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/64": [
+     15.8521781,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/64": [
+     18.8565137,
+     0.838620187,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/64": [
+     145.822896,
+     0.109048563,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/64": [
+     27.0758723,
+     0.603203288,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/64": [
+     25.4665199,
+     0.612312595,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/4096": [
+     696.548942,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/4096": [
+     664.390212,
+     1.03782723,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/4096": [
+     683.60582,
+     1.03060171,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/4096": [
+     695.084656,
+     0.978697208,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/4096": [
+     692.673942,
+     1.02398221,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/4096": [
+     682.468931,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/4096": [
+     674.37211,
+     1.01309331,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/4096": [
+     8968.63367,
+     0.0765586004,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/4096": [
+     1070.42486,
+     0.656509748,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/4096": [
+     683.192919,
+     0.989736962,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/100000": [
+     20542.0392,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/100000": [
+     20518.6471,
+     1.01630673,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/100000": [
+     20234.7059,
+     1.01595157,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/100000": [
+     20701.6667,
+     0.994828881,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/100000": [
+     20534.7451,
+     1.01377242,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/100000": [
+     20640.6078,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/100000": [
+     21402.9412,
+     0.992633265,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/100000": [
+     222367.451,
+     0.09348939,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/100000": [
+     27072.6863,
+     0.766645414,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/100000": [
+     21357.1961,
+     0.967150699,
+     "HandWritten"
+    ]
+   }
+  },
+  {
+   "round": 4,
+   "build": "candidate",
+   "status": "ok",
+   "load_before": 16.4,
+   "load_after": 15.7,
+   "waited_s": 0,
+   "quiet": false,
+   "run_dir": "/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs/0e19da0ca84a/20261010-091439-459a0d0-rotation-final-layered/samples/0e19da0ca84a/20261010-091659-459a0d0-r4-candidate",
+   "results": {
+    "NBody/Ordered/HandWritten/64": [
+     15784,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/64": [
+     15513.5,
+     1.01650129,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/64": [
+     16334.5,
+     0.968236191,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/64": [
+     16294.5,
+     0.967988206,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/64": [
+     16234,
+     0.974043175,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/64": [
+     16234.5,
+     0.971545887,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/64": [
+     16279,
+     0.972003066,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/64": [
+     16309.5,
+     0.968670209,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/64": [
+     16285,
+     0.971029482,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/64": [
+     16244.5,
+     0.972549847,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/64": [
+     16235,
+     0.97369428,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/64": [
+     16299.5,
+     0.970274292,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/64": [
+     16204.5,
+     0.974591037,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/64": [
+     16345,
+     0.970744916,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/64": [
+     16139.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/64": [
+     16239.5,
+     0.99410845,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/64": [
+     15313,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/64": [
+     16179,
+     0.946737109,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/64": [
+     16109,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/64": [
+     16324.5,
+     0.98525255,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/64": [
+     15323,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/64": [
+     16184,
+     0.946181414,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/64": [
+     16064.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/64": [
+     16235,
+     0.990719051,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/64": [
+     15323,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/64": [
+     16205,
+     0.945263534,
+     "HandWritten"
+    ],
+    "NBody/Ordered/HandWritten/1024": [
+     4324581,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/1024": [
+     4388207.5,
+     0.976188281,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/1024": [
+     4338041.5,
+     0.995569909,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/1024": [
+     4112976,
+     1.03414914,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/1024": [
+     4155425.5,
+     1.0100971,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/1024": [
+     4341346,
+     0.991075511,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/1024": [
+     4512560,
+     0.947532004,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/1024": [
+     4252317.5,
+     1.00188415,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/1024": [
+     2282534.5,
+     1.89136156,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/1024": [
+     2335750.5,
+     1.83412887,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/1024": [
+     4513697,
+     0.97111631,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/1024": [
+     4423580.5,
+     0.956514633,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/1024": [
+     1309329,
+     3.3095333,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/1024": [
+     2446768.5,
+     1.83704743,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/1024": [
+     4543652,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/1024": [
+     4304515.5,
+     1.00069129,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/1024": [
+     4203888.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/1024": [
+     4424822,
+     0.943260582,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/1024": [
+     2147495.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/1024": [
+     2275173.5,
+     0.964402945,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/1024": [
+     2212183.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/1024": [
+     2263506,
+     0.982437669,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/1024": [
+     1234080,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/1024": [
+     1128220,
+     1.05603159,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/1024": [
+     1763094.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/1024": [
+     2048841,
+     1.02934996,
+     "HandWritten"
+    ],
+    "NBody/Ordered/HandWritten/4096": [
+     72011782.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/4096": [
+     71138288.5,
+     0.997121255,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/4096": [
+     70888015.5,
+     0.998098357,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/4096": [
+     70552242.5,
+     1.00975783,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/4096": [
+     71938127.5,
+     0.985179466,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/4096": [
+     72396115,
+     0.997431046,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/4096": [
+     39427145,
+     1.92256623,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/4096": [
+     43394959,
+     1.66812122,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/4096": [
+     42971283.5,
+     1.65812961,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/4096": [
+     37511227,
+     1.87646792,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/4096": [
+     32352810.5,
+     2.2350216,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/4096": [
+     32393602.5,
+     2.22731115,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/4096": [
+     23382403.5,
+     3.02598524,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/4096": [
+     32164076,
+     2.16637151,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/4096": [
+     70722545.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/4096": [
+     71066029.5,
+     1.00234379,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/4096": [
+     68165030,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/4096": [
+     69546943.5,
+     0.976821096,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/4096": [
+     34460946.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/4096": [
+     34743294,
+     0.988123998,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/4096": [
+     35476286.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/4096": [
+     35486431.5,
+     0.981852595,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/4096": [
+     17880608.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/4096": [
+     18476263.5,
+     0.970923174,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/4096": [
+     19285276,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/4096": [
+     18731384.5,
+     1.03500645,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/64": [
+     14.7425961,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/64": [
+     16.9394269,
+     0.875866284,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/64": [
+     19.6197566,
+     0.750162691,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/64": [
+     23.9760391,
+     0.634399521,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/64": [
+     22.7441935,
+     0.61884362,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/64": [
+     15.8664068,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/64": [
+     18.8849253,
+     0.834865649,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/64": [
+     141.126543,
+     0.111888787,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/64": [
+     25.7220923,
+     0.606773845,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/64": [
+     25.1709227,
+     0.620319467,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/4096": [
+     688.152887,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/4096": [
+     658.869423,
+     1.05038592,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/4096": [
+     665.776247,
+     1.04637379,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/4096": [
+     705.968504,
+     0.979753685,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/4096": [
+     658.725066,
+     1.04478412,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/4096": [
+     685.677069,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/4096": [
+     672.400271,
+     1.01918677,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/4096": [
+     9044.66757,
+     0.0780672207,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/4096": [
+     1042.07734,
+     0.65650842,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/4096": [
+     691.839891,
+     0.979205645,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/100000": [
+     20745.4706,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/100000": [
+     20107.0588,
+     1.03463129,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/100000": [
+     20293.8235,
+     1.01975285,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/100000": [
+     20449.3529,
+     1.01132113,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/100000": [
+     20535.1569,
+     1.00925581,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/100000": [
+     20837.3725,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/100000": [
+     20581.098,
+     1.00996202,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/100000": [
+     219868.569,
+     0.0959655468,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/100000": [
+     26982.9412,
+     0.774832708,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/100000": [
+     21051.2353,
+     1.01318888,
+     "HandWritten"
+    ]
+   }
+  },
+  {
+   "round": 4,
+   "build": "control",
+   "status": "ok",
+   "load_before": 14.5,
+   "load_after": 18.7,
+   "waited_s": 0,
+   "quiet": false,
+   "run_dir": "/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs/0e19da0ca84a/20261010-091439-459a0d0-rotation-final-layered/samples/0e19da0ca84a/20261010-091721-459a0d0-r4-control",
+   "results": {
+    "NBody/Ordered/HandWritten/64": [
+     15764,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/64": [
+     15618,
+     1.00616094,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/64": [
+     15593,
+     1.0045242,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/64": [
+     15594,
+     1.00708671,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/64": [
+     15569,
+     1.00871418,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/64": [
+     15593.5,
+     1.00710476,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/64": [
+     15603.5,
+     1.00638208,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/64": [
+     15584,
+     1.00709873,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/64": [
+     15608.5,
+     1.00800055,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/64": [
+     15608,
+     1.00867881,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/64": [
+     15704,
+     1.00549329,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/64": [
+     15643.5,
+     1.00451233,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/64": [
+     15558.5,
+     1.01096568,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/64": [
+     15548,
+     1.01033468,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/64": [
+     16029.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/64": [
+     15483,
+     1.03351128,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/64": [
+     15288.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/64": [
+     15543.5,
+     0.984480647,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/64": [
+     16400,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/64": [
+     15498.5,
+     1.05816899,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/64": [
+     15283,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/64": [
+     15524,
+     0.984524233,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/64": [
+     16415,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/64": [
+     15499,
+     1.05910045,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/64": [
+     15288,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/64": [
+     15493,
+     0.986364218,
+     "HandWritten"
+    ],
+    "NBody/Ordered/HandWritten/1024": [
+     4561834.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/1024": [
+     4360445,
+     1.02808963,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/1024": [
+     4548534.5,
+     1.04840691,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/1024": [
+     4526065,
+     1.02008418,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/1024": [
+     4513120.5,
+     1.02397748,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/1024": [
+     4327785,
+     1.03417732,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/1024": [
+     4421622.5,
+     1.03126421,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/1024": [
+     4447671.5,
+     1.00860866,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/1024": [
+     2687561.5,
+     1.68355024,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/1024": [
+     2709415,
+     1.5884757,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/1024": [
+     4859899.5,
+     1.008408,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/1024": [
+     4474377.5,
+     1.02784734,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/1024": [
+     1601846,
+     2.96183511,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/1024": [
+     2205894,
+     2.07980305,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/1024": [
+     4196822.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/1024": [
+     4339028,
+     0.960318552,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/1024": [
+     4275396.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/1024": [
+     4383865.5,
+     0.968321834,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/1024": [
+     2294728,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/1024": [
+     2358589.5,
+     0.980301173,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/1024": [
+     2455196,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/1024": [
+     3594087,
+     0.807195813,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/1024": [
+     1550423.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/1024": [
+     1566267,
+     0.97669806,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/1024": [
+     2100524.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/1024": [
+     2105982.5,
+     0.99073896,
+     "HandWritten"
+    ],
+    "NBody/Ordered/HandWritten/4096": [
+     70750286,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/4096": [
+     69367767,
+     1.01051846,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/4096": [
+     70645528.5,
+     1.0131915,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/4096": [
+     69422547.5,
+     1.02466719,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/4096": [
+     70707217,
+     1.02739402,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/4096": [
+     69508800,
+     1.03450169,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/4096": [
+     38139922,
+     1.79195471,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/4096": [
+     35653000,
+     1.95387599,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/4096": [
+     35440622.5,
+     1.93053844,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/4096": [
+     36729074.5,
+     1.99773796,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/4096": [
+     30014011,
+     2.54735872,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/4096": [
+     28667521,
+     2.60055225,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/4096": [
+     22568063,
+     3.27921236,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/4096": [
+     32422176,
+     2.22752051,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/4096": [
+     71712701.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/4096": [
+     71010930.5,
+     1.01884117,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/4096": [
+     71092064,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/4096": [
+     72240703.5,
+     0.989232228,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/4096": [
+     38017317,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/4096": [
+     36635403,
+     1.026769,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/4096": [
+     36479084,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/4096": [
+     36429682.5,
+     0.997912735,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/4096": [
+     18553150,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/4096": [
+     18839837.5,
+     0.974119128,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/4096": [
+     19809313.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/4096": [
+     20914934,
+     1.00258098,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/64": [
+     14.5258971,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/64": [
+     22.0210244,
+     0.656429371,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/64": [
+     147.007828,
+     0.0980019821,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/64": [
+     22.7602326,
+     0.645022036,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/64": [
+     17.8600185,
+     0.823033341,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/64": [
+     16.002814,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/64": [
+     20.4957955,
+     0.78172212,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/64": [
+     141.309376,
+     0.115496848,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/64": [
+     24.628352,
+     0.649260769,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/64": [
+     20.6290803,
+     0.770392128,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/4096": [
+     749.066058,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/4096": [
+     1239.06887,
+     0.60797019,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/4096": [
+     10112.8166,
+     0.0740514939,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/4096": [
+     1154,
+     0.657797865,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/4096": [
+     733.463106,
+     0.976599805,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/4096": [
+     676.574022,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/4096": [
+     1207.38338,
+     0.567864109,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/4096": [
+     9150.92528,
+     0.0736126167,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/4096": [
+     1084.59986,
+     0.639687719,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/4096": [
+     736.553073,
+     0.927468717,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/100000": [
+     24238.24,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/100000": [
+     38902.38,
+     0.635266441,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/100000": [
+     272106.44,
+     0.0958479013,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/100000": [
+     31318.32,
+     0.813316787,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/100000": [
+     21984.22,
+     0.99038897,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/100000": [
+     22065.6667,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/100000": [
+     31754.4103,
+     0.708680313,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/100000": [
+     269772.846,
+     0.0829750924,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/100000": [
+     34029.359,
+     0.636945197,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/100000": [
+     25594.5897,
+     0.881520305,
+     "HandWritten"
+    ]
+   }
+  },
+  {
+   "round": 5,
+   "build": "control",
+   "status": "ok",
+   "load_before": 18.7,
+   "load_after": 16.6,
+   "waited_s": 0,
+   "quiet": false,
+   "run_dir": "/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs/0e19da0ca84a/20261010-091439-459a0d0-rotation-final-layered/samples/0e19da0ca84a/20261010-091744-459a0d0-r5-control",
+   "results": {
+    "NBody/Ordered/HandWritten/64": [
+     15899,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/64": [
+     15608.5,
+     1.02058415,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/64": [
+     15608.5,
+     1.01923385,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/64": [
+     15568.5,
+     1.02120394,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/64": [
+     15608.5,
+     1.01770139,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/64": [
+     15568,
+     1.02226122,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/64": [
+     15588.5,
+     1.01959762,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/64": [
+     15538.5,
+     1.02481605,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/64": [
+     15588.5,
+     1.01999014,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/64": [
+     15549,
+     1.02378047,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/64": [
+     15574,
+     1.02025872,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/64": [
+     15543.5,
+     1.02292684,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/64": [
+     15559,
+     1.02060629,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/64": [
+     15518.5,
+     1.02450506,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/64": [
+     15583.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/64": [
+     15568.5,
+     1.00128841,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/64": [
+     15338.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/64": [
+     15523.5,
+     0.988425728,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/64": [
+     15643.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/64": [
+     15524,
+     1.00867052,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/64": [
+     15333.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/64": [
+     15529,
+     0.987788778,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/64": [
+     15728.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/64": [
+     15523,
+     1.00997999,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/64": [
+     15318,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/64": [
+     15528.5,
+     0.989282338,
+     "HandWritten"
+    ],
+    "NBody/Ordered/HandWritten/1024": [
+     4500481.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/1024": [
+     4436455,
+     1.00339194,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/1024": [
+     4379213.5,
+     1.04570164,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/1024": [
+     4382428.5,
+     1.016716,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/1024": [
+     4368357,
+     1.0268668,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/1024": [
+     4333479,
+     1.03741054,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/1024": [
+     4374651.5,
+     1.02375323,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/1024": [
+     4464077,
+     1.01289279,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/1024": [
+     2304703,
+     1.90938202,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/1024": [
+     2253776,
+     2.01483941,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/1024": [
+     4384757,
+     1.0408036,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/1024": [
+     4508764,
+     1.01866197,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/1024": [
+     1282563.5,
+     3.60991226,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/1024": [
+     2144321,
+     2.34867012,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/1024": [
+     4619486.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/1024": [
+     4460381,
+     1.01286211,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/1024": [
+     4448498,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/1024": [
+     4483606.5,
+     1.01744246,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/1024": [
+     2185408,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/1024": [
+     2351524,
+     0.921685759,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/1024": [
+     2664928,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/1024": [
+     2771030,
+     0.941378041,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/1024": [
+     1446060,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/1024": [
+     1541709.5,
+     0.923766194,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/1024": [
+     2328887,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/1024": [
+     2118283.5,
+     1.10401801,
+     "HandWritten"
+    ],
+    "NBody/Ordered/HandWritten/4096": [
+     69462725.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/4096": [
+     70389811,
+     0.981810927,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/4096": [
+     69996147.5,
+     0.979347585,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/4096": [
+     69088299.5,
+     0.991010894,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/4096": [
+     70918530.5,
+     0.975944051,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/4096": [
+     70187150,
+     0.975358551,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/4096": [
+     35946747,
+     1.92481665,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/4096": [
+     37430599.5,
+     1.89341497,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/4096": [
+     36455386,
+     1.84934671,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/4096": [
+     38476828.5,
+     1.801086,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/4096": [
+     32508746.5,
+     2.13923181,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/4096": [
+     32367092,
+     2.15670305,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/4096": [
+     24239503.5,
+     2.81102228,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/4096": [
+     32352135,
+     2.15484123,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/4096": [
+     72271049,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/4096": [
+     72543815.5,
+     1.00884633,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/4096": [
+     70744587,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/4096": [
+     70606793.5,
+     0.99604621,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/4096": [
+     35491705,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/4096": [
+     36569658.5,
+     0.980828029,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/4096": [
+     35486311.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/4096": [
+     36420989,
+     0.974790025,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/4096": [
+     18350438.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/4096": [
+     20128325,
+     0.969943203,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/4096": [
+     19863257,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/4096": [
+     20182832.5,
+     0.957575279,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/64": [
+     14.5289475,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/64": [
+     21.0206722,
+     0.681873523,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/64": [
+     146.718289,
+     0.0983650095,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/64": [
+     22.4538948,
+     0.639348421,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/64": [
+     17.9164164,
+     0.821010162,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/64": [
+     16.704973,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/64": [
+     21.327128,
+     0.779095106,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/64": [
+     144.440797,
+     0.114493312,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/64": [
+     25.142251,
+     0.630778819,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/64": [
+     22.1657677,
+     0.779169895,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/4096": [
+     684.853147,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/4096": [
+     1213.31608,
+     0.557688064,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/4096": [
+     9081.31888,
+     0.0747979636,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/4096": [
+     1073.78322,
+     0.650846334,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/4096": [
+     687.563636,
+     0.987581455,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/4096": [
+     691.235683,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/4096": [
+     1170.28561,
+     0.587097805,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/4096": [
+     9192.70411,
+     0.0763048211,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/4096": [
+     1078.38473,
+     0.645176844,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/4096": [
+     723.825257,
+     0.954975909,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/100000": [
+     20965.6078,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/100000": [
+     29416.4118,
+     0.735906141,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/100000": [
+     231657.569,
+     0.0931660097,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/100000": [
+     26743.9412,
+     0.791439011,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/100000": [
+     22297.8039,
+     0.977319939,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/100000": [
+     21086.1818,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/100000": [
+     28516.0455,
+     0.7360816,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/100000": [
+     224897.864,
+     0.0942087426,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/100000": [
+     26655.75,
+     0.787963814,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/100000": [
+     21955,
+     0.963223512,
+     "HandWritten"
+    ]
+   }
+  },
+  {
+   "round": 5,
+   "build": "candidate",
+   "status": "ok",
+   "load_before": 15.2,
+   "load_after": 15.0,
+   "waited_s": 0,
+   "quiet": false,
+   "run_dir": "/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs/0e19da0ca84a/20261010-091439-459a0d0-rotation-final-layered/samples/0e19da0ca84a/20261010-091806-459a0d0-r5-candidate",
+   "results": {
+    "NBody/Ordered/HandWritten/64": [
+     15728.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/64": [
+     15528.5,
+     1.01235145,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/64": [
+     16300,
+     0.96489389,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/64": [
+     16329,
+     0.965495927,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/64": [
+     16339.5,
+     0.963858258,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/64": [
+     16264.5,
+     0.967086409,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/64": [
+     16264.5,
+     0.966677102,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/64": [
+     16294.5,
+     0.962822437,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/64": [
+     16364.5,
+     0.96226263,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/64": [
+     16295,
+     0.967054956,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/64": [
+     16249.5,
+     0.969485275,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/64": [
+     16285,
+     0.967940288,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/64": [
+     16340,
+     0.964601863,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/64": [
+     16310,
+     0.964968919,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/64": [
+     16094,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/64": [
+     16230,
+     0.988514522,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/64": [
+     15323,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/64": [
+     16199,
+     0.947632796,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/64": [
+     16119,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/64": [
+     16254.5,
+     0.992353787,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/64": [
+     15313,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/64": [
+     16234.5,
+     0.942016519,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/64": [
+     16084,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/64": [
+     16264,
+     0.993147685,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/64": [
+     15318,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/64": [
+     16174,
+     0.947629746,
+     "HandWritten"
+    ],
+    "NBody/Ordered/HandWritten/1024": [
+     4119115.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/1024": [
+     4317991,
+     0.953824213,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/1024": [
+     4340629.5,
+     0.950105584,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/1024": [
+     4258255,
+     0.985141738,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/1024": [
+     4306238.5,
+     0.983094258,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/1024": [
+     4342763,
+     0.975202332,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/1024": [
+     4316508.5,
+     0.955433115,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/1024": [
+     4235911.5,
+     1.01401411,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/1024": [
+     2194556.5,
+     1.89600046,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/1024": [
+     2283906.5,
+     1.91402291,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/1024": [
+     4331040,
+     0.978545936,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/1024": [
+     4305472,
+     0.976106557,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/1024": [
+     1558195,
+     2.65302787,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/1024": [
+     2135818,
+     1.92876001,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/1024": [
+     4132455.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/1024": [
+     4348552,
+     0.963645788,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/1024": [
+     4154409,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/1024": [
+     4315426.5,
+     1.0133673,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/1024": [
+     2254687,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/1024": [
+     2160855.5,
+     0.991008842,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/1024": [
+     2323326.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/1024": [
+     2323208.5,
+     1.014957,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/1024": [
+     1569121,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/1024": [
+     1716398.5,
+     0.940040396,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/1024": [
+     1268467,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/1024": [
+     2095732.5,
+     0.703326222,
+     "HandWritten"
+    ],
+    "NBody/Ordered/HandWritten/4096": [
+     69313870,
+     1,
+     "HandWritten"
+    ],
+    "NBody/Ordered/ECS/4096": [
+     70457654,
+     0.977328768,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native1/4096": [
+     72058708.5,
+     0.942721689,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline1/4096": [
+     71519704,
+     0.990916059,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x1/4096": [
+     71445862.5,
+     0.968025775,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x1/4096": [
+     70408400,
+     0.995749695,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native2/4096": [
+     39004826.5,
+     1.86724323,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline2/4096": [
+     37211654,
+     1.82710883,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x2/4096": [
+     35951649.5,
+     1.95060928,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x2/4096": [
+     36654599.5,
+     1.86722846,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Native4/4096": [
+     32473067,
+     2.14026831,
+     "HandWritten"
+    ],
+    "NBody/Ordered/Pipeline4/4096": [
+     32455596,
+     2.16617765,
+     "HandWritten"
+    ],
+    "NBody/Ordered/NativeG64x4/4096": [
+     23393560.5,
+     2.97014544,
+     "HandWritten"
+    ],
+    "NBody/Ordered/PipelineG64x4/4096": [
+     32492001,
+     2.15099486,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/HandWritten/4096": [
+     71221143.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative1/ECS/4096": [
+     71213411.5,
+     0.992240431,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/HandWritten/4096": [
+     68675825.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline1/ECS/4096": [
+     70530509.5,
+     0.982502897,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/HandWritten/4096": [
+     34189215.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative2/ECS/4096": [
+     35226598.5,
+     0.977153688,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/HandWritten/4096": [
+     34522950,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline2/ECS/4096": [
+     34583359.5,
+     0.993338311,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/HandWritten/4096": [
+     18632018.5,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedNative4/ECS/4096": [
+     22108578.5,
+     0.954027925,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/HandWritten/4096": [
+     18468006,
+     1,
+     "HandWritten"
+    ],
+    "NBody/MatchedPipeline4/ECS/4096": [
+     18544631.5,
+     0.999350184,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/64": [
+     14.204466,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/64": [
+     16.3926337,
+     0.861440026,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/64": [
+     17.5483974,
+     0.805867472,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/64": [
+     22.0722192,
+     0.664747609,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/64": [
+     22.9989092,
+     0.620051405,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/64": [
+     15.8135723,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/64": [
+     18.8554662,
+     0.845137604,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/64": [
+     141.088343,
+     0.11062823,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/64": [
+     25.9115906,
+     0.607230434,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/64": [
+     25.1127477,
+     0.625733036,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/4096": [
+     697.39498,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/4096": [
+     650.686262,
+     1.06896243,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/4096": [
+     665.417437,
+     1.06152245,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/4096": [
+     699.227213,
+     0.99961656,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/4096": [
+     675.075297,
+     1.03497425,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/4096": [
+     713.377883,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/4096": [
+     680.084803,
+     1.0557558,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/4096": [
+     9144.64111,
+     0.0797892388,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/4096": [
+     1045.34464,
+     0.685795939,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/4096": [
+     691.404342,
+     1.03681444,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/HandWritten/100000": [
+     21837.7059,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Each/100000": [
+     20545.3725,
+     1.01499544,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1/100000": [
+     20551.2549,
+     1.0348239,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain64/100000": [
+     21105.4314,
+     1.01922594,
+     "HandWritten"
+    ],
+    "RowDispatch/Coherent/Grain1024/100000": [
+     20794.9608,
+     1.00628182,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/HandWritten/100000": [
+     20582.8824,
+     1,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Each/100000": [
+     21058.098,
+     0.977433115,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1/100000": [
+     218670.098,
+     0.0960834352,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain64/100000": [
+     26754.7451,
+     0.76938799,
+     "HandWritten"
+    ],
+    "RowDispatch/Fragmented/Grain1024/100000": [
+     21281.5686,
+     0.972851316,
+     "HandWritten"
+    ]
+   }
+  }
+ ]
+}

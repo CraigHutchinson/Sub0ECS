@@ -1,0 +1,119 @@
+# Rotation 20261010-091439-459a0d0-rotation-final-layered
+
+5 rounds, builds rotated, pin `0-3`, profile `compare`.
+
+| Build | Samples used | Left out (busy machine) |
+|---|---:|---:|
+| control | 5 | 0 |
+| candidate | 5 | 0 |
+
+| Case | control time (spread) | candidate time (spread) | control vs baseline (range) | candidate vs baseline (range) |
+|---|---:|---:|---:|---:|
+| NBody/MatchedNative1/ECS/1024 | 4.44 ms (±3%) | 4.3 ms (±7%) | 0.96× (0.95–1.01) | 1.00× (0.95–1.00) |
+| NBody/MatchedNative1/ECS/4096 | 72.5 ms (±6%) | 72.8 ms (±4%) | 1.01× (0.98–1.02) | 0.99× (0.99–1.01) |
+| NBody/MatchedNative1/ECS/64 | 15.5 µs (±0%) | 16.2 µs (±2%) | 1.03× (1.00–1.03) | 1.00× (0.99–1.01) |
+| NBody/MatchedNative1/HandWritten/1024 | 4.32 ms (±5%) | 4.2 ms (±6%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/MatchedNative1/HandWritten/4096 | 74.5 ms (±4%) | 71.8 ms (±5%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/MatchedNative1/HandWritten/64 | 16 µs (±1%) | 16.1 µs (±1%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/MatchedNative2/ECS/1024 | 2.36 ms (±36%) | 2.28 ms (±4%) | 0.92× (0.53–1.01) | 0.99× (0.95–1.70) |
+| NBody/MatchedNative2/ECS/4096 | 36.6 ms (±9%) | 36.4 ms (±3%) | 1.03× (0.98–1.20) | 0.98× (0.94–1.00) |
+| NBody/MatchedNative2/ECS/64 | 15.5 µs (±0%) | 16.3 µs (±1%) | 1.03× (1.00–1.06) | 0.99× (0.99–0.99) |
+| NBody/MatchedNative2/HandWritten/1024 | 2.23 ms (±4%) | 2.25 ms (±42%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/MatchedNative2/HandWritten/4096 | 38 ms (±27%) | 34.5 ms (±7%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/MatchedNative2/HandWritten/64 | 16 µs (±2%) | 16.1 µs (±1%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/MatchedNative4/ECS/1024 | 1.57 ms (±15%) | 1.58 ms (±19%) | 1.00× (0.92–1.32) | 1.01× (0.94–1.40) |
+| NBody/MatchedNative4/ECS/4096 | 22 ms (±31%) | 22.1 ms (±11%) | 0.98× (0.97–1.00) | 0.98× (0.95–1.00) |
+| NBody/MatchedNative4/ECS/64 | 15.5 µs (±0%) | 16.2 µs (±1%) | 1.03× (1.01–1.06) | 1.00× (0.99–1.00) |
+| NBody/MatchedNative4/HandWritten/1024 | 1.56 ms (±31%) | 1.58 ms (±28%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/MatchedNative4/HandWritten/4096 | 22 ms (±32%) | 18.6 ms (±12%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/MatchedNative4/HandWritten/64 | 16 µs (±2%) | 16.1 µs (±1%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/MatchedPipeline1/ECS/1024 | 4.44 ms (±4%) | 4.32 ms (±8%) | 0.97× (0.96–1.02) | 0.98× (0.91–1.01) |
+| NBody/MatchedPipeline1/ECS/4096 | 72.2 ms (±3%) | 70.5 ms (±1%) | 1.00× (0.98–1.03) | 0.98× (0.98–0.99) |
+| NBody/MatchedPipeline1/ECS/64 | 15.5 µs (±0%) | 16.2 µs (±1%) | 0.99× (0.98–0.99) | 0.95× (0.94–0.95) |
+| NBody/MatchedPipeline1/HandWritten/1024 | 4.37 ms (±4%) | 4.15 ms (±4%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/MatchedPipeline1/HandWritten/4096 | 71.1 ms (±5%) | 68.7 ms (±2%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/MatchedPipeline1/HandWritten/64 | 15.3 µs (±0%) | 15.3 µs (±0%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/MatchedPipeline2/ECS/1024 | 2.59 ms (±26%) | 2.32 ms (±11%) | 0.95× (0.81–1.67) | 0.98× (0.92–1.02) |
+| NBody/MatchedPipeline2/ECS/4096 | 36.4 ms (±24%) | 36.3 ms (±33%) | 1.00× (0.94–1.11) | 0.99× (0.98–1.00) |
+| NBody/MatchedPipeline2/ECS/64 | 15.5 µs (±0%) | 16.2 µs (±1%) | 0.99× (0.98–0.99) | 0.94× (0.94–0.96) |
+| NBody/MatchedPipeline2/HandWritten/1024 | 2.66 ms (±36%) | 2.28 ms (±4%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/MatchedPipeline2/HandWritten/4096 | 36.5 ms (±27%) | 35.6 ms (±18%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/MatchedPipeline2/HandWritten/64 | 15.3 µs (±0%) | 15.3 µs (±0%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/MatchedPipeline4/ECS/1024 | 2.11 ms (±4%) | 2.08 ms (±1%) | 0.99× (0.98–1.10) | 1.01× (0.70–1.03) |
+| NBody/MatchedPipeline4/ECS/4096 | 20.9 ms (±34%) | 19 ms (±19%) | 1.00× (0.96–1.12) | 1.02× (1.00–1.04) |
+| NBody/MatchedPipeline4/ECS/64 | 15.5 µs (±0%) | 16.2 µs (±1%) | 0.99× (0.99–0.99) | 0.95× (0.93–0.95) |
+| NBody/MatchedPipeline4/HandWritten/1024 | 2.1 ms (±6%) | 2.1 ms (±20%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/MatchedPipeline4/HandWritten/4096 | 19.9 ms (±37%) | 19.7 ms (±21%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/MatchedPipeline4/HandWritten/64 | 15.3 µs (±0%) | 15.3 µs (±0%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/Ordered/ECS/1024 | 4.36 ms (±3%) | 4.39 ms (±5%) | 1.01× (0.95–1.03) | 0.98× (0.94–0.99) |
+| NBody/Ordered/ECS/4096 | 69.7 ms (±2%) | 70.9 ms (±1%) | 0.99× (0.97–1.04) | 1.00× (0.98–1.01) |
+| NBody/Ordered/ECS/64 | 15.6 µs (±1%) | 15.6 µs (±0%) | 1.01× (1.01–1.02) | 1.02× (1.01–1.02) |
+| NBody/Ordered/HandWritten/1024 | 4.47 ms (±5%) | 4.32 ms (±6%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/Ordered/HandWritten/4096 | 70.8 ms (±2%) | 70.8 ms (±2%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/Ordered/HandWritten/64 | 15.9 µs (±1%) | 15.8 µs (±1%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| NBody/Ordered/Native1/1024 | 4.38 ms (±3%) | 4.4 ms (±5%) | 1.03× (0.95–1.05) | 0.99× (0.95–1.04) |
+| NBody/Ordered/Native1/4096 | 70.2 ms (±1%) | 72.1 ms (±2%) | 1.01× (0.98–1.01) | 0.98× (0.94–1.01) |
+| NBody/Ordered/Native1/64 | 15.6 µs (±0%) | 16.3 µs (±0%) | 1.02× (1.00–1.02) | 0.97× (0.96–0.98) |
+| NBody/Ordered/Native2/1024 | 4.37 ms (±2%) | 4.51 ms (±6%) | 1.02× (0.97–1.06) | 0.96× (0.95–1.00) |
+| NBody/Ordered/Native2/4096 | 36.4 ms (±3%) | 39 ms (±17%) | 1.92× (1.79–1.94) | 1.87× (1.47–1.92) |
+| NBody/Ordered/Native2/64 | 15.6 µs (±0%) | 16.3 µs (±1%) | 1.01× (1.01–1.02) | 0.97× (0.96–0.98) |
+| NBody/Ordered/Native4/1024 | 4.33 ms (±7%) | 4.43 ms (±4%) | 1.04× (0.97–1.06) | 0.98× (0.97–1.05) |
+| NBody/Ordered/Native4/4096 | 32.4 ms (±5%) | 32.5 ms (±0%) | 2.36× (2.12–2.73) | 2.20× (2.14–2.24) |
+| NBody/Ordered/Native4/64 | 15.6 µs (±1%) | 16.2 µs (±0%) | 1.02× (1.01–1.02) | 0.97× (0.96–0.98) |
+| NBody/Ordered/NativeG64x1/1024 | 4.37 ms (±2%) | 4.31 ms (±7%) | 1.02× (0.97–1.04) | 1.00× (0.94–1.02) |
+| NBody/Ordered/NativeG64x1/4096 | 70.7 ms (±2%) | 71.4 ms (±3%) | 1.00× (0.98–1.03) | 0.99× (0.97–1.01) |
+| NBody/Ordered/NativeG64x1/64 | 15.6 µs (±0%) | 16.3 µs (±1%) | 1.01× (1.01–1.02) | 0.97× (0.96–0.98) |
+| NBody/Ordered/NativeG64x2/1024 | 2.37 ms (±10%) | 2.33 ms (±40%) | 1.83× (1.68–1.91) | 1.89× (1.02–1.99) |
+| NBody/Ordered/NativeG64x2/4096 | 35.7 ms (±2%) | 36 ms (±25%) | 1.94× (1.85–2.02) | 1.95× (1.34–1.97) |
+| NBody/Ordered/NativeG64x2/64 | 15.6 µs (±1%) | 16.4 µs (±1%) | 1.01× (1.01–1.02) | 0.97× (0.96–0.98) |
+| NBody/Ordered/NativeG64x4/1024 | 1.37 ms (±14%) | 1.57 ms (±16%) | 3.13× (2.96–3.61) | 2.65× (2.62–3.31) |
+| NBody/Ordered/NativeG64x4/4096 | 22.6 ms (±8%) | 23.4 ms (±5%) | 3.28× (2.81–3.63) | 2.97× (2.80–3.03) |
+| NBody/Ordered/NativeG64x4/64 | 15.6 µs (±0%) | 16.3 µs (±1%) | 1.02× (1.01–1.02) | 0.97× (0.96–0.98) |
+| NBody/Ordered/Pipeline1/1024 | 4.31 ms (±4%) | 4.26 ms (±8%) | 1.02× (0.98–1.07) | 0.99× (0.92–1.03) |
+| NBody/Ordered/Pipeline1/4096 | 69.7 ms (±3%) | 71.5 ms (±3%) | 0.99× (0.97–1.02) | 0.99× (0.95–1.01) |
+| NBody/Ordered/Pipeline1/64 | 15.6 µs (±0%) | 16.3 µs (±1%) | 1.02× (1.01–1.02) | 0.97× (0.96–0.98) |
+| NBody/Ordered/Pipeline2/1024 | 4.35 ms (±4%) | 4.33 ms (±6%) | 1.01× (0.99–1.07) | 0.99× (0.93–1.01) |
+| NBody/Ordered/Pipeline2/4096 | 36.4 ms (±2%) | 37.2 ms (±11%) | 1.92× (1.87–1.95) | 1.90× (1.67–1.99) |
+| NBody/Ordered/Pipeline2/64 | 15.6 µs (±0%) | 16.3 µs (±1%) | 1.02× (1.01–1.02) | 0.97× (0.96–0.98) |
+| NBody/Ordered/Pipeline4/1024 | 4.33 ms (±4%) | 4.4 ms (±4%) | 1.02× (0.99–1.07) | 0.98× (0.95–1.01) |
+| NBody/Ordered/Pipeline4/4096 | 32.4 ms (±6%) | 32.4 ms (±0%) | 2.26× (2.13–2.60) | 2.21× (2.17–2.29) |
+| NBody/Ordered/Pipeline4/64 | 15.5 µs (±0%) | 16.3 µs (±1%) | 1.02× (1.00–1.02) | 0.97× (0.96–0.98) |
+| NBody/Ordered/PipelineG64x1/1024 | 4.31 ms (±1%) | 4.34 ms (±6%) | 1.03× (0.96–1.06) | 0.98× (0.91–1.00) |
+| NBody/Ordered/PipelineG64x1/4096 | 70.2 ms (±2%) | 71.8 ms (±2%) | 1.00× (0.97–1.03) | 0.98× (0.97–1.00) |
+| NBody/Ordered/PipelineG64x1/64 | 15.6 µs (±0%) | 16.3 µs (±0%) | 1.02× (1.01–1.02) | 0.97× (0.96–0.98) |
+| NBody/Ordered/PipelineG64x2/1024 | 2.32 ms (±10%) | 2.37 ms (±26%) | 1.87× (1.59–2.01) | 1.83× (1.64–1.91) |
+| NBody/Ordered/PipelineG64x2/4096 | 37.2 ms (±9%) | 37.5 ms (±4%) | 1.95× (1.80–2.00) | 1.87× (1.84–1.99) |
+| NBody/Ordered/PipelineG64x2/64 | 15.5 µs (±0%) | 16.3 µs (±1%) | 1.02× (1.01–1.02) | 0.97× (0.96–0.98) |
+| NBody/Ordered/PipelineG64x4/1024 | 2.14 ms (±19%) | 2.2 ms (±8%) | 2.10× (1.96–3.02) | 1.95× (1.84–2.07) |
+| NBody/Ordered/PipelineG64x4/4096 | 32.4 ms (±18%) | 32.5 ms (±1%) | 2.23× (2.12–3.35) | 2.17× (2.15–2.30) |
+| NBody/Ordered/PipelineG64x4/64 | 15.5 µs (±0%) | 16.3 µs (±1%) | 1.02× (1.01–1.02) | 0.97× (0.96–0.98) |
+| RowDispatch/Coherent/Each/100000 | 29.4 µs (±17%) | 20.5 µs (±8%) | 0.73× (0.64–0.74) | 1.02× (0.96–1.03) |
+| RowDispatch/Coherent/Each/4096 | 1.24 µs (±6%) | 663 ns (±2%) | 0.58× (0.56–0.61) | 1.05× (1.04–1.10) |
+| RowDispatch/Coherent/Each/64 | 22 ns (±6%) | 16.7 ns (±4%) | 0.70× (0.66–0.72) | 0.86× (0.82–0.89) |
+| RowDispatch/Coherent/Grain1/100000 | 232 µs (±12%) | 20.6 µs (±4%) | 0.10× (0.09–0.10) | 1.02× (0.99–1.03) |
+| RowDispatch/Coherent/Grain1/4096 | 9.74 µs (±7%) | 666 ns (±3%) | 0.07× (0.07–0.08) | 1.05× (1.03–1.06) |
+| RowDispatch/Coherent/Grain1/64 | 147 ns (±6%) | 18.7 ns (±7%) | 0.10× (0.10–0.10) | 0.81× (0.75–0.84) |
+| RowDispatch/Coherent/Grain1024/100000 | 22 µs (±15%) | 20.8 µs (±5%) | 0.99× (0.98–0.99) | 1.01× (1.00–1.02) |
+| RowDispatch/Coherent/Grain1024/4096 | 727 ns (±3%) | 675 ns (±3%) | 0.99× (0.98–0.99) | 1.03× (1.02–1.04) |
+| RowDispatch/Coherent/Grain1024/64 | 17.9 ns (±6%) | 22.7 ns (±9%) | 0.82× (0.81–0.82) | 0.62× (0.60–0.67) |
+| RowDispatch/Coherent/Grain64/100000 | 28.2 µs (±9%) | 21.1 µs (±4%) | 0.79× (0.78–0.83) | 1.02× (0.99–1.04) |
+| RowDispatch/Coherent/Grain64/4096 | 1.12 µs (±8%) | 706 ns (±7%) | 0.65× (0.62–0.66) | 0.98× (0.98–1.01) |
+| RowDispatch/Coherent/Grain64/64 | 22.8 ns (±9%) | 24 ns (±5%) | 0.65× (0.59–0.66) | 0.63× (0.62–0.66) |
+| RowDispatch/Coherent/HandWritten/100000 | 21.1 µs (±8%) | 21.8 µs (±5%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| RowDispatch/Coherent/HandWritten/4096 | 721 ns (±5%) | 697 ns (±4%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| RowDispatch/Coherent/HandWritten/64 | 14.6 ns (±4%) | 14.5 ns (±3%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| RowDispatch/Fragmented/Each/100000 | 29 µs (±9%) | 21.4 µs (±5%) | 0.74× (0.71–0.74) | 0.99× (0.98–1.06) |
+| RowDispatch/Fragmented/Each/4096 | 1.21 µs (±2%) | 680 ns (±5%) | 0.57× (0.55–0.59) | 1.02× (1.01–1.06) |
+| RowDispatch/Fragmented/Each/64 | 20.9 ns (±3%) | 18.9 ns (±1%) | 0.83× (0.78–0.89) | 0.85× (0.83–1.00) |
+| RowDispatch/Fragmented/Grain1/100000 | 240 µs (±9%) | 222 µs (±7%) | 0.09× (0.08–0.10) | 0.10× (0.09–0.10) |
+| RowDispatch/Fragmented/Grain1/4096 | 9.19 µs (±3%) | 9.14 µs (±7%) | 0.08× (0.07–0.08) | 0.08× (0.07–0.08) |
+| RowDispatch/Fragmented/Grain1/64 | 144 ns (±4%) | 146 ns (±4%) | 0.12× (0.11–0.13) | 0.11× (0.11–0.13) |
+| RowDispatch/Fragmented/Grain1024/100000 | 22.5 µs (±9%) | 21.4 µs (±5%) | 0.96× (0.88–0.98) | 0.99× (0.97–1.01) |
+| RowDispatch/Fragmented/Grain1024/4096 | 737 ns (±6%) | 692 ns (±5%) | 0.93× (0.91–0.96) | 0.98× (0.93–1.04) |
+| RowDispatch/Fragmented/Grain1024/64 | 21.4 ns (±4%) | 25.3 ns (±2%) | 0.78× (0.76–0.83) | 0.62× (0.61–0.74) |
+| RowDispatch/Fragmented/Grain64/100000 | 28.9 µs (±13%) | 27.1 µs (±7%) | 0.77× (0.64–0.80) | 0.77× (0.74–0.77) |
+| RowDispatch/Fragmented/Grain64/4096 | 1.08 µs (±3%) | 1.07 µs (±3%) | 0.64× (0.64–0.65) | 0.66× (0.65–0.69) |
+| RowDispatch/Fragmented/Grain64/64 | 25.1 ns (±2%) | 26.1 ns (±6%) | 0.65× (0.63–0.73) | 0.61× (0.60–0.73) |
+| RowDispatch/Fragmented/HandWritten/100000 | 21.4 µs (±5%) | 20.8 µs (±5%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| RowDispatch/Fragmented/HandWritten/4096 | 683 ns (±3%) | 713 ns (±3%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |
+| RowDispatch/Fragmented/HandWritten/64 | 17 ns (±8%) | 15.9 ns (±12%) | 1.00× (1.00–1.00) | 1.00× (1.00–1.00) |

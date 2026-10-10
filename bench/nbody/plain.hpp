@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include "nbody/body.hpp"
 namespace bench::nbody
 {
@@ -14,6 +15,31 @@ public:
     {
         input_ = bodies_;
         for (std::size_t i = 0; i < bodies_.size(); ++i) bodies_[i] = advanceBody(input_, i);
+        ++ticks_;
+    }
+    /** Handwritten parallel control: the same snapshot, pool and grain as ECS.
+     * Each task owns disjoint target bodies; source reduction order is unchanged.
+     */
+    template <std::size_t Rows = 1024, typename Pool>
+    void tick(Pool& pool)
+    {
+        static_assert(Rows > 0);
+        input_ = bodies_;
+        const auto n = bodies_.size();
+        const auto chunks = n == 0 ? 0 : 1 + (n - 1) / Rows;
+        if (chunks < 4)
+        {
+            for (std::size_t i = 0; i < n; ++i) bodies_[i] = advanceBody(input_, i);
+        }
+        else
+        {
+            auto update = [&](std::size_t item, unsigned) {
+                const auto begin = item * Rows;
+                const auto end = begin + std::min(Rows, n - begin);
+                for (auto i = begin; i < end; ++i) bodies_[i] = advanceBody(input_, i);
+            };
+            pool.parallelFor(chunks, update);
+        }
         ++ticks_;
     }
     const std::vector<Body>& state() const { return bodies_; }

@@ -442,3 +442,14 @@ instrumented guest instruction references, not retired hardware counters.
 validation logs](../bench/results/reference/work-mode-nbody/README.md) preserve
 slow samples and limitations. Shared-host results are diagnostic. Actual Crucible
 FP/staging/replay/frame/lifecycle integration remains a separate receiving gate.
+
+## Layered row-dispatch review (10 October 2026)
+
+The [layered review](optimization/layered-review.md) audits architecture,
+optional Pipeline integration, storage, functions and generated loops against
+handwritten targets. Single-partition `eachParallel` now computes row ranges
+without a per-call chunk list and resolves columns once. General fragmented
+storage and pool semantics remain unchanged. The `rows` paired harness isolates
+this mechanism; complete n-body ticks check whether it matters alongside real
+scheduling and physics. See the review and its curated receipt for measurements,
+validation and the remaining layout/consumer/platform gaps.
