@@ -1,5 +1,8 @@
 # SubzeroECS: design and evidence
 
+Start with the [performance guide](optimization/README.md) for workload selection,
+reproduction recipes, current optimization results and their limits.
+
 What the library does, why it is built that way, and the measurements behind each
 claim. Open work is in [BACKLOG.md](BACKLOG.md); longer design notes are under
 [research/](research/).

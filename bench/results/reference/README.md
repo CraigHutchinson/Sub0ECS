@@ -1,7 +1,7 @@
 # Reference captures
 
 The captures the figures in [docs/FINDINGS.md](../../../docs/FINDINGS.md) and the
-README rest on. Each was taken with `bench/tools/rotate.py`: several interleaved
+README rest on. The original captures below were taken with `bench/tools/rotate.py`: several interleaved
 samples of MSVC 19.51, clang-cl 22.1 and GCC 16.2 builds (host-tuned, no
 floating-point contraction) on a Core Ultra 9 275HX, with a quiet-machine check
 before every sample.
@@ -20,3 +20,22 @@ capture.
 
 Older captures are in the repository history, not here: a figure belongs in the
 tree only while the current code produces it.
+
+## Layered and full-stack optimization captures
+
+These captures use a different shared virtual host and GCC 13.3 portable builds;
+do not combine their absolute timings with the machine above. Each receipt names
+its source, flags, resource counts, validation and uncontrolled host conditions.
+See the [performance guide](../../../docs/optimization/README.md) for workload
+selection and commands.
+
+| Capture | Covers | Interpretation |
+|---|---|---|
+| [Initial n-body diagnostic](work-mode-nbody/README.md) | Ordered kernel, native/Pipeline controls, instruction profiling | Shared-host diagnostic; compact follow-up below |
+| [Layered dispatch](work-mode-layered/README.md) | Five process pairs; single-partition row dispatch | Includes small-world setup regression; not a whole-game claim |
+| [Representative workloads](work-mode-representative/README.md) | Five process pairs; compact n-body plus streaming, churn and staged neighbors | Complete-tick library experiments with matched handwritten controls |
+| [Full stack and Crucible](work-mode-stack/README.md) | Five synthetic process captures and 20 actual consumer processes | Dense indexed staging premise is stronger; actual Crucible ranges overlap |
+
+Historical receipts preserve the flags and pins actually measured. Use the
+[current C++23 contract](../../../docs/cxx23.md) for new builds and capture fresh
+results before claiming a new compiler or production configuration is faster.

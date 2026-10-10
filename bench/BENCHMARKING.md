@@ -1,5 +1,8 @@
 # Benchmarking
 
+Start with the [performance guide](../docs/optimization/README.md) for workload selection,
+reproduction recipes, current optimization results and their limits.
+
 How to measure the library, and how to tell whether a measurement can be
 trusted. The harness makes runs **reproducible, self-describing and comparable**:
 the same suites run on any machine and record what they ran on.
@@ -59,6 +62,9 @@ python3 bench/tools/compare.py bench/results/runs/<host>/<runA> bench/results/ru
 |---|---:|---:|---|---|
 | `quick` | 5 | default | 1K entities, 1K units | Check the harness works (seconds), not numbers |
 | `compare` | 11 | 1 ms | 1K / 100K entities | `rotate.py`: about a minute per sample, so many interleaved samples are affordable |
+| `nbody` | 11 | 0 ms | 64 / 1024 / 4096 bodies; 1 / 2 / 4 lanes | Ordered and compact all-pairs ticks |
+| `representative` | 11 | 0 ms | Row sizes 1K / 16K / 64K plus n-body | Complete streaming, churn, staging and compute |
+| `stack` | 11 | 0 ms | 64 / 4096 / 65536 stack rows plus row workloads and n-body | Optional Pub/Pipeline/ECS boundary; requires both integration flags |
 | `standard` | 22 | 1 ms | 1K / 100K / 1M; 1K / 10K / 50K units | Everyday comparisons |
 | `reference` | 52 | 5 ms | + 10M entities, + 200K units, thread ladder to all cores | Dedicated hardware |
 

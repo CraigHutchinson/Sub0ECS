@@ -3,10 +3,13 @@
 A header-only C++23 Entity Component System whose storage is laid out by the
 **systems you declare**, not only by the components entities happen to have.
 
-You get the iteration speed of a hand-written loop and keep the flexibility that a
-hand-written loop gives up: any entity can gain or lose any component at any time,
-systems can be added while the program runs, and the same systems run inline, on a
-thread pool or on a device without changing their results.
+The performance target is optimized hand-written code for the same workload,
+while retaining runtime component changes, queries and execution choices.
+The measured gap depends on the workload: see the [performance guide](docs/optimization/README.md)
+for handwritten comparisons, reproduction commands and current limits.
+
+[Quick start](#quick-start) · [Performance](#performance) · [Build](#build) ·
+[Benchmark guide](bench/BENCHMARKING.md) · [Examples](docs/EXAMPLES.md)
 
 ## What it gives you
 
@@ -89,6 +92,25 @@ further type is kept in side storage, where everything still works and only
 
 ## Performance
 
+Start with the **[performance guide](docs/optimization/README.md)** to choose a
+workload, reproduce a result, or follow the architecture-to-function review.
+
+| Question | Start here |
+|---|---|
+| How close is iteration to handwritten code? | Tables below and [reference captures](bench/results/reference/README.md) |
+| What about complete ticks, n-body, streaming and churn? | [Representative workloads](docs/optimization/representative.md) and [n-body contract](docs/optimization/nbody.md) |
+| Where does Pub/Pipeline/ECS composition spend time? | [Full-stack workloads and actual Crucible reproduction](docs/optimization/full-stack.md) |
+| How do I measure or profile my own change? | [Benchmarking method](bench/BENCHMARKING.md) |
+| What remains unproven or needs future coverage? | [Crucible workload requirements](docs/optimization/full-stack.md#crucible-workload-and-exhaustive-logic-reference) and [backlog](docs/BACKLOG.md) |
+
+Synthetic indexed staging improves substantially under a fixed dense-identity
+contract, but remains above the handwritten floor. Actual Crucible timing ranges
+overlap: **no production speedup is established** by that capture. See the
+[full-stack receipt](bench/results/reference/work-mode-stack/README.md) for
+medians, spreads, source pins and raw evidence. The following tables describe the
+original storage comparison on its named machine, not full-stack performance.
+
+
 The bar is **code written by hand for exactly this workload**, with no ECS: a
 plain loop over arrays, and a hand-tuned version of it with one array per field
 and explicit SIMD. Those have none of the library's flexibility, which is the
@@ -109,7 +131,7 @@ results.
 
 What that says, honestly:
 
-- **Iteration costs nothing over a hand-written loop**, on all three compilers,
+- **Iteration is close to a plain hand-written loop in these cases**, on all three compilers,
   and stays there when the work is split into small systems and fused. It is
   1.7–10× faster than a class hierarchy and 12–40× faster than objects that own
   their components.
@@ -175,9 +197,6 @@ bench/             benchmarks, the reference designs they compare against, harne
 docs/              design and evidence, examples guide, research notes, backlog
 ```
 
-Representative complete-tick workloads and the consolidated optimization review:
-[streaming, churn, staged neighbors and n-body](docs/optimization/representative.md).
-
 Design and evidence: [docs/FINDINGS.md](docs/FINDINGS.md). Open work:
 [docs/BACKLOG.md](docs/BACKLOG.md).
 
@@ -205,5 +224,3 @@ earlier API is available at the [`v1.0.0` tag](https://github.com/CraigHutchinso
 
 **Contributions:**
 See [CONTRIBUTING.md](CONTRIBUTING.md) for dual-license inbound contribution terms.
-
-Full-stack optimization: [Pub/Pipeline/ECS workloads and Crucible reproduction](docs/optimization/full-stack.md).
