@@ -54,6 +54,12 @@
       "kind": "harness",
       "exe": "bench/sub0ecs_nbody_bench",
       "filter": "^NBody/"
+    },
+    "rows": {
+      "description": "Row dispatch against direct handwritten column loops; inline diagnostic pool",
+      "kind": "harness",
+      "exe": "bench/sub0ecs_rows_bench",
+      "filter": "^RowDispatch/"
     }
   },
   "profiles": {
@@ -72,7 +78,8 @@
         "skirmish",
         "threads",
         "spans",
-        "nbody"
+        "nbody",
+        "rows"
       ],
       "epochs": 5,
       "min_epoch_ms": 0

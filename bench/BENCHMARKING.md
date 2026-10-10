@@ -279,3 +279,11 @@ python bench/tools/run.py --profile reference --pin P --label ref-msvc
 See [ordered n-body](../docs/optimization/nbody.md) for the optional Pipeline
 adapter, explicit row-grain experiment, bitwise oracle and metric boundaries.
 Use `--profile nbody` for the suite; `quick` includes a small smoke case.
+
+## Row-dispatch isolation
+
+`--suites rows` compares direct handwritten column loops with `each` and
+`eachParallel` at grains 1/64/1024. Its pool runs chunks inline deliberately:
+results isolate descriptor/traversal cost, not thread scaling. Use `nbody`
+separately for the native and Pipeline pools. See the
+[layered review](../docs/optimization/layered-review.md) for contracts and limits.

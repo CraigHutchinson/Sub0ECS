@@ -90,3 +90,13 @@ change or fabricated shared type layer is required by this n-body experiment.
 Other useful scenarios are fragmented/churning worlds, bounded command delivery,
 and staged neighbor/grid workloads. Each needs an oracle, declared work unit and
 end-to-end operation boundary before joining this benchmark suite.
+
+## Same-resource handwritten controls
+
+The `MatchedNativeN` and `MatchedPipelineN` benchmark groups compare ECS with
+handwritten contiguous-body ranges using the same pool implementation, N lanes,
+64-row grain, four-chunk inline threshold and immutable tick snapshot. Both
+include snapshot/gather in timing and join before returning. Their oracle and
+reduction order are unchanged. These ratios isolate storage/dispatch overhead
+from thread scaling; the original `Ordered` group remains for continuity. The
+shared arithmetic kernel is still not a claim of the fastest n-body algorithm.

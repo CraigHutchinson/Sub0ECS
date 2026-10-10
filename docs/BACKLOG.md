@@ -18,6 +18,9 @@ the next release.
 | [#12](https://github.com/CraigHutchinson/Sub0ECS/issues/12) | Conversion to the Sub0 family style profile | Done: style guide aligned with the profile, includes library-rooted, macro prefixes, `ISidePool`, Doxygen tags and `[[nodiscard]]` on the user-facing API. Every decided mechanical rule is at zero. Open: tags on the store's building blocks (or move them to `detail`, #13 finding 18), and the executor naming and pool-interface points raised in the issue |
 
 
+See also the [10 October layered review](optimization/layered-review.md) for the
+single-partition dispatch refinement and the next experiments against handwritten bars.
+
 ## Performance: the gaps the benchmarks show
 
 | Item | Evidence |

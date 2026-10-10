@@ -1,0 +1,76 @@
+Note: perf_event_open failed, so the ins/op, cyc/op, IPC, bra/op and miss% columns are missing.
+This is usually a container or VM without virtualized performance counters, or
+/proc/sys/kernel/perf_event_paranoid being too restrictive.
+
+
+| relative |              95% CI |             ns/pass |              pass/s |    err% |     total | RowDispatch/Coherent/64
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:------------------------
+|   100.0% |                     |               14.27 |       70,060,101.40 |    3.4% |      0.01 | `RowDispatch/Coherent/HandWritten/64`
+|    84.5% |      64.2% .. 94.5% |               16.72 |       59,796,989.42 |    5.6% |      0.01 | `RowDispatch/Coherent/Each/64`
+|    80.6% |      71.8% .. 88.3% |               17.57 |       56,906,134.60 |    4.6% |      0.01 | `RowDispatch/Coherent/Grain1/64`
+|    60.2% |      48.0% .. 64.4% |               23.69 |       42,209,815.11 |    6.2% |      0.01 | `RowDispatch/Coherent/Grain64/64`
+|    60.7% |      47.4% .. 66.9% |               23.51 |       42,529,744.60 |    8.0% |      0.01 | `RowDispatch/Coherent/Grain1024/64`
+
+  Summary
+    `RowDispatch/Coherent/HandWritten/64` is fastest of 5, 1.18x ahead of `RowDispatch/Coherent/Each/64`
+    95% CI [1.06 .. 1.56], intervals corrected for 4 comparisons, 15 paired rounds, interleaved
+
+| relative |              95% CI |             ns/pass |              pass/s |    err% |     total | RowDispatch/Fragmented/64
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:--------------------------
+|   100.0% |                     |               16.10 |       62,114,374.34 |    3.7% |      0.01 | `RowDispatch/Fragmented/HandWritten/64`
+|    82.0% |      75.7% .. 98.6% |               19.85 |       50,388,748.46 |    5.9% |      0.01 | `RowDispatch/Fragmented/Each/64`
+|    11.1% |      10.0% .. 12.6% |              150.33 |        6,651,919.87 |    2.3% |      0.07 | `RowDispatch/Fragmented/Grain1/64`
+|    60.8% |      52.1% .. 69.5% |               27.73 |       36,067,265.44 |    8.0% |      0.01 | `RowDispatch/Fragmented/Grain64/64`
+|    62.1% |      51.9% .. 67.2% |               27.23 |       36,721,616.38 |    7.7% |      0.01 | `RowDispatch/Fragmented/Grain1024/64`
+
+  Summary
+    `RowDispatch/Fragmented/HandWritten/64` is fastest of 5, 1.22x ahead of `RowDispatch/Fragmented/Each/64`
+    95% CI [1.01 .. 1.32], intervals corrected for 4 comparisons, 15 paired rounds, interleaved
+
+| relative |              95% CI |             ns/pass |              pass/s |    err% |     total | RowDispatch/Coherent/4096
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:--------------------------
+|   100.0% |                     |              741.46 |        1,348,689.54 |    5.4% |      0.02 | `RowDispatch/Coherent/HandWritten/4096`
+|   106.3% |     89.2% .. 116.0% |              684.99 |        1,459,867.93 |    5.5% |      0.02 | `RowDispatch/Coherent/Each/4096`
+|   110.0% |     99.6% .. 119.4% |              667.23 |        1,498,726.43 |    1.7% |      0.02 | `RowDispatch/Coherent/Grain1/4096`
+|   101.2% |     95.5% .. 112.7% |              711.82 |        1,404,850.08 |    2.2% |      0.02 | `RowDispatch/Coherent/Grain64/4096`
+|   105.7% |     93.5% .. 113.4% |              718.50 |        1,391,789.08 |    6.7% |      0.02 | `RowDispatch/Coherent/Grain1024/4096`
+
+  Summary
+    `RowDispatch/Coherent/Grain1/4096` and `RowDispatch/Coherent/Each/4096` are the two fastest of 5, and were not separated
+    95% CI [0.97 .. 1.14], intervals corrected for 4 comparisons, 15 paired rounds, interleaved
+
+| relative |              95% CI |             ns/pass |              pass/s |    err% |     total | RowDispatch/Fragmented/4096
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:----------------------------
+|   100.0% |                     |              729.93 |        1,369,986.16 |    6.8% |      0.02 | `RowDispatch/Fragmented/HandWritten/4096`
+|   104.2% |     85.4% .. 128.8% |              699.83 |        1,428,909.09 |    5.7% |      0.02 | `RowDispatch/Fragmented/Each/4096`
+|     7.7% |        7.2% .. 8.3% |            9,580.16 |          104,382.41 |    3.1% |      0.21 | `RowDispatch/Fragmented/Grain1/4096`
+|    65.9% |      56.1% .. 71.7% |            1,153.97 |          866,576.79 |    6.6% |      0.03 | `RowDispatch/Fragmented/Grain64/4096`
+|    95.9% |     82.4% .. 110.6% |              743.98 |        1,344,130.48 |    7.0% |      0.02 | `RowDispatch/Fragmented/Grain1024/4096`
+
+  Summary
+    `RowDispatch/Fragmented/Each/4096` and `RowDispatch/Fragmented/HandWritten/4096` are the two fastest of 5, and were not separated
+    95% CI [0.85 .. 1.29], intervals corrected for 4 comparisons, 15 paired rounds, interleaved
+
+| relative |              95% CI |             ns/pass |              pass/s |    err% |     total | RowDispatch/Coherent/100000
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:----------------------------
+|   100.0% |                     |           22,659.16 |           44,132.27 |    7.1% |      0.02 | `RowDispatch/Coherent/HandWritten/100000`
+|    98.5% |     88.4% .. 118.8% |           22,291.53 |           44,860.09 |    7.3% |      0.02 | `RowDispatch/Coherent/Each/100000`
+|   103.0% |     86.0% .. 115.0% |           21,488.35 |           46,536.84 |    3.9% |      0.02 | `RowDispatch/Coherent/Grain1/100000`
+|   102.9% |     94.9% .. 109.9% |           21,680.22 |           46,125.00 |    5.0% |      0.02 | `RowDispatch/Coherent/Grain64/100000`
+|   100.8% |     93.1% .. 111.6% |           22,133.06 |           45,181.28 |    6.0% |      0.02 | `RowDispatch/Coherent/Grain1024/100000`
+
+  Summary
+    `RowDispatch/Coherent/Grain1/100000` and `RowDispatch/Coherent/Grain64/100000` are the two fastest of 5, and were not separated
+    95% CI [0.82 .. 1.21], intervals corrected for 4 comparisons, 15 paired rounds, interleaved
+
+| relative |              95% CI |             ns/pass |              pass/s |    err% |     total | RowDispatch/Fragmented/100000
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:------------------------------
+|   100.0% |                     |           23,001.76 |           43,474.93 |    7.8% |      0.02 | `RowDispatch/Fragmented/HandWritten/100000`
+|    97.7% |     89.8% .. 104.7% |           23,646.54 |           42,289.49 |    6.6% |      0.02 | `RowDispatch/Fragmented/Each/100000`
+|     8.7% |        8.0% .. 9.8% |          253,690.02 |            3,941.82 |    5.1% |      0.20 | `RowDispatch/Fragmented/Grain1/100000`
+|    74.5% |      52.7% .. 78.9% |           32,435.02 |           30,830.87 |   12.2% |      0.03 | `RowDispatch/Fragmented/Grain64/100000`
+|    93.2% |     71.1% .. 106.1% |           24,283.50 |           41,180.23 |    9.4% |      0.02 | `RowDispatch/Fragmented/Grain1024/100000`
+
+  Summary
+    `RowDispatch/Fragmented/HandWritten/100000` and `RowDispatch/Fragmented/Each/100000` are the two fastest of 5, and were not separated
+    95% CI [0.95 .. 1.11], intervals corrected for 4 comparisons, 15 paired rounds, interleaved

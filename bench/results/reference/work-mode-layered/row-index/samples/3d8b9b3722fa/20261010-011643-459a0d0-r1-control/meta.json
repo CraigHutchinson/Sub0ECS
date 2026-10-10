@@ -1,0 +1,105 @@
+{
+  "schema": "sub0ecs-bench/1",
+  "timestamp_utc": "2026-10-10T01:16:42+00:00",
+  "label": "r1-control",
+  "host": "3d8b9b3722fa",
+  "os": {
+    "system": "Linux",
+    "release": "6.18.44",
+    "version": "#1 SMP Sat Sep 26 20:02:31 UTC 2026",
+    "libc": "glibc 2.39",
+    "python": "3.12.14"
+  },
+  "cpu": {
+    "logical_cpus": 9,
+    "machine": "x86_64",
+    "processor": "x86_64",
+    "Model name": "AMD EPYC 9V74 80-Core Processor",
+    "Architecture": "x86_64",
+    "CPU(s)": "9",
+    "Thread(s) per core": "1",
+    "Core(s) per socket": "9",
+    "Socket(s)": "1",
+    "NUMA node(s)": "1",
+    "L1d cache": "160 KiB (5 instances)",
+    "L1i cache": "160 KiB (5 instances)",
+    "L2 cache": "5 MiB (5 instances)",
+    "L3 cache": "32 MiB (1 instance)",
+    "Hypervisor vendor": "KVM",
+    "Virtualization type": "full",
+    "Flags": "fma sse4_2 avx avx2 avx512f"
+  },
+  "memory": {
+    "total_gib": 9.7
+  },
+  "power": {
+    "smt_active": "0",
+    "aslr": "2",
+    "loadavg": [
+      1.1064453125,
+      1.330078125,
+      0.93701171875
+    ]
+  },
+  "git": {
+    "sha": "459a0d0f2eceeca97c0d10ce365f023a173a7548",
+    "branch": "perf/layered-row-dispatch",
+    "dirty": true,
+    "describe": "v1.0.0-67-g459a0d0-dirty"
+  },
+  "build": {
+    "build_dir": "build/control",
+    "build_type": "Release",
+    "cxx": "/usr/bin/c++",
+    "cxx_version": "GNU 13.3.0",
+    "cxx_flags": "",
+    "cxx_flags_release": "-O3 -DNDEBUG",
+    "native": "OFF",
+    "generator": "Unix Makefiles"
+  },
+  "run": {
+    "profile": "compare",
+    "profile_settings": {
+      "description": "Between-build comparisons (rotate.py): short enough to take many interleaved samples",
+      "env": {
+        "BENCH_SIZES": "1000,100000"
+      },
+      "suites": [
+        "baseline"
+      ],
+      "epochs": 11,
+      "min_epoch_ms": 1
+    },
+    "suites": [
+      "rows"
+    ],
+    "pin": "0-3",
+    "no_aslr": false,
+    "extra_env": []
+  },
+  "warnings": [
+    "ASLR enabled: small run-to-run layout noise",
+    "virtualised host (KVM): expect noisy neighbours",
+    "working tree has uncommitted changes: results are not reproducible from the SHA alone"
+  ],
+  "results": {
+    "rows": {
+      "status": "ok",
+      "returncode": 0,
+      "seconds": 1.4,
+      "command": [
+        "taskset",
+        "-c",
+        "0-3",
+        "build/control/bench/sub0ecs_rows_bench",
+        "--filter=^RowDispatch/",
+        "--epochs=11",
+        "--min-epoch-ms=1",
+        "--out=/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs/3d8b9b3722fa/20261010-011641-459a0d0-rotation-row-index/samples/3d8b9b3722fa/20261010-011643-459a0d0-r1-control/rows.json"
+      ],
+      "env": {
+        "BENCH_SIZES": "1000,100000"
+      }
+    }
+  }
+}

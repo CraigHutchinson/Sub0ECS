@@ -58,22 +58,31 @@ TEST_CASE("nbody pools preserve ordered evolving state including ECS chunk tail"
 
 TEST_CASE("nbody explicit grain exposes expensive small worlds to both pools")
 {
-    bench::nbody::Plain reference(257);
-    bench::nbody::Ecs native(257);
-    sub0ecs::fusion::Parallel pool(2);
-#if defined(SUB0ECS_TEST_PIPELINE)
-    bench::nbody::Ecs bridged(257);
-    sub0pipeline::PriorityExecutor executor({.threadCount = 2, .queueCapacity = 2});
-    sub0ecs::adapters::PipelinePool bridge(executor);
-#endif
-    for (int tick = 0; tick < 3; ++tick)
+    for (const unsigned workers : {1u, 2u, 4u})
     {
-        reference.tick();
-        native.tick<64>(pool);
-        same(reference.state(), native.state());
+        bench::nbody::Plain reference(257);
+        bench::nbody::Ecs native(257);
+        bench::nbody::Plain handNative(257);
+        sub0ecs::fusion::Parallel pool(workers);
 #if defined(SUB0ECS_TEST_PIPELINE)
-        bridged.tick<64>(bridge);
-        same(reference.state(), bridged.state());
+        bench::nbody::Ecs bridged(257);
+        bench::nbody::Plain handPipeline(257);
+        sub0pipeline::PriorityExecutor executor({.threadCount = workers, .queueCapacity = workers});
+        sub0ecs::adapters::PipelinePool bridge(executor);
 #endif
+        for (int tick = 0; tick < 3; ++tick)
+        {
+            reference.tick();
+            native.tick<64>(pool);
+            handNative.tick<64>(pool);
+            same(reference.state(), handNative.state());
+            same(reference.state(), native.state());
+#if defined(SUB0ECS_TEST_PIPELINE)
+            bridged.tick<64>(bridge);
+            handPipeline.tick<64>(bridge);
+            same(reference.state(), handPipeline.state());
+            same(reference.state(), bridged.state());
+#endif
+        }
     }
 }

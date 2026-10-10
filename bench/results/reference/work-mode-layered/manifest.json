@@ -1,0 +1,37 @@
+{
+  "base": "459a0d0f2eceeca97c0d10ce365f023a173a7548",
+  "pipeline_pin": "f730c4ec2973a449c45fbf9a74595414b9bf30e1",
+  "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "flags": "-O3 -DNDEBUG -g -ffp-contract=off; portable x86-64; no LTO, native tuning or fast-math",
+  "source_sha256": {
+    "include/sub0ecs/store/world.hpp": "b5859d7d8f335e9b3171ae83a4d00ec583892e2288bc0dddf620d6734660bb23",
+    "bench/rows/bench.cpp": "7edd4af34248fe4c2e50d84dfbe6d52de86ca15f56d61ef3d7e58f995f9dbd3c",
+    "bench/nbody/bench.cpp": "dc85b277dd8b0641bb8155947bf89d1fa72a686b61cbb0aaf9288d4736346518",
+    "bench/nbody/plain.hpp": "bd87d8ba9a686416bdc117a1774eefa988e3b1ed32193585ac3990d525f3dbad",
+    "bench/nbody/body.hpp": "4bed743e43ba472724bd7c22119ce9c391bc42ddb4ac40747d330fa8f5b257d4",
+    "bench/nbody/ecs.hpp": "323d4723b9e4aa89165a98815a732119e45e0b3f27acc448ece45a50386bb71f"
+  },
+  "control_world_sha256": "3b8fe58e8d867650b0d1ab17c4361c8bafe09cbc82ea4fdb57b92b618e015225",
+  "binary_sha256": {
+    "control/sub0ecs_rows_bench": "a7b4e636fada0f53e2b2a62d8452e80407e390a3c1590815436f6ae4ab168d09",
+    "control/sub0ecs_nbody_bench": "8e1f69b902e01482779acf9861c2f2a03c85c5718a2fb69996eeee596e85cf81",
+    "candidate/sub0ecs_rows_bench": "60767f35159cbb5dd940246bd2c9489b01d6db2dd6f9b6a7782214b041b8054a",
+    "candidate/sub0ecs_nbody_bench": "1deb3b070c0c564953a26b16cf3d5711df72f6edc501d5e9211f1c442cc16bd9"
+  },
+  "earlier_rows_binary_sha256": {
+    "pass1": "fe973a0b4bd0c2e2654d97fd9c06ebd66c6af4a51f72eb602cbd1618c1cbc42c",
+    "pass2": "1814b944b01da480c9cacb19d1f267ea68906386f8dc7e45aa498477cd68fe40"
+  },
+  "profile_binary_sha256": "2ce7fb1ddf004c1dfcf3249f1f8a3b3743d04c91c644bffdffffcc5673d2f741",
+  "final_environment": {
+    "NBODY_SIZES": "64,1024,4096",
+    "NBODY_THREADS": "1,2,4",
+    "pin": "0-3"
+  },
+  "notes": [
+    "Baseline uses original world.hpp with the same new benchmark sources as candidate. Nbody build commands are recorded separately.",
+    "Per-run git SHA identifies base plus dirty sources, not a distinct baseline binary; this manifest disambiguates them.",
+    "Earlier candidate nbody binaries were not retained; earlier series are exploratory, not final qualification.",
+    "Two host identities: compare controls and candidates within each series only."
+  ]
+}

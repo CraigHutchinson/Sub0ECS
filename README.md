@@ -144,6 +144,10 @@ your hardware) in [bench/BENCHMARKING.md](bench/BENCHMARKING.md). The references
 are described in [bench/README.md](bench/README.md). Comparisons with EnTT and
 flecs themselves have not been run yet.
 
+The [layered optimization review](docs/optimization/layered-review.md) covers the
+Pipeline integration, matched parallel handwritten controls, and the measured
+single-partition row-dispatch refinement.
+
 ## Build
 
 ```bash

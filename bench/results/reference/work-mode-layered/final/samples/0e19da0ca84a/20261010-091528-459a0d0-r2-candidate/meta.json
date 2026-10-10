@@ -1,0 +1,124 @@
+{
+  "schema": "sub0ecs-bench/1",
+  "timestamp_utc": "2026-10-10T07:15:28+00:00",
+  "label": "r2-candidate",
+  "host": "0e19da0ca84a",
+  "os": {
+    "system": "Linux",
+    "release": "6.18.44",
+    "version": "#1 SMP Sat Sep 26 20:02:31 UTC 2026",
+    "libc": "glibc 2.39",
+    "python": "3.12.14"
+  },
+  "cpu": {
+    "logical_cpus": 9,
+    "machine": "x86_64",
+    "processor": "x86_64",
+    "Model name": "AMD EPYC 9V74 80-Core Processor",
+    "Architecture": "x86_64",
+    "CPU(s)": "9",
+    "Thread(s) per core": "1",
+    "Core(s) per socket": "9",
+    "Socket(s)": "1",
+    "NUMA node(s)": "1",
+    "L1d cache": "160 KiB (5 instances)",
+    "L1i cache": "160 KiB (5 instances)",
+    "L2 cache": "5 MiB (5 instances)",
+    "L3 cache": "32 MiB (1 instance)",
+    "Hypervisor vendor": "KVM",
+    "Virtualization type": "full",
+    "Flags": "fma sse4_2 avx avx2 avx512f"
+  },
+  "memory": {
+    "total_gib": 9.7
+  },
+  "power": {
+    "smt_active": "0",
+    "aslr": "2",
+    "loadavg": [
+      1.02197265625,
+      0.77783203125,
+      0.37646484375
+    ]
+  },
+  "git": {
+    "sha": "459a0d0f2eceeca97c0d10ce365f023a173a7548",
+    "branch": "perf/layered-row-dispatch",
+    "dirty": true,
+    "describe": "v1.0.0-67-g459a0d0-dirty"
+  },
+  "build": {
+    "build_dir": "build/candidate",
+    "build_type": "Release",
+    "cxx": "/usr/bin/c++",
+    "cxx_version": "GNU 13.3.0",
+    "cxx_flags": "",
+    "cxx_flags_release": "-O3 -DNDEBUG",
+    "native": "OFF",
+    "generator": "Unix Makefiles"
+  },
+  "run": {
+    "profile": "compare",
+    "profile_settings": {
+      "description": "Between-build comparisons (rotate.py): short enough to take many interleaved samples",
+      "env": {
+        "BENCH_SIZES": "1000,100000"
+      },
+      "suites": [
+        "baseline"
+      ],
+      "epochs": 11,
+      "min_epoch_ms": 1
+    },
+    "suites": [
+      "rows",
+      "nbody"
+    ],
+    "pin": "0-3",
+    "no_aslr": false,
+    "extra_env": []
+  },
+  "warnings": [
+    "ASLR enabled: small run-to-run layout noise",
+    "virtualised host (KVM): expect noisy neighbours",
+    "working tree has uncommitted changes: results are not reproducible from the SHA alone"
+  ],
+  "results": {
+    "rows": {
+      "status": "ok",
+      "returncode": 0,
+      "seconds": 1.0,
+      "command": [
+        "taskset",
+        "-c",
+        "0-3",
+        "build/candidate/bench/sub0ecs_rows_bench",
+        "--filter=^RowDispatch/",
+        "--epochs=11",
+        "--min-epoch-ms=1",
+        "--out=/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs/0e19da0ca84a/20261010-091439-459a0d0-rotation-final-layered/samples/0e19da0ca84a/20261010-091528-459a0d0-r2-candidate/rows.json"
+      ],
+      "env": {
+        "BENCH_SIZES": "1000,100000"
+      }
+    },
+    "nbody": {
+      "status": "ok",
+      "returncode": 0,
+      "seconds": 21.3,
+      "command": [
+        "taskset",
+        "-c",
+        "0-3",
+        "build/candidate/bench/sub0ecs_nbody_bench",
+        "--filter=^NBody/",
+        "--epochs=11",
+        "--min-epoch-ms=1",
+        "--out=/workspace/scratch/df8f5a8b05e6/Sub0ECS/bench/results/runs/0e19da0ca84a/20261010-091439-459a0d0-rotation-final-layered/samples/0e19da0ca84a/20261010-091528-459a0d0-r2-candidate/nbody.json"
+      ],
+      "env": {
+        "BENCH_SIZES": "1000,100000"
+      }
+    }
+  }
+}

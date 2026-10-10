@@ -1,0 +1,230 @@
+Note: perf_event_open failed, so the ins/op, cyc/op, IPC, bra/op and miss% columns are missing.
+This is usually a container or VM without virtualized performance counters, or
+/proc/sys/kernel/perf_event_paranoid being too restrictive.
+
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/Ordered/64
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:-----------------
+|   100.0% |                     |           15,759.00 |           63,455.80 |    0.2% |      0.00 | `NBody/Ordered/HandWritten/64`
+|   101.4% |     49.7% .. 102.0% |           15,558.00 |           64,275.61 |    0.4% |      0.00 | `NBody/Ordered/ECS/64`
+|   101.4% |     87.9% .. 101.8% |           15,539.00 |           64,354.21 |    0.3% |      0.00 | `NBody/Ordered/Native1/64`
+|   101.4% |     18.8% .. 102.1% |           15,523.00 |           64,420.54 |    0.3% |      0.00 | `NBody/Ordered/Pipeline1/64`
+|   101.5% |    100.8% .. 102.4% |           15,503.50 |           64,501.56 |    0.1% |      0.00 | `NBody/Ordered/NativeG64x1/64`
+|   101.5% |    101.0% .. 102.1% |           15,519.00 |           64,437.14 |    0.2% |      0.00 | `NBody/Ordered/PipelineG64x1/64`
+|   101.6% |    101.0% .. 102.5% |           15,513.00 |           64,462.06 |    0.2% |      0.00 | `NBody/Ordered/Native2/64`
+|   101.6% |    101.0% .. 102.7% |           15,513.50 |           64,459.99 |    0.2% |      0.00 | `NBody/Ordered/Pipeline2/64`
+|   101.3% |     94.4% .. 102.2% |           15,548.50 |           64,314.89 |    0.2% |      0.00 | `NBody/Ordered/NativeG64x2/64`
+|   101.6% |    100.1% .. 102.5% |           15,513.50 |           64,459.99 |    0.2% |      0.00 | `NBody/Ordered/PipelineG64x2/64`
+|   101.6% |    100.8% .. 102.4% |           15,523.00 |           64,420.54 |    0.2% |      0.00 | `NBody/Ordered/Native4/64`
+|   101.6% |    101.0% .. 102.3% |           15,528.00 |           64,399.79 |    0.2% |      0.00 | `NBody/Ordered/Pipeline4/64`
+|   101.4% |    100.8% .. 102.6% |           15,529.00 |           64,395.65 |    0.4% |      0.00 | `NBody/Ordered/NativeG64x4/64`
+|   101.6% |    101.1% .. 102.3% |           15,523.00 |           64,420.54 |    0.1% |      0.00 | `NBody/Ordered/PipelineG64x4/64`
+
+  Summary
+    `NBody/Ordered/NativeG64x1/64` and `NBody/Ordered/Native2/64` are the two fastest of 14, and were not separated
+    95% CI [0.99 .. 1.00], intervals corrected for 13 comparisons, 14 paired rounds, interleaved
+    up to 1 of 14 rounds tied at the clock's resolution
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/MatchedNative1/64
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:------------------------
+|   100.0% |                     |           15,979.00 |           62,582.14 |    0.3% |      0.00 | `NBody/MatchedNative1/HandWritten/64`
+|   103.3% |    102.3% .. 103.6% |           15,483.50 |           64,584.88 |    0.3% |      0.00 | `NBody/MatchedNative1/ECS/64`
+
+  Summary
+    `NBody/MatchedNative1/ECS/64` ran 1.03x faster than `NBody/MatchedNative1/HandWritten/64`
+    95% CI [1.02 .. 1.04], 12 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/MatchedPipeline1/64
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:--------------------------
+|   100.0% |                     |           15,333.00 |           65,218.81 |    0.1% |      0.00 | `NBody/MatchedPipeline1/HandWritten/64`
+|    99.3% |      98.8% .. 99.4% |           15,453.50 |           64,710.26 |    0.3% |      0.00 | `NBody/MatchedPipeline1/ECS/64`
+
+  Summary
+    `NBody/MatchedPipeline1/ECS/64` ran 1.01x slower than `NBody/MatchedPipeline1/HandWritten/64`
+    95% CI [1.01 .. 1.01], 12 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/MatchedNative2/64
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:------------------------
+|   100.0% |                     |           16,004.50 |           62,482.43 |    0.3% |      0.00 | `NBody/MatchedNative2/HandWritten/64`
+|   103.3% |    103.2% .. 104.1% |           15,468.00 |           64,649.60 |    0.2% |      0.00 | `NBody/MatchedNative2/ECS/64`
+
+  Summary
+    `NBody/MatchedNative2/ECS/64` ran 1.03x faster than `NBody/MatchedNative2/HandWritten/64`
+    95% CI [1.03 .. 1.04], 12 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/MatchedPipeline2/64
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:--------------------------
+|   100.0% |                     |           15,313.00 |           65,303.99 |    0.2% |      0.00 | `NBody/MatchedPipeline2/HandWritten/64`
+|    98.8% |      98.6% .. 99.2% |           15,488.00 |           64,566.12 |    0.1% |      0.00 | `NBody/MatchedPipeline2/ECS/64`
+
+  Summary
+    `NBody/MatchedPipeline2/ECS/64` ran 1.01x slower than `NBody/MatchedPipeline2/HandWritten/64`
+    95% CI [1.01 .. 1.01], 12 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/MatchedNative4/64
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:------------------------
+|   100.0% |                     |           16,024.00 |           62,406.39 |    0.3% |      0.00 | `NBody/MatchedNative4/HandWritten/64`
+|   103.4% |    102.8% .. 103.9% |           15,483.00 |           64,586.97 |    0.3% |      0.00 | `NBody/MatchedNative4/ECS/64`
+
+  Summary
+    `NBody/MatchedNative4/ECS/64` ran 1.03x faster than `NBody/MatchedNative4/HandWritten/64`
+    95% CI [1.03 .. 1.04], 12 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/MatchedPipeline4/64
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:--------------------------
+|   100.0% |                     |           15,343.00 |           65,176.30 |    0.4% |      0.00 | `NBody/MatchedPipeline4/HandWritten/64`
+|    98.8% |     98.5% .. 117.7% |           15,524.00 |           64,416.39 |    0.5% |      0.00 | `NBody/MatchedPipeline4/ECS/64`
+
+  Summary
+    no difference resolved between `NBody/MatchedPipeline4/HandWritten/64` and `NBody/MatchedPipeline4/ECS/64`
+    ratio 0.99x, 95% CI [0.98 .. 1.18], 12 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/Ordered/1024
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:-------------------
+|   100.0% |                     |        4,418,641.50 |              226.31 |    5.2% |      0.06 | `NBody/Ordered/HandWritten/1024`
+|    97.4% |     84.6% .. 110.3% |        4,626,691.00 |              216.14 |    4.2% |      0.06 | `NBody/Ordered/ECS/1024`
+|    98.6% |     92.2% .. 105.5% |        4,608,207.50 |              217.00 |    5.1% |      0.07 | `NBody/Ordered/Native1/1024`
+|    99.0% |     89.0% .. 112.1% |        4,412,092.00 |              226.65 |    3.9% |      0.06 | `NBody/Ordered/Pipeline1/1024`
+|    99.0% |     87.7% .. 115.4% |        4,568,958.00 |              218.87 |    4.6% |      0.06 | `NBody/Ordered/NativeG64x1/1024`
+|    94.7% |     90.0% .. 119.1% |        4,589,464.00 |              217.89 |    4.4% |      0.06 | `NBody/Ordered/PipelineG64x1/1024`
+|   102.8% |     85.6% .. 112.5% |        4,374,049.50 |              228.62 |    3.5% |      0.06 | `NBody/Ordered/Native2/1024`
+|    96.3% |     86.6% .. 112.3% |        4,490,575.50 |              222.69 |    6.0% |      0.07 | `NBody/Ordered/Pipeline2/1024`
+|   108.2% |    100.5% .. 204.3% |        4,125,755.00 |              242.38 |    1.4% |      0.05 | `NBody/Ordered/NativeG64x2/1024`
+|   196.3% |    178.6% .. 231.5% |        2,255,980.50 |              443.27 |    3.9% |      0.03 | `NBody/Ordered/PipelineG64x2/1024`
+|    98.6% |     90.9% .. 120.0% |        4,387,810.50 |              227.90 |    4.9% |      0.06 | `NBody/Ordered/Native4/1024`
+|   103.6% |     86.3% .. 112.2% |        4,469,783.50 |              223.72 |    3.1% |      0.06 | `NBody/Ordered/Pipeline4/1024`
+|   278.4% |    260.9% .. 427.8% |        1,590,988.50 |              628.54 |    1.0% |      0.02 | `NBody/Ordered/NativeG64x4/1024`
+|   201.7% |    178.8% .. 234.3% |        2,137,793.00 |              467.77 |    2.2% |      0.03 | `NBody/Ordered/PipelineG64x4/1024`
+
+  Summary
+    `NBody/Ordered/NativeG64x4/1024` is fastest of 14, 1.40x ahead of `NBody/Ordered/PipelineG64x4/1024`
+    95% CI [1.30 .. 1.85], intervals corrected for 13 comparisons, 14 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/MatchedNative1/1024
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:--------------------------
+|   100.0% |                     |        4,353,989.00 |              229.67 |    4.8% |      0.05 | `NBody/MatchedNative1/HandWritten/1024`
+|    97.8% |     94.3% .. 102.0% |        4,461,075.50 |              224.16 |    1.6% |      0.05 | `NBody/MatchedNative1/ECS/1024`
+
+  Summary
+    no difference resolved between `NBody/MatchedNative1/HandWritten/1024` and `NBody/MatchedNative1/ECS/1024`
+    ratio 0.98x, 95% CI [0.94 .. 1.02], 12 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/MatchedPipeline1/1024
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:----------------------------
+|   100.0% |                     |        4,546,890.00 |              219.93 |    5.4% |      0.05 | `NBody/MatchedPipeline1/HandWritten/1024`
+|    98.8% |     91.1% .. 102.2% |        4,534,582.00 |              220.53 |    4.5% |      0.05 | `NBody/MatchedPipeline1/ECS/1024`
+
+  Summary
+    no difference resolved between `NBody/MatchedPipeline1/HandWritten/1024` and `NBody/MatchedPipeline1/ECS/1024`
+    ratio 0.99x, 95% CI [0.91 .. 1.02], 12 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/MatchedNative2/1024
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:--------------------------
+|   100.0% |                     |        4,025,043.50 |              248.44 |    0.8% |      0.04 | `NBody/MatchedNative2/HandWritten/1024`
+|   151.5% |     89.2% .. 188.9% |        2,301,049.00 |              434.58 |    5.7% |      0.03 | `NBody/MatchedNative2/ECS/1024`
+
+  Summary
+    no difference resolved between `NBody/MatchedNative2/HandWritten/1024` and `NBody/MatchedNative2/ECS/1024`
+    ratio 1.51x, 95% CI [0.89 .. 1.89], 12 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/MatchedPipeline2/1024
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:----------------------------
+|   100.0% |                     |        2,187,898.50 |              457.06 |    4.4% |      0.03 | `NBody/MatchedPipeline2/HandWritten/1024`
+|   101.4% |     97.2% .. 113.9% |        2,140,972.50 |              467.08 |    3.0% |      0.03 | `NBody/MatchedPipeline2/ECS/1024`
+
+  Summary
+    no difference resolved between `NBody/MatchedPipeline2/HandWritten/1024` and `NBody/MatchedPipeline2/ECS/1024`
+    ratio 1.01x, 95% CI [0.97 .. 1.14], 12 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/MatchedNative4/1024
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:--------------------------
+|   100.0% |                     |        1,543,156.50 |              648.02 |    4.6% |      0.02 | `NBody/MatchedNative4/HandWritten/1024`
+|    99.4% |     93.4% .. 109.1% |        1,529,841.50 |              653.66 |    2.8% |      0.02 | `NBody/MatchedNative4/ECS/1024`
+
+  Summary
+    no difference resolved between `NBody/MatchedNative4/HandWritten/1024` and `NBody/MatchedNative4/ECS/1024`
+    ratio 0.99x, 95% CI [0.93 .. 1.09], 12 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/MatchedPipeline4/1024
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:----------------------------
+|   100.0% |                     |        2,115,409.00 |              472.72 |    1.1% |      0.03 | `NBody/MatchedPipeline4/HandWritten/1024`
+|    99.0% |     91.4% .. 101.5% |        2,114,457.50 |              472.93 |    1.6% |      0.03 | `NBody/MatchedPipeline4/ECS/1024`
+
+  Summary
+    no difference resolved between `NBody/MatchedPipeline4/HandWritten/1024` and `NBody/MatchedPipeline4/ECS/1024`
+    ratio 0.99x, 95% CI [0.91 .. 1.02], 12 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/Ordered/4096
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:-------------------
+|   100.0% |                     |       70,144,784.50 |               14.26 |    2.0% |      1.00 | `NBody/Ordered/HandWritten/4096`
+|    97.5% |     89.3% .. 101.5% |       72,444,616.00 |               13.80 |    2.3% |      1.02 | `NBody/Ordered/ECS/4096`
+|    98.7% |     92.9% .. 101.7% |       71,082,212.00 |               14.07 |    2.1% |      1.01 | `NBody/Ordered/Native1/4096`
+|   100.1% |     87.1% .. 103.9% |       70,520,035.50 |               14.18 |    2.4% |      1.01 | `NBody/Ordered/Pipeline1/4096`
+|    99.2% |     89.9% .. 104.6% |       70,821,576.00 |               14.12 |    2.9% |      1.02 | `NBody/Ordered/NativeG64x1/4096`
+|   100.3% |     92.9% .. 104.8% |       70,770,477.00 |               14.13 |    1.5% |      1.00 | `NBody/Ordered/PipelineG64x1/4096`
+|   196.7% |    122.3% .. 204.0% |       36,044,653.00 |               27.74 |    1.2% |      0.56 | `NBody/Ordered/Native2/4096`
+|   205.5% |    191.4% .. 222.1% |       34,932,843.50 |               28.63 |    2.5% |      0.49 | `NBody/Ordered/Pipeline2/4096`
+|   200.2% |    123.4% .. 207.2% |       35,383,812.00 |               28.26 |    2.8% |      0.55 | `NBody/Ordered/NativeG64x2/4096`
+|   200.7% |    191.1% .. 209.4% |       35,316,528.00 |               28.32 |    1.5% |      0.50 | `NBody/Ordered/PipelineG64x2/4096`
+|   378.5% |    214.3% .. 414.4% |       18,396,279.00 |               54.36 |    3.1% |      0.30 | `NBody/Ordered/Native4/4096`
+|   362.0% |    212.4% .. 399.7% |       19,265,259.00 |               51.91 |    8.9% |      0.33 | `NBody/Ordered/Pipeline4/4096`
+|   382.3% |    307.4% .. 418.1% |       18,229,747.50 |               54.86 |    4.5% |      0.27 | `NBody/Ordered/NativeG64x4/4096`
+|   373.1% |    220.9% .. 412.4% |       18,561,438.00 |               53.88 |    5.8% |      0.29 | `NBody/Ordered/PipelineG64x4/4096`
+
+  Summary
+    `NBody/Ordered/NativeG64x4/4096` and `NBody/Ordered/Native4/4096` are the two fastest of 14, and were not separated
+    95% CI [0.80 .. 1.81], intervals corrected for 13 comparisons, 14 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/MatchedNative1/4096
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:--------------------------
+|   100.0% |                     |       70,003,760.50 |               14.28 |    1.0% |      0.85 | `NBody/MatchedNative1/HandWritten/4096`
+|    99.5% |     98.7% .. 101.3% |       70,628,116.50 |               14.16 |    1.2% |      0.85 | `NBody/MatchedNative1/ECS/4096`
+
+  Summary
+    no difference resolved between `NBody/MatchedNative1/HandWritten/4096` and `NBody/MatchedNative1/ECS/4096`
+    ratio 0.99x, 95% CI [0.99 .. 1.01], 12 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/MatchedPipeline1/4096
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:----------------------------
+|   100.0% |                     |       70,333,400.00 |               14.22 |    0.9% |      0.84 | `NBody/MatchedPipeline1/HandWritten/4096`
+|    98.2% |     96.6% .. 102.8% |       71,277,548.00 |               14.03 |    1.3% |      0.85 | `NBody/MatchedPipeline1/ECS/4096`
+
+  Summary
+    no difference resolved between `NBody/MatchedPipeline1/HandWritten/4096` and `NBody/MatchedPipeline1/ECS/4096`
+    ratio 0.98x, 95% CI [0.97 .. 1.03], 12 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/MatchedNative2/4096
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:--------------------------
+|   100.0% |                     |       35,696,521.50 |               28.01 |    4.4% |      0.55 | `NBody/MatchedNative2/HandWritten/4096`
+|   100.8% |     95.8% .. 176.9% |       35,433,309.00 |               28.22 |    1.8% |      0.43 | `NBody/MatchedNative2/ECS/4096`
+
+  Summary
+    no difference resolved between `NBody/MatchedNative2/HandWritten/4096` and `NBody/MatchedNative2/ECS/4096`
+    ratio 1.01x, 95% CI [0.96 .. 1.77], 12 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/MatchedPipeline2/4096
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:----------------------------
+|   100.0% |                     |       36,279,435.50 |               27.56 |    1.7% |      0.44 | `NBody/MatchedPipeline2/HandWritten/4096`
+|    99.6% |     96.7% .. 103.9% |       36,189,895.00 |               27.63 |    2.9% |      0.47 | `NBody/MatchedPipeline2/ECS/4096`
+
+  Summary
+    no difference resolved between `NBody/MatchedPipeline2/HandWritten/4096` and `NBody/MatchedPipeline2/ECS/4096`
+    ratio 1.00x, 95% CI [0.97 .. 1.04], 12 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/MatchedNative4/4096
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:--------------------------
+|   100.0% |                     |       17,738,121.00 |               56.38 |    2.3% |      0.23 | `NBody/MatchedNative4/HandWritten/4096`
+|    97.3% |      92.5% .. 99.2% |       18,255,384.00 |               54.78 |    4.9% |      0.25 | `NBody/MatchedNative4/ECS/4096`
+
+  Summary
+    `NBody/MatchedNative4/ECS/4096` ran 1.03x slower than `NBody/MatchedNative4/HandWritten/4096`
+    95% CI [1.01 .. 1.08], 12 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | NBody/MatchedPipeline4/4096
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:----------------------------
+|   100.0% |                     |       18,810,164.00 |               53.16 |    5.0% |      0.26 | `NBody/MatchedPipeline4/HandWritten/4096`
+|    96.0% |     81.1% .. 100.6% |       19,345,871.50 |               51.69 |    5.6% |      0.28 | `NBody/MatchedPipeline4/ECS/4096`
+
+  Summary
+    no difference resolved between `NBody/MatchedPipeline4/HandWritten/4096` and `NBody/MatchedPipeline4/ECS/4096`
+    ratio 0.96x, 95% CI [0.81 .. 1.01], 12 paired rounds, interleaved
