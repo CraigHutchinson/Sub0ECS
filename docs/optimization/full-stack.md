@@ -75,7 +75,7 @@ python3 bench/tools/rotate.py --build current=build/stack --rounds 5 \
 
 The stack profile keeps the existing ordered/compact n-body and streaming/churn/
 staged-neighbor suites alongside the new boundary. `stack` is optional, so core
-C++20 users and the ordinary quick profile do not acquire Pub. CI enables the
+C++23 users and the ordinary quick profile do not acquire Pub. CI enables the
 optional tests on the Pipeline platforms and runs a small stack smoke on GCC.
 Keep an omitted-dependency Clang build as the standalone gate.
 

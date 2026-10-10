@@ -20,7 +20,8 @@ option(SUB0ECS_WITH_PIPELINE "Enable the optional Sub0Pipeline pool adapter and 
 
 add_library(Sub0ECS INTERFACE)
 add_library(Sub0ECS::Sub0ECS ALIAS Sub0ECS)
-target_compile_features(Sub0ECS INTERFACE cxx_std_20)
+# Public usage requirement: consumers inherit the common Sub0 C++23 baseline.
+target_compile_features(Sub0ECS INTERFACE cxx_std_23)
 target_include_directories(Sub0ECS INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>)
 
 if(SUB0ECS_WITH_PIPELINE)

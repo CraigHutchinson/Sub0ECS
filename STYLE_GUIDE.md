@@ -102,12 +102,12 @@ void remove(Entity e)
 
 ## Language
 
-- C++20. The library is header-only and free of RTTI and exceptions; it
+- C++23, declared with target-scoped public usage requirements. The library is header-only and free of RTTI and exceptions; it
   terminates (`std::abort`) on unrecoverable misuse and uses `assert()` for
   internal invariants.
 - The opt-in `Sub0ECS::Pipeline` adapter follows Pipeline's C++23 and exception
   contract: it joins accepted work before propagating failures. The standalone
-  ECS target and umbrella remain C++20 without this dependency.
+  ECS target and umbrella use C++23 without this dependency.
 - Decide at compile time what is known at compile time: query sets, planners and
   capabilities are types, dispatched with `if constexpr`.
 - Prefer concept constraints over SFINAE; `using` aliases over `typedef`.

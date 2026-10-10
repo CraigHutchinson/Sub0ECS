@@ -17,7 +17,7 @@ bench/tools/profile.py    one case under Intel VTune: hot functions, processor m
 CMakePresets.json         bench-native | bench-portable | sanitize
 ```
 
-Everything uses CMake, Ninja, a C++20 compiler, [nanobench](https://github.com/martinus/nanobench)
+Everything uses CMake, Ninja, a C++23 compiler, [nanobench](https://github.com/martinus/nanobench)
 (fetched) and the Python 3 standard library.
 
 ## How a measurement works

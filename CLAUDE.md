@@ -40,6 +40,10 @@ only (a GitHub rule) and tests that branch.
 
 ## Rules
 
+- **C++23 baseline.** Declare public requirements with target-scoped `cxx_std_23`;
+  standalone ECS must inherit it without enabling optional integrations. Keep
+  historical performance receipts tied to their actual language/compiler flags.
+
 - **Single-responsibility headers.** One type, concept or alternative per header,
   grouped by directory, with an umbrella header per group. See `STYLE_GUIDE.md`.
 - **The references stay honest.** The designs in `bench/designs/` are what the
