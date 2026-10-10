@@ -1,0 +1,1796 @@
+{
+  "NBody/Compact/CompactECS/1024": {
+    "count": 5,
+    "median_ns": 2859671.5,
+    "min_ns": 2625108.5,
+    "max_ns": 2970543.5,
+    "samples_ns": [
+      2859671.5,
+      2625108.5,
+      2970543.5,
+      2809711.5,
+      2960382.5
+    ]
+  },
+  "NBody/Compact/CompactECS/4096": {
+    "count": 5,
+    "median_ns": 44578213,
+    "min_ns": 42974348.5,
+    "max_ns": 47238415.5,
+    "samples_ns": [
+      47238415.5,
+      44806292.5,
+      42974506,
+      44578213,
+      42974348.5
+    ]
+  },
+  "NBody/Compact/CompactECS/64": {
+    "count": 5,
+    "median_ns": 9970,
+    "min_ns": 9850,
+    "max_ns": 9975,
+    "samples_ns": [
+      9975,
+      9970,
+      9975,
+      9850,
+      9910
+    ]
+  },
+  "NBody/Compact/CompactHandWritten/1024": {
+    "count": 5,
+    "median_ns": 2992311,
+    "min_ns": 2690808,
+    "max_ns": 3121881,
+    "samples_ns": [
+      2998495,
+      2690808,
+      3121881,
+      2713025.5,
+      2992311
+    ]
+  },
+  "NBody/Compact/CompactHandWritten/4096": {
+    "count": 5,
+    "median_ns": 47089499,
+    "min_ns": 44775428,
+    "max_ns": 49166040,
+    "samples_ns": [
+      49166040,
+      47089499,
+      47087502.5,
+      47402754,
+      44775428
+    ]
+  },
+  "NBody/Compact/CompactHandWritten/64": {
+    "count": 5,
+    "median_ns": 11377,
+    "min_ns": 10651,
+    "max_ns": 11487.5,
+    "samples_ns": [
+      11487.5,
+      11352,
+      11377,
+      10651,
+      11402
+    ]
+  },
+  "NBody/Compact/CompactNativeG64x2/1024": {
+    "count": 5,
+    "median_ns": 1574032.5,
+    "min_ns": 1340390.5,
+    "max_ns": 2600116,
+    "samples_ns": [
+      2600116,
+      1574032.5,
+      1654027.5,
+      1340390.5,
+      1440371
+    ]
+  },
+  "NBody/Compact/CompactNativeG64x2/4096": {
+    "count": 5,
+    "median_ns": 29065540.5,
+    "min_ns": 21221945.5,
+    "max_ns": 41441816,
+    "samples_ns": [
+      28632949,
+      39640736.5,
+      41441816,
+      29065540.5,
+      21221945.5
+    ]
+  },
+  "NBody/Compact/CompactNativeG64x2/64": {
+    "count": 5,
+    "median_ns": 12078,
+    "min_ns": 11968,
+    "max_ns": 12083,
+    "samples_ns": [
+      12083,
+      12078,
+      12048,
+      11968,
+      12078
+    ]
+  },
+  "NBody/Compact/CompactPipelineG64x2/1024": {
+    "count": 5,
+    "median_ns": 1538141,
+    "min_ns": 1387727.5,
+    "max_ns": 1680197,
+    "samples_ns": [
+      1387727.5,
+      1538141,
+      1587978,
+      1680197,
+      1487091.5
+    ]
+  },
+  "NBody/Compact/CompactPipelineG64x2/4096": {
+    "count": 5,
+    "median_ns": 22755393,
+    "min_ns": 21874934.5,
+    "max_ns": 34553058.5,
+    "samples_ns": [
+      32973499,
+      22755393,
+      34553058.5,
+      21874934.5,
+      22113230.5
+    ]
+  },
+  "NBody/Compact/CompactPipelineG64x2/64": {
+    "count": 5,
+    "median_ns": 12018.5,
+    "min_ns": 11943,
+    "max_ns": 12033,
+    "samples_ns": [
+      12018.5,
+      12023,
+      11993,
+      11943,
+      12033
+    ]
+  },
+  "NBody/Compact/ECS/1024": {
+    "count": 5,
+    "median_ns": 4290063,
+    "min_ns": 4146872,
+    "max_ns": 4537020,
+    "samples_ns": [
+      4146872,
+      4266112,
+      4537020,
+      4375487,
+      4290063
+    ]
+  },
+  "NBody/Compact/ECS/4096": {
+    "count": 5,
+    "median_ns": 70383971.5,
+    "min_ns": 70292297,
+    "max_ns": 74259456.5,
+    "samples_ns": [
+      74259456.5,
+      70379191.5,
+      70694919.5,
+      70292297,
+      70383971.5
+    ]
+  },
+  "NBody/Compact/ECS/64": {
+    "count": 5,
+    "median_ns": 15559,
+    "min_ns": 15558,
+    "max_ns": 15678.5,
+    "samples_ns": [
+      15558.5,
+      15558,
+      15559,
+      15678.5,
+      15618
+    ]
+  },
+  "NBody/Compact/HandWritten/1024": {
+    "count": 5,
+    "median_ns": 4317139,
+    "min_ns": 4169816.5,
+    "max_ns": 4800776,
+    "samples_ns": [
+      4317139,
+      4217013,
+      4800776,
+      4423208.5,
+      4169816.5
+    ]
+  },
+  "NBody/Compact/HandWritten/4096": {
+    "count": 5,
+    "median_ns": 70229794,
+    "min_ns": 69247266.5,
+    "max_ns": 75685243,
+    "samples_ns": [
+      75685243,
+      70229794,
+      69247266.5,
+      69869664,
+      71124605.5
+    ]
+  },
+  "NBody/Compact/HandWritten/64": {
+    "count": 5,
+    "median_ns": 15823.5,
+    "min_ns": 15808,
+    "max_ns": 15834,
+    "samples_ns": [
+      15828.5,
+      15819,
+      15834,
+      15808,
+      15823.5
+    ]
+  },
+  "NBody/Compact/NativeG64x2/1024": {
+    "count": 5,
+    "median_ns": 2242984,
+    "min_ns": 2164395.5,
+    "max_ns": 2530792,
+    "samples_ns": [
+      2245692.5,
+      2242984,
+      2530792,
+      2232187.5,
+      2164395.5
+    ]
+  },
+  "NBody/Compact/NativeG64x2/4096": {
+    "count": 5,
+    "median_ns": 37510709.5,
+    "min_ns": 36249854,
+    "max_ns": 58993493,
+    "samples_ns": [
+      39410192,
+      58993493,
+      36795760,
+      37510709.5,
+      36249854
+    ]
+  },
+  "NBody/Compact/NativeG64x2/64": {
+    "count": 5,
+    "median_ns": 15674,
+    "min_ns": 15658.5,
+    "max_ns": 15759,
+    "samples_ns": [
+      15759,
+      15659,
+      15743.5,
+      15674,
+      15658.5
+    ]
+  },
+  "NBody/Compact/PipelineG64x2/1024": {
+    "count": 5,
+    "median_ns": 2429025.5,
+    "min_ns": 2332764,
+    "max_ns": 2632199.5,
+    "samples_ns": [
+      2332764,
+      2632199.5,
+      2520041,
+      2383189.5,
+      2429025.5
+    ]
+  },
+  "NBody/Compact/PipelineG64x2/4096": {
+    "count": 5,
+    "median_ns": 36820535.5,
+    "min_ns": 35171756,
+    "max_ns": 41542388,
+    "samples_ns": [
+      41542388,
+      36473685,
+      36820535.5,
+      35171756,
+      37212427
+    ]
+  },
+  "NBody/Compact/PipelineG64x2/64": {
+    "count": 5,
+    "median_ns": 15768.5,
+    "min_ns": 15708.5,
+    "max_ns": 15839,
+    "samples_ns": [
+      15768.5,
+      15724,
+      15839,
+      15774,
+      15708.5
+    ]
+  },
+  "NBody/CompactMatchedNative2/ECS/1024": {
+    "count": 5,
+    "median_ns": 1486561,
+    "min_ns": 1416936,
+    "max_ns": 1557453,
+    "samples_ns": [
+      1557453,
+      1497207,
+      1416936,
+      1482184.5,
+      1486561
+    ]
+  },
+  "NBody/CompactMatchedNative2/ECS/4096": {
+    "count": 5,
+    "median_ns": 22730365.5,
+    "min_ns": 21417931.5,
+    "max_ns": 41104977,
+    "samples_ns": [
+      41104977,
+      36586694,
+      22730365.5,
+      21417931.5,
+      21576419
+    ]
+  },
+  "NBody/CompactMatchedNative2/ECS/64": {
+    "count": 5,
+    "median_ns": 12088,
+    "min_ns": 11953,
+    "max_ns": 12163.5,
+    "samples_ns": [
+      12088,
+      12093.5,
+      12163.5,
+      12088,
+      11953
+    ]
+  },
+  "NBody/CompactMatchedNative2/HandWritten/1024": {
+    "count": 5,
+    "median_ns": 1444508,
+    "min_ns": 1396360,
+    "max_ns": 1724679.5,
+    "samples_ns": [
+      1724679.5,
+      1441423.5,
+      1470021,
+      1444508,
+      1396360
+    ]
+  },
+  "NBody/CompactMatchedNative2/HandWritten/4096": {
+    "count": 5,
+    "median_ns": 24045373.5,
+    "min_ns": 21912800,
+    "max_ns": 34062674.5,
+    "samples_ns": [
+      34021011,
+      34062674.5,
+      24045373.5,
+      22552357.5,
+      21912800
+    ]
+  },
+  "NBody/CompactMatchedNative2/HandWritten/64": {
+    "count": 5,
+    "median_ns": 10661,
+    "min_ns": 10561,
+    "max_ns": 10696,
+    "samples_ns": [
+      10656,
+      10696,
+      10661,
+      10666,
+      10561
+    ]
+  },
+  "NBody/CompactMatchedPipeline2/ECS/1024": {
+    "count": 5,
+    "median_ns": 1623296.5,
+    "min_ns": 1533927,
+    "max_ns": 2412639,
+    "samples_ns": [
+      1609831.5,
+      1748998.5,
+      2412639,
+      1533927,
+      1623296.5
+    ]
+  },
+  "NBody/CompactMatchedPipeline2/ECS/4096": {
+    "count": 5,
+    "median_ns": 27804131.5,
+    "min_ns": 22235310,
+    "max_ns": 37615931,
+    "samples_ns": [
+      37615931,
+      27804131.5,
+      28134304,
+      22235310,
+      22871634
+    ]
+  },
+  "NBody/CompactMatchedPipeline2/ECS/64": {
+    "count": 5,
+    "median_ns": 11993,
+    "min_ns": 11862.5,
+    "max_ns": 12038,
+    "samples_ns": [
+      11993,
+      12038,
+      11953,
+      12003,
+      11862.5
+    ]
+  },
+  "NBody/CompactMatchedPipeline2/HandWritten/1024": {
+    "count": 5,
+    "median_ns": 1752125.5,
+    "min_ns": 1415529.5,
+    "max_ns": 2113328.5,
+    "samples_ns": [
+      1752125.5,
+      1933202.5,
+      2113328.5,
+      1415529.5,
+      1491986.5
+    ]
+  },
+  "NBody/CompactMatchedPipeline2/HandWritten/4096": {
+    "count": 5,
+    "median_ns": 23535591.5,
+    "min_ns": 22012031.5,
+    "max_ns": 26748710,
+    "samples_ns": [
+      26748710,
+      24502200,
+      23535591.5,
+      22878474.5,
+      22012031.5
+    ]
+  },
+  "NBody/CompactMatchedPipeline2/HandWritten/64": {
+    "count": 5,
+    "median_ns": 10581,
+    "min_ns": 10475.5,
+    "max_ns": 10626,
+    "samples_ns": [
+      10551,
+      10606,
+      10626,
+      10581,
+      10475.5
+    ]
+  },
+  "NBody/MatchedNative2/ECS/1024": {
+    "count": 5,
+    "median_ns": 2306675,
+    "min_ns": 2263304,
+    "max_ns": 4050402.5,
+    "samples_ns": [
+      4050402.5,
+      2655469.5,
+      2291196.5,
+      2306675,
+      2263304
+    ]
+  },
+  "NBody/MatchedNative2/ECS/4096": {
+    "count": 5,
+    "median_ns": 39835229.5,
+    "min_ns": 36375654.5,
+    "max_ns": 57112305.5,
+    "samples_ns": [
+      53680446,
+      57112305.5,
+      39835229.5,
+      36675550,
+      36375654.5
+    ]
+  },
+  "NBody/MatchedNative2/ECS/64": {
+    "count": 5,
+    "median_ns": 15924,
+    "min_ns": 15618.5,
+    "max_ns": 16209.5,
+    "samples_ns": [
+      15954,
+      15618.5,
+      16209.5,
+      15843.5,
+      15924
+    ]
+  },
+  "NBody/MatchedNative2/HandWritten/1024": {
+    "count": 5,
+    "median_ns": 2396800,
+    "min_ns": 2144616,
+    "max_ns": 2658283.5,
+    "samples_ns": [
+      2476164.5,
+      2658283.5,
+      2396800,
+      2329028,
+      2144616
+    ]
+  },
+  "NBody/MatchedNative2/HandWritten/4096": {
+    "count": 5,
+    "median_ns": 38785535.5,
+    "min_ns": 35487924.5,
+    "max_ns": 49127074,
+    "samples_ns": [
+      41054128,
+      49127074,
+      38785535.5,
+      36902551.5,
+      35487924.5
+    ]
+  },
+  "NBody/MatchedNative2/HandWritten/64": {
+    "count": 5,
+    "median_ns": 15729,
+    "min_ns": 15643,
+    "max_ns": 15919,
+    "samples_ns": [
+      15729,
+      15688.5,
+      15919,
+      15643,
+      15763.5
+    ]
+  },
+  "NBody/MatchedPipeline2/ECS/1024": {
+    "count": 5,
+    "median_ns": 2722901,
+    "min_ns": 2309456,
+    "max_ns": 2888885.5,
+    "samples_ns": [
+      2795800,
+      2722901,
+      2888885.5,
+      2309456,
+      2343900
+    ]
+  },
+  "NBody/MatchedPipeline2/ECS/4096": {
+    "count": 5,
+    "median_ns": 44566301,
+    "min_ns": 38162236,
+    "max_ns": 64789688,
+    "samples_ns": [
+      48948781,
+      64789688,
+      44566301,
+      39672229.5,
+      38162236
+    ]
+  },
+  "NBody/MatchedPipeline2/ECS/64": {
+    "count": 5,
+    "median_ns": 15934,
+    "min_ns": 15764,
+    "max_ns": 16129.5,
+    "samples_ns": [
+      15764,
+      15974,
+      16129.5,
+      15934,
+      15844
+    ]
+  },
+  "NBody/MatchedPipeline2/HandWritten/1024": {
+    "count": 5,
+    "median_ns": 2582204.5,
+    "min_ns": 2479024,
+    "max_ns": 2959817,
+    "samples_ns": [
+      2610510,
+      2959817,
+      2582204.5,
+      2479024,
+      2507352
+    ]
+  },
+  "NBody/MatchedPipeline2/HandWritten/4096": {
+    "count": 5,
+    "median_ns": 39931462,
+    "min_ns": 36141773,
+    "max_ns": 64194828.5,
+    "samples_ns": [
+      46554389.5,
+      64194828.5,
+      39736574,
+      39931462,
+      36141773
+    ]
+  },
+  "NBody/MatchedPipeline2/HandWritten/64": {
+    "count": 5,
+    "median_ns": 15343,
+    "min_ns": 15318,
+    "max_ns": 15368,
+    "samples_ns": [
+      15368,
+      15343,
+      15333,
+      15353,
+      15318
+    ]
+  },
+  "RowWork/FragmentedChurn/ECS/1024": {
+    "count": 5,
+    "median_ns": 4462,
+    "min_ns": 3130,
+    "max_ns": 5132.5,
+    "samples_ns": [
+      4462,
+      3595.5,
+      5132.5,
+      4572,
+      3130
+    ]
+  },
+  "RowWork/FragmentedChurn/ECS/16384": {
+    "count": 5,
+    "median_ns": 52223.5,
+    "min_ns": 48743,
+    "max_ns": 62429,
+    "samples_ns": [
+      50391,
+      62429,
+      57271,
+      48743,
+      52223.5
+    ]
+  },
+  "RowWork/FragmentedChurn/ECS/65536": {
+    "count": 5,
+    "median_ns": 309305.5,
+    "min_ns": 267743.5,
+    "max_ns": 346386,
+    "samples_ns": [
+      309866,
+      293030.5,
+      309305.5,
+      346386,
+      267743.5
+    ]
+  },
+  "RowWork/FragmentedChurn/HandWritten/1024": {
+    "count": 5,
+    "median_ns": 2939.5,
+    "min_ns": 1888,
+    "max_ns": 3194.5,
+    "samples_ns": [
+      3129.5,
+      2018,
+      3194.5,
+      2939.5,
+      1888
+    ]
+  },
+  "RowWork/FragmentedChurn/HandWritten/16384": {
+    "count": 5,
+    "median_ns": 27972,
+    "min_ns": 27146,
+    "max_ns": 34286.5,
+    "samples_ns": [
+      27972,
+      34286.5,
+      31347,
+      27782,
+      27146
+    ]
+  },
+  "RowWork/FragmentedChurn/HandWritten/65536": {
+    "count": 5,
+    "median_ns": 166866,
+    "min_ns": 157892.5,
+    "max_ns": 178729,
+    "samples_ns": [
+      178729,
+      163986.5,
+      177161.5,
+      166866,
+      157892.5
+    ]
+  },
+  "RowWork/FragmentedChurn/NativeG1024x1/1024": {
+    "count": 5,
+    "median_ns": 6174,
+    "min_ns": 4181.5,
+    "max_ns": 7025.5,
+    "samples_ns": [
+      6515,
+      4406.5,
+      7025.5,
+      6174,
+      4181.5
+    ]
+  },
+  "RowWork/FragmentedChurn/NativeG1024x1/16384": {
+    "count": 5,
+    "median_ns": 70956.5,
+    "min_ns": 67476,
+    "max_ns": 75588.5,
+    "samples_ns": [
+      67476,
+      75588.5,
+      70956.5,
+      71407,
+      68958.5
+    ]
+  },
+  "RowWork/FragmentedChurn/NativeG1024x1/65536": {
+    "count": 5,
+    "median_ns": 333927,
+    "min_ns": 309941.5,
+    "max_ns": 361919,
+    "samples_ns": [
+      323436.5,
+      352955.5,
+      361919,
+      333927,
+      309941.5
+    ]
+  },
+  "RowWork/FragmentedChurn/NativeG1024x2/1024": {
+    "count": 5,
+    "median_ns": 11742.5,
+    "min_ns": 8973.5,
+    "max_ns": 40530.5,
+    "samples_ns": [
+      10275.5,
+      40530.5,
+      14681.5,
+      11742.5,
+      8973.5
+    ]
+  },
+  "RowWork/FragmentedChurn/NativeG1024x2/16384": {
+    "count": 5,
+    "median_ns": 66535.5,
+    "min_ns": 62990,
+    "max_ns": 86430.5,
+    "samples_ns": [
+      62990,
+      64121.5,
+      75728.5,
+      86430.5,
+      66535.5
+    ]
+  },
+  "RowWork/FragmentedChurn/NativeG1024x2/65536": {
+    "count": 5,
+    "median_ns": 330627,
+    "min_ns": 310947.5,
+    "max_ns": 464839.5,
+    "samples_ns": [
+      316091,
+      464839.5,
+      330627,
+      367142,
+      310947.5
+    ]
+  },
+  "RowWork/FragmentedChurn/NativeG64x1/1024": {
+    "count": 5,
+    "median_ns": 6585,
+    "min_ns": 4247,
+    "max_ns": 7035,
+    "samples_ns": [
+      6585,
+      4401.5,
+      7035,
+      6590,
+      4247
+    ]
+  },
+  "RowWork/FragmentedChurn/NativeG64x1/16384": {
+    "count": 5,
+    "median_ns": 71237,
+    "min_ns": 65028,
+    "max_ns": 111122.5,
+    "samples_ns": [
+      75964,
+      65028,
+      111122.5,
+      71237,
+      69104
+    ]
+  },
+  "RowWork/FragmentedChurn/NativeG64x1/65536": {
+    "count": 5,
+    "median_ns": 334222,
+    "min_ns": 322054.5,
+    "max_ns": 350126.5,
+    "samples_ns": [
+      350126.5,
+      332014.5,
+      349270,
+      334222,
+      322054.5
+    ]
+  },
+  "RowWork/FragmentedChurn/NativeG64x2/1024": {
+    "count": 5,
+    "median_ns": 11097,
+    "min_ns": 5958.5,
+    "max_ns": 28383,
+    "samples_ns": [
+      11097,
+      23525,
+      28383,
+      9774.5,
+      5958.5
+    ]
+  },
+  "RowWork/FragmentedChurn/NativeG64x2/16384": {
+    "count": 5,
+    "median_ns": 80876,
+    "min_ns": 66039.5,
+    "max_ns": 91162,
+    "samples_ns": [
+      69339.5,
+      91162,
+      85989.5,
+      66039.5,
+      80876
+    ]
+  },
+  "RowWork/FragmentedChurn/NativeG64x2/65536": {
+    "count": 5,
+    "median_ns": 426532,
+    "min_ns": 407118,
+    "max_ns": 442831,
+    "samples_ns": [
+      442831,
+      426532,
+      407118,
+      421513.5,
+      429540.5
+    ]
+  },
+  "RowWork/FragmentedChurn/PipelineG1024x1/1024": {
+    "count": 5,
+    "median_ns": 4717,
+    "min_ns": 3109.5,
+    "max_ns": 5218,
+    "samples_ns": [
+      4717,
+      3405.5,
+      5218,
+      4847.5,
+      3109.5
+    ]
+  },
+  "RowWork/FragmentedChurn/PipelineG1024x1/16384": {
+    "count": 5,
+    "median_ns": 51447,
+    "min_ns": 47561.5,
+    "max_ns": 64146.5,
+    "samples_ns": [
+      49995.5,
+      51447,
+      64146.5,
+      53355.5,
+      47561.5
+    ]
+  },
+  "RowWork/FragmentedChurn/PipelineG1024x1/65536": {
+    "count": 5,
+    "median_ns": 309770.5,
+    "min_ns": 277672.5,
+    "max_ns": 333366,
+    "samples_ns": [
+      309770.5,
+      314263,
+      302480,
+      333366,
+      277672.5
+    ]
+  },
+  "RowWork/FragmentedChurn/PipelineG1024x2/1024": {
+    "count": 5,
+    "median_ns": 30946.5,
+    "min_ns": 23014.5,
+    "max_ns": 45388.5,
+    "samples_ns": [
+      30946.5,
+      30165.5,
+      45388.5,
+      33495.5,
+      23014.5
+    ]
+  },
+  "RowWork/FragmentedChurn/PipelineG1024x2/16384": {
+    "count": 5,
+    "median_ns": 101312.5,
+    "min_ns": 84582,
+    "max_ns": 143080.5,
+    "samples_ns": [
+      101312.5,
+      143080.5,
+      135279,
+      92088,
+      84582
+    ]
+  },
+  "RowWork/FragmentedChurn/PipelineG1024x2/65536": {
+    "count": 5,
+    "median_ns": 398704.5,
+    "min_ns": 320882.5,
+    "max_ns": 554709,
+    "samples_ns": [
+      356376,
+      554709,
+      408389.5,
+      398704.5,
+      320882.5
+    ]
+  },
+  "RowWork/FragmentedChurn/PipelineG64x1/1024": {
+    "count": 5,
+    "median_ns": 4747,
+    "min_ns": 3245,
+    "max_ns": 5012.5,
+    "samples_ns": [
+      4747,
+      3320,
+      5012.5,
+      4802,
+      3245
+    ]
+  },
+  "RowWork/FragmentedChurn/PipelineG64x1/16384": {
+    "count": 5,
+    "median_ns": 51082.5,
+    "min_ns": 49499.5,
+    "max_ns": 56946,
+    "samples_ns": [
+      51082.5,
+      52889.5,
+      56946,
+      49499.5,
+      49875
+    ]
+  },
+  "RowWork/FragmentedChurn/PipelineG64x1/65536": {
+    "count": 5,
+    "median_ns": 309195,
+    "min_ns": 299310.5,
+    "max_ns": 334242.5,
+    "samples_ns": [
+      301734,
+      299310.5,
+      334242.5,
+      309195,
+      309881
+    ]
+  },
+  "RowWork/FragmentedChurn/PipelineG64x2/1024": {
+    "count": 5,
+    "median_ns": 28347.5,
+    "min_ns": 22935,
+    "max_ns": 37391.5,
+    "samples_ns": [
+      27701.5,
+      37391.5,
+      37140.5,
+      28347.5,
+      22935
+    ]
+  },
+  "RowWork/FragmentedChurn/PipelineG64x2/16384": {
+    "count": 5,
+    "median_ns": 117091.5,
+    "min_ns": 87697.5,
+    "max_ns": 129714.5,
+    "samples_ns": [
+      98272.5,
+      129714.5,
+      117091.5,
+      87697.5,
+      126880.5
+    ]
+  },
+  "RowWork/FragmentedChurn/PipelineG64x2/65536": {
+    "count": 5,
+    "median_ns": 361629,
+    "min_ns": 309851,
+    "max_ns": 586798,
+    "samples_ns": [
+      361629,
+      586798,
+      359771,
+      452806,
+      309851
+    ]
+  },
+  "RowWork/StagedNeighbors/ECS/1024": {
+    "count": 5,
+    "median_ns": 16435,
+    "min_ns": 16279,
+    "max_ns": 16519.5,
+    "samples_ns": [
+      16409,
+      16435,
+      16519.5,
+      16279,
+      16440
+    ]
+  },
+  "RowWork/StagedNeighbors/ECS/16384": {
+    "count": 5,
+    "median_ns": 270477,
+    "min_ns": 266000.5,
+    "max_ns": 335409,
+    "samples_ns": [
+      288914.5,
+      267908,
+      335409,
+      266000.5,
+      270477
+    ]
+  },
+  "RowWork/StagedNeighbors/ECS/65536": {
+    "count": 5,
+    "median_ns": 1183169.5,
+    "min_ns": 1143289.5,
+    "max_ns": 1319981,
+    "samples_ns": [
+      1183169.5,
+      1180705.5,
+      1319981,
+      1225388,
+      1143289.5
+    ]
+  },
+  "RowWork/StagedNeighbors/HandWritten/1024": {
+    "count": 5,
+    "median_ns": 16254,
+    "min_ns": 16229,
+    "max_ns": 16419.5,
+    "samples_ns": [
+      16419.5,
+      16249,
+      16379,
+      16229,
+      16254
+    ]
+  },
+  "RowWork/StagedNeighbors/HandWritten/16384": {
+    "count": 5,
+    "median_ns": 285930,
+    "min_ns": 265404.5,
+    "max_ns": 417475.5,
+    "samples_ns": [
+      289004.5,
+      285930,
+      417475.5,
+      265404.5,
+      273756.5
+    ]
+  },
+  "RowWork/StagedNeighbors/HandWritten/65536": {
+    "count": 5,
+    "median_ns": 1207491.5,
+    "min_ns": 1151592.5,
+    "max_ns": 1257561,
+    "samples_ns": [
+      1191662.5,
+      1207491.5,
+      1257561,
+      1235698.5,
+      1151592.5
+    ]
+  },
+  "RowWork/StagedNeighbors/NativeG1024x1/1024": {
+    "count": 5,
+    "median_ns": 16419.5,
+    "min_ns": 16295,
+    "max_ns": 16550,
+    "samples_ns": [
+      16419.5,
+      16550,
+      16335,
+      16425,
+      16295
+    ]
+  },
+  "RowWork/StagedNeighbors/NativeG1024x1/16384": {
+    "count": 5,
+    "median_ns": 278179,
+    "min_ns": 266395.5,
+    "max_ns": 322730.5,
+    "samples_ns": [
+      284658,
+      278179,
+      322730.5,
+      272630,
+      266395.5
+    ]
+  },
+  "RowWork/StagedNeighbors/NativeG1024x1/65536": {
+    "count": 5,
+    "median_ns": 1198417.5,
+    "min_ns": 1144566.5,
+    "max_ns": 1301212.5,
+    "samples_ns": [
+      1190435.5,
+      1198417.5,
+      1301212.5,
+      1268423,
+      1144566.5
+    ]
+  },
+  "RowWork/StagedNeighbors/NativeG1024x2/1024": {
+    "count": 5,
+    "median_ns": 16294.5,
+    "min_ns": 16244.5,
+    "max_ns": 16434.5,
+    "samples_ns": [
+      16419.5,
+      16244.5,
+      16434.5,
+      16254.5,
+      16294.5
+    ]
+  },
+  "RowWork/StagedNeighbors/NativeG1024x2/16384": {
+    "count": 5,
+    "median_ns": 191728.5,
+    "min_ns": 166645.5,
+    "max_ns": 272635.5,
+    "samples_ns": [
+      272635.5,
+      259064.5,
+      191728.5,
+      167722,
+      166645.5
+    ]
+  },
+  "RowWork/StagedNeighbors/NativeG1024x2/65536": {
+    "count": 5,
+    "median_ns": 817770,
+    "min_ns": 713794,
+    "max_ns": 956719.5,
+    "samples_ns": [
+      817770,
+      956719.5,
+      773708.5,
+      713794,
+      867184.5
+    ]
+  },
+  "RowWork/StagedNeighbors/NativeG64x1/1024": {
+    "count": 5,
+    "median_ns": 16279,
+    "min_ns": 16240,
+    "max_ns": 16495,
+    "samples_ns": [
+      16495,
+      16240,
+      16474.5,
+      16264.5,
+      16279
+    ]
+  },
+  "RowWork/StagedNeighbors/NativeG64x1/16384": {
+    "count": 5,
+    "median_ns": 278529,
+    "min_ns": 272390,
+    "max_ns": 376646.5,
+    "samples_ns": [
+      278529,
+      272390,
+      376646.5,
+      276656.5,
+      279946
+    ]
+  },
+  "RowWork/StagedNeighbors/NativeG64x1/65536": {
+    "count": 5,
+    "median_ns": 1210591,
+    "min_ns": 1168452.5,
+    "max_ns": 1301948.5,
+    "samples_ns": [
+      1210591,
+      1301948.5,
+      1266996,
+      1180045,
+      1168452.5
+    ]
+  },
+  "RowWork/StagedNeighbors/NativeG64x2/1024": {
+    "count": 5,
+    "median_ns": 17110.5,
+    "min_ns": 16680,
+    "max_ns": 22584,
+    "samples_ns": [
+      22584,
+      16815.5,
+      17110.5,
+      16680,
+      21492.5
+    ]
+  },
+  "RowWork/StagedNeighbors/NativeG64x2/16384": {
+    "count": 5,
+    "median_ns": 170461.5,
+    "min_ns": 168273.5,
+    "max_ns": 244487.5,
+    "samples_ns": [
+      170461.5,
+      190782,
+      244487.5,
+      168273.5,
+      168889
+    ]
+  },
+  "RowWork/StagedNeighbors/NativeG64x2/65536": {
+    "count": 5,
+    "median_ns": 817364.5,
+    "min_ns": 759237,
+    "max_ns": 1181777.5,
+    "samples_ns": [
+      809182,
+      1181777.5,
+      817364.5,
+      759237,
+      1137095
+    ]
+  },
+  "RowWork/StagedNeighbors/PipelineG1024x1/1024": {
+    "count": 5,
+    "median_ns": 16339.5,
+    "min_ns": 16249,
+    "max_ns": 16495,
+    "samples_ns": [
+      16439.5,
+      16249,
+      16495,
+      16254,
+      16339.5
+    ]
+  },
+  "RowWork/StagedNeighbors/PipelineG1024x1/16384": {
+    "count": 5,
+    "median_ns": 271343,
+    "min_ns": 263831.5,
+    "max_ns": 329570.5,
+    "samples_ns": [
+      271343,
+      284007.5,
+      329570.5,
+      263831.5,
+      266816.5
+    ]
+  },
+  "RowWork/StagedNeighbors/PipelineG1024x1/65536": {
+    "count": 5,
+    "median_ns": 1210080.5,
+    "min_ns": 1191296.5,
+    "max_ns": 1303966,
+    "samples_ns": [
+      1200811.5,
+      1210080.5,
+      1303966,
+      1262639.5,
+      1191296.5
+    ]
+  },
+  "RowWork/StagedNeighbors/PipelineG1024x2/1024": {
+    "count": 5,
+    "median_ns": 16294.5,
+    "min_ns": 16275,
+    "max_ns": 16445,
+    "samples_ns": [
+      16395,
+      16275,
+      16445,
+      16284.5,
+      16294.5
+    ]
+  },
+  "RowWork/StagedNeighbors/PipelineG1024x2/16384": {
+    "count": 5,
+    "median_ns": 255534.5,
+    "min_ns": 203711.5,
+    "max_ns": 386306,
+    "samples_ns": [
+      249660.5,
+      321403.5,
+      255534.5,
+      203711.5,
+      386306
+    ]
+  },
+  "RowWork/StagedNeighbors/PipelineG1024x2/65536": {
+    "count": 5,
+    "median_ns": 811891,
+    "min_ns": 774464.5,
+    "max_ns": 1252053,
+    "samples_ns": [
+      778395.5,
+      1123730.5,
+      811891,
+      774464.5,
+      1252053
+    ]
+  },
+  "RowWork/StagedNeighbors/PipelineG64x1/1024": {
+    "count": 5,
+    "median_ns": 16464.5,
+    "min_ns": 16300,
+    "max_ns": 16550,
+    "samples_ns": [
+      16550,
+      16519.5,
+      16464.5,
+      16420,
+      16300
+    ]
+  },
+  "RowWork/StagedNeighbors/PipelineG64x1/16384": {
+    "count": 5,
+    "median_ns": 279620.5,
+    "min_ns": 265464.5,
+    "max_ns": 301002.5,
+    "samples_ns": [
+      283937,
+      279620.5,
+      301002.5,
+      275945,
+      265464.5
+    ]
+  },
+  "RowWork/StagedNeighbors/PipelineG64x1/65536": {
+    "count": 5,
+    "median_ns": 1219544.5,
+    "min_ns": 1203405,
+    "max_ns": 1246690,
+    "samples_ns": [
+      1203405,
+      1222924.5,
+      1219544.5,
+      1246690,
+      1211161.5
+    ]
+  },
+  "RowWork/StagedNeighbors/PipelineG64x2/1024": {
+    "count": 5,
+    "median_ns": 46299.5,
+    "min_ns": 35893.5,
+    "max_ns": 55853.5,
+    "samples_ns": [
+      46299.5,
+      55853.5,
+      45403,
+      35893.5,
+      46700
+    ]
+  },
+  "RowWork/StagedNeighbors/PipelineG64x2/16384": {
+    "count": 5,
+    "median_ns": 359255,
+    "min_ns": 203831.5,
+    "max_ns": 438274.5,
+    "samples_ns": [
+      273093.5,
+      383011,
+      359255,
+      203831.5,
+      438274.5
+    ]
+  },
+  "RowWork/StagedNeighbors/PipelineG64x2/65536": {
+    "count": 5,
+    "median_ns": 1067836.5,
+    "min_ns": 791781,
+    "max_ns": 1221412.5,
+    "samples_ns": [
+      1067836.5,
+      1221412.5,
+      841395.5,
+      791781,
+      1220753.5
+    ]
+  },
+  "RowWork/Streaming/ECS/1024": {
+    "count": 5,
+    "median_ns": 541,
+    "min_ns": 481,
+    "max_ns": 786,
+    "samples_ns": [
+      746,
+      536,
+      786,
+      541,
+      481
+    ]
+  },
+  "RowWork/Streaming/ECS/16384": {
+    "count": 5,
+    "median_ns": 8708,
+    "min_ns": 8127.5,
+    "max_ns": 10571,
+    "samples_ns": [
+      8127.5,
+      8708,
+      10571,
+      8718,
+      8322
+    ]
+  },
+  "RowWork/Streaming/ECS/65536": {
+    "count": 5,
+    "median_ns": 61117,
+    "min_ns": 46079.5,
+    "max_ns": 63350.5,
+    "samples_ns": [
+      61447.5,
+      61117,
+      60191,
+      63350.5,
+      46079.5
+    ]
+  },
+  "RowWork/Streaming/HandWritten/1024": {
+    "count": 5,
+    "median_ns": 526,
+    "min_ns": 491,
+    "max_ns": 771,
+    "samples_ns": [
+      741,
+      526,
+      771,
+      506,
+      491
+    ]
+  },
+  "RowWork/Streaming/HandWritten/16384": {
+    "count": 5,
+    "median_ns": 8302.5,
+    "min_ns": 7962,
+    "max_ns": 10646,
+    "samples_ns": [
+      7962,
+      8317,
+      10646,
+      8253,
+      8302.5
+    ]
+  },
+  "RowWork/Streaming/HandWritten/65536": {
+    "count": 5,
+    "median_ns": 61076.5,
+    "min_ns": 49489,
+    "max_ns": 61708,
+    "samples_ns": [
+      61076.5,
+      61182,
+      59710,
+      61708,
+      49489
+    ]
+  },
+  "RowWork/Streaming/NativeG1024x1/1024": {
+    "count": 5,
+    "median_ns": 1743,
+    "min_ns": 1723,
+    "max_ns": 2854.5,
+    "samples_ns": [
+      2829,
+      1742.5,
+      2854.5,
+      1743,
+      1723
+    ]
+  },
+  "RowWork/Streaming/NativeG1024x1/16384": {
+    "count": 5,
+    "median_ns": 27015.5,
+    "min_ns": 26925.5,
+    "max_ns": 40040,
+    "samples_ns": [
+      27040.5,
+      26925.5,
+      40040,
+      27001,
+      27015.5
+    ]
+  },
+  "RowWork/Streaming/NativeG1024x1/65536": {
+    "count": 5,
+    "median_ns": 109535,
+    "min_ns": 108393,
+    "max_ns": 120055.5,
+    "samples_ns": [
+      120055.5,
+      109615,
+      109535,
+      108654,
+      108393
+    ]
+  },
+  "RowWork/Streaming/NativeG1024x2/1024": {
+    "count": 5,
+    "median_ns": 1733,
+    "min_ns": 1733,
+    "max_ns": 2864.5,
+    "samples_ns": [
+      2814.5,
+      1733,
+      2864.5,
+      1733,
+      1733
+    ]
+  },
+  "RowWork/Streaming/NativeG1024x2/16384": {
+    "count": 5,
+    "median_ns": 16494.5,
+    "min_ns": 13670.5,
+    "max_ns": 21092,
+    "samples_ns": [
+      13670.5,
+      19449,
+      21092,
+      14346.5,
+      16494.5
+    ]
+  },
+  "RowWork/Streaming/NativeG1024x2/65536": {
+    "count": 5,
+    "median_ns": 59925,
+    "min_ns": 49159,
+    "max_ns": 66755.5,
+    "samples_ns": [
+      66755.5,
+      65544,
+      56029,
+      59925,
+      49159
+    ]
+  },
+  "RowWork/Streaming/NativeG64x1/1024": {
+    "count": 5,
+    "median_ns": 2043.5,
+    "min_ns": 2038,
+    "max_ns": 3470.5,
+    "samples_ns": [
+      3395,
+      2043.5,
+      3470.5,
+      2038.5,
+      2038
+    ]
+  },
+  "RowWork/Streaming/NativeG64x1/16384": {
+    "count": 5,
+    "median_ns": 31637.5,
+    "min_ns": 31567,
+    "max_ns": 47892,
+    "samples_ns": [
+      31637.5,
+      31622.5,
+      47892,
+      31677.5,
+      31567
+    ]
+  },
+  "RowWork/Streaming/NativeG64x1/65536": {
+    "count": 5,
+    "median_ns": 127777,
+    "min_ns": 126349.5,
+    "max_ns": 172509,
+    "samples_ns": [
+      140456.5,
+      172509,
+      126555.5,
+      127777,
+      126349.5
+    ]
+  },
+  "RowWork/Streaming/NativeG64x2/1024": {
+    "count": 5,
+    "median_ns": 1497.5,
+    "min_ns": 1262,
+    "max_ns": 2584,
+    "samples_ns": [
+      1497.5,
+      1262,
+      1657.5,
+      1271.5,
+      2584
+    ]
+  },
+  "RowWork/Streaming/NativeG64x2/16384": {
+    "count": 5,
+    "median_ns": 22844.5,
+    "min_ns": 21703,
+    "max_ns": 27256,
+    "samples_ns": [
+      21703,
+      24401.5,
+      27256,
+      22764,
+      22844.5
+    ]
+  },
+  "RowWork/Streaming/NativeG64x2/65536": {
+    "count": 5,
+    "median_ns": 114151.5,
+    "min_ns": 110331.5,
+    "max_ns": 132244,
+    "samples_ns": [
+      114151.5,
+      111087,
+      124663,
+      132244,
+      110331.5
+    ]
+  },
+  "RowWork/Streaming/PipelineG1024x1/1024": {
+    "count": 5,
+    "median_ns": 1752,
+    "min_ns": 1733,
+    "max_ns": 2855,
+    "samples_ns": [
+      2855,
+      1733,
+      2854,
+      1733,
+      1752
+    ]
+  },
+  "RowWork/Streaming/PipelineG1024x1/16384": {
+    "count": 5,
+    "median_ns": 8482.5,
+    "min_ns": 8358,
+    "max_ns": 10837,
+    "samples_ns": [
+      8358,
+      8653,
+      10837,
+      8482.5,
+      8473
+    ]
+  },
+  "RowWork/Streaming/PipelineG1024x1/65536": {
+    "count": 5,
+    "median_ns": 56900,
+    "min_ns": 45443.5,
+    "max_ns": 68412.5,
+    "samples_ns": [
+      60190.5,
+      56900,
+      56264.5,
+      68412.5,
+      45443.5
+    ]
+  },
+  "RowWork/Streaming/PipelineG1024x2/1024": {
+    "count": 5,
+    "median_ns": 1753,
+    "min_ns": 1732.5,
+    "max_ns": 2859.5,
+    "samples_ns": [
+      2819.5,
+      1753,
+      2859.5,
+      1732.5,
+      1733
+    ]
+  },
+  "RowWork/Streaming/PipelineG1024x2/16384": {
+    "count": 5,
+    "median_ns": 41372,
+    "min_ns": 38357.5,
+    "max_ns": 55668.5,
+    "samples_ns": [
+      48177.5,
+      41372,
+      38357.5,
+      39845,
+      55668.5
+    ]
+  },
+  "RowWork/Streaming/PipelineG1024x2/65536": {
+    "count": 5,
+    "median_ns": 85929,
+    "min_ns": 74141.5,
+    "max_ns": 99264.5,
+    "samples_ns": [
+      83375.5,
+      98988.5,
+      74141.5,
+      85929,
+      99264.5
+    ]
+  },
+  "RowWork/Streaming/PipelineG64x1/1024": {
+    "count": 5,
+    "median_ns": 591,
+    "min_ns": 561,
+    "max_ns": 831,
+    "samples_ns": [
+      821.5,
+      591,
+      831,
+      561,
+      561
+    ]
+  },
+  "RowWork/Streaming/PipelineG64x1/16384": {
+    "count": 5,
+    "median_ns": 8448,
+    "min_ns": 8348,
+    "max_ns": 10982,
+    "samples_ns": [
+      8448,
+      8808.5,
+      10982,
+      8418,
+      8348
+    ]
+  },
+  "RowWork/Streaming/PipelineG64x1/65536": {
+    "count": 5,
+    "median_ns": 63230,
+    "min_ns": 49369,
+    "max_ns": 66906,
+    "samples_ns": [
+      63230,
+      61142,
+      66906,
+      64092,
+      49369
+    ]
+  },
+  "RowWork/Streaming/PipelineG64x2/1024": {
+    "count": 5,
+    "median_ns": 17216,
+    "min_ns": 8813,
+    "max_ns": 24321.5,
+    "samples_ns": [
+      12063,
+      17216,
+      24321.5,
+      17571.5,
+      8813
+    ]
+  },
+  "RowWork/Streaming/PipelineG64x2/16384": {
+    "count": 5,
+    "median_ns": 40491,
+    "min_ns": 37176,
+    "max_ns": 45734,
+    "samples_ns": [
+      43014.5,
+      40491,
+      45734,
+      37176,
+      38888.5
+    ]
+  },
+  "RowWork/Streaming/PipelineG64x2/65536": {
+    "count": 5,
+    "median_ns": 86365,
+    "min_ns": 70786,
+    "max_ns": 97041,
+    "samples_ns": [
+      70786,
+      97041,
+      88598.5,
+      81106.5,
+      86365
+    ]
+  }
+}

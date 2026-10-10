@@ -1,0 +1,21 @@
+run dir: /workspace/scratch/a79dc81cbc62/Sub0ECS/bench/results/runs/dfbfd71b265a/20261010-154100-671eedb-representative-receiving
+  warning: ASLR enabled: small run-to-run layout noise
+  warning: virtualised host (KVM): expect noisy neighbours
+  warning: working tree has uncommitted changes: results are not reproducible from the SHA alone
+  > baseline: build/pipeline/bench/sub0ecs_bench --filter=^(Create|Iter1|Update2|Frame3|SparseQuery|RandomGet|AddRemove|TagChurn|DestroyCreate)/ --epochs=5 --min-epoch-ms=0 --out=/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/results/runs/dfbfd71b265a/20261010-154100-671eedb-representative-receiving/baseline.json
+    ok in 11s
+  > fusion: build/pipeline/bench/sub0ecs_bench --filter=^(FusionFrame|Frame3Sys)/ --epochs=5 --min-epoch-ms=0 --out=/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/results/runs/dfbfd71b265a/20261010-154100-671eedb-representative-receiving/fusion.json
+    ok in 0s
+  > skirmish: build/pipeline/bench/sub0ecs_skirmish_bench --filter=^Tick/ --epochs=5 --min-epoch-ms=0 --out=/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/results/runs/dfbfd71b265a/20261010-154100-671eedb-representative-receiving/skirmish.json
+    ok in 0s
+  > threads: build/pipeline/bench/sub0ecs_skirmish_bench --filter=^Threads/ --epochs=5 --min-epoch-ms=0 --out=/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/results/runs/dfbfd71b265a/20261010-154100-671eedb-representative-receiving/threads.json
+    ok in 1s
+  > spans: build/pipeline/bench/sub0ecs_spans_bench --filter=.* --epochs=5 --min-epoch-ms=0 --out=/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/results/runs/dfbfd71b265a/20261010-154100-671eedb-representative-receiving/spans.json
+    ok in 0s
+  > nbody: build/pipeline/bench/sub0ecs_nbody_bench --filter=^NBody/ --epochs=5 --min-epoch-ms=0 --out=/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/results/runs/dfbfd71b265a/20261010-154100-671eedb-representative-receiving/nbody.json
+    ok in 0s
+  > rows: build/pipeline/bench/sub0ecs_rows_bench --filter=^RowDispatch/ --epochs=5 --min-epoch-ms=0 --out=/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/results/runs/dfbfd71b265a/20261010-154100-671eedb-representative-receiving/rows.json
+    ok in 1s
+  > row-workloads: build/pipeline/bench/sub0ecs_row_workloads_bench --filter=^RowWork/ --epochs=5 --min-epoch-ms=0 --out=/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/results/runs/dfbfd71b265a/20261010-154100-671eedb-representative-receiving/row-workloads.json
+    ok in 0s
+done: /workspace/scratch/a79dc81cbc62/Sub0ECS/bench/results/runs/dfbfd71b265a/20261010-154100-671eedb-representative-receiving/summary.md

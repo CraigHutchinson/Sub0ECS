@@ -1,0 +1,7 @@
+{
+  "standalone": "g++ -std=c++20 -O2 -ffp-contract=off -pthread -DDOCTEST_CONFIG_USE_STD_HEADERS -Iinclude -Ibench -I/root/.cpm/doctest/a12c tests/test_main.cpp tests/test_nbody.cpp tests/test_row_workloads.cpp tests/test_row_grain.cpp -o build/compact-evidence/final/standalone-tests",
+  "tsan": "g++ -std=c++23 -O1 -g -ffp-contract=off -pthread -fsanitize=thread -fno-omit-frame-pointer -DSUB0ECS_TEST_PIPELINE=1 -DSUB0PIPELINE_EXCEPTIONS=1 -DDOCTEST_CONFIG_USE_STD_HEADERS -Iinclude -Ibench -I../Sub0Pipeline/include -I/root/.cpm/doctest/a12c tests/test_main.cpp tests/test_nbody.cpp tests/test_row_workloads.cpp tests/test_pipeline_pool.cpp ../Sub0Pipeline/src/sub0pipeline.cpp ../Sub0Pipeline/src/tick_loop.cpp ../Sub0Pipeline/platform/priority/priority_executor.cpp -o build/compact-evidence/final/tsan-tests",
+  "tsan_run": "TSAN_OPTIONS=halt_on_error=1 build/compact-evidence/final/tsan-tests --test-suite-exclude=exhaustive",
+  "full_tests": "ctest --test-dir build/pipeline --output-on-failure",
+  "smoke": "python3 bench/tools/run.py --profile quick --build-dir build/pipeline --label representative-receiving"
+}

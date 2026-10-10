@@ -1,0 +1,22 @@
+[
+  "/usr/bin/c++",
+  "-DSUB0ECS_TEST_PIPELINE=1",
+  "-DSUB0PIPELINE_EXCEPTIONS=1",
+  "-I/workspace/scratch/a79dc81cbc62/Sub0ECS/bench",
+  "-I/workspace/scratch/a79dc81cbc62/Sub0ECS/include",
+  "-I/root/.cpm/nanobench/8263/src/include",
+  "-I/workspace/scratch/a79dc81cbc62/Sub0Pipeline/include",
+  "-O3",
+  "-DNDEBUG",
+  "-std=gnu++23",
+  "-g",
+  "-Wall",
+  "-Wextra",
+  "-ffp-contract=off",
+  "-O3",
+  "-c",
+  "/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/nbody/bench.cpp",
+  "-o",
+  "build/compact-evidence/final/vector.o",
+  "-fopt-info-vec-all=build/compact-evidence/final/vectorization.txt"
+]

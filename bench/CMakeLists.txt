@@ -69,3 +69,10 @@ endif()
 # Separate chunk bookkeeping from kernel and scheduler cost.
 add_executable(sub0ecs_rows_bench rows/bench.cpp)
 target_link_libraries(sub0ecs_rows_bench PRIVATE sub0ecs_bench_harness)
+
+add_executable(sub0ecs_row_workloads_bench row_workloads/bench.cpp)
+target_link_libraries(sub0ecs_row_workloads_bench PRIVATE sub0ecs_bench_harness)
+if(SUB0ECS_WITH_PIPELINE)
+    target_compile_definitions(sub0ecs_row_workloads_bench PRIVATE SUB0ECS_TEST_PIPELINE=1)
+    target_link_libraries(sub0ecs_row_workloads_bench PRIVATE Sub0ECS::Pipeline Sub0Pipeline::Priority)
+endif()

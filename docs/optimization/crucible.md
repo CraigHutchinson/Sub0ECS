@@ -214,3 +214,27 @@ control; see [n-body](nbody.md) and the FINDINGS receipt. This advances C3's lib
 experiment. It does not update Crucible's runtime pins or receive production FP,
 staged commit, replay, p95/p99 or lifecycle contracts. C1 supervision, C2 actual
 caller attribution, C4 access enforcement and C5 Pub delivery remain open.
+
+## Consolidated status after PR19
+
+PR18 merged the optional Pipeline pool and explicit row grain. PR19 merged the
+single-partition arithmetic dispatch specialization and same-resource handwritten
+controls, with all five platform/sanitizer CI jobs passing. The
+[representative follow-up](representative.md) extends C3/C6 measurement coverage
+with complete streaming, tag-selected churn and staged-neighbor ticks, plus a
+compact n-body force snapshot. C6 now has a synthetic churn benchmark; this does
+not attribute Crucible's current runtime cost to migration.
+
+Keep adapters in the library that owns the translated contract. Keep Pub Wiring,
+Domain and protocol identities owned by Pub, Pipeline execution/join owned by
+Pipeline, and ECS storage/query identity owned by ECS. Shared benchmark pool
+fixtures eliminate duplicated setup without adding a common runtime layer.
+A batching/borrow API or shared primitive still needs two actual consumers and
+proof of matching lifetime/error semantics. These findings do not justify an
+architectural type merger.
+
+Next receiving work remains C1 bounded profiler supervision, C2 real caller
+attribution and production library pins, C4 access enforcement, and C5 a meaningful
+Pub delivery comparison. Real spatial workloads, field-split target SIMD and
+many-tiny-partition stress remain distinct experiments. Do not combine their
+hypotheses into a default scheduler/layout change.
