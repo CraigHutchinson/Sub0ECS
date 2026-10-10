@@ -1,5 +1,8 @@
 # Comparison benchmarks
 
+Start with the [performance guide](../docs/optimization/README.md) for workload selection,
+reproduction recipes, current optimization results and their limits.
+
 These keep the library honest. The store ([`sub0ecs::store`](../include/sub0ecs/store/world.hpp),
 *QueryPart* / *QPartHinted* below) runs one fixed workload beside reference
 implementations, and every figure the project quotes is a ratio to one of them,
