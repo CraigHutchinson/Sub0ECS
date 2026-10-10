@@ -1,0 +1,10 @@
+{
+  "schema": "sub0ecs-bench-results/1",
+  "binary": "sub0ecs_stack_bench",
+  "settings": {"filter": "^Stack/Boundary1/DomainSearch/", "epochs": 300, "min_epoch_ms": 0, "warmup": 0},
+  "results": [
+    {"name": "Stack/Boundary1/DomainSearch/65536", "scenario": "Stack", "pattern": "Boundary1", "design": "DomainSearch", "group": "Stack/Boundary1/65536", "n": 65536, "unit": "boundary",
+     "median_ns": 7655765, "err_pct": 7.00879695, "min_ns": 6777179, "max_ns": 16183035, "epochs": 300, "items_per_second": 130.620519,
+     "counters": {"state_checksum": 3.96046157e+10, "completed_ticks": 303}, "notes": {}}
+  ]
+}

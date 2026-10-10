@@ -88,3 +88,5 @@ Design: [research/executor-async.md](research/executor-async.md).
 | ESP32-P4: static capacity, code size, SRAM budget; a fixed-capacity policy behind the same columns |
 | Extract the store's substrate as Sub0DataStore once the store API settles |
 | Skirmish as its own project (see [bench/skirmish/README.md](../bench/skirmish/README.md)) |
+
+- Full-stack follow-up: [current contracts](optimization/full-stack.md), especially actual mobile-ID staging, fixed-wiring lifecycle receiving, complete spatial workloads and native-frame qualification.

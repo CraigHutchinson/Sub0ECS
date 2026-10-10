@@ -1,0 +1,436 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 55.07      1.25     1.25      303     4.13     4.13  void std::__introsort_loop<__gnu_cxx::__normal_iterator<bench::stack::Row*, std::vector<bench::stack::Row, std::allocator<bench::stack::Row> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<bench::stack::Simulation<bench::stack::DomainRoute, false>::prepare()::{lambda(bench::stack::Row const&, bench::stack::Row const&)#2}> >(__gnu_cxx::__normal_iterator<bench::stack::Row*, std::vector<bench::stack::Row, std::allocator<bench::stack::Row> > >, __gnu_cxx::__normal_iterator<bench::stack::Row*, std::vector<bench::stack::Row, std::allocator<bench::stack::Row> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<bench::stack::Simulation<bench::stack::DomainRoute, false>::prepare()::{lambda(bench::stack::Row const&, bench::stack::Row const&)#2}>)
+ 40.53      2.17     0.92      303     3.04     3.04  std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#2}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#2}&&)::{lambda(std::stop_token)#1}>::_M_invoke(std::_Any_data const&, std::stop_token&&)
+  2.20      2.22     0.05      303     0.17     4.36  std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#1}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#1}&&)::{lambda(std::stop_token)#1}>::_M_invoke(std::_Any_data const&, std::stop_token&&)
+  0.88      2.24     0.02      303     0.07     0.07  void sub0ecs::adapters::PipelinePool::parallelFor<bench::stack::Simulation<bench::stack::DomainRoute, false>::compute()::{lambda(unsigned long, unsigned int)#1}>(unsigned long, bench::stack::Simulation<bench::stack::DomainRoute, false>::compute()::{lambda(unsigned long, unsigned int)#1}&)
+  0.88      2.26     0.02      303     0.07     0.07  std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#3}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#3}&&)::{lambda(std::stop_token)#1}>::_M_invoke(std::_Any_data const&, std::stop_token&&)
+  0.44      2.27     0.01                             ankerl::nanobench::detail::LinuxPerformanceCounters::endMeasure()
+  0.00      2.27     0.00    98323     0.00     0.00  std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::WiredRoute, true>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+  0.00      2.27     0.00    65536     0.00     0.00  sub0ecs::store::BasicWorld<true, std::tuple<sub0ecs::Query<bench::stack::Row>, sub0ecs::Query<bench::stack::Row, bench::stack::Simulation<bench::stack::DomainRoute, false>::Tag> >, sub0ecs::store::Volatile<> >::partitionFor(unsigned long)
+  0.00      2.27     0.00    65536     0.00     0.00  sub0ecs::store::Partition::pushRow(sub0ecs::Entity)
+  0.00      2.27     0.00     1088     0.00     0.00  std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_dispose()
+  0.00      2.27     0.00      608     0.00     0.00  std::vector<unsigned int, std::allocator<unsigned int> >::reserve(unsigned long)
+  0.00      2.27     0.00      304     0.00     0.00  std::_Function_handler<void (), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda()#1}>::_M_invoke(std::_Any_data const&)
+  0.00      2.27     0.00      303     0.00     0.00  sub0::detail::BrokerImpl<bench::stack::Batch, sub0::with<sub0::detail::BuiltinT<8u, (sub0::Dispatch)1, (sub0::Context)2, false, sub0::NoLock, (sub0::NoReceivers)0>, sub0::Scoped, sub0::Capacity<1u>, sub0::NoFilter, sub0::LockWith<bench::stack::BrokerLock> > >::publish(bench::stack::Batch const&, void const*, sub0::PublishReport*) const
+  0.00      2.27     0.00        8     0.00     0.00  bench::harness::Case::~Case()
+  0.00      2.27     0.00        4     0.00     0.00  std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_release()
+  0.00      2.27     0.00        4     0.00     0.00  std::vector<long, std::allocator<long> >::~vector()
+  0.00      2.27     0.00        4     0.00     0.00  std::vector<unsigned long, std::allocator<unsigned long> >::~vector()
+  0.00      2.27     0.00        3     0.00     0.00  bench::stack::Plain::tick()
+  0.00      2.27     0.00        3     0.00     0.00  std::stop_token::_Stop_state_t::_M_release_ownership()
+  0.00      2.27     0.00        2     0.00     0.00  bench::env::list(char const*, std::vector<long, std::allocator<long> >)
+  0.00      2.27     0.00        2     0.00     0.00  bench::harness::Case::Case(bench::harness::Case&&)
+  0.00      2.27     0.00        2     0.00     0.00  std::unique_ptr<sub0ecs::store::Partition, std::default_delete<sub0ecs::store::Partition> >::~unique_ptr()
+  0.00      2.27     0.00        2     0.00     0.00  std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count(std::__shared_count<(__gnu_cxx::_Lock_policy)2> const&)
+  0.00      2.27     0.00        2     0.00     0.00  std::_Function_handler<void (), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::WiredRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::WiredRoute, false> >)::{lambda()#1}>::_M_invoke(std::_Any_data const&)
+  0.00      2.27     0.00        1     0.00     0.00  void sub0::detail::BrokerImpl<bench::stack::Batch, sub0::with<sub0::detail::BuiltinT<8u, (sub0::Dispatch)1, (sub0::Context)2, false, sub0::NoLock, (sub0::NoReceivers)0>, sub0::Scoped, sub0::Capacity<1u>, sub0::NoFilter, sub0::LockWith<bench::stack::BrokerLock> > >::close<true, 0>(sub0::detail::Table<bench::stack::Batch, sub0::with<sub0::detail::BuiltinT<8u, (sub0::Dispatch)1, (sub0::Context)2, false, sub0::NoLock, (sub0::NoReceivers)0>, sub0::Scoped, sub0::Capacity<1u>, sub0::NoFilter, sub0::LockWith<bench::stack::BrokerLock> > >&)
+  0.00      2.27     0.00        1     0.00     0.00  bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)
+  0.00      2.27     0.00        1     0.00     0.00  bench::stack::DomainRoute::~DomainRoute()
+  0.00      2.27     0.00        1     0.00     0.00  bench::stack::Plain::Plain(unsigned long)
+  0.00      2.27     0.00        1     0.00     0.00  bench::stack::Plain::~Plain()
+  0.00      2.27     0.00        1     0.00     0.00  bench::harness::Prepared::~Prepared()
+  0.00      2.27     0.00        1     0.00     0.00  sub0ecs::store::BasicWorld<true, std::tuple<sub0ecs::Query<bench::stack::Row>, sub0ecs::Query<bench::stack::Row, bench::stack::Simulation<bench::stack::DomainRoute, false>::Tag> >, sub0ecs::store::Volatile<> >::~BasicWorld()
+  0.00      2.27     0.00        1     0.00     0.00  sub0ecs::store::SidePool<bench::stack::Simulation<bench::stack::DomainRoute, false>::Tag>::~SidePool()
+  0.00      2.27     0.00        1     0.00     0.00  sub0ecs::store::SidePool<bench::stack::Row>::~SidePool()
+  0.00      2.27     0.00        1     0.00     0.00  std::_Hashtable<unsigned long, std::pair<unsigned long const, unsigned int>, std::allocator<std::pair<unsigned long const, unsigned int> >, std::__detail::_Select1st, std::equal_to<unsigned long>, std::hash<unsigned long>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<false, false, true> >::_M_rehash(unsigned long, unsigned long const&)
+  0.00      2.27     0.00        1     0.00     0.00  std::_Function_handler<bench::harness::Prepared (), main::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+  0.00      2.27     0.00        1     0.00     0.00  std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::WiredRoute, false>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+  0.00      2.27     0.00        1     0.00     0.00  std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::DomainRoute, false>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+  0.00      2.27     0.00        1     0.00     0.00  std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::DomainRoute, false>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_invoke(std::_Any_data const&)
+  0.00      2.27     0.00        1     0.00     0.00  std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::DomainRoute, true>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+  0.00      2.27     0.00        1     0.00     0.00  std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#2}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#2}&&)::{lambda(std::stop_token)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+  0.00      2.27     0.00        1     0.00     0.00  std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#3}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#3}&&)::{lambda(std::stop_token)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+  0.00      2.27     0.00        1     0.00     0.00  std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#1}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#1}&&)::{lambda(std::stop_token)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+  0.00      2.27     0.00        1     0.00     0.00  std::_Function_handler<void (bench::harness::Record&), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda(bench::harness::Record&)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+  0.00      2.27     0.00        1     0.00     0.00  std::_Function_handler<void (bench::harness::Record&), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda(bench::harness::Record&)#1}>::_M_invoke(std::_Any_data const&, bench::harness::Record&)
+  0.00      2.27     0.00        1     0.00     0.00  std::_Function_handler<void (), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)
+  0.00      2.27     0.00        1     0.00     0.00  std::_Sp_counted_ptr_inplace<bench::stack::Simulation<bench::stack::DomainRoute, false>, std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_M_destroy()
+  0.00      2.27     0.00        1     0.00     0.00  std::_Sp_counted_ptr_inplace<bench::stack::Simulation<bench::stack::DomainRoute, false>, std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()
+  0.00      2.27     0.00        1     0.00     0.00  std::vector<bench::harness::Case, std::allocator<bench::harness::Case> >::~vector()
+  0.00      2.27     0.00        1     0.00     0.00  std::vector<unsigned int, std::allocator<unsigned int> >::push_back(unsigned int const&)
+  0.00      2.27     0.00        1     0.00     0.00  std::__detail::_MakeUniq<sub0ecs::store::SidePool<bench::stack::Row> >::__single_object std::make_unique<sub0ecs::store::SidePool<bench::stack::Row>>()
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2024 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 4 byte(s) for 0.44% of 2.27 seconds
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]     99.6    0.00    2.26                 sub0pipeline::Pipeline::Impl::invoke(sub0pipeline::Pipeline::Node&) [1]
+                0.05    1.27     303/303         std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#1}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#1}&&)::{lambda(std::stop_token)#1}>::_M_invoke(std::_Any_data const&, std::stop_token&&) [2]
+                0.92    0.00     303/303         std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#2}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#2}&&)::{lambda(std::stop_token)#1}>::_M_invoke(std::_Any_data const&, std::stop_token&&) [4]
+                0.02    0.00     303/303         std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#3}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#3}&&)::{lambda(std::stop_token)#1}>::_M_invoke(std::_Any_data const&, std::stop_token&&) [6]
+-----------------------------------------------
+                0.05    1.27     303/303         sub0pipeline::Pipeline::Impl::invoke(sub0pipeline::Pipeline::Node&) [1]
+[2]     58.1    0.05    1.27     303         std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#1}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#1}&&)::{lambda(std::stop_token)#1}>::_M_invoke(std::_Any_data const&, std::stop_token&&) [2]
+                1.25    0.00     303/303         void std::__introsort_loop<__gnu_cxx::__normal_iterator<bench::stack::Row*, std::vector<bench::stack::Row, std::allocator<bench::stack::Row> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<bench::stack::Simulation<bench::stack::DomainRoute, false>::prepare()::{lambda(bench::stack::Row const&, bench::stack::Row const&)#2}> >(__gnu_cxx::__normal_iterator<bench::stack::Row*, std::vector<bench::stack::Row, std::allocator<bench::stack::Row> > >, __gnu_cxx::__normal_iterator<bench::stack::Row*, std::vector<bench::stack::Row, std::allocator<bench::stack::Row> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<bench::stack::Simulation<bench::stack::DomainRoute, false>::prepare()::{lambda(bench::stack::Row const&, bench::stack::Row const&)#2}>) [3]
+                0.02    0.00     303/303         void sub0ecs::adapters::PipelinePool::parallelFor<bench::stack::Simulation<bench::stack::DomainRoute, false>::compute()::{lambda(unsigned long, unsigned int)#1}>(unsigned long, bench::stack::Simulation<bench::stack::DomainRoute, false>::compute()::{lambda(unsigned long, unsigned int)#1}&) [5]
+-----------------------------------------------
+                              123018             void std::__introsort_loop<__gnu_cxx::__normal_iterator<bench::stack::Row*, std::vector<bench::stack::Row, std::allocator<bench::stack::Row> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<bench::stack::Simulation<bench::stack::DomainRoute, false>::prepare()::{lambda(bench::stack::Row const&, bench::stack::Row const&)#2}> >(__gnu_cxx::__normal_iterator<bench::stack::Row*, std::vector<bench::stack::Row, std::allocator<bench::stack::Row> > >, __gnu_cxx::__normal_iterator<bench::stack::Row*, std::vector<bench::stack::Row, std::allocator<bench::stack::Row> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<bench::stack::Simulation<bench::stack::DomainRoute, false>::prepare()::{lambda(bench::stack::Row const&, bench::stack::Row const&)#2}>) [3]
+                1.25    0.00     303/303         std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#1}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#1}&&)::{lambda(std::stop_token)#1}>::_M_invoke(std::_Any_data const&, std::stop_token&&) [2]
+[3]     55.1    1.25    0.00     303+123018  void std::__introsort_loop<__gnu_cxx::__normal_iterator<bench::stack::Row*, std::vector<bench::stack::Row, std::allocator<bench::stack::Row> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<bench::stack::Simulation<bench::stack::DomainRoute, false>::prepare()::{lambda(bench::stack::Row const&, bench::stack::Row const&)#2}> >(__gnu_cxx::__normal_iterator<bench::stack::Row*, std::vector<bench::stack::Row, std::allocator<bench::stack::Row> > >, __gnu_cxx::__normal_iterator<bench::stack::Row*, std::vector<bench::stack::Row, std::allocator<bench::stack::Row> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<bench::stack::Simulation<bench::stack::DomainRoute, false>::prepare()::{lambda(bench::stack::Row const&, bench::stack::Row const&)#2}>) [3]
+                              123018             void std::__introsort_loop<__gnu_cxx::__normal_iterator<bench::stack::Row*, std::vector<bench::stack::Row, std::allocator<bench::stack::Row> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<bench::stack::Simulation<bench::stack::DomainRoute, false>::prepare()::{lambda(bench::stack::Row const&, bench::stack::Row const&)#2}> >(__gnu_cxx::__normal_iterator<bench::stack::Row*, std::vector<bench::stack::Row, std::allocator<bench::stack::Row> > >, __gnu_cxx::__normal_iterator<bench::stack::Row*, std::vector<bench::stack::Row, std::allocator<bench::stack::Row> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<bench::stack::Simulation<bench::stack::DomainRoute, false>::prepare()::{lambda(bench::stack::Row const&, bench::stack::Row const&)#2}>) [3]
+-----------------------------------------------
+                0.92    0.00     303/303         sub0pipeline::Pipeline::Impl::invoke(sub0pipeline::Pipeline::Node&) [1]
+[4]     40.5    0.92    0.00     303         std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#2}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#2}&&)::{lambda(std::stop_token)#1}>::_M_invoke(std::_Any_data const&, std::stop_token&&) [4]
+-----------------------------------------------
+                0.02    0.00     303/303         std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#1}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#1}&&)::{lambda(std::stop_token)#1}>::_M_invoke(std::_Any_data const&, std::stop_token&&) [2]
+[5]      0.9    0.02    0.00     303         void sub0ecs::adapters::PipelinePool::parallelFor<bench::stack::Simulation<bench::stack::DomainRoute, false>::compute()::{lambda(unsigned long, unsigned int)#1}>(unsigned long, bench::stack::Simulation<bench::stack::DomainRoute, false>::compute()::{lambda(unsigned long, unsigned int)#1}&) [5]
+-----------------------------------------------
+                0.02    0.00     303/303         sub0pipeline::Pipeline::Impl::invoke(sub0pipeline::Pipeline::Node&) [1]
+[6]      0.9    0.02    0.00     303         std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#3}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#3}&&)::{lambda(std::stop_token)#1}>::_M_invoke(std::_Any_data const&, std::stop_token&&) [6]
+-----------------------------------------------
+                                                 <spontaneous>
+[7]      0.4    0.01    0.00                 ankerl::nanobench::detail::LinuxPerformanceCounters::endMeasure() [7]
+-----------------------------------------------
+                0.00    0.00       1/98323       main [13]
+                0.00    0.00       1/98323       std::vector<bench::harness::Case, std::allocator<bench::harness::Case> >::~vector() [56]
+                0.00    0.00       2/98323       std::_Function_handler<void (bench::harness::Record&), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda(bench::harness::Record&)#1}>::_M_invoke(std::_Any_data const&, bench::harness::Record&) [52]
+                0.00    0.00       2/98323       bench::stack::Plain::Plain(unsigned long) [36]
+                0.00    0.00       4/98323       bench::env::list(char const*, std::vector<long, std::allocator<long> >) [28]
+                0.00    0.00   32772/98323       bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int) [34]
+                0.00    0.00   65541/98323       sub0ecs::store::BasicWorld<true, std::tuple<sub0ecs::Query<bench::stack::Row>, sub0ecs::Query<bench::stack::Row, bench::stack::Simulation<bench::stack::DomainRoute, false>::Tag> >, sub0ecs::store::Volatile<> >::partitionFor(unsigned long) [16]
+[15]     0.0    0.00    0.00   98323         std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::WiredRoute, true>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [15]
+-----------------------------------------------
+                0.00    0.00   65536/65536       bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int) [34]
+[16]     0.0    0.00    0.00   65536         sub0ecs::store::BasicWorld<true, std::tuple<sub0ecs::Query<bench::stack::Row>, sub0ecs::Query<bench::stack::Row, bench::stack::Simulation<bench::stack::DomainRoute, false>::Tag> >, sub0ecs::store::Volatile<> >::partitionFor(unsigned long) [16]
+                0.00    0.00   65541/98323       std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::WiredRoute, true>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [15]
+                0.00    0.00       2/304         std::_Function_handler<void (), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda()#1}>::_M_invoke(std::_Any_data const&) [20]
+                0.00    0.00       2/2           std::unique_ptr<sub0ecs::store::Partition, std::default_delete<sub0ecs::store::Partition> >::~unique_ptr() [30]
+-----------------------------------------------
+                0.00    0.00   65536/65536       bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int) [34]
+[17]     0.0    0.00    0.00   65536         sub0ecs::store::Partition::pushRow(sub0ecs::Entity) [17]
+-----------------------------------------------
+                0.00    0.00       1/1088        bench::harness::(anonymous namespace)::recordFor(bench::harness::Case const&) [151]
+                0.00    0.00       1/1088        ankerl::nanobench::detail::IterationLogic::moveResultTo(std::vector<ankerl::nanobench::Result, std::allocator<ankerl::nanobench::Result> >&) [238]
+                0.00    0.00       1/1088        ankerl::nanobench::detail::IterationLogic::add(std::chrono::duration<long, std::ratio<1l, 1000000000l> >, ankerl::nanobench::detail::PerformanceCounters const&) [239]
+                0.00    0.00       1/1088        sub0pipeline::Pipeline::~Pipeline() [117]
+                0.00    0.00       2/1088        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_assign(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [722]
+                0.00    0.00       3/1088        bench::harness::(anonymous namespace)::runPaired(std::vector<bench::harness::Case const*, std::allocator<bench::harness::Case const*> > const&, bench::harness::Options const&, std::vector<bench::harness::Record, std::allocator<bench::harness::Record> >&) [152]
+                0.00    0.00       3/1088        sub0pipeline::Job::name(std::basic_string_view<char, std::char_traits<char> >) [75]
+                0.00    0.00       5/1088        bench::harness::Record::~Record() [155]
+                0.00    0.00       6/1088        bench::env::list(char const*, std::vector<long, std::allocator<long> >) [28]
+                0.00    0.00       8/1088        ankerl::nanobench::detail::PerformanceCounters::~PerformanceCounters() [261]
+                0.00    0.00       9/1088        bench::harness::benchMain(int, char**, bench::harness::Registry const&, char const*) [157]
+                0.00    0.00       9/1088        sub0pipeline::Pipeline::Impl::addNode(std::function<std::expected<void, sub0pipeline::PipelineError> (std::stop_token)>, std::basic_string_view<char, std::char_traits<char> >, unsigned char) [104]
+                0.00    0.00      11/1088        bench::harness::runAll(bench::harness::Registry const&, bench::harness::Options const&) [156]
+                0.00    0.00      12/1088        bench::harness::Case::group[abi:cxx11]() const [359]
+                0.00    0.00      21/1088        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_mutate(unsigned long, unsigned long, char const*, unsigned long) [723]
+                0.00    0.00      21/1088        ankerl::nanobench::detail::gatherStabilityInformation(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&) [276]
+                0.00    0.00      23/1088        ankerl::nanobench::detail::IterationLogic::Impl::showResult(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) const [409]
+                0.00    0.00      42/1088        bench::harness::Case::name[abi:cxx11]() const [358]
+                0.00    0.00     909/1088        sub0pipeline::Pipeline::runImpl(sub0pipeline::IExecutor&, std::stop_token, sub0pipeline::IObserver*)::DispatchContext::dispatchJob(unsigned int) [822]
+[18]     0.0    0.00    0.00    1088         std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_dispose() [18]
+-----------------------------------------------
+                0.00    0.00       1/608         bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int) [34]
+                0.00    0.00       1/608         sub0pipeline::Pipeline::validate() const [356]
+                0.00    0.00     606/608         sub0pipeline::Pipeline::runImpl(sub0pipeline::IExecutor&, std::stop_token, sub0pipeline::IObserver*) [110]
+[19]     0.0    0.00    0.00     608         std::vector<unsigned int, std::allocator<unsigned int> >::reserve(unsigned long) [19]
+-----------------------------------------------
+                0.00    0.00       2/304         main [13]
+                0.00    0.00       2/304         sub0ecs::store::BasicWorld<true, std::tuple<sub0ecs::Query<bench::stack::Row>, sub0ecs::Query<bench::stack::Row, bench::stack::Simulation<bench::stack::DomainRoute, false>::Tag> >, sub0ecs::store::Volatile<> >::partitionFor(unsigned long) [16]
+                0.00    0.00     300/304         bench::harness::writeJson(std::ostream&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bench::harness::Options const&, std::vector<bench::harness::Record, std::allocator<bench::harness::Record> > const&) [158]
+[20]     0.0    0.00    0.00     304         std::_Function_handler<void (), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda()#1}>::_M_invoke(std::_Any_data const&) [20]
+                0.00    0.00     300/303         sub0::detail::BrokerImpl<bench::stack::Batch, sub0::with<sub0::detail::BuiltinT<8u, (sub0::Dispatch)1, (sub0::Context)2, false, sub0::NoLock, (sub0::NoReceivers)0>, sub0::Scoped, sub0::Capacity<1u>, sub0::NoFilter, sub0::LockWith<bench::stack::BrokerLock> > >::publish(bench::stack::Batch const&, void const*, sub0::PublishReport*) const [21]
+                0.00    0.00       3/8           bench::harness::Case::~Case() [22]
+                0.00    0.00       2/2           bench::harness::Case::Case(bench::harness::Case&&) [29]
+                0.00    0.00       1/1           std::_Hashtable<unsigned long, std::pair<unsigned long const, unsigned int>, std::allocator<std::pair<unsigned long const, unsigned int> >, std::__detail::_Select1st, std::equal_to<unsigned long>, std::hash<unsigned long>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<false, false, true> >::_M_rehash(unsigned long, unsigned long const&) [42]
+-----------------------------------------------
+                0.00    0.00       3/303         std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::DomainRoute, false>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_invoke(std::_Any_data const&) [46]
+                0.00    0.00     300/303         std::_Function_handler<void (), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda()#1}>::_M_invoke(std::_Any_data const&) [20]
+[21]     0.0    0.00    0.00     303         sub0::detail::BrokerImpl<bench::stack::Batch, sub0::with<sub0::detail::BuiltinT<8u, (sub0::Dispatch)1, (sub0::Context)2, false, sub0::NoLock, (sub0::NoReceivers)0>, sub0::Scoped, sub0::Capacity<1u>, sub0::NoFilter, sub0::LockWith<bench::stack::BrokerLock> > >::publish(bench::stack::Batch const&, void const*, sub0::PublishReport*) const [21]
+-----------------------------------------------
+                0.00    0.00       3/8           std::_Function_handler<void (), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda()#1}>::_M_invoke(std::_Any_data const&) [20]
+                0.00    0.00       5/8           main [13]
+[22]     0.0    0.00    0.00       8         bench::harness::Case::~Case() [22]
+-----------------------------------------------
+                0.00    0.00       1/4           std::_Function_handler<void (), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [53]
+                0.00    0.00       1/4           std::_Function_handler<void (bench::harness::Record&), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda(bench::harness::Record&)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [51]
+                0.00    0.00       1/4           std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::DomainRoute, false>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_invoke(std::_Any_data const&) [46]
+                0.00    0.00       1/4           bench::harness::runAll(bench::harness::Registry const&, bench::harness::Options const&) [156]
+[23]     0.0    0.00    0.00       4         std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_release() [23]
+                0.00    0.00       1/1           std::_Sp_counted_ptr_inplace<bench::stack::Simulation<bench::stack::DomainRoute, false>, std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_M_dispose() [55]
+-----------------------------------------------
+                0.00    0.00       2/4           main [13]
+                0.00    0.00       2/4           bench::env::list(char const*, std::vector<long, std::allocator<long> >) [28]
+[24]     0.0    0.00    0.00       4         std::vector<long, std::allocator<long> >::~vector() [24]
+-----------------------------------------------
+                0.00    0.00       4/4           ankerl::nanobench::detail::IterationLogic::moveResultTo(std::vector<ankerl::nanobench::Result, std::allocator<ankerl::nanobench::Result> >&) [238]
+[25]     0.0    0.00    0.00       4         std::vector<unsigned long, std::allocator<unsigned long> >::~vector() [25]
+-----------------------------------------------
+                0.00    0.00       3/3           std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::DomainRoute, false>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_invoke(std::_Any_data const&) [46]
+[26]     0.0    0.00    0.00       3         bench::stack::Plain::tick() [26]
+-----------------------------------------------
+                0.00    0.00       3/3           sub0pipeline::Pipeline::~Pipeline() [117]
+[27]     0.0    0.00    0.00       3         std::stop_token::_Stop_state_t::_M_release_ownership() [27]
+-----------------------------------------------
+                0.00    0.00       2/2           main [13]
+[28]     0.0    0.00    0.00       2         bench::env::list(char const*, std::vector<long, std::allocator<long> >) [28]
+                0.00    0.00       6/1088        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_dispose() [18]
+                0.00    0.00       4/98323       std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::WiredRoute, true>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [15]
+                0.00    0.00       2/4           std::vector<long, std::allocator<long> >::~vector() [24]
+-----------------------------------------------
+                0.00    0.00       2/2           std::_Function_handler<void (), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda()#1}>::_M_invoke(std::_Any_data const&) [20]
+[29]     0.0    0.00    0.00       2         bench::harness::Case::Case(bench::harness::Case&&) [29]
+-----------------------------------------------
+                0.00    0.00       2/2           sub0ecs::store::BasicWorld<true, std::tuple<sub0ecs::Query<bench::stack::Row>, sub0ecs::Query<bench::stack::Row, bench::stack::Simulation<bench::stack::DomainRoute, false>::Tag> >, sub0ecs::store::Volatile<> >::partitionFor(unsigned long) [16]
+[30]     0.0    0.00    0.00       2         std::unique_ptr<sub0ecs::store::Partition, std::default_delete<sub0ecs::store::Partition> >::~unique_ptr() [30]
+-----------------------------------------------
+                0.00    0.00       2/2           std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::DomainRoute, false>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_invoke(std::_Any_data const&) [46]
+[31]     0.0    0.00    0.00       2         std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count(std::__shared_count<(__gnu_cxx::_Lock_policy)2> const&) [31]
+-----------------------------------------------
+                0.00    0.00       2/2           std::_Function_handler<void (bench::harness::Record&), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda(bench::harness::Record&)#1}>::_M_invoke(std::_Any_data const&, bench::harness::Record&) [52]
+[32]     0.0    0.00    0.00       2         std::_Function_handler<void (), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::WiredRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::WiredRoute, false> >)::{lambda()#1}>::_M_invoke(std::_Any_data const&) [32]
+-----------------------------------------------
+                0.00    0.00       1/1           bench::stack::DomainRoute::~DomainRoute() [35]
+[33]     0.0    0.00    0.00       1         void sub0::detail::BrokerImpl<bench::stack::Batch, sub0::with<sub0::detail::BuiltinT<8u, (sub0::Dispatch)1, (sub0::Context)2, false, sub0::NoLock, (sub0::NoReceivers)0>, sub0::Scoped, sub0::Capacity<1u>, sub0::NoFilter, sub0::LockWith<bench::stack::BrokerLock> > >::close<true, 0>(sub0::detail::Table<bench::stack::Batch, sub0::with<sub0::detail::BuiltinT<8u, (sub0::Dispatch)1, (sub0::Context)2, false, sub0::NoLock, (sub0::NoReceivers)0>, sub0::Scoped, sub0::Capacity<1u>, sub0::NoFilter, sub0::LockWith<bench::stack::BrokerLock> > >&) [33]
+-----------------------------------------------
+                0.00    0.00       1/1           std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::DomainRoute, false>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_invoke(std::_Any_data const&) [46]
+[34]     0.0    0.00    0.00       1         bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int) [34]
+                0.00    0.00   65536/65536       sub0ecs::store::BasicWorld<true, std::tuple<sub0ecs::Query<bench::stack::Row>, sub0ecs::Query<bench::stack::Row, bench::stack::Simulation<bench::stack::DomainRoute, false>::Tag> >, sub0ecs::store::Volatile<> >::partitionFor(unsigned long) [16]
+                0.00    0.00   65536/65536       sub0ecs::store::Partition::pushRow(sub0ecs::Entity) [17]
+                0.00    0.00   32772/98323       std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::WiredRoute, true>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [15]
+                0.00    0.00       1/608         std::vector<unsigned int, std::allocator<unsigned int> >::reserve(unsigned long) [19]
+                0.00    0.00       1/1           std::__detail::_MakeUniq<sub0ecs::store::SidePool<bench::stack::Row> >::__single_object std::make_unique<sub0ecs::store::SidePool<bench::stack::Row>>() [58]
+-----------------------------------------------
+                0.00    0.00       1/1           std::_Sp_counted_ptr_inplace<bench::stack::Simulation<bench::stack::DomainRoute, false>, std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_M_dispose() [55]
+[35]     0.0    0.00    0.00       1         bench::stack::DomainRoute::~DomainRoute() [35]
+                0.00    0.00       1/1           void sub0::detail::BrokerImpl<bench::stack::Batch, sub0::with<sub0::detail::BuiltinT<8u, (sub0::Dispatch)1, (sub0::Context)2, false, sub0::NoLock, (sub0::NoReceivers)0>, sub0::Scoped, sub0::Capacity<1u>, sub0::NoFilter, sub0::LockWith<bench::stack::BrokerLock> > >::close<true, 0>(sub0::detail::Table<bench::stack::Batch, sub0::with<sub0::detail::BuiltinT<8u, (sub0::Dispatch)1, (sub0::Context)2, false, sub0::NoLock, (sub0::NoReceivers)0>, sub0::Scoped, sub0::Capacity<1u>, sub0::NoFilter, sub0::LockWith<bench::stack::BrokerLock> > >&) [33]
+-----------------------------------------------
+                0.00    0.00       1/1           std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::DomainRoute, false>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_invoke(std::_Any_data const&) [46]
+[36]     0.0    0.00    0.00       1         bench::stack::Plain::Plain(unsigned long) [36]
+                0.00    0.00       2/98323       std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::WiredRoute, true>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [15]
+-----------------------------------------------
+                0.00    0.00       1/1           std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::DomainRoute, false>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_invoke(std::_Any_data const&) [46]
+[37]     0.0    0.00    0.00       1         bench::stack::Plain::~Plain() [37]
+-----------------------------------------------
+                0.00    0.00       1/1           bench::harness::(anonymous namespace)::runPaired(std::vector<bench::harness::Case const*, std::allocator<bench::harness::Case const*> > const&, bench::harness::Options const&, std::vector<bench::harness::Record, std::allocator<bench::harness::Record> >&) [152]
+[38]     0.0    0.00    0.00       1         bench::harness::Prepared::~Prepared() [38]
+-----------------------------------------------
+                0.00    0.00       1/1           std::_Sp_counted_ptr_inplace<bench::stack::Simulation<bench::stack::DomainRoute, false>, std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_M_dispose() [55]
+[39]     0.0    0.00    0.00       1         sub0ecs::store::BasicWorld<true, std::tuple<sub0ecs::Query<bench::stack::Row>, sub0ecs::Query<bench::stack::Row, bench::stack::Simulation<bench::stack::DomainRoute, false>::Tag> >, sub0ecs::store::Volatile<> >::~BasicWorld() [39]
+                0.00    0.00       1/1           sub0ecs::store::SidePool<bench::stack::Row>::~SidePool() [41]
+                0.00    0.00       1/1           sub0ecs::store::SidePool<bench::stack::Simulation<bench::stack::DomainRoute, false>::Tag>::~SidePool() [40]
+-----------------------------------------------
+                0.00    0.00       1/1           sub0ecs::store::BasicWorld<true, std::tuple<sub0ecs::Query<bench::stack::Row>, sub0ecs::Query<bench::stack::Row, bench::stack::Simulation<bench::stack::DomainRoute, false>::Tag> >, sub0ecs::store::Volatile<> >::~BasicWorld() [39]
+[40]     0.0    0.00    0.00       1         sub0ecs::store::SidePool<bench::stack::Simulation<bench::stack::DomainRoute, false>::Tag>::~SidePool() [40]
+-----------------------------------------------
+                0.00    0.00       1/1           sub0ecs::store::BasicWorld<true, std::tuple<sub0ecs::Query<bench::stack::Row>, sub0ecs::Query<bench::stack::Row, bench::stack::Simulation<bench::stack::DomainRoute, false>::Tag> >, sub0ecs::store::Volatile<> >::~BasicWorld() [39]
+[41]     0.0    0.00    0.00       1         sub0ecs::store::SidePool<bench::stack::Row>::~SidePool() [41]
+-----------------------------------------------
+                0.00    0.00       1/1           std::_Function_handler<void (), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda()#1}>::_M_invoke(std::_Any_data const&) [20]
+[42]     0.0    0.00    0.00       1         std::_Hashtable<unsigned long, std::pair<unsigned long const, unsigned int>, std::allocator<std::pair<unsigned long const, unsigned int> >, std::__detail::_Select1st, std::equal_to<unsigned long>, std::hash<unsigned long>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<false, false, true> >::_M_rehash(unsigned long, unsigned long const&) [42]
+-----------------------------------------------
+                0.00    0.00       1/1           std::vector<bench::harness::Case, std::allocator<bench::harness::Case> >::~vector() [56]
+[43]     0.0    0.00    0.00       1         std::_Function_handler<bench::harness::Prepared (), main::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [43]
+-----------------------------------------------
+                0.00    0.00       1/1           std::vector<bench::harness::Case, std::allocator<bench::harness::Case> >::~vector() [56]
+[44]     0.0    0.00    0.00       1         std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::WiredRoute, false>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [44]
+-----------------------------------------------
+                0.00    0.00       1/1           std::vector<bench::harness::Case, std::allocator<bench::harness::Case> >::~vector() [56]
+[45]     0.0    0.00    0.00       1         std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::DomainRoute, false>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [45]
+-----------------------------------------------
+                0.00    0.00       1/1           bench::harness::(anonymous namespace)::runPaired(std::vector<bench::harness::Case const*, std::allocator<bench::harness::Case const*> > const&, bench::harness::Options const&, std::vector<bench::harness::Record, std::allocator<bench::harness::Record> >&) [152]
+[46]     0.0    0.00    0.00       1         std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::DomainRoute, false>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_invoke(std::_Any_data const&) [46]
+                0.00    0.00       3/303         sub0::detail::BrokerImpl<bench::stack::Batch, sub0::with<sub0::detail::BuiltinT<8u, (sub0::Dispatch)1, (sub0::Context)2, false, sub0::NoLock, (sub0::NoReceivers)0>, sub0::Scoped, sub0::Capacity<1u>, sub0::NoFilter, sub0::LockWith<bench::stack::BrokerLock> > >::publish(bench::stack::Batch const&, void const*, sub0::PublishReport*) const [21]
+                0.00    0.00       3/3           bench::stack::Plain::tick() [26]
+                0.00    0.00       2/2           std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count(std::__shared_count<(__gnu_cxx::_Lock_policy)2> const&) [31]
+                0.00    0.00       1/1           bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int) [34]
+                0.00    0.00       1/1           bench::stack::Plain::Plain(unsigned long) [36]
+                0.00    0.00       1/1           bench::stack::Plain::~Plain() [37]
+                0.00    0.00       1/4           std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_release() [23]
+-----------------------------------------------
+                0.00    0.00       1/1           std::vector<bench::harness::Case, std::allocator<bench::harness::Case> >::~vector() [56]
+[47]     0.0    0.00    0.00       1         std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::DomainRoute, true>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [47]
+-----------------------------------------------
+                0.00    0.00       1/1           sub0pipeline::Pipeline::~Pipeline() [117]
+[48]     0.0    0.00    0.00       1         std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#2}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#2}&&)::{lambda(std::stop_token)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [48]
+-----------------------------------------------
+                0.00    0.00       1/1           sub0pipeline::Pipeline::~Pipeline() [117]
+[49]     0.0    0.00    0.00       1         std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#3}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#3}&&)::{lambda(std::stop_token)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [49]
+-----------------------------------------------
+                0.00    0.00       1/1           sub0pipeline::Pipeline::~Pipeline() [117]
+[50]     0.0    0.00    0.00       1         std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#1}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#1}&&)::{lambda(std::stop_token)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [50]
+-----------------------------------------------
+                0.00    0.00       1/1           std::vector<bench::harness::Prepared, std::allocator<bench::harness::Prepared> >::~vector() [673]
+[51]     0.0    0.00    0.00       1         std::_Function_handler<void (bench::harness::Record&), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda(bench::harness::Record&)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [51]
+                0.00    0.00       1/4           std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_release() [23]
+-----------------------------------------------
+                0.00    0.00       1/1           bench::harness::(anonymous namespace)::runPaired(std::vector<bench::harness::Case const*, std::allocator<bench::harness::Case const*> > const&, bench::harness::Options const&, std::vector<bench::harness::Record, std::allocator<bench::harness::Record> >&) [152]
+[52]     0.0    0.00    0.00       1         std::_Function_handler<void (bench::harness::Record&), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda(bench::harness::Record&)#1}>::_M_invoke(std::_Any_data const&, bench::harness::Record&) [52]
+                0.00    0.00       2/98323       std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::WiredRoute, true>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [15]
+                0.00    0.00       2/2           std::_Function_handler<void (), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::WiredRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::WiredRoute, false> >)::{lambda()#1}>::_M_invoke(std::_Any_data const&) [32]
+-----------------------------------------------
+                0.00    0.00       1/1           std::vector<bench::harness::Prepared, std::allocator<bench::harness::Prepared> >::~vector() [673]
+[53]     0.0    0.00    0.00       1         std::_Function_handler<void (), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [53]
+                0.00    0.00       1/1           std::_Sp_counted_ptr_inplace<bench::stack::Simulation<bench::stack::DomainRoute, false>, std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_M_destroy() [54]
+                0.00    0.00       1/4           std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_release() [23]
+-----------------------------------------------
+                0.00    0.00       1/1           std::_Function_handler<void (), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [53]
+[54]     0.0    0.00    0.00       1         std::_Sp_counted_ptr_inplace<bench::stack::Simulation<bench::stack::DomainRoute, false>, std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_M_destroy() [54]
+-----------------------------------------------
+                0.00    0.00       1/1           std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_release() [23]
+[55]     0.0    0.00    0.00       1         std::_Sp_counted_ptr_inplace<bench::stack::Simulation<bench::stack::DomainRoute, false>, std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_M_dispose() [55]
+                0.00    0.00       1/1           sub0ecs::store::BasicWorld<true, std::tuple<sub0ecs::Query<bench::stack::Row>, sub0ecs::Query<bench::stack::Row, bench::stack::Simulation<bench::stack::DomainRoute, false>::Tag> >, sub0ecs::store::Volatile<> >::~BasicWorld() [39]
+                0.00    0.00       1/1           bench::stack::DomainRoute::~DomainRoute() [35]
+-----------------------------------------------
+                0.00    0.00       1/1           main [13]
+[56]     0.0    0.00    0.00       1         std::vector<bench::harness::Case, std::allocator<bench::harness::Case> >::~vector() [56]
+                0.00    0.00       1/98323       std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::WiredRoute, true>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [15]
+                0.00    0.00       1/1           std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::DomainRoute, true>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [47]
+                0.00    0.00       1/1           std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::WiredRoute, false>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [44]
+                0.00    0.00       1/1           std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::DomainRoute, false>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [45]
+                0.00    0.00       1/1           std::_Function_handler<bench::harness::Prepared (), main::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [43]
+-----------------------------------------------
+                0.00    0.00       1/1           sub0pipeline::Pipeline::runImpl(sub0pipeline::IExecutor&, std::stop_token, sub0pipeline::IObserver*) [110]
+[57]     0.0    0.00    0.00       1         std::vector<unsigned int, std::allocator<unsigned int> >::push_back(unsigned int const&) [57]
+-----------------------------------------------
+                0.00    0.00       1/1           bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int) [34]
+[58]     0.0    0.00    0.00       1         std::__detail::_MakeUniq<sub0ecs::store::SidePool<bench::stack::Row> >::__single_object std::make_unique<sub0ecs::store::SidePool<bench::stack::Row>>() [58]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012-2024 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+  [33] void sub0::detail::BrokerImpl<bench::stack::Batch, sub0::with<sub0::detail::BuiltinT<8u, (sub0::Dispatch)1, (sub0::Context)2, false, sub0::NoLock, (sub0::NoReceivers)0>, sub0::Scoped, sub0::Capacity<1u>, sub0::NoFilter, sub0::LockWith<bench::stack::BrokerLock> > >::close<true, 0>(sub0::detail::Table<bench::stack::Batch, sub0::with<sub0::detail::BuiltinT<8u, (sub0::Dispatch)1, (sub0::Context)2, false, sub0::NoLock, (sub0::NoReceivers)0>, sub0::Scoped, sub0::Capacity<1u>, sub0::NoFilter, sub0::LockWith<bench::stack::BrokerLock> > >&) [21] sub0::detail::BrokerImpl<bench::stack::Batch, sub0::with<sub0::detail::BuiltinT<8u, (sub0::Dispatch)1, (sub0::Context)2, false, sub0::NoLock, (sub0::NoReceivers)0>, sub0::Scoped, sub0::Capacity<1u>, sub0::NoFilter, sub0::LockWith<bench::stack::BrokerLock> > >::publish(bench::stack::Batch const&, void const*, sub0::PublishReport*) const [2] std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#1}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#1}&&)::{lambda(std::stop_token)#1}>::_M_invoke(std::_Any_data const&, std::stop_token&&)
+  [28] bench::env::list(char const*, std::vector<long, std::allocator<long> >) [42] std::_Hashtable<unsigned long, std::pair<unsigned long const, unsigned int>, std::allocator<std::pair<unsigned long const, unsigned int> >, std::__detail::_Select1st, std::equal_to<unsigned long>, std::hash<unsigned long>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<false, false, true> >::_M_rehash(unsigned long, unsigned long const&) [51] std::_Function_handler<void (bench::harness::Record&), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda(bench::harness::Record&)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) (std_function.h)
+  [34] bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int) [27] std::stop_token::_Stop_state_t::_M_release_ownership() [52] std::_Function_handler<void (bench::harness::Record&), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda(bench::harness::Record&)#1}>::_M_invoke(std::_Any_data const&, bench::harness::Record&) (std_function.h)
+  [35] bench::stack::DomainRoute::~DomainRoute() [30] std::unique_ptr<sub0ecs::store::Partition, std::default_delete<sub0ecs::store::Partition> >::~unique_ptr() [32] std::_Function_handler<void (), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::WiredRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::WiredRoute, false> >)::{lambda()#1}>::_M_invoke(std::_Any_data const&) (std_function.h)
+  [26] bench::stack::Plain::tick() [31] std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count(std::__shared_count<(__gnu_cxx::_Lock_policy)2> const&) [53] std::_Function_handler<void (), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) (std_function.h)
+  [36] bench::stack::Plain::Plain(unsigned long) [23] std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_release() [20] std::_Function_handler<void (), (anonymous namespace)::prepare<bench::stack::Simulation<bench::stack::DomainRoute, false> >(std::shared_ptr<bench::stack::Simulation<bench::stack::DomainRoute, false> >)::{lambda()#1}>::_M_invoke(std::_Any_data const&) (std_function.h)
+  [37] bench::stack::Plain::~Plain() [43] std::_Function_handler<bench::harness::Prepared (), main::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) (bench.cpp) [54] std::_Sp_counted_ptr_inplace<bench::stack::Simulation<bench::stack::DomainRoute, false>, std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_M_destroy()
+  [29] bench::harness::Case::Case(bench::harness::Case&&) [44] std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::WiredRoute, false>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) (bench.cpp) [55] std::_Sp_counted_ptr_inplace<bench::stack::Simulation<bench::stack::DomainRoute, false>, std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()
+  [22] bench::harness::Case::~Case() [15] std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::WiredRoute, true>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) (bench.cpp) [56] std::vector<bench::harness::Case, std::allocator<bench::harness::Case> >::~vector()
+  [38] bench::harness::Prepared::~Prepared() [45] std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::DomainRoute, false>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) (bench.cpp) [19] std::vector<unsigned int, std::allocator<unsigned int> >::reserve(unsigned long)
+   [7] ankerl::nanobench::detail::LinuxPerformanceCounters::endMeasure() [46] std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::DomainRoute, false>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_invoke(std::_Any_data const&) (std_function.h) [57] std::vector<unsigned int, std::allocator<unsigned int> >::push_back(unsigned int const&)
+  [16] sub0ecs::store::BasicWorld<true, std::tuple<sub0ecs::Query<bench::stack::Row>, sub0ecs::Query<bench::stack::Row, bench::stack::Simulation<bench::stack::DomainRoute, false>::Tag> >, sub0ecs::store::Volatile<> >::partitionFor(unsigned long) [47] std::_Function_handler<bench::harness::Prepared (), (anonymous namespace)::add<bench::stack::DomainRoute, true>(bench::harness::Registry&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, unsigned int)::{lambda()#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) (bench.cpp) [24] std::vector<long, std::allocator<long> >::~vector()
+  [39] sub0ecs::store::BasicWorld<true, std::tuple<sub0ecs::Query<bench::stack::Row>, sub0ecs::Query<bench::stack::Row, bench::stack::Simulation<bench::stack::DomainRoute, false>::Tag> >, sub0ecs::store::Volatile<> >::~BasicWorld() [48] std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#2}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#2}&&)::{lambda(std::stop_token)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [25] std::vector<unsigned long, std::allocator<unsigned long> >::~vector()
+  [40] sub0ecs::store::SidePool<bench::stack::Simulation<bench::stack::DomainRoute, false>::Tag>::~SidePool() [4] std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#2}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#2}&&)::{lambda(std::stop_token)#1}>::_M_invoke(std::_Any_data const&, std::stop_token&&) [18] std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_dispose()
+  [41] sub0ecs::store::SidePool<bench::stack::Row>::~SidePool() [49] std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#3}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#3}&&)::{lambda(std::stop_token)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation) [58] std::__detail::_MakeUniq<sub0ecs::store::SidePool<bench::stack::Row> >::__single_object std::make_unique<sub0ecs::store::SidePool<bench::stack::Row>>()
+  [17] sub0ecs::store::Partition::pushRow(sub0ecs::Entity) [6] std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#3}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#3}&&)::{lambda(std::stop_token)#1}>::_M_invoke(std::_Any_data const&, std::stop_token&&) [3] void std::__introsort_loop<__gnu_cxx::__normal_iterator<bench::stack::Row*, std::vector<bench::stack::Row, std::allocator<bench::stack::Row> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<bench::stack::Simulation<bench::stack::DomainRoute, false>::prepare()::{lambda(bench::stack::Row const&, bench::stack::Row const&)#2}> >(__gnu_cxx::__normal_iterator<bench::stack::Row*, std::vector<bench::stack::Row, std::allocator<bench::stack::Row> > >, __gnu_cxx::__normal_iterator<bench::stack::Row*, std::vector<bench::stack::Row, std::allocator<bench::stack::Row> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<bench::stack::Simulation<bench::stack::DomainRoute, false>::prepare()::{lambda(bench::stack::Row const&, bench::stack::Row const&)#2}>)
+   [5] void sub0ecs::adapters::PipelinePool::parallelFor<bench::stack::Simulation<bench::stack::DomainRoute, false>::compute()::{lambda(unsigned long, unsigned int)#1}>(unsigned long, bench::stack::Simulation<bench::stack::DomainRoute, false>::compute()::{lambda(unsigned long, unsigned int)#1}&) [50] std::_Function_handler<std::expected<void, sub0pipeline::PipelineError> (std::stop_token), sub0pipeline::Pipeline::emplace<bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#1}>(bench::stack::Simulation<bench::stack::DomainRoute, false>::Simulation(unsigned long, unsigned int)::{lambda()#1}&&)::{lambda(std::stop_token)#1}>::_M_manager(std::_Any_data&, std::_Any_data const&, std::_Manager_operation)

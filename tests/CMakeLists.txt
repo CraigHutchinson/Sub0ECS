@@ -38,3 +38,8 @@ if(SUB0ECS_WITH_PIPELINE)
     target_compile_definitions(sub0ecs_tests PRIVATE SUB0ECS_TEST_PIPELINE=1)
     target_link_libraries(sub0ecs_tests PRIVATE Sub0ECS::Pipeline Sub0Pipeline::Priority)
 endif()
+
+if(SUB0ECS_STACK_BENCHMARKS)
+    target_sources(sub0ecs_tests PRIVATE test_stack.cpp)
+    target_link_libraries(sub0ecs_tests PRIVATE sub0ecs_stack_support)
+endif()

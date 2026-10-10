@@ -12,6 +12,8 @@ option(SUB0ECS_BUILD_BENCHMARKS "Build the comparison benchmarks (fetches Google
 option(SUB0ECS_NATIVE           "Tune tests/benchmarks for the build host (-march=native; /arch:AVX2 on MSVC)" OFF)
 option(SUB0ECS_SANITIZE         "Build tests with sanitizers (ASan+UBSan; ASan on MSVC)"        OFF)
 
+option(SUB0ECS_STACK_BENCHMARKS "Enable optional Pub/Pipeline/ECS workload tests and benchmarks" OFF)
+
 option(SUB0ECS_WITH_PIPELINE "Enable the optional Sub0Pipeline pool adapter and its receiving" OFF)
 
 # ── Core library (header-only) ───────────────────────────────────────────────

@@ -294,3 +294,7 @@ separately for the native and Pipeline pools. See the
 churn with selected behaviors, staged eight-neighbor updates, and ordered n-body.
 See [the workload contracts and optimization pass](../docs/optimization/representative.md).
 The quick profile also receives both benchmark executables.
+
+## Full-stack and actual consumer baselines
+
+See [full-stack contracts and commands](../docs/optimization/full-stack.md) for the optional `stack` profile and the fail-closed Crucible headless capture. Existing n-body and row workloads remain complementary controls.

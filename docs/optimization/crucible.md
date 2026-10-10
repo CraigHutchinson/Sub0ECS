@@ -238,3 +238,7 @@ attribution and production library pins, C4 access enforcement, and C5 a meaning
 Pub delivery comparison. Real spatial workloads, field-split target SIMD and
 many-tiny-partition stress remain distinct experiments. Do not combine their
 hypotheses into a default scheduler/layout change.
+
+## Current full-stack reproduction
+
+PR20 is merged with passing platform/sanitizer CI. The [full-stack contract](full-stack.md) freezes the current Crucible source and dependency pins, adds optional Pub/Pipeline/ECS composition arms and an actual-consumer capture, and records future workload/exhaustive-logic requirements. Earlier source inventories above are historical; no production pin promotion or native-frame qualification is implied.

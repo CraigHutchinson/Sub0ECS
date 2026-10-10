@@ -203,3 +203,5 @@ earlier API is available at the [`v1.0.0` tag](https://github.com/CraigHutchinso
 
 **Contributions:**
 See [CONTRIBUTING.md](CONTRIBUTING.md) for dual-license inbound contribution terms.
+
+Full-stack optimization: [Pub/Pipeline/ECS workloads and Crucible reproduction](docs/optimization/full-stack.md).

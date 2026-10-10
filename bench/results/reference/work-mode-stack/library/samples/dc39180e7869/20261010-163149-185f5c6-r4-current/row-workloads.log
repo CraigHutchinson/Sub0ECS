@@ -1,0 +1,131 @@
+Note: perf_event_open failed, so the ins/op, cyc/op, IPC, bra/op and miss% columns are missing.
+This is usually a container or VM without virtualized performance counters, or
+/proc/sys/kernel/perf_event_paranoid being too restrictive.
+
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | RowWork/Streaming/1024
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:-----------------------
+|   100.0% |                     |              776.50 |        1,287,830.01 |    5.7% |      0.00 | `RowWork/Streaming/HandWritten/1024`
+|    96.2% |     77.5% .. 111.7% |              781.50 |        1,279,590.53 |    1.3% |      0.00 | `RowWork/Streaming/ECS/1024`
+|    29.9% |      26.5% .. 39.0% |            2,559.00 |          390,777.65 |    1.8% |      0.00 | `RowWork/Streaming/NativeG1024x1/1024`
+|    24.7% |      22.5% .. 32.0% |            3,160.00 |          316,455.70 |    4.0% |      0.00 | `RowWork/Streaming/NativeG64x1/1024`
+|    27.6% |      22.6% .. 39.0% |            3,070.00 |          325,732.90 |    7.5% |      0.00 | `RowWork/Streaming/PipelineG1024x1/1024`
+|    91.0% |     88.2% .. 103.7% |              846.00 |        1,182,033.10 |    3.6% |      0.00 | `RowWork/Streaming/PipelineG64x1/1024`
+|    30.1% |      27.8% .. 38.7% |            2,544.00 |          393,081.76 |    1.6% |      0.00 | `RowWork/Streaming/NativeG1024x2/1024`
+|     2.6% |       0.8% .. 17.1% |           44,311.50 |           22,567.51 |  137.9% |      0.00 | `RowWork/Streaming/NativeG64x2/1024`
+|    30.3% |      27.9% .. 38.9% |            2,609.00 |          383,288.62 |    3.4% |      0.00 | `RowWork/Streaming/PipelineG1024x2/1024`
+|     6.0% |        2.5% .. 6.4% |           12,509.00 |           79,942.44 |    6.5% |      0.00 | `RowWork/Streaming/PipelineG64x2/1024`
+|    31.0% |      28.0% .. 36.4% |            2,579.00 |          387,747.19 |    2.8% |      0.00 | `RowWork/Streaming/NativeG1024x4/1024`
+|     1.1% |        0.8% .. 5.5% |           76,604.50 |           13,054.06 |   13.0% |      0.00 | `RowWork/Streaming/NativeG64x4/1024`
+|    30.7% |      28.4% .. 38.7% |            2,533.50 |          394,710.87 |    1.2% |      0.00 | `RowWork/Streaming/PipelineG1024x4/1024`
+|     2.3% |        0.6% .. 4.4% |           35,072.50 |           28,512.37 |   57.4% |      0.00 | `RowWork/Streaming/PipelineG64x4/1024`
+
+  Summary
+    `RowWork/Streaming/HandWritten/1024` and `RowWork/Streaming/ECS/1024` are the two fastest of 14, and were not separated
+    95% CI [0.90 .. 1.29], intervals corrected for 13 comparisons, 14 paired rounds, interleaved
+    up to 1 of 14 rounds tied at the clock's resolution
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | RowWork/FragmentedChurn/1024
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:-----------------------------
+|   100.0% |                     |            3,139.50 |          318,522.06 |    5.9% |      0.00 | `RowWork/FragmentedChurn/HandWritten/1024`
+|    55.9% |      34.7% .. 71.1% |            5,718.00 |          174,886.32 |   16.6% |      0.00 | `RowWork/FragmentedChurn/ECS/1024`
+|    44.6% |      30.8% .. 52.3% |            7,225.50 |          138,398.73 |   13.0% |      0.00 | `RowWork/FragmentedChurn/NativeG1024x1/1024`
+|    43.2% |      26.5% .. 51.8% |            7,106.00 |          140,726.15 |   12.3% |      0.00 | `RowWork/FragmentedChurn/NativeG64x1/1024`
+|    52.6% |      28.3% .. 70.0% |            5,793.50 |          172,607.23 |   19.9% |      0.00 | `RowWork/FragmentedChurn/PipelineG1024x1/1024`
+|    55.4% |      39.0% .. 70.2% |            5,428.50 |          184,212.95 |   17.3% |      0.00 | `RowWork/FragmentedChurn/PipelineG64x1/1024`
+|    16.1% |       3.1% .. 27.7% |           19,634.50 |           50,930.76 |   41.5% |      0.00 | `RowWork/FragmentedChurn/NativeG1024x2/1024`
+|    14.5% |       2.6% .. 26.6% |           22,308.50 |           44,825.96 |   48.2% |      0.00 | `RowWork/FragmentedChurn/NativeG64x2/1024`
+|    16.3% |       8.4% .. 19.3% |           18,192.00 |           54,969.22 |   19.3% |      0.00 | `RowWork/FragmentedChurn/PipelineG1024x2/1024`
+|    10.7% |       8.9% .. 18.1% |           28,492.50 |           35,096.96 |   25.2% |      0.00 | `RowWork/FragmentedChurn/PipelineG64x2/1024`
+|     2.7% |        1.6% .. 3.1% |          114,617.00 |            8,724.71 |    2.5% |      0.00 | `RowWork/FragmentedChurn/NativeG1024x4/1024`
+|     2.7% |        1.7% .. 9.3% |          120,130.50 |            8,324.28 |    5.3% |      0.00 | `RowWork/FragmentedChurn/NativeG64x4/1024`
+|     6.9% |        3.5% .. 9.9% |           46,008.50 |           21,735.11 |   16.4% |      0.00 | `RowWork/FragmentedChurn/PipelineG1024x4/1024`
+|     9.8% |       8.1% .. 17.1% |           30,701.00 |           32,572.23 |   18.5% |      0.00 | `RowWork/FragmentedChurn/PipelineG64x4/1024`
+
+  Summary
+    `RowWork/FragmentedChurn/HandWritten/1024` is fastest of 14, 1.80x ahead of `RowWork/FragmentedChurn/PipelineG64x1/1024`
+    95% CI [1.43 .. 2.57], intervals corrected for 13 comparisons, 14 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | RowWork/StagedNeighbors/1024
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:-----------------------------
+|   100.0% |                     |           16,645.00 |           60,078.10 |    0.9% |      0.00 | `RowWork/StagedNeighbors/HandWritten/1024`
+|   100.4% |     99.1% .. 102.1% |           16,434.00 |           60,849.46 |    0.3% |      0.00 | `RowWork/StagedNeighbors/ECS/1024`
+|   100.8% |     98.9% .. 101.7% |           16,440.00 |           60,827.25 |    0.1% |      0.00 | `RowWork/StagedNeighbors/NativeG1024x1/1024`
+|    99.5% |     96.0% .. 101.2% |           16,550.00 |           60,422.96 |    0.2% |      0.00 | `RowWork/StagedNeighbors/NativeG64x1/1024`
+|   100.6% |     99.1% .. 101.5% |           16,494.50 |           60,626.27 |    0.3% |      0.00 | `RowWork/StagedNeighbors/PipelineG1024x1/1024`
+|    98.1% |      96.7% .. 99.9% |           16,870.00 |           59,276.82 |    0.3% |      0.00 | `RowWork/StagedNeighbors/PipelineG64x1/1024`
+|   100.9% |     99.2% .. 102.0% |           16,434.00 |           60,849.46 |    0.2% |      0.00 | `RowWork/StagedNeighbors/NativeG1024x2/1024`
+|    90.9% |      44.2% .. 96.2% |           18,192.50 |           54,967.71 |    2.4% |      0.00 | `RowWork/StagedNeighbors/NativeG64x2/1024`
+|    99.9% |     98.7% .. 101.6% |           16,514.50 |           60,552.85 |    0.2% |      0.00 | `RowWork/StagedNeighbors/PipelineG1024x2/1024`
+|    39.4% |      29.7% .. 41.6% |           42,374.00 |           23,599.38 |    8.1% |      0.00 | `RowWork/StagedNeighbors/PipelineG64x2/1024`
+|    99.7% |     98.1% .. 100.5% |           16,675.00 |           59,970.01 |    0.2% |      0.00 | `RowWork/StagedNeighbors/NativeG1024x4/1024`
+|    50.9% |      23.3% .. 70.8% |           32,439.00 |           30,827.09 |    4.8% |      0.00 | `RowWork/StagedNeighbors/NativeG64x4/1024`
+|    99.3% |     53.3% .. 101.3% |           16,700.00 |           59,880.24 |    1.4% |      0.00 | `RowWork/StagedNeighbors/PipelineG1024x4/1024`
+|    44.6% |      36.4% .. 51.0% |           37,612.00 |           26,587.26 |    9.6% |      0.00 | `RowWork/StagedNeighbors/PipelineG64x4/1024`
+
+  Summary
+    `RowWork/StagedNeighbors/ECS/1024` and `RowWork/StagedNeighbors/NativeG1024x2/1024` are the two fastest of 14, and were not separated
+    95% CI [0.99 .. 1.00], intervals corrected for 13 comparisons, 14 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | RowWork/Streaming/16384
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:------------------------
+|   100.0% |                     |           10,450.00 |           95,693.78 |    3.5% |      0.00 | `RowWork/Streaming/HandWritten/16384`
+|    98.8% |     51.2% .. 102.8% |           10,481.00 |           95,410.74 |    1.7% |      0.00 | `RowWork/Streaming/ECS/16384`
+|    25.0% |      16.2% .. 34.0% |           42,423.50 |           23,571.84 |    4.5% |      0.00 | `RowWork/Streaming/NativeG1024x1/16384`
+|    21.5% |      19.0% .. 31.4% |           47,952.50 |           20,853.97 |    0.3% |      0.00 | `RowWork/Streaming/NativeG64x1/16384`
+|    96.3% |     87.7% .. 106.1% |           10,996.00 |           90,942.16 |    3.8% |      0.00 | `RowWork/Streaming/PipelineG1024x1/16384`
+|    95.1% |      89.3% .. 99.9% |           11,006.50 |           90,855.40 |    3.6% |      0.00 | `RowWork/Streaming/PipelineG64x1/16384`
+|    70.0% |      61.7% .. 81.1% |           15,152.50 |           65,995.71 |    5.0% |      0.00 | `RowWork/Streaming/NativeG1024x2/16384`
+|    17.1% |      13.0% .. 49.6% |           68,312.50 |           14,638.61 |   18.5% |      0.00 | `RowWork/Streaming/NativeG64x2/16384`
+|    28.1% |      24.2% .. 32.6% |           37,371.00 |           26,758.72 |    9.5% |      0.00 | `RowWork/Streaming/PipelineG1024x2/16384`
+|    31.4% |      25.3% .. 34.0% |           33,485.50 |           29,863.67 |    9.8% |      0.00 | `RowWork/Streaming/PipelineG64x2/16384`
+|    19.7% |      14.9% .. 46.7% |           54,106.00 |           18,482.24 |   15.4% |      0.00 | `RowWork/Streaming/NativeG1024x4/16384`
+|    32.3% |       8.4% .. 39.7% |           38,864.00 |           25,730.75 |   34.8% |      0.00 | `RowWork/Streaming/NativeG64x4/16384`
+|    27.1% |      22.5% .. 39.5% |           39,289.00 |           25,452.42 |    7.7% |      0.00 | `RowWork/Streaming/PipelineG1024x4/16384`
+|    29.0% |      25.0% .. 33.0% |           36,404.50 |           27,469.13 |    3.9% |      0.00 | `RowWork/Streaming/PipelineG64x4/16384`
+
+  Summary
+    `RowWork/Streaming/HandWritten/16384` and `RowWork/Streaming/ECS/16384` are the two fastest of 14, and were not separated
+    95% CI [0.97 .. 1.95], intervals corrected for 13 comparisons, 14 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | RowWork/FragmentedChurn/16384
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:------------------------------
+|   100.0% |                     |           47,371.00 |           21,109.96 |   20.5% |      0.00 | `RowWork/FragmentedChurn/HandWritten/16384`
+|    72.6% |     40.0% .. 158.3% |           55,543.50 |           18,003.91 |    8.8% |      0.00 | `RowWork/FragmentedChurn/ECS/16384`
+|    49.1% |     36.6% .. 117.9% |           73,325.00 |           13,637.91 |   17.5% |      0.00 | `RowWork/FragmentedChurn/NativeG1024x1/16384`
+|    47.6% |     35.7% .. 105.2% |           76,129.50 |           13,135.51 |   17.3% |      0.00 | `RowWork/FragmentedChurn/NativeG64x1/16384`
+|    76.9% |     40.8% .. 145.2% |           57,631.00 |           17,351.77 |    8.9% |      0.00 | `RowWork/FragmentedChurn/PipelineG1024x1/16384`
+|    65.3% |      45.5% .. 87.1% |           62,654.50 |           15,960.55 |   17.1% |      0.00 | `RowWork/FragmentedChurn/PipelineG64x1/16384`
+|    68.8% |     29.5% .. 128.5% |           66,885.00 |           14,951.04 |    7.6% |      0.00 | `RowWork/FragmentedChurn/NativeG1024x2/16384`
+|    47.6% |     39.1% .. 123.2% |           82,539.00 |           12,115.48 |   28.4% |      0.00 | `RowWork/FragmentedChurn/NativeG64x2/16384`
+|    43.1% |     29.8% .. 102.6% |           85,884.00 |           11,643.61 |   16.8% |      0.00 | `RowWork/FragmentedChurn/PipelineG1024x2/16384`
+|    40.6% |     20.0% .. 101.3% |          111,136.50 |            8,997.94 |   27.2% |      0.00 | `RowWork/FragmentedChurn/PipelineG64x2/16384`
+|    52.2% |      29.7% .. 83.6% |           92,413.50 |           10,820.93 |    9.2% |      0.00 | `RowWork/FragmentedChurn/NativeG1024x4/16384`
+|    42.5% |      26.3% .. 54.1% |           99,664.50 |           10,033.66 |    9.5% |      0.00 | `RowWork/FragmentedChurn/NativeG64x4/16384`
+|    44.1% |     29.3% .. 104.9% |           96,585.00 |           10,353.57 |   24.3% |      0.00 | `RowWork/FragmentedChurn/PipelineG1024x4/16384`
+|    43.3% |      28.4% .. 90.0% |          101,402.50 |            9,861.69 |    9.1% |      0.00 | `RowWork/FragmentedChurn/PipelineG64x4/16384`
+
+  Summary
+    `RowWork/FragmentedChurn/HandWritten/16384` and `RowWork/FragmentedChurn/ECS/16384` are the two fastest of 14, and were not separated
+    95% CI [0.63 .. 2.50], intervals corrected for 13 comparisons, 14 paired rounds, interleaved
+
+| relative |              95% CI |             ns/tick |              tick/s |    err% |     total | RowWork/StagedNeighbors/16384
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:------------------------------
+|   100.0% |                     |          275,579.00 |            3,628.72 |    4.0% |      0.00 | `RowWork/StagedNeighbors/HandWritten/16384`
+|   100.1% |     90.0% .. 137.9% |          280,311.50 |            3,567.46 |    4.8% |      0.00 | `RowWork/StagedNeighbors/ECS/16384`
+|   100.6% |     86.9% .. 132.7% |          276,976.50 |            3,610.41 |    4.1% |      0.00 | `RowWork/StagedNeighbors/NativeG1024x1/16384`
+|    99.0% |     84.9% .. 138.4% |          270,852.50 |            3,692.05 |    0.7% |      0.00 | `RowWork/StagedNeighbors/NativeG64x1/16384`
+|   101.5% |     88.3% .. 127.6% |          274,116.50 |            3,648.08 |    2.5% |      0.00 | `RowWork/StagedNeighbors/PipelineG1024x1/16384`
+|   100.0% |     94.7% .. 137.1% |          278,868.50 |            3,585.92 |    3.9% |      0.00 | `RowWork/StagedNeighbors/PipelineG64x1/16384`
+|   162.1% |    138.0% .. 212.1% |          171,558.00 |            5,828.93 |    4.4% |      0.00 | `RowWork/StagedNeighbors/NativeG1024x2/16384`
+|   149.4% |    120.8% .. 218.9% |          195,238.50 |            5,121.94 |    6.3% |      0.00 | `RowWork/StagedNeighbors/NativeG64x2/16384`
+|   141.3% |    104.0% .. 150.2% |          206,625.50 |            4,839.67 |    8.3% |      0.00 | `RowWork/StagedNeighbors/PipelineG1024x2/16384`
+|   114.5% |     78.2% .. 169.4% |          303,525.50 |            3,294.62 |   23.8% |      0.00 | `RowWork/StagedNeighbors/PipelineG64x2/16384`
+|   193.4% |     84.7% .. 272.9% |          147,371.50 |            6,785.57 |   10.4% |      0.00 | `RowWork/StagedNeighbors/NativeG1024x4/16384`
+|   175.4% |    149.8% .. 208.0% |          156,330.00 |            6,396.72 |    9.7% |      0.00 | `RowWork/StagedNeighbors/NativeG64x4/16384`
+|   144.0% |     96.7% .. 236.7% |          193,936.00 |            5,156.34 |    6.2% |      0.00 | `RowWork/StagedNeighbors/PipelineG1024x4/16384`
+|   140.4% |     91.2% .. 188.5% |          203,220.00 |            4,920.78 |   10.8% |      0.00 | `RowWork/StagedNeighbors/PipelineG64x4/16384`
+
+  Summary
+    `RowWork/StagedNeighbors/NativeG1024x4/16384` and `RowWork/StagedNeighbors/NativeG64x4/16384` are the two fastest of 14, and were not separated
+    95% CI [0.49 .. 1.18], intervals corrected for 13 comparisons, 14 paired rounds, interleaved

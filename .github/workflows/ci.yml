@@ -24,12 +24,14 @@ jobs:
       - name: Profiler failure receiving
         run: python3 -m unittest discover -s bench/tools/tests -p "test_*.py"
       - name: Configure
-        run: cmake --preset default -DSUB0ECS_WITH_PIPELINE=ON
+        run: cmake --preset default -DSUB0ECS_WITH_PIPELINE=ON -DSUB0ECS_STACK_BENCHMARKS=ON
         env: { CC: gcc, CXX: g++ }
       - name: Build (tests + benchmarks)
         run: cmake --build --preset default
       - name: Test (gate)
         run: ctest --preset default
+      - name: Full-stack harness smoke
+        run: python3 bench/tools/run.py --profile quick --suites stack --build-dir build/default --env STACK_SIZES=32 --env STACK_THREADS=1,2 --label stack-ci
       - name: Benchmark harness smoke (quick profile)
         run: python3 bench/tools/run.py --profile quick --build-dir build/default --label ci
 
@@ -59,7 +61,7 @@ jobs:
       - name: Profiler failure receiving
         run: python3 -m unittest discover -s bench/tools/tests -p "test_*.py"
       - name: Configure
-        run: cmake --preset default -DSUB0ECS_WITH_PIPELINE=ON
+        run: cmake --preset default -DSUB0ECS_WITH_PIPELINE=ON -DSUB0ECS_STACK_BENCHMARKS=ON
       - name: Build (tests + benchmarks)
         run: cmake --build --preset default
       - name: Test (gate)
@@ -72,7 +74,7 @@ jobs:
       - name: Profiler failure receiving
         run: python -m unittest discover -s bench/tools/tests -p "test_*.py"
       - name: Configure
-        run: cmake --preset ci-msvc -DSUB0ECS_WITH_PIPELINE=ON
+        run: cmake --preset ci-msvc -DSUB0ECS_WITH_PIPELINE=ON -DSUB0ECS_STACK_BENCHMARKS=ON
       - name: Build (tests + benchmarks)
         # The benchmark TUs instantiate every design x scenario: keep concurrent cl.exe count low
         run: cmake --build --preset ci-msvc --parallel 2
@@ -86,7 +88,7 @@ jobs:
       - name: Install Ninja
         run: sudo apt-get update && sudo apt-get install -y ninja-build
       - name: Configure (ASan + UBSan)
-        run: cmake --preset sanitize -DSUB0ECS_WITH_PIPELINE=ON "-DCMAKE_CXX_FLAGS=-fsanitize=address,undefined -fno-omit-frame-pointer" "-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined"
+        run: cmake --preset sanitize -DSUB0ECS_WITH_PIPELINE=ON -DSUB0ECS_STACK_BENCHMARKS=ON "-DCMAKE_CXX_FLAGS=-fsanitize=address,undefined -fno-omit-frame-pointer" "-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined"
         env: { CC: gcc, CXX: g++ }
       - name: Build
         run: cmake --build --preset sanitize

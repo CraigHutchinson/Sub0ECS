@@ -1,0 +1,1454 @@
+{
+  "control/direct": {
+    "pub_route_startup/0": {
+      "median_us": 0.05,
+      "min_us": 0.04,
+      "max_us": 0.06,
+      "process_medians_us": [
+        0.04,
+        0.06,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "pub_admission_first/0": {
+      "median_us": 3.676,
+      "min_us": 3.115,
+      "max_us": 4.337,
+      "process_medians_us": [
+        3.786,
+        4.337,
+        3.676,
+        3.115,
+        3.555
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "pub_admission_steady/0": {
+      "median_us": 0.03,
+      "min_us": 0.03,
+      "max_us": 0.03,
+      "process_medians_us": [
+        0.03,
+        0.03,
+        0.03,
+        0.03,
+        0.03
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "inspector_startup/64": {
+      "median_us": 203.026,
+      "min_us": 190.166,
+      "max_us": 294.963,
+      "process_medians_us": [
+        191.508,
+        294.963,
+        214.022,
+        203.026,
+        190.166
+      ],
+      "new_calls": [
+        79,
+        79,
+        79,
+        79,
+        79
+      ]
+    },
+    "tick_capture_first/64": {
+      "median_us": 101.102,
+      "min_us": 93.982,
+      "max_us": 128.894,
+      "process_medians_us": [
+        96.114,
+        127.701,
+        101.102,
+        128.894,
+        93.982
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "production_admission_steady/64": {
+      "median_us": 0.1405,
+      "min_us": 0.11,
+      "max_us": 0.2705,
+      "process_medians_us": [
+        0.1905,
+        0.11,
+        0.136,
+        0.2705,
+        0.1405
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "tick_capture_steady/64": {
+      "median_us": 82.9295,
+      "min_us": 82.4135,
+      "max_us": 83.35,
+      "process_medians_us": [
+        82.9645,
+        83.35,
+        82.8295,
+        82.4135,
+        82.9295
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "inspector_startup/2048": {
+      "median_us": 486.732,
+      "min_us": 389.715,
+      "max_us": 610.958,
+      "process_medians_us": [
+        404.979,
+        610.958,
+        486.732,
+        606.622,
+        389.715
+      ],
+      "new_calls": [
+        109,
+        109,
+        109,
+        109,
+        109
+      ]
+    },
+    "tick_capture_first/2048": {
+      "median_us": 2935.26,
+      "min_us": 2788.634,
+      "max_us": 3106.658,
+      "process_medians_us": [
+        2937.503,
+        2800.046,
+        2935.26,
+        2788.634,
+        3106.658
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "production_admission_steady/2048": {
+      "median_us": 0.3905,
+      "min_us": 0.3655,
+      "max_us": 0.576,
+      "process_medians_us": [
+        0.576,
+        0.3905,
+        0.3655,
+        0.4605,
+        0.3705
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "tick_capture_steady/2048": {
+      "median_us": 2797.4265,
+      "min_us": 2733.8175,
+      "max_us": 2886.888,
+      "process_medians_us": [
+        2814.8845,
+        2778.7395,
+        2733.8175,
+        2797.4265,
+        2886.888
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "reference_startup/2048": {
+      "median_us": 341.674,
+      "min_us": 323.596,
+      "max_us": 384.477,
+      "process_medians_us": [
+        384.477,
+        329.194,
+        341.674,
+        323.596,
+        382.755
+      ],
+      "new_calls": [
+        109,
+        109,
+        109,
+        109,
+        109
+      ]
+    },
+    "reference_complete_mission/2048": {
+      "median_us": 870495.91,
+      "min_us": 838440.024,
+      "max_us": 915865.674,
+      "process_medians_us": [
+        870495.91,
+        893729.533,
+        838440.024,
+        856623.893,
+        915865.674
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "reference_tick_capture_mission/2048": {
+      "median_us": 3184.735,
+      "min_us": 3088.109,
+      "max_us": 3412.207,
+      "process_medians_us": [
+        3233.759,
+        3184.735,
+        3088.109,
+        3130.624,
+        3412.207
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "reference_admission/2048": {
+      "median_us": 0.391,
+      "min_us": 0.361,
+      "max_us": 0.54,
+      "process_medians_us": [
+        0.391,
+        0.4,
+        0.39,
+        0.361,
+        0.54
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "structural_startup/2048": {
+      "median_us": 338.489,
+      "min_us": 329.885,
+      "max_us": 441.834,
+      "process_medians_us": [
+        441.834,
+        344.898,
+        338.489,
+        329.986,
+        329.885
+      ],
+      "new_calls": [
+        110,
+        110,
+        110,
+        110,
+        110
+      ]
+    },
+    "structural_complete_mission/2048": {
+      "median_us": 1698817.065,
+      "min_us": 1660844.7,
+      "max_us": 1795826.509,
+      "process_medians_us": [
+        1660844.7,
+        1698817.065,
+        1662370.705,
+        1795826.509,
+        1711355.372
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "structural_tick_capture_mission/2048": {
+      "median_us": 3704.5060000000003,
+      "min_us": 3621.281,
+      "max_us": 4007.9764999999998,
+      "process_medians_us": [
+        3621.281,
+        3734.7255,
+        3669.5225,
+        4007.9764999999998,
+        3704.5060000000003
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "structural_admission/2048": {
+      "median_us": 0.391,
+      "min_us": 0.3,
+      "max_us": 0.5,
+      "process_medians_us": [
+        0.381,
+        0.421,
+        0.3,
+        0.5,
+        0.391
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "control/integrated": {
+    "pub_route_startup/0": {
+      "median_us": 1.542,
+      "min_us": 1.472,
+      "max_us": 2.053,
+      "process_medians_us": [
+        1.472,
+        1.843,
+        1.502,
+        1.542,
+        2.053
+      ],
+      "new_calls": [
+        2,
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    "pub_admission_first/0": {
+      "median_us": 3.936,
+      "min_us": 3.355,
+      "max_us": 4.397,
+      "process_medians_us": [
+        3.936,
+        4.106,
+        4.397,
+        3.555,
+        3.355
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "pub_admission_steady/0": {
+      "median_us": 0.05,
+      "min_us": 0.05,
+      "max_us": 0.05,
+      "process_medians_us": [
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "inspector_startup/64": {
+      "median_us": 212.199,
+      "min_us": 203.916,
+      "max_us": 276.075,
+      "process_medians_us": [
+        276.075,
+        203.916,
+        212.199,
+        236.185,
+        204.377
+      ],
+      "new_calls": [
+        93,
+        93,
+        93,
+        93,
+        93
+      ]
+    },
+    "tick_capture_first/64": {
+      "median_us": 96.585,
+      "min_us": 96.045,
+      "max_us": 96.796,
+      "process_medians_us": [
+        96.585,
+        96.045,
+        96.796,
+        96.705,
+        96.115
+      ],
+      "new_calls": [
+        5,
+        5,
+        5,
+        5,
+        5
+      ]
+    },
+    "production_admission_steady/64": {
+      "median_us": 0.321,
+      "min_us": 0.2355,
+      "max_us": 0.46599999999999997,
+      "process_medians_us": [
+        0.445,
+        0.2355,
+        0.315,
+        0.46599999999999997,
+        0.321
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "tick_capture_steady/64": {
+      "median_us": 83.45,
+      "min_us": 82.44900000000001,
+      "max_us": 83.616,
+      "process_medians_us": [
+        82.9145,
+        83.45,
+        82.44900000000001,
+        83.4805,
+        83.616
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "inspector_startup/2048": {
+      "median_us": 410.767,
+      "min_us": 402.965,
+      "max_us": 639.03,
+      "process_medians_us": [
+        639.03,
+        402.965,
+        410.767,
+        516.456,
+        404.197
+      ],
+      "new_calls": [
+        123,
+        123,
+        123,
+        123,
+        123
+      ]
+    },
+    "tick_capture_first/2048": {
+      "median_us": 3032.516,
+      "min_us": 2747.177,
+      "max_us": 3295.612,
+      "process_medians_us": [
+        3295.612,
+        2831.683,
+        2747.177,
+        3137.244,
+        3032.516
+      ],
+      "new_calls": [
+        5,
+        5,
+        5,
+        5,
+        5
+      ]
+    },
+    "production_admission_steady/2048": {
+      "median_us": 0.8859999999999999,
+      "min_us": 0.802,
+      "max_us": 1.197,
+      "process_medians_us": [
+        0.802,
+        0.8665,
+        1.197,
+        1.1760000000000002,
+        0.8859999999999999
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "tick_capture_steady/2048": {
+      "median_us": 2841.303,
+      "min_us": 2778.279,
+      "max_us": 2987.598,
+      "process_medians_us": [
+        2883.6975,
+        2841.303,
+        2805.1395,
+        2778.279,
+        2987.598
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "reference_startup/2048": {
+      "median_us": 199.69,
+      "min_us": 198.649,
+      "max_us": 264.777,
+      "process_medians_us": [
+        264.777,
+        199.69,
+        231.277,
+        199.059,
+        198.649
+      ],
+      "new_calls": [
+        123,
+        123,
+        123,
+        123,
+        123
+      ]
+    },
+    "reference_complete_mission/2048": {
+      "median_us": 897359.016,
+      "min_us": 862382.444,
+      "max_us": 967501.836,
+      "process_medians_us": [
+        917633.791,
+        967501.836,
+        862382.444,
+        880353.465,
+        897359.016
+      ],
+      "new_calls": [
+        5,
+        5,
+        5,
+        5,
+        5
+      ]
+    },
+    "reference_tick_capture_mission/2048": {
+      "median_us": 3297.484,
+      "min_us": 3208.691,
+      "max_us": 3363.694,
+      "process_medians_us": [
+        3363.694,
+        3297.484,
+        3208.691,
+        3272.086,
+        3305.826
+      ],
+      "new_calls": [
+        5,
+        5,
+        5,
+        5,
+        5
+      ]
+    },
+    "reference_admission/2048": {
+      "median_us": 1.152,
+      "min_us": 1.051,
+      "max_us": 1.342,
+      "process_medians_us": [
+        1.051,
+        1.342,
+        1.182,
+        1.152,
+        1.082
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "structural_startup/2048": {
+      "median_us": 277.507,
+      "min_us": 247.602,
+      "max_us": 353.511,
+      "process_medians_us": [
+        295.624,
+        277.507,
+        247.602,
+        251.417,
+        353.511
+      ],
+      "new_calls": [
+        124,
+        124,
+        124,
+        124,
+        124
+      ]
+    },
+    "structural_complete_mission/2048": {
+      "median_us": 1715042.716,
+      "min_us": 1652731.884,
+      "max_us": 1755696.319,
+      "process_medians_us": [
+        1746081.552,
+        1652731.884,
+        1683808.271,
+        1755696.319,
+        1715042.716
+      ],
+      "new_calls": [
+        5,
+        5,
+        5,
+        5,
+        5
+      ]
+    },
+    "structural_tick_capture_mission/2048": {
+      "median_us": 3683.3644999999997,
+      "min_us": 3600.5640000000003,
+      "max_us": 3835.6274999999996,
+      "process_medians_us": [
+        3835.6274999999996,
+        3600.5640000000003,
+        3730.6944999999996,
+        3683.3644999999997,
+        3677.7055
+      ],
+      "new_calls": [
+        5,
+        5,
+        5,
+        5,
+        5
+      ]
+    },
+    "structural_admission/2048": {
+      "median_us": 1.081,
+      "min_us": 1.062,
+      "max_us": 1.342,
+      "process_medians_us": [
+        1.342,
+        1.152,
+        1.072,
+        1.062,
+        1.081
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "current/direct": {
+    "pub_route_startup/0": {
+      "median_us": 0.05,
+      "min_us": 0.05,
+      "max_us": 0.12,
+      "process_medians_us": [
+        0.05,
+        0.12,
+        0.05,
+        0.07,
+        0.05
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "pub_admission_first/0": {
+      "median_us": 3.726,
+      "min_us": 2.994,
+      "max_us": 3.976,
+      "process_medians_us": [
+        2.994,
+        3.756,
+        3.275,
+        3.726,
+        3.976
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "pub_admission_steady/0": {
+      "median_us": 0.03,
+      "min_us": 0.03,
+      "max_us": 0.03,
+      "process_medians_us": [
+        0.03,
+        0.03,
+        0.03,
+        0.03,
+        0.03
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "inspector_startup/64": {
+      "median_us": 195.174,
+      "min_us": 190.146,
+      "max_us": 221.152,
+      "process_medians_us": [
+        194.703,
+        190.146,
+        195.174,
+        221.152,
+        206.941
+      ],
+      "new_calls": [
+        79,
+        79,
+        79,
+        79,
+        79
+      ]
+    },
+    "tick_capture_first/64": {
+      "median_us": 96.454,
+      "min_us": 94.402,
+      "max_us": 166.48,
+      "process_medians_us": [
+        95.484,
+        94.402,
+        166.48,
+        96.595,
+        96.454
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "production_admission_steady/64": {
+      "median_us": 0.14,
+      "min_us": 0.125,
+      "max_us": 0.181,
+      "process_medians_us": [
+        0.181,
+        0.175,
+        0.125,
+        0.14,
+        0.13
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "tick_capture_steady/64": {
+      "median_us": 82.6445,
+      "min_us": 82.5385,
+      "max_us": 83.11500000000001,
+      "process_medians_us": [
+        83.11500000000001,
+        82.5385,
+        82.6345,
+        82.925,
+        82.6445
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "inspector_startup/2048": {
+      "median_us": 422.765,
+      "min_us": 405.479,
+      "max_us": 499.52,
+      "process_medians_us": [
+        405.479,
+        406.911,
+        499.52,
+        422.765,
+        460.452
+      ],
+      "new_calls": [
+        109,
+        109,
+        109,
+        109,
+        109
+      ]
+    },
+    "tick_capture_first/2048": {
+      "median_us": 2809.06,
+      "min_us": 2781.429,
+      "max_us": 3007.177,
+      "process_medians_us": [
+        2791.623,
+        3007.177,
+        2781.429,
+        2809.06,
+        2848.339
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "production_admission_steady/2048": {
+      "median_us": 0.476,
+      "min_us": 0.3705,
+      "max_us": 0.586,
+      "process_medians_us": [
+        0.586,
+        0.501,
+        0.3705,
+        0.4655,
+        0.476
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "tick_capture_steady/2048": {
+      "median_us": 2764.5985,
+      "min_us": 2742.7405,
+      "max_us": 2984.96,
+      "process_medians_us": [
+        2742.7405,
+        2751.3779999999997,
+        2764.5985,
+        2984.96,
+        2868.4049999999997
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "reference_startup/2048": {
+      "median_us": 330.817,
+      "min_us": 317.187,
+      "max_us": 351.689,
+      "process_medians_us": [
+        351.689,
+        330.817,
+        322.114,
+        332.98,
+        317.187
+      ],
+      "new_calls": [
+        109,
+        109,
+        109,
+        109,
+        109
+      ]
+    },
+    "reference_complete_mission/2048": {
+      "median_us": 871289.016,
+      "min_us": 861951.193,
+      "max_us": 917157.357,
+      "process_medians_us": [
+        864111.691,
+        871289.016,
+        861951.193,
+        917157.357,
+        889639.577
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "reference_tick_capture_mission/2048": {
+      "median_us": 3209.171,
+      "min_us": 3171.034,
+      "max_us": 3339.197,
+      "process_medians_us": [
+        3171.034,
+        3201.359,
+        3209.171,
+        3339.197,
+        3307.319
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "reference_admission/2048": {
+      "median_us": 0.42,
+      "min_us": 0.38,
+      "max_us": 0.431,
+      "process_medians_us": [
+        0.38,
+        0.42,
+        0.401,
+        0.42,
+        0.431
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "structural_startup/2048": {
+      "median_us": 369.795,
+      "min_us": 327.172,
+      "max_us": 379.24,
+      "process_medians_us": [
+        327.172,
+        369.795,
+        347.562,
+        372.991,
+        379.24
+      ],
+      "new_calls": [
+        110,
+        110,
+        110,
+        110,
+        110
+      ]
+    },
+    "structural_complete_mission/2048": {
+      "median_us": 1689509.044,
+      "min_us": 1629083.864,
+      "max_us": 1745959.769,
+      "process_medians_us": [
+        1629083.864,
+        1689509.044,
+        1641709.359,
+        1745959.769,
+        1704020.686
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "structural_tick_capture_mission/2048": {
+      "median_us": 3656.804,
+      "min_us": 3530.694,
+      "max_us": 3839.3785,
+      "process_medians_us": [
+        3530.694,
+        3708.6705,
+        3628.8865,
+        3839.3785,
+        3656.804
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "structural_admission/2048": {
+      "median_us": 0.411,
+      "min_us": 0.391,
+      "max_us": 0.491,
+      "process_medians_us": [
+        0.401,
+        0.391,
+        0.411,
+        0.471,
+        0.491
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "current/integrated": {
+    "pub_route_startup/0": {
+      "median_us": 1.793,
+      "min_us": 1.452,
+      "max_us": 1.943,
+      "process_medians_us": [
+        1.793,
+        1.663,
+        1.843,
+        1.452,
+        1.943
+      ],
+      "new_calls": [
+        2,
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    "pub_admission_first/0": {
+      "median_us": 3.445,
+      "min_us": 3.145,
+      "max_us": 3.996,
+      "process_medians_us": [
+        3.395,
+        3.465,
+        3.996,
+        3.145,
+        3.445
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "pub_admission_steady/0": {
+      "median_us": 0.05,
+      "min_us": 0.05,
+      "max_us": 0.05,
+      "process_medians_us": [
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "inspector_startup/64": {
+      "median_us": 211.017,
+      "min_us": 199.53,
+      "max_us": 326.431,
+      "process_medians_us": [
+        199.53,
+        211.919,
+        211.017,
+        326.431,
+        203.776
+      ],
+      "new_calls": [
+        93,
+        93,
+        93,
+        93,
+        93
+      ]
+    },
+    "tick_capture_first/64": {
+      "median_us": 96.425,
+      "min_us": 94.542,
+      "max_us": 97.877,
+      "process_medians_us": [
+        97.877,
+        97.687,
+        96.134,
+        94.542,
+        96.425
+      ],
+      "new_calls": [
+        5,
+        5,
+        5,
+        5,
+        5
+      ]
+    },
+    "production_admission_steady/64": {
+      "median_us": 0.301,
+      "min_us": 0.235,
+      "max_us": 0.4955,
+      "process_medians_us": [
+        0.301,
+        0.35050000000000003,
+        0.4955,
+        0.235,
+        0.25
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "tick_capture_steady/64": {
+      "median_us": 83.14,
+      "min_us": 82.724,
+      "max_us": 83.2855,
+      "process_medians_us": [
+        83.14,
+        83.2855,
+        82.724,
+        83.185,
+        82.765
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "inspector_startup/2048": {
+      "median_us": 441.714,
+      "min_us": 407.743,
+      "max_us": 494.804,
+      "process_medians_us": [
+        407.743,
+        464.618,
+        409.756,
+        494.804,
+        441.714
+      ],
+      "new_calls": [
+        123,
+        123,
+        123,
+        123,
+        123
+      ]
+    },
+    "tick_capture_first/2048": {
+      "median_us": 2845.825,
+      "min_us": 2732.214,
+      "max_us": 2987.929,
+      "process_medians_us": [
+        2748.51,
+        2845.825,
+        2732.214,
+        2882.631,
+        2987.929
+      ],
+      "new_calls": [
+        5,
+        5,
+        5,
+        5,
+        5
+      ]
+    },
+    "production_admission_steady/2048": {
+      "median_us": 1.252,
+      "min_us": 1.2069999999999999,
+      "max_us": 1.3464999999999998,
+      "process_medians_us": [
+        1.252,
+        1.2814999999999999,
+        1.2365,
+        1.2069999999999999,
+        1.3464999999999998
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "tick_capture_steady/2048": {
+      "median_us": 2750.4825,
+      "min_us": 2732.3199999999997,
+      "max_us": 3001.885,
+      "process_medians_us": [
+        2735.4395,
+        2750.4825,
+        2732.3199999999997,
+        2955.085,
+        3001.885
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "reference_startup/2048": {
+      "median_us": 211.909,
+      "min_us": 192.379,
+      "max_us": 325.058,
+      "process_medians_us": [
+        192.379,
+        211.909,
+        198.318,
+        232.349,
+        325.058
+      ],
+      "new_calls": [
+        123,
+        123,
+        123,
+        123,
+        123
+      ]
+    },
+    "reference_complete_mission/2048": {
+      "median_us": 858865.289,
+      "min_us": 849096.722,
+      "max_us": 926266.74,
+      "process_medians_us": [
+        851833.169,
+        858865.289,
+        849096.722,
+        926266.74,
+        867736.855
+      ],
+      "new_calls": [
+        5,
+        5,
+        5,
+        5,
+        5
+      ]
+    },
+    "reference_tick_capture_mission/2048": {
+      "median_us": 3216.151,
+      "min_us": 3154.859,
+      "max_us": 3420.979,
+      "process_medians_us": [
+        3154.859,
+        3216.151,
+        3168.941,
+        3420.979,
+        3249.722
+      ],
+      "new_calls": [
+        5,
+        5,
+        5,
+        5,
+        5
+      ]
+    },
+    "reference_admission/2048": {
+      "median_us": 1.322,
+      "min_us": 1.271,
+      "max_us": 1.472,
+      "process_medians_us": [
+        1.322,
+        1.271,
+        1.332,
+        1.292,
+        1.472
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "structural_startup/2048": {
+      "median_us": 216.595,
+      "min_us": 215.835,
+      "max_us": 281.743,
+      "process_medians_us": [
+        281.743,
+        216.595,
+        277.948,
+        216.255,
+        215.835
+      ],
+      "new_calls": [
+        124,
+        124,
+        124,
+        124,
+        124
+      ]
+    },
+    "structural_complete_mission/2048": {
+      "median_us": 1648911.547,
+      "min_us": 1626875.387,
+      "max_us": 1826686.092,
+      "process_medians_us": [
+        1728243.665,
+        1648911.547,
+        1626875.387,
+        1826686.092,
+        1645624.708
+      ],
+      "new_calls": [
+        5,
+        5,
+        5,
+        5,
+        5
+      ]
+    },
+    "structural_tick_capture_mission/2048": {
+      "median_us": 3585.696,
+      "min_us": 3543.919,
+      "max_us": 3955.6735,
+      "process_medians_us": [
+        3776.093,
+        3585.696,
+        3543.919,
+        3955.6735,
+        3546.944
+      ],
+      "new_calls": [
+        5,
+        5,
+        5,
+        5,
+        5
+      ]
+    },
+    "structural_admission/2048": {
+      "median_us": 1.152,
+      "min_us": 1.072,
+      "max_us": 1.402,
+      "process_medians_us": [
+        1.312,
+        1.132,
+        1.072,
+        1.152,
+        1.402
+      ],
+      "new_calls": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  }
+}
