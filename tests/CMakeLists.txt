@@ -30,3 +30,11 @@ add_test(NAME sub0ecs_tests COMMAND sub0ecs_tests --test-suite-exclude=exhaustiv
 add_test(NAME sub0ecs_tests_exhaustive COMMAND sub0ecs_tests --test-suite=exhaustive)
 set_tests_properties(sub0ecs_tests PROPERTIES LABELS gate)
 set_tests_properties(sub0ecs_tests_exhaustive PROPERTIES LABELS exhaustive)
+
+# Representative application conformance is part of the existing gate.
+target_sources(sub0ecs_tests PRIVATE test_nbody.cpp test_row_grain.cpp)
+if(SUB0ECS_WITH_PIPELINE)
+    target_sources(sub0ecs_tests PRIVATE test_pipeline_pool.cpp)
+    target_compile_definitions(sub0ecs_tests PRIVATE SUB0ECS_TEST_PIPELINE=1)
+    target_link_libraries(sub0ecs_tests PRIVATE Sub0ECS::Pipeline Sub0Pipeline::Priority)
+endif()

@@ -406,3 +406,39 @@ exist because a number was once wrong without them:
   components), and the cost of query-match invalidation there.
 - A cost model for the `Parallel` executor's width. It splits by row count, which
   is right at 1M entities and wrong at 100K (section 5).
+
+## Optional Pipeline adapter and ordered n-body grain
+
+The [n-body workload](optimization/nbody.md) reuses Pipeline's execution resource
+through an ECS-owned synchronous pool adapter. The default ECS chunk size exposes
+only one chunk at 1,024 bodies and takes the serial path despite expensive all-pairs
+work. Explicit `RowGrain<64>` exposes sixteen chunks while preserving the same
+ascending-source arithmetic and bitwise state. The existing default is unchanged.
+
+Five alternating process pairs, GCC13.3 Release portable x86-64, AMD EPYC9V74
+shared virtual host, two lanes; median [min–max] of process medians, milliseconds
+per complete tick:
+
+| Bodies | Plain floor | Pipeline default | Pipeline grain64 |
+|---|---|---|---|
+| 64 | 0.01617 [0.01575–0.01623] | 0.01550 [0.01548–0.01557] | 0.01549 [0.01546–0.01552] |
+| 1,024 | 4.180 [4.050–4.692] | 4.374 [4.311–4.723] | 2.173 [2.127–2.384] |
+| 4,096 | 69.487 [67.989–73.025] | 35.647 [33.529–36.733] | 36.650 [34.116–39.021] |
+
+At 1,024 bodies the explicit Pipeline grain is 1.92x the plain reference's
+throughput and 2.01x the default Pipeline arm, using ratios of medians. The native
+pool also improves (4.389 to 2.188 ms), identifying granularity/utilization rather
+than an inherent superiority of one executor. At 4,096 bodies Pipeline grain64
+is slightly slower; keep the explicit choice. No production frame gain is claimed.
+
+Callgrind at 1,024 bodies records 184,284,843 total-process Ir for Pipeline default
+versus 184,307,212 for grain64 over five ticks including warmups. There is no
+instruction reduction: the mechanism overlaps independent target rows. GCC's
+vector report and linked scalar sqrt/division support preserving the existing
+ordered kernel rather than introducing unqualified reassociation. These are
+instrumented guest instruction references, not retired hardware counters.
+
+[Raw paired JSON, full ranges, instruction graphs, source/binary receipts and
+validation logs](../bench/results/reference/work-mode-nbody/README.md) preserve
+slow samples and limitations. Shared-host results are diagnostic. Actual Crucible
+FP/staging/replay/frame/lifecycle integration remains a separate receiving gate.

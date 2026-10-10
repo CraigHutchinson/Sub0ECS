@@ -12,12 +12,18 @@ option(SUB0ECS_BUILD_BENCHMARKS "Build the comparison benchmarks (fetches Google
 option(SUB0ECS_NATIVE           "Tune tests/benchmarks for the build host (-march=native; /arch:AVX2 on MSVC)" OFF)
 option(SUB0ECS_SANITIZE         "Build tests with sanitizers (ASan+UBSan; ASan on MSVC)"        OFF)
 
+option(SUB0ECS_WITH_PIPELINE "Enable the optional Sub0Pipeline pool adapter and its receiving" OFF)
+
 # ── Core library (header-only) ───────────────────────────────────────────────
 
 add_library(Sub0ECS INTERFACE)
 add_library(Sub0ECS::Sub0ECS ALIAS Sub0ECS)
 target_compile_features(Sub0ECS INTERFACE cxx_std_20)
 target_include_directories(Sub0ECS INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>)
+
+if(SUB0ECS_WITH_PIPELINE)
+    include(cmake/PipelineAdapter.cmake)
+endif()
 
 if(IS_SUBPROJECT OR NOT (SUB0ECS_BUILD_TESTING OR SUB0ECS_BUILD_BENCHMARKS))
     return()

@@ -1,0 +1,11 @@
+==13== Callgrind, a call-graph generating cache profiler
+==13== Copyright (C) 2002-2017, and GNU GPL'd, by Josef Weidendorfer et al.
+==13== Using Valgrind-3.27.1 and LibVEX; rerun with -h for copyright info
+==13== Command: /workspace/scratch/a79dc81cbc62/Sub0ECS/build/pipeline/bench/sub0ecs_nbody_bench --filter=PipelineG64x2/1024$ --epochs=3 --quiet --out=build/nbody-evidence/PipelineG64x2-instrumented.json
+==13== 
+==13== For interactive control, run 'callgrind_control -h'.
+==13== 
+==13== Events    : Ir
+==13== Collected : 184307212
+==13== 
+==13== I   refs:      184,307,212

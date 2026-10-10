@@ -1,0 +1,17 @@
+/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/nbody/body.hpp:35:39: missed: couldn't vectorize loop
+/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/nbody/body.hpp:35:39: missed: not vectorized: control flow in loop.
+/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/nbody/body.hpp:33:28: missed: not vectorized: more than one data ref in stmt: body = MEM[(const struct Body &)_132];
+/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/nbody/body.hpp:33:28: missed: not vectorized: more than one data ref in stmt: body = MEM[(const struct Body &)_50];
+/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/nbody/body.hpp:47:23: optimized: basic block part vectorized using 16 byte vectors
+/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/nbody/body.hpp:33:28: missed: not vectorized: more than one data ref in stmt: <retval> = MEM[(const struct Body &)_4];
+/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/nbody/body.hpp:33:28: missed: not vectorized: more than one data ref in stmt: body = MEM[(const struct Body &)_55];
+/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/nbody/body.hpp:33:28: missed: not vectorized: more than one data ref in stmt: body = MEM[(const struct Body &)_41];
+/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/nbody/body.hpp:33:28: missed: not vectorized: more than one data ref in stmt: body = MEM[(const struct Body &)_119];
+/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/nbody/body.hpp:33:28: missed: not vectorized: more than one data ref in stmt: body = MEM[(const struct Body &)_116];
+/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/nbody/body.hpp:22:82: optimized: basic block part vectorized using 16 byte vectors
+/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/nbody/body.hpp:22:82: missed: splitting region at loop 1 exit at bb50
+/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/nbody/body.hpp:33:28: missed: not vectorized: more than one data ref in stmt: body = MEM[(const struct Body &)_72];
+/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/nbody/body.hpp:47:23: missed: splitting region at dominance boundary bb18
+/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/nbody/body.hpp:33:28: missed: not vectorized: more than one data ref in stmt: body = MEM[(const struct Body &)_187];
+/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/nbody/body.hpp:47:23: missed: splitting region at dominance boundary bb70
+/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/nbody/body.hpp:47:23: missed: splitting region at loop 1 exit at bb71

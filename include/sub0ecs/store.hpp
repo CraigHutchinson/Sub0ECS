@@ -21,4 +21,5 @@
 #include "sub0ecs/store/side_pool.hpp"
 #include "sub0ecs/store/type_index.hpp"
 #include "sub0ecs/store/volatile.hpp"
+#include "sub0ecs/store/row_grain.hpp"
 #include "sub0ecs/store/world.hpp"

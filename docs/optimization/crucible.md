@@ -202,3 +202,15 @@ native frame acceptance was run here. Python failure tests use a fake collector;
 they validate orchestration/report handling only. All architecture passes remain
 proposed; none count toward three measured refinement passes. Runtime sources and
 Crucible dependency pins are unchanged.
+
+
+## Subsequent receiving status
+
+ECS PR16 and recovery PR17, and Crucible PR33/PR34, have now merged after their
+exact-head CI gates. The inventory and local-tool limitations above describe the
+initial audit. The next increment implements the optional ECS-owned Pipeline
+pool bridge and an evolving ordered n-body application, with explicit row-grain
+control; see [n-body](nbody.md) and the FINDINGS receipt. This advances C3's library
+experiment. It does not update Crucible's runtime pins or receive production FP,
+staged commit, replay, p95/p99 or lifecycle contracts. C1 supervision, C2 actual
+caller attribution, C4 access enforcement and C5 Pub delivery remain open.
