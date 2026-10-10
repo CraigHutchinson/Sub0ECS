@@ -1,4 +1,4 @@
-# Optional integration only: the standalone ECS target remains C++20.
+# Optional integration only: both targets use C++23; the core keeps no Pipeline dependency.
 if(NOT TARGET Sub0Pipeline::Sub0Pipeline)
     include(${CMAKE_CURRENT_LIST_DIR}/CPM.cmake)
     CPMAddPackage(

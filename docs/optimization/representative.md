@@ -76,7 +76,7 @@ python3 bench/tools/run.py --profile representative --build-dir build/default
 ```
 
 The `quick` profile includes a small row-workload smoke case. Both suites still
-compile/run without Pipeline in standalone C++20. Use `ROW_SIZES`, `ROW_THREADS`,
+compile/run without Pipeline in standalone C++23 (the earlier receipt used C++20). Use `ROW_SIZES`, `ROW_THREADS`,
 `NBODY_SIZES`, `NBODY_THREADS` and the common `--filter` to bound individual arms.
 
 See the [capture recipe and receipts](../../bench/results/reference/work-mode-representative/README.md)

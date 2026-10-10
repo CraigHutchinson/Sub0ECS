@@ -2,7 +2,8 @@
 
 Source: Sub0ECS master `459a0d0f2eceeca97c0d10ce365f023a173a7548`, including
 PR18's optional Pipeline adapter. This review works from architecture down to
-row-loop code. The implementation in this increment removes single-partition
+row-loop code. Its C++20 references record that earlier baseline; the current
+[language contract](../cxx23.md) is C++23. The implementation in this increment removes single-partition
 chunk materialization; it does not claim whole-application optimality.
 
 ## Performance contract and architecture

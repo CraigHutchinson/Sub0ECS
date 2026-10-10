@@ -84,8 +84,8 @@ partitions pool seam is the first refinement for fragmented workloads. It curren
 has fixed 1024/2048-row chunking and an inline threshold. A measured need to override
 those is a small ECS API proposal, not justification for exposing Partition internals.
 
-The optional bridge must not add Pipeline's C++23 requirement or dependencies to
-ECS's standalone C++20 target. Begin at the consumer composition boundary. Promote
+The original campaign kept ECS at C++20. The common baseline now requires C++23;
+the optional bridge must still not add Pipeline dependencies to the standalone target. Begin at the consumer composition boundary. Promote
 a product-neutral optional adapter only after its real caller and standalone,
 omitted-dependency and cross-compiler gates pass.
 

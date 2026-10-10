@@ -1,6 +1,6 @@
 # SubzeroECS
 
-A header-only C++20 Entity Component System whose storage is laid out by the
+A header-only C++23 Entity Component System whose storage is laid out by the
 **systems you declare**, not only by the components entities happen to have.
 
 You get the iteration speed of a hand-written loop and keep the flexibility that a
@@ -149,6 +149,8 @@ Pipeline integration, matched parallel handwritten controls, and the measured
 single-partition row-dispatch refinement.
 
 ## Build
+
+Language/toolchain contract: [common C++23 baseline](docs/cxx23.md). This raises the standalone minimum from C++20; optional integrations remain optional.
 
 ```bash
 cmake --preset default          # Release: tests + benchmarks (Ninja; on Windows use a VS developer prompt)

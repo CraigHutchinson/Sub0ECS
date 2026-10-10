@@ -6,7 +6,7 @@ gates and the architecture/DRY decisions across ECS, Pipeline and Pub.
 
 ## Composition and contracts
 
-`Sub0ECS::Sub0ECS` remains standalone C++20. `SUB0ECS_WITH_PIPELINE=ON`
+`Sub0ECS::Sub0ECS` uses the common C++23 baseline. `SUB0ECS_WITH_PIPELINE=ON`
 adds the C++23 `Sub0ECS::Pipeline` interface target, pinned to Pipeline
 `f730c4ec2973a449c45fbf9a74595414b9bf30e1` unless the parent already supplies
 `Sub0Pipeline::Sub0Pipeline`. The adapter lives in ECS because it translates the
