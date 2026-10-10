@@ -60,6 +60,9 @@ only (a GitHub rule) and tests that branch.
   (VTune hot functions and processor metrics), then the compiler's vectoriser
   report. The order and commands are in `bench/BENCHMARKING.md`, "Finding out why".
   Compare compilers on one machine, never across machines.
+- **Consumer integration work.** Follow `docs/optimization/crucible.md` for actual
+  caller attribution, adapter ownership, refinement passes and the stronger
+  five-pair qualification gate. Microbenchmarks alone do not receive a consumer.
 - **Several samples, interleaved.** Other work runs on the benchmark machine and it
   heats up. Never judge a between-run difference from one run of each: use
   `bench/tools/rotate.py` (at least three rounds, builds rotated, load checked before
