@@ -1,0 +1,175 @@
+{
+  "timing": [
+    {
+      "n": 64,
+      "design": "ECS",
+      "samples": 10,
+      "median_ns": 15477.5,
+      "min_ns": 15458,
+      "max_ns": 15678
+    },
+    {
+      "n": 64,
+      "design": "HandWritten",
+      "samples": 10,
+      "median_ns": 16171.5,
+      "min_ns": 15748,
+      "max_ns": 16234
+    },
+    {
+      "n": 64,
+      "design": "Native2",
+      "samples": 5,
+      "median_ns": 16194,
+      "min_ns": 15953.5,
+      "max_ns": 16249
+    },
+    {
+      "n": 64,
+      "design": "NativeG64x2",
+      "samples": 5,
+      "median_ns": 15528,
+      "min_ns": 15488,
+      "max_ns": 15532.5
+    },
+    {
+      "n": 64,
+      "design": "Pipeline2",
+      "samples": 5,
+      "median_ns": 15503,
+      "min_ns": 15483,
+      "max_ns": 15573
+    },
+    {
+      "n": 64,
+      "design": "PipelineG64x2",
+      "samples": 5,
+      "median_ns": 15488,
+      "min_ns": 15457.5,
+      "max_ns": 15523
+    },
+    {
+      "n": 1024,
+      "design": "ECS",
+      "samples": 10,
+      "median_ns": 4319247.25,
+      "min_ns": 4121236.5,
+      "max_ns": 4716858.5
+    },
+    {
+      "n": 1024,
+      "design": "HandWritten",
+      "samples": 10,
+      "median_ns": 4179818.5,
+      "min_ns": 4049646,
+      "max_ns": 4692477
+    },
+    {
+      "n": 1024,
+      "design": "Native2",
+      "samples": 5,
+      "median_ns": 4388582.5,
+      "min_ns": 4149428,
+      "max_ns": 4770587
+    },
+    {
+      "n": 1024,
+      "design": "NativeG64x2",
+      "samples": 5,
+      "median_ns": 2188392,
+      "min_ns": 2101183.5,
+      "max_ns": 4062830.5
+    },
+    {
+      "n": 1024,
+      "design": "Pipeline2",
+      "samples": 5,
+      "median_ns": 4373981,
+      "min_ns": 4311473,
+      "max_ns": 4722727
+    },
+    {
+      "n": 1024,
+      "design": "PipelineG64x2",
+      "samples": 5,
+      "median_ns": 2172669.5,
+      "min_ns": 2127132,
+      "max_ns": 2384017
+    },
+    {
+      "n": 4096,
+      "design": "ECS",
+      "samples": 10,
+      "median_ns": 70010545.5,
+      "min_ns": 67908648,
+      "max_ns": 73366181
+    },
+    {
+      "n": 4096,
+      "design": "HandWritten",
+      "samples": 10,
+      "median_ns": 69486636.5,
+      "min_ns": 67988644.5,
+      "max_ns": 73025250
+    },
+    {
+      "n": 4096,
+      "design": "Native2",
+      "samples": 5,
+      "median_ns": 35635049,
+      "min_ns": 34659337,
+      "max_ns": 39429280.5
+    },
+    {
+      "n": 4096,
+      "design": "NativeG64x2",
+      "samples": 5,
+      "median_ns": 34367449.5,
+      "min_ns": 33594899.5,
+      "max_ns": 35070171.5
+    },
+    {
+      "n": 4096,
+      "design": "Pipeline2",
+      "samples": 5,
+      "median_ns": 35646940.5,
+      "min_ns": 33529382,
+      "max_ns": 36733272.5
+    },
+    {
+      "n": 4096,
+      "design": "PipelineG64x2",
+      "samples": 5,
+      "median_ns": 36650457,
+      "min_ns": 34115897.5,
+      "max_ns": 39021355.5
+    }
+  ],
+  "instructions": [
+    {
+      "arm": "HandWritten",
+      "total_process_Ir": 184195724,
+      "completed_ticks": 5
+    },
+    {
+      "arm": "Native2",
+      "total_process_Ir": 184356730,
+      "completed_ticks": 5
+    },
+    {
+      "arm": "NativeG64x2",
+      "total_process_Ir": 184501596,
+      "completed_ticks": 5
+    },
+    {
+      "arm": "Pipeline2",
+      "total_process_Ir": 184284843,
+      "completed_ticks": 5
+    },
+    {
+      "arm": "PipelineG64x2",
+      "total_process_Ir": 184307212,
+      "completed_ticks": 5
+    }
+  ]
+}

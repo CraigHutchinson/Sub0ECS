@@ -48,6 +48,12 @@
       "kind": "harness",
       "exe": "bench/sub0ecs_spans_bench",
       "filter": ".*"
+    },
+    "nbody": {
+      "description": "Evolving softened all-pairs n-body: plain/ECS/native pool/optional Pipeline adapter",
+      "kind": "harness",
+      "exe": "bench/sub0ecs_nbody_bench",
+      "filter": "^NBody/"
     }
   },
   "profiles": {
@@ -56,14 +62,17 @@
       "env": {
         "BENCH_SIZES": "1000",
         "SKIRMISH_UPT": "250",
-        "SKIRMISH_THREADS_UPT": "250"
+        "SKIRMISH_THREADS_UPT": "250",
+        "NBODY_SIZES": "32",
+        "NBODY_THREADS": "1,2"
       },
       "suites": [
         "baseline",
         "fusion",
         "skirmish",
         "threads",
-        "spans"
+        "spans",
+        "nbody"
       ],
       "epochs": 5,
       "min_epoch_ms": 0
@@ -112,6 +121,18 @@
       ],
       "epochs": 52,
       "min_epoch_ms": 5
+    },
+    "nbody": {
+      "description": "Representative n-body application (quadratic; advisory timing)",
+      "env": {
+        "NBODY_SIZES": "64,1024,4096",
+        "NBODY_THREADS": "1,2,4"
+      },
+      "suites": [
+        "nbody"
+      ],
+      "epochs": 11,
+      "min_epoch_ms": 0
     }
   }
 }

@@ -1,0 +1,27 @@
+--------------------------------------------------------------------------------
+Profile data file 'build/nbody-evidence/PipelineG64x2.callgrind' (creator: callgrind-3.27.1)
+--------------------------------------------------------------------------------
+I1 cache: 
+D1 cache: 
+LL cache: 
+Timerange: Basic block 0 - 11203665
+Trigger: Program termination
+Profiled target:  /workspace/scratch/a79dc81cbc62/Sub0ECS/build/pipeline/bench/sub0ecs_nbody_bench --filter=PipelineG64x2/1024$ --epochs=3 --quiet --out=build/nbody-evidence/PipelineG64x2-instrumented.json (PID 13, part 1)
+Events recorded:  Ir
+Events shown:     Ir
+Event sort order: Ir
+Thresholds:       95
+Include dirs:     
+User annotated:   
+Auto-annotation:  off
+
+--------------------------------------------------------------------------------
+Ir                   
+--------------------------------------------------------------------------------
+184,307,212 (100.0%)  PROGRAM TOTALS
+
+--------------------------------------------------------------------------------
+Ir                    file:function
+--------------------------------------------------------------------------------
+178,263,105 (96.72%)  bench/nbody/body.hpp:std::_Function_handler<void (), sub0ecs::adapters::PipelinePool::parallelFor<sub0ecs::store::BasicWorld<true, std::tuple<sub0ecs::Query<bench::nbody::Position, bench::nbody::Velocity, bench::nbody::Mass, bench::nbody::Id> >, sub0ecs::store::Volatile<> >::eachParallel<bench::nbody::Position, bench::nbody::Velocity, bench::nbody::Mass, bench::nbody::Id, sub0ecs::adapters::PipelinePool, bench::nbody::Ecs::tick<64ul, sub0ecs::adapters::PipelinePool>(sub0ecs::adapters::PipelinePool&)::{lambda(unsigned int, bench::nbody::Position&, bench::nbody::Velocity&, bench::nbody::Mass const&, bench::nbody::Id const&)#1}, 64ul>(sub0ecs::adapters::PipelinePool&, bench::nbody::Ecs::tick<64ul, sub0ecs::adapters::PipelinePool>(sub0ecs::adapters::PipelinePool&)::{lambda(unsigned int, bench::nbody::Position&, bench::nbody::Velocity&, bench::nbody::Mass const&, bench::nbody::Id const&)#1}&&, sub0ecs::store::RowGrain<64ul>)::{lambda(unsigned long, unsigned int)#1}>(unsigned long, sub0ecs::store::BasicWorld<true, std::tuple<sub0ecs::Query<bench::nbody::Position, bench::nbody::Velocity, bench::nbody::Mass, bench::nbody::Id> >, sub0ecs::store::Volatile<> >::eachParallel<bench::nbody::Position, bench::nbody::Velocity, bench::nbody::Mass, bench::nbody::Id, sub0ecs::adapters::PipelinePool, bench::nbody::Ecs::tick<64ul, sub0ecs::adapters::PipelinePool>(sub0ecs::adapters::PipelinePool&)::{lambda(unsigned int, bench::nbody::Position&, bench::nbody::Velocity&, bench::nbody::Mass const&, bench::nbody::Id const&)#1}, 64ul>(sub0ecs::adapters::PipelinePool&, bench::nbody::Ecs::tick<64ul, sub0ecs::adapters::PipelinePool>(sub0ecs::adapters::PipelinePool&)::{lambda(unsigned int, bench::nbody::Position&, bench::nbody::Velocity&, bench::nbody::Mass const&, bench::nbody::Id const&)#1}&&, sub0ecs::store::RowGrain<64ul>)::{lambda(unsigned long, unsigned int)#1}&)::{lambda()#1}>::_M_invoke(std::_Any_data const&)
+

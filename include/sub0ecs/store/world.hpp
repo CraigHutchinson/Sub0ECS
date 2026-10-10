@@ -62,6 +62,7 @@
 #include "sub0ecs/entity.hpp"
 #include "sub0ecs/fusion/executors/inline.hpp"
 #include "sub0ecs/query.hpp"
+#include "sub0ecs/store/row_grain.hpp"
 #include "sub0ecs/store/detail/meta.hpp"
 #include "sub0ecs/store/dynamic_query.hpp"
 #include "sub0ecs/store/mask.hpp"
@@ -422,22 +423,23 @@ namespace sub0ecs::store
 
         /** Data-parallel iteration: fixed-size row chunks across ALL partitions
          *  matching the query become pool work items (one fork-join per system,
-         *  not per partition). The worker index lets callers keep per-thread command
-         *  buffers and accumulators without locks.
+         *  not per partition). The lane index lets callers keep exclusive command
+         *  buffers and accumulators without locks. A lane need not be an OS thread.
          *  @tparam Cs  The components of a declared Query<Cs...>, in its order.
          *  @tparam Pool A type with parallelFor(items, fn(item, worker)), such as
          *              fusion::Parallel.
+         *  @tparam Rows Rows per chunk; defaults to 1024 for compatibility.
          *  @param pool The pool whose threads run the chunks.
          *  @param f    Called as f(worker, Cs&...) once per matching entity, with
          *              worker < pool.concurrency().
          *  @note f runs on several threads at once. It may touch only the components it
          *        is handed; record structural changes per worker and apply them after. */
-        template <typename... Cs, typename Pool, typename F>
-        void eachParallel(Pool& pool, F&& f)
+        template <typename... Cs, typename Pool, typename F, std::size_t Rows = 1024>
+        void eachParallel(Pool& pool, F&& f, RowGrain<Rows> = {})
         {
             constexpr std::size_t qi = detail::indexOf<Query<Cs...>, Qs...>();
             static_assert(qi < kQueries, "eachParallel<Cs...> must name a declared Query<Cs...>");
-            constexpr std::size_t kChunk = 1024;
+            constexpr std::size_t kChunk = Rows;
             chunks_.clear();
             for (Partition* p : byQuery_[qi])
             {

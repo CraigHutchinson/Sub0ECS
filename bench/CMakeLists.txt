@@ -57,3 +57,11 @@ add_executable(sub0ecs_skirmish_bench skirmish/bench.cpp)
 target_link_libraries(sub0ecs_skirmish_bench PRIVATE sub0ecs_bench_harness)
 add_executable(sub0ecs_skirmish_demo skirmish/demo.cpp)
 target_link_libraries(sub0ecs_skirmish_demo PRIVATE sub0ecs_bench_support)
+
+# Representative evolving application; shares the existing paired JSON harness.
+add_executable(sub0ecs_nbody_bench nbody/bench.cpp)
+target_link_libraries(sub0ecs_nbody_bench PRIVATE sub0ecs_bench_harness)
+if(SUB0ECS_WITH_PIPELINE)
+    target_compile_definitions(sub0ecs_nbody_bench PRIVATE SUB0ECS_TEST_PIPELINE=1)
+    target_link_libraries(sub0ecs_nbody_bench PRIVATE Sub0ECS::Pipeline Sub0Pipeline::Priority)
+endif()

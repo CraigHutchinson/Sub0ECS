@@ -1,0 +1,72 @@
+[
+  {
+    "arm": "HandWritten",
+    "command": [
+      "/workspace/scratch/a79dc81cbc62/tooling/valgrind-installed/bin/valgrind",
+      "--tool=callgrind",
+      "--callgrind-out-file=build/nbody-evidence/HandWritten.callgrind",
+      "/workspace/scratch/a79dc81cbc62/Sub0ECS/build/pipeline/bench/sub0ecs_nbody_bench",
+      "--filter=HandWritten/1024$",
+      "--epochs=3",
+      "--quiet",
+      "--out=build/nbody-evidence/HandWritten-instrumented.json"
+    ],
+    "returncode": 0
+  },
+  {
+    "arm": "Native2",
+    "command": [
+      "/workspace/scratch/a79dc81cbc62/tooling/valgrind-installed/bin/valgrind",
+      "--tool=callgrind",
+      "--callgrind-out-file=build/nbody-evidence/Native2.callgrind",
+      "/workspace/scratch/a79dc81cbc62/Sub0ECS/build/pipeline/bench/sub0ecs_nbody_bench",
+      "--filter=Native2/1024$",
+      "--epochs=3",
+      "--quiet",
+      "--out=build/nbody-evidence/Native2-instrumented.json"
+    ],
+    "returncode": 0
+  },
+  {
+    "arm": "NativeG64x2",
+    "command": [
+      "/workspace/scratch/a79dc81cbc62/tooling/valgrind-installed/bin/valgrind",
+      "--tool=callgrind",
+      "--callgrind-out-file=build/nbody-evidence/NativeG64x2.callgrind",
+      "/workspace/scratch/a79dc81cbc62/Sub0ECS/build/pipeline/bench/sub0ecs_nbody_bench",
+      "--filter=NativeG64x2/1024$",
+      "--epochs=3",
+      "--quiet",
+      "--out=build/nbody-evidence/NativeG64x2-instrumented.json"
+    ],
+    "returncode": 0
+  },
+  {
+    "arm": "Pipeline2",
+    "command": [
+      "/workspace/scratch/a79dc81cbc62/tooling/valgrind-installed/bin/valgrind",
+      "--tool=callgrind",
+      "--callgrind-out-file=build/nbody-evidence/Pipeline2.callgrind",
+      "/workspace/scratch/a79dc81cbc62/Sub0ECS/build/pipeline/bench/sub0ecs_nbody_bench",
+      "--filter=Pipeline2/1024$",
+      "--epochs=3",
+      "--quiet",
+      "--out=build/nbody-evidence/Pipeline2-instrumented.json"
+    ],
+    "returncode": 0
+  },
+  {
+    "arm": "PipelineG64x2",
+    "command": [
+      "/workspace/scratch/a79dc81cbc62/tooling/valgrind-installed/bin/valgrind",
+      "--tool=callgrind",
+      "--callgrind-out-file=build/nbody-evidence/PipelineG64x2.callgrind",
+      "/workspace/scratch/a79dc81cbc62/Sub0ECS/build/pipeline/bench/sub0ecs_nbody_bench",
+      "--filter=PipelineG64x2/1024$",
+      "--epochs=3",
+      "--quiet",
+      "--out=build/nbody-evidence/PipelineG64x2-instrumented.json"
+    ],
+    "returncode": 0
+  }
+]

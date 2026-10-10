@@ -24,7 +24,7 @@ jobs:
       - name: Profiler failure receiving
         run: python3 -m unittest discover -s bench/tools/tests -p "test_*.py"
       - name: Configure
-        run: cmake --preset default
+        run: cmake --preset default -DSUB0ECS_WITH_PIPELINE=ON
         env: { CC: gcc, CXX: g++ }
       - name: Build (tests + benchmarks)
         run: cmake --build --preset default
@@ -59,7 +59,7 @@ jobs:
       - name: Profiler failure receiving
         run: python3 -m unittest discover -s bench/tools/tests -p "test_*.py"
       - name: Configure
-        run: cmake --preset default
+        run: cmake --preset default -DSUB0ECS_WITH_PIPELINE=ON
       - name: Build (tests + benchmarks)
         run: cmake --build --preset default
       - name: Test (gate)
@@ -72,7 +72,7 @@ jobs:
       - name: Profiler failure receiving
         run: python -m unittest discover -s bench/tools/tests -p "test_*.py"
       - name: Configure
-        run: cmake --preset ci-msvc
+        run: cmake --preset ci-msvc -DSUB0ECS_WITH_PIPELINE=ON
       - name: Build (tests + benchmarks)
         # The benchmark TUs instantiate every design x scenario: keep concurrent cl.exe count low
         run: cmake --build --preset ci-msvc --parallel 2
@@ -86,7 +86,7 @@ jobs:
       - name: Install Ninja
         run: sudo apt-get update && sudo apt-get install -y ninja-build
       - name: Configure (ASan + UBSan)
-        run: cmake --preset sanitize
+        run: cmake --preset sanitize -DSUB0ECS_WITH_PIPELINE=ON "-DCMAKE_CXX_FLAGS=-fsanitize=address,undefined -fno-omit-frame-pointer" "-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined"
         env: { CC: gcc, CXX: g++ }
       - name: Build
         run: cmake --build --preset sanitize

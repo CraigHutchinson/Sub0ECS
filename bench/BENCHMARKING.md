@@ -273,3 +273,9 @@ python bench/tools/run.py --profile reference --pin P --label ref-msvc
 - **Embedded (ESP32-P4):** use a separate runner that
   flashes the device and captures serial output. It should keep the same
   `meta.json` schema (with device fields) so `compare.py` still works.
+
+## Representative n-body application
+
+See [ordered n-body](../docs/optimization/nbody.md) for the optional Pipeline
+adapter, explicit row-grain experiment, bitwise oracle and metric boundaries.
+Use `--profile nbody` for the suite; `quick` includes a small smoke case.

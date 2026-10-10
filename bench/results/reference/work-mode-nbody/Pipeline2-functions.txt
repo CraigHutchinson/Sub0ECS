@@ -1,0 +1,28 @@
+--------------------------------------------------------------------------------
+Profile data file 'build/nbody-evidence/Pipeline2.callgrind' (creator: callgrind-3.27.1)
+--------------------------------------------------------------------------------
+I1 cache: 
+D1 cache: 
+LL cache: 
+Timerange: Basic block 0 - 11199807
+Trigger: Program termination
+Profiled target:  /workspace/scratch/a79dc81cbc62/Sub0ECS/build/pipeline/bench/sub0ecs_nbody_bench --filter=Pipeline2/1024$ --epochs=3 --quiet --out=build/nbody-evidence/Pipeline2-instrumented.json (PID 10, part 1)
+Events recorded:  Ir
+Events shown:     Ir
+Event sort order: Ir
+Thresholds:       95
+Include dirs:     
+User annotated:   
+Auto-annotation:  off
+
+--------------------------------------------------------------------------------
+Ir                   
+--------------------------------------------------------------------------------
+184,284,843 (100.0%)  PROGRAM TOTALS
+
+--------------------------------------------------------------------------------
+Ir                    file:function
+--------------------------------------------------------------------------------
+106,954,779 (58.04%)  bench/nbody/body.hpp:std::_Function_handler<void (), (anonymous namespace)::prepare<(anonymous namespace)::Bridged<1024ul> >(std::shared_ptr<(anonymous namespace)::Bridged<1024ul> >)::{lambda()#1}>::_M_invoke(std::_Any_data const&)
+ 71,303,186 (38.69%)  bench/nbody/body.hpp:std::_Function_handler<bench::harness::Prepared (), main::{lambda()#4}>::_M_invoke(std::_Any_data const&)
+
