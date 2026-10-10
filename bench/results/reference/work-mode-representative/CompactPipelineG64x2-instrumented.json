@@ -1,0 +1,10 @@
+{
+  "schema": "sub0ecs-bench-results/1",
+  "binary": "sub0ecs_nbody_bench",
+  "settings": {"filter": "^NBody/Compact/CompactPipelineG64x2/1024$", "epochs": 3, "min_epoch_ms": 0, "warmup": 0},
+  "results": [
+    {"name": "NBody/Compact/CompactPipelineG64x2/1024", "scenario": "NBody", "pattern": "Compact", "design": "CompactPipelineG64x2", "group": "NBody/Compact/1024", "n": 1024, "unit": "tick",
+     "median_ns": 23409734, "err_pct": 0.283543052, "min_ns": 23343545, "max_ns": 24852755, "epochs": 3, "items_per_second": 42.7172731,
+     "counters": {"state_checksum": 7970.93764, "completed_ticks": 5, "directed_interactions_per_tick": 1047552}, "notes": {}}
+  ]
+}

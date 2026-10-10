@@ -173,6 +173,9 @@ bench/             benchmarks, the reference designs they compare against, harne
 docs/              design and evidence, examples guide, research notes, backlog
 ```
 
+Representative complete-tick workloads and the consolidated optimization review:
+[streaming, churn, staged neighbors and n-body](docs/optimization/representative.md).
+
 Design and evidence: [docs/FINDINGS.md](docs/FINDINGS.md). Open work:
 [docs/BACKLOG.md](docs/BACKLOG.md).
 

@@ -32,7 +32,7 @@ set_tests_properties(sub0ecs_tests PROPERTIES LABELS gate)
 set_tests_properties(sub0ecs_tests_exhaustive PROPERTIES LABELS exhaustive)
 
 # Representative application conformance is part of the existing gate.
-target_sources(sub0ecs_tests PRIVATE test_nbody.cpp test_row_grain.cpp)
+target_sources(sub0ecs_tests PRIVATE test_nbody.cpp test_row_grain.cpp test_row_workloads.cpp)
 if(SUB0ECS_WITH_PIPELINE)
     target_sources(sub0ecs_tests PRIVATE test_pipeline_pool.cpp)
     target_compile_definitions(sub0ecs_tests PRIVATE SUB0ECS_TEST_PIPELINE=1)

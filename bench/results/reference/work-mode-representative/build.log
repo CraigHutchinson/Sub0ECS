@@ -1,0 +1,2 @@
+[1/2] Building CXX object bench/CMakeFiles/sub0ecs_row_workloads_bench.dir/row_workloads/bench.cpp.o
+[2/2] Linking CXX executable bench/sub0ecs_row_workloads_bench

@@ -1,0 +1,89 @@
+[0/1] Re-running CMake...
+-- Downloading CPM.cmake to /root/.cpm/cpm/CPM_0.42.1.cmake
+-- CPM: Adding package Sub0Pipeline@ (/workspace/scratch/a79dc81cbc62/Sub0Pipeline)
+-- CPM: Adding package nanobench@4.6.0 (v4.6.0 to /root/.cpm/nanobench/8263)
+-- CPM: Adding package doctest@2.5.3 (v2.5.3 to /root/.cpm/doctest/a12c)
+-- Configuring done (17.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /workspace/scratch/a79dc81cbc62/Sub0ECS/build/pipeline
+[1/60] Building CXX object _deps/nanobench-build/CMakeFiles/nanobench.dir/src/test/app/nanobench.cpp.o
+[2/60] Linking CXX static library _deps/nanobench-build/libnanobench.a
+[3/60] Building CXX object bench/CMakeFiles/sub0ecs_bench_harness.dir/harness/runner.cpp.o
+[4/60] Linking CXX static library bench/libsub0ecs_bench_harness.a
+[5/60] Building CXX object bench/CMakeFiles/sub0ecs_spans_bench.dir/spans_bench.cpp.o
+[6/60] Building CXX object bench/CMakeFiles/sub0ecs_dynamic_timeline.dir/dynamic_timeline.cpp.o
+[7/60] Building CXX object bench/CMakeFiles/sub0ecs_bench.dir/scenarios_bench.cpp.o
+In function ‘void operator delete(void*)’,
+    inlined from ‘void operator delete(void*)’ at /workspace/scratch/a79dc81cbc62/Sub0ECS/bench/scenarios_bench.cpp:61:6,
+    inlined from ‘void operator delete(void*, std::size_t)’ at /workspace/scratch/a79dc81cbc62/Sub0ECS/bench/scenarios_bench.cpp:67:70,
+    inlined from ‘void std::default_delete<_Tp>::operator()(_Tp*) const [with _Tp = bench::qpart::Adapter<false, std::tuple<sub0ecs::Query<bench::Position>, sub0ecs::Query<bench::Position, bench::Velocity>, sub0ecs::Query<bench::Health, bench::Rotation>, sub0ecs::Query<bench::Scale, bench::Color>, sub0ecs::Query<bench::Position, bench::Velocity, bench::Tag> > >]’ at /usr/include/c++/13/bits/unique_ptr.h:99:2,
+    inlined from ‘std::unique_ptr<_Tp, _Dp>::~unique_ptr() [with _Tp = bench::qpart::Adapter<false, std::tuple<sub0ecs::Query<bench::Position>, sub0ecs::Query<bench::Position, bench::Velocity>, sub0ecs::Query<bench::Health, bench::Rotation>, sub0ecs::Query<bench::Scale, bench::Color>, sub0ecs::Query<bench::Position, bench::Velocity, bench::Tag> > >; _Dp = std::default_delete<bench::qpart::Adapter<false, std::tuple<sub0ecs::Query<bench::Position>, sub0ecs::Query<bench::Position, bench::Velocity>, sub0ecs::Query<bench::Health, bench::Rotation>, sub0ecs::Query<bench::Scale, bench::Color>, sub0ecs::Query<bench::Position, bench::Velocity, bench::Tag> > > >]’ at /usr/include/c++/13/bits/unique_ptr.h:404:17,
+    inlined from ‘{anonymous}::addCreate<bench::qpart::Adapter<false, std::tuple<sub0ecs::Query<bench::Position>, sub0ecs::Query<bench::Position, bench::Velocity>, sub0ecs::Query<bench::Health, bench::Rotation>, sub0ecs::Query<bench::Scale, bench::Color>, sub0ecs::Query<bench::Position, bench::Velocity, bench::Tag> > > >(bench::Pattern, int64_t)::<lambda()>’ at /workspace/scratch/a79dc81cbc62/Sub0ECS/bench/scenarios_bench.cpp:154:31,
+    inlined from ‘constexpr _Res std::__invoke_impl(__invoke_other, _Fn&&, _Args&& ...) [with _Res = bench::harness::Prepared; _Fn = {anonymous}::addCreate<bench::qpart::Adapter<false, std::tuple<sub0ecs::Query<bench::Position>, sub0ecs::Query<bench::Position, bench::Velocity>, sub0ecs::Query<bench::Health, bench::Rotation>, sub0ecs::Query<bench::Scale, bench::Color>, sub0ecs::Query<bench::Position, bench::Velocity, bench::Tag> > > >(bench::Pattern, int64_t)::<lambda()>&; _Args = {}]’ at /usr/include/c++/13/bits/invoke.h:61:67,
+    inlined from ‘constexpr std::enable_if_t<is_invocable_r_v<_Res, _Callable, _Args ...>, _Res> std::__invoke_r(_Callable&&, _Args&& ...) [with _Res = bench::harness::Prepared; _Callable = {anonymous}::addCreate<bench::qpart::Adapter<false, std::tuple<sub0ecs::Query<bench::Position>, sub0ecs::Query<bench::Position, bench::Velocity>, sub0ecs::Query<bench::Health, bench::Rotation>, sub0ecs::Query<bench::Scale, bench::Color>, sub0ecs::Query<bench::Position, bench::Velocity, bench::Tag> > > >(bench::Pattern, int64_t)::<lambda()>&; _Args = {}]’ at /usr/include/c++/13/bits/invoke.h:116:38,
+    inlined from ‘static _Res std::_Function_handler<_Res(_ArgTypes ...), _Functor>::_M_invoke(const std::_Any_data&, _ArgTypes&& ...) [with _Res = bench::harness::Prepared; _Functor = {anonymous}::addCreate<bench::qpart::Adapter<false, std::tuple<sub0ecs::Query<bench::Position>, sub0ecs::Query<bench::Position, bench::Velocity>, sub0ecs::Query<bench::Health, bench::Rotation>, sub0ecs::Query<bench::Scale, bench::Color>, sub0ecs::Query<bench::Position, bench::Velocity, bench::Tag> > > >(bench::Pattern, int64_t)::<lambda()>; _ArgTypes = {}]’ at /usr/include/c++/13/bits/std_function.h:291:44:
+/workspace/scratch/a79dc81cbc62/Sub0ECS/bench/scenarios_bench.cpp:65:14: warning: ‘void free(void*)’ called on pointer returned from a mismatched allocation function [-Wmismatched-new-delete]
+   65 |     std::free(p);
+      |     ~~~~~~~~~^~~
+In file included from /usr/include/c++/13/memory:78,
+                 from /workspace/scratch/a79dc81cbc62/Sub0ECS/bench/scenarios_bench.cpp:13:
+In function ‘std::__detail::__unique_ptr_t<_Tp> std::make_unique(_Args&& ...) [with _Tp = bench::qpart::Adapter<false, tuple<sub0ecs::Query<bench::Position>, sub0ecs::Query<bench::Position, bench::Velocity>, sub0ecs::Query<bench::Health, bench::Rotation>, sub0ecs::Query<bench::Scale, bench::Color>, sub0ecs::Query<bench::Position, bench::Velocity, bench::Tag> > >; _Args = {}]’,
+    inlined from ‘{anonymous}::addCreate<bench::qpart::Adapter<false, std::tuple<sub0ecs::Query<bench::Position>, sub0ecs::Query<bench::Position, bench::Velocity>, sub0ecs::Query<bench::Health, bench::Rotation>, sub0ecs::Query<bench::Scale, bench::Color>, sub0ecs::Query<bench::Position, bench::Velocity, bench::Tag> > > >(bench::Pattern, int64_t)::<lambda()>’ at /workspace/scratch/a79dc81cbc62/Sub0ECS/bench/scenarios_bench.cpp:148:40,
+    inlined from ‘constexpr _Res std::__invoke_impl(__invoke_other, _Fn&&, _Args&& ...) [with _Res = bench::harness::Prepared; _Fn = {anonymous}::addCreate<bench::qpart::Adapter<false, std::tuple<sub0ecs::Query<bench::Position>, sub0ecs::Query<bench::Position, bench::Velocity>, sub0ecs::Query<bench::Health, bench::Rotation>, sub0ecs::Query<bench::Scale, bench::Color>, sub0ecs::Query<bench::Position, bench::Velocity, bench::Tag> > > >(bench::Pattern, int64_t)::<lambda()>&; _Args = {}]’ at /usr/include/c++/13/bits/invoke.h:61:67,
+    inlined from ‘constexpr std::enable_if_t<is_invocable_r_v<_Res, _Callable, _Args ...>, _Res> std::__invoke_r(_Callable&&, _Args&& ...) [with _Res = bench::harness::Prepared; _Callable = {anonymous}::addCreate<bench::qpart::Adapter<false, std::tuple<sub0ecs::Query<bench::Position>, sub0ecs::Query<bench::Position, bench::Velocity>, sub0ecs::Query<bench::Health, bench::Rotation>, sub0ecs::Query<bench::Scale, bench::Color>, sub0ecs::Query<bench::Position, bench::Velocity, bench::Tag> > > >(bench::Pattern, int64_t)::<lambda()>&; _Args = {}]’ at /usr/include/c++/13/bits/invoke.h:116:38,
+    inlined from ‘static _Res std::_Function_handler<_Res(_ArgTypes ...), _Functor>::_M_invoke(const std::_Any_data&, _ArgTypes&& ...) [with _Res = bench::harness::Prepared; _Functor = {anonymous}::addCreate<bench::qpart::Adapter<false, std::tuple<sub0ecs::Query<bench::Position>, sub0ecs::Query<bench::Position, bench::Velocity>, sub0ecs::Query<bench::Health, bench::Rotation>, sub0ecs::Query<bench::Scale, bench::Color>, sub0ecs::Query<bench::Position, bench::Velocity, bench::Tag> > > >(bench::Pattern, int64_t)::<lambda()>; _ArgTypes = {}]’ at /usr/include/c++/13/bits/std_function.h:291:44:
+/usr/include/c++/13/bits/unique_ptr.h:1070:30: note: returned from ‘void* operator new(std::size_t)’
+ 1070 |     { return unique_ptr<_Tp>(new _Tp(std::forward<_Args>(__args)...)); }
+      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8/60] Building CXX object bench/CMakeFiles/sub0ecs_skirmish_demo.dir/skirmish/demo.cpp.o
+[9/60] Building CXX object bench/CMakeFiles/sub0ecs_nbody_bench.dir/nbody/bench.cpp.o
+[10/60] Building CXX object bench/CMakeFiles/sub0ecs_rows_bench.dir/rows/bench.cpp.o
+[11/60] Building CXX object bench/CMakeFiles/sub0ecs_row_workloads_bench.dir/row_workloads/bench.cpp.o
+[12/60] Building CXX object examples/CMakeFiles/sub0ecs_example_minimal_world.dir/minimal_world.cpp.o
+[13/60] Building CXX object examples/CMakeFiles/sub0ecs_example_rocket.dir/rocket.cpp.o
+[14/60] Building CXX object examples/CMakeFiles/sub0ecs_example_hinted_partitions.dir/hinted_partitions.cpp.o
+[15/60] Building CXX object examples/CMakeFiles/sub0ecs_example_structural_changes.dir/structural_changes.cpp.o
+[16/60] Building CXX object examples/CMakeFiles/sub0ecs_example_random_access.dir/random_access.cpp.o
+[17/60] Building CXX object examples/CMakeFiles/sub0ecs_example_fusion_planners.dir/fusion_planners.cpp.o
+[18/60] Building CXX object examples/CMakeFiles/sub0ecs_example_auto_tuner.dir/auto_tuner.cpp.o
+[19/60] Building CXX object examples/CMakeFiles/sub0ecs_example_executors.dir/executors.cpp.o
+[20/60] Building CXX object examples/CMakeFiles/sub0ecs_example_parallel_systems.dir/parallel_systems.cpp.o
+[21/60] Building CXX object examples/CMakeFiles/sub0ecs_example_determinism.dir/determinism.cpp.o
+[22/60] Building CXX object examples/CMakeFiles/sub0ecs_example_dynamic_systems.dir/dynamic_systems.cpp.o
+[23/60] Building CXX object examples/CMakeFiles/sub0ecs_example_skirmish.dir/skirmish.cpp.o
+[24/60] Building CXX object tests/CMakeFiles/sub0ecs_tests.dir/test_main.cpp.o
+[25/60] Building CXX object tests/CMakeFiles/sub0ecs_tests.dir/test_entity.cpp.o
+[26/60] Building CXX object bench/CMakeFiles/sub0ecs_skirmish_bench.dir/skirmish/bench.cpp.o
+[27/60] Building CXX object tests/CMakeFiles/sub0ecs_tests.dir/test_executors.cpp.o
+[28/60] Building CXX object tests/CMakeFiles/sub0ecs_tests.dir/test_design_conformance.cpp.o
+[29/60] Building CXX object tests/CMakeFiles/sub0ecs_tests.dir/test_fusion.cpp.o
+[30/60] Building CXX object tests/CMakeFiles/sub0ecs_tests.dir/test_store.cpp.o
+[31/60] Building CXX object tests/CMakeFiles/sub0ecs_tests.dir/test_dynamic.cpp.o
+[32/60] Building CXX object tests/CMakeFiles/sub0ecs_tests.dir/test_nbody.cpp.o
+[33/60] Building CXX object tests/CMakeFiles/sub0ecs_tests.dir/test_row_grain.cpp.o
+[34/60] Building CXX object tests/CMakeFiles/sub0ecs_tests.dir/test_row_workloads.cpp.o
+[35/60] Building CXX object tests/CMakeFiles/sub0ecs_tests.dir/test_pipeline_pool.cpp.o
+[36/60] Building CXX object _deps/doctest-build/CMakeFiles/doctest_with_main.dir/doctest/doctest.cpp.o
+[37/60] Linking CXX executable bench/sub0ecs_bench
+[38/60] Linking CXX executable bench/sub0ecs_spans_bench
+[39/60] Linking CXX executable bench/sub0ecs_dynamic_timeline
+[40/60] Linking CXX executable bench/sub0ecs_skirmish_bench
+[41/60] Linking CXX executable bench/sub0ecs_skirmish_demo
+[42/60] Linking CXX executable bench/sub0ecs_nbody_bench
+[43/60] Linking CXX executable bench/sub0ecs_rows_bench
+[44/60] Linking CXX executable bench/sub0ecs_row_workloads_bench
+[45/60] Linking CXX executable examples/sub0ecs_example_minimal_world
+[46/60] Linking CXX executable examples/sub0ecs_example_rocket
+[47/60] Linking CXX executable examples/sub0ecs_example_hinted_partitions
+[48/60] Linking CXX executable examples/sub0ecs_example_structural_changes
+[49/60] Linking CXX executable examples/sub0ecs_example_random_access
+[50/60] Linking CXX executable examples/sub0ecs_example_fusion_planners
+[51/60] Linking CXX executable examples/sub0ecs_example_auto_tuner
+[52/60] Linking CXX executable examples/sub0ecs_example_executors
+[53/60] Linking CXX executable examples/sub0ecs_example_parallel_systems
+[54/60] Linking CXX executable examples/sub0ecs_example_determinism
+[55/60] Linking CXX executable examples/sub0ecs_example_dynamic_systems
+[56/60] Linking CXX executable examples/sub0ecs_example_skirmish
+[57/60] Linking CXX static library _deps/doctest-build/libdoctest_with_main.a
+[58/60] Building CXX object tests/CMakeFiles/sub0ecs_tests.dir/test_skirmish.cpp.o
+[59/60] Linking CXX executable tests/sub0ecs_tests

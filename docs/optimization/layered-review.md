@@ -66,8 +66,8 @@ The [curated receipt](../../bench/results/reference/work-mode-layered/README.md)
 source header hashes, raw results, vectorizer diagnostics, profile and disassembly.
 These shared-host measurements provide advisory evidence for this library specialization, not
 Crucible's frame pacing or production receiving. Power/thermal conditions and
-external host load are not controlled. Cross-platform CI and consumer attribution
-remain separate gates.
+external host load are not controlled. Cross-platform CI subsequently passed (see below); consumer attribution
+remains a separate gate.
 
 ## Next experiments, in order
 
@@ -112,5 +112,11 @@ a promise of improvement for every call. Full ranges and all samples are in the
 receipt. Matched n-body results establish no clear complete-tick improvement.
 
 All 81 local tests (including exhaustive), 12 examples, focused standalone C++20
-and fully instrumented focused Pipeline ASan/UBSan receiving pass. Cross-platform
-CI and refreshed reference-host performance remain required before broad claims.
+and fully instrumented focused Pipeline ASan/UBSan receiving pass. PR19 merged as `671eedb3bf1b92a668692640fbf5bf50a50e1b74` after exact-head CI
+run [38040715547](https://github.com/CraigHutchinson/Sub0ECS/actions/runs/38040715547)
+passed GCC, Clang (including exhaustive), MSVC, macOS and ASan/UBSan jobs.
+Refreshed reference-host performance and actual consumer receiving remain open.
+
+The [consolidated follow-up](representative.md) adds complete churn, streaming and
+neighbor workloads plus a compact ordered force kernel. It preserves this PR's
+pool dispatch contract; the pending one-lane bypass was rejected during integration.

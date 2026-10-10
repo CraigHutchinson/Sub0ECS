@@ -6,6 +6,11 @@ within a group.
 
 For the current consumer-led sequence, architecture/adapter review and evidence
 gates, see [the Crucible optimization campaign](optimization/crucible.md).
+PR19's dispatch specialization is merged and platform CI passed. The
+[representative suite](optimization/representative.md) now covers useful churn,
+streaming and staged-neighbor work; many-tiny-partition, actual spatial queries
+and production attribution remain open. These synthetic workloads do not close
+the side-pool/migration or Crucible acceptance items below.
 
 ## Readiness: audit findings
 

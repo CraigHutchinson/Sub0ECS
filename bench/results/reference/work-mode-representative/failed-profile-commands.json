@@ -1,0 +1,19 @@
+[
+  {
+    "command": [
+      "../tooling/valgrind-installed/bin/valgrind",
+      "--tool=callgrind",
+      "--callgrind-out-file=build/compact-evidence/final/PipelineG64x2.callgrind",
+      "build/pipeline/bench/sub0ecs_nbody_bench",
+      "--filter=^NBody/Compact/PipelineG64x2/1024$",
+      "--epochs=3",
+      "--quiet",
+      "--out=build/compact-evidence/final/PipelineG64x2-instrumented.json"
+    ],
+    "env": {
+      "NBODY_SIZES": "1024",
+      "NBODY_THREADS": "2"
+    },
+    "returncode": 126
+  }
+]

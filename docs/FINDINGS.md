@@ -415,33 +415,12 @@ only one chunk at 1,024 bodies and takes the serial path despite expensive all-p
 work. Explicit `RowGrain<64>` exposes sixteen chunks while preserving the same
 ascending-source arithmetic and bitwise state. The existing default is unchanged.
 
-Five alternating process pairs, GCC13.3 Release portable x86-64, AMD EPYC9V74
-shared virtual host, two lanes; median [min–max] of process medians, milliseconds
-per complete tick:
-
-| Bodies | Plain floor | Pipeline default | Pipeline grain64 |
-|---|---|---|---|
-| 64 | 0.01617 [0.01575–0.01623] | 0.01550 [0.01548–0.01557] | 0.01549 [0.01546–0.01552] |
-| 1,024 | 4.180 [4.050–4.692] | 4.374 [4.311–4.723] | 2.173 [2.127–2.384] |
-| 4,096 | 69.487 [67.989–73.025] | 35.647 [33.529–36.733] | 36.650 [34.116–39.021] |
-
-At 1,024 bodies the explicit Pipeline grain is 1.92x the plain reference's
-throughput and 2.01x the default Pipeline arm, using ratios of medians. The native
-pool also improves (4.389 to 2.188 ms), identifying granularity/utilization rather
-than an inherent superiority of one executor. At 4,096 bodies Pipeline grain64
-is slightly slower; keep the explicit choice. No production frame gain is claimed.
-
-Callgrind at 1,024 bodies records 184,284,843 total-process Ir for Pipeline default
-versus 184,307,212 for grain64 over five ticks including warmups. There is no
-instruction reduction: the mechanism overlaps independent target rows. GCC's
-vector report and linked scalar sqrt/division support preserving the existing
-ordered kernel rather than introducing unqualified reassociation. These are
-instrumented guest instruction references, not retired hardware counters.
-
-[Raw paired JSON, full ranges, instruction graphs, source/binary receipts and
-validation logs](../bench/results/reference/work-mode-nbody/README.md) preserve
-slow samples and limitations. Shared-host results are diagnostic. Actual Crucible
-FP/staging/replay/frame/lifecycle integration remains a separate receiving gate.
+PR18 established this granularity mechanism, with bitwise conformance and a
+five-pair diagnostic capture. Its instruction counts showed work overlap rather
+than fewer instructions. The default remains unchanged: smaller grains did not
+win at every size. The [original receipt](../bench/results/reference/work-mode-nbody/README.md)
+is historical evidence for PR18; use the newer representative-workload receipt
+below for current kernel comparisons. No production frame gain is claimed.
 
 ## Layered row-dispatch review (10 October 2026)
 
@@ -453,3 +432,65 @@ storage and pool semantics remain unchanged. The `rows` paired harness isolates
 this mechanism; complete n-body ticks check whether it matters alongside real
 scheduling and physics. See the review and its curated receipt for measurements,
 validation and the remaining layout/consumer/platform gaps.
+
+## Representative workloads and compact ordered kernel (after PR19)
+
+The [consolidated review](optimization/representative.md) adds useful structural
+and staging workloads, and retains merged PR19 dispatch without further library
+API/header changes. Three pending one-lane shortcuts were rejected because a
+`concurrency()` query does not authorize bypassing custom-pool dispatch. Their
+regressions, measurements and source are retained in the receipt.
+
+The compact n-body arm stages position/scaled mass, then splits each ascending
+source reduction around self. The unchanged independent scalar oracle receives
+sequential/native/Pipeline variants bit for bit. Both original and compact kernels
+have handwritten controls at the same lane count, grain and join boundary.
+
+Five alternating independent A/B process pairs, GCC13.3 portable Release
+`-O3 -ffp-contract=off`, AMD EPYC9V74 virtual host with eight-CPU quota. Times
+are milliseconds per complete evolving tick, median [full range] of five process
+medians. Instrumented times are excluded; host power/thermals are uncontrolled.
+
+| Bodies / arm | Original kernel, ms | Compact kernel, ms |
+|---|---:|---:|
+| 1,024 / HandWritten | 4.317 [4.170–4.801] | 2.992 [2.691–3.122] |
+| 1,024 / ECS | 4.290 [4.147–4.537] | 2.860 [2.625–2.971] |
+| 1,024 / PipelineG64x2 | 2.429 [2.333–2.632] | 1.538 [1.388–1.680] |
+| 4,096 / HandWritten | 70.230 [69.247–75.685] | 47.089 [44.775–49.166] |
+| 4,096 / ECS | 70.384 [70.292–74.259] | 44.578 [42.974–47.238] |
+| 4,096 / PipelineG64x2 | 36.821 [35.172–41.542] | 22.755 [21.875–34.553] |
+
+At 1,024 bodies Pipeline's median complete-tick time falls 36.7% (1.58x
+throughput). The sequential ECS arm also improves, so this is a kernel/layout
+change rather than just worker scaling. The two-lane compact handwritten controls
+remain visible: at 4,096 bodies the matched Pipeline ECS median is 27.804 ms
+versus 23.536 ms handwritten, with broad overlapping ranges. Do not claim a
+universal zero-cost abstraction or combine ratios from different groups.
+
+Callgrind records 184,491,868 → 119,168,119 total-process instruction references
+at 1,024 bodies / two Pipeline lanes / five ticks, including startup and warmups:
+35.4% fewer guest instructions, not a hardware retired-instruction measurement.
+GCC vectorizes the split force loops with 16-byte vectors. Linked packed
+sqrt/division calculates independent source contributions, then adds them in
+source order. No fast-math, reduction reassociation or alias promise is introduced.
+Compact ECS adds 32 bytes/body of scratch while retaining its inspection cache;
+smaller hot inputs do not mean smaller total allocation.
+
+The new complete-tick row workloads cover streaming, eight initial query signatures
+with tag migration and consumed selected updates, and a staged eight-neighbor
+read/update. At 65,536 rows, median microseconds per tick:
+
+| Workload | Plain | Direct ECS | Native 2 lanes / grain1024 | Pipeline 2 lanes / grain1024 |
+|---|---:|---:|---:|---:|
+| Streaming | 61.1 | 61.1 | 59.9 | 85.9 |
+| FragmentedChurn | 166.9 | 309.3 | 330.6 | 398.7 |
+| StagedNeighbors | 1207.5 | 1183.2 | 817.8 | 811.9 |
+
+The full ranges and every sample are in the
+[receipt](../bench/results/reference/work-mode-representative/README.md).
+These synthetic workloads guide future attribution: cheap streaming does not
+justify Pipeline dispatch, churn still costs more than a bit-mask floor, and
+bounded neighbor work can use two lanes. They do not choose a global grain/width
+or establish a real spatial-grid or production Crucible gain. Library-owned
+adapters remain the integration boundary; Pub types and delivery semantics remain
+owned by Pub, with C1/C2/C4/C5 receiving still open.

@@ -60,6 +60,12 @@
       "kind": "harness",
       "exe": "bench/sub0ecs_rows_bench",
       "filter": "^RowDispatch/"
+    },
+    "row-workloads": {
+      "description": "Complete streaming, fragmented/churning and staged-neighbor ticks",
+      "kind": "harness",
+      "exe": "bench/sub0ecs_row_workloads_bench",
+      "filter": "^RowWork/"
     }
   },
   "profiles": {
@@ -70,7 +76,9 @@
         "SKIRMISH_UPT": "250",
         "SKIRMISH_THREADS_UPT": "250",
         "NBODY_SIZES": "32",
-        "NBODY_THREADS": "1,2"
+        "NBODY_THREADS": "1,2",
+        "ROW_SIZES": "32",
+        "ROW_THREADS": "1,2"
       },
       "suites": [
         "baseline",
@@ -79,7 +87,8 @@
         "threads",
         "spans",
         "nbody",
-        "rows"
+        "rows",
+        "row-workloads"
       ],
       "epochs": 5,
       "min_epoch_ms": 0
@@ -140,6 +149,21 @@
       ],
       "epochs": 11,
       "min_epoch_ms": 0
+    },
+    "representative": {
+      "description": "Whole-tick scheduling, structural, staging and compute workload spectrum",
+      "suites": [
+        "row-workloads",
+        "nbody"
+      ],
+      "epochs": 11,
+      "min_epoch_ms": 0,
+      "env": {
+        "ROW_SIZES": "1024,16384,65536",
+        "ROW_THREADS": "1,2,4",
+        "NBODY_SIZES": "64,1024,4096",
+        "NBODY_THREADS": "1,2,4"
+      }
     }
   }
 }

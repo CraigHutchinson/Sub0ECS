@@ -41,17 +41,23 @@ TEST_CASE("nbody pools preserve ordered evolving state including ECS chunk tail"
 {
     bench::nbody::Plain reference(4097);
     bench::nbody::Ecs native(4097);
+    bench::nbody::CompactEcs compact(4097);
+    bench::nbody::CompactPlain compactHand(4097);
     sub0ecs::fusion::Parallel pool(2);
 #if defined(SUB0ECS_TEST_PIPELINE)
     bench::nbody::Ecs bridged(4097);
+    bench::nbody::CompactEcs compactBridged(4097);
     sub0pipeline::PriorityExecutor executor({.threadCount = 2, .queueCapacity = 2});
     sub0ecs::adapters::PipelinePool bridge(executor);
 #endif
     for (int tick = 0; tick < 2; ++tick)
     {
         reference.tick(); native.tick(pool); same(reference.state(), native.state());
+        compact.tick<64>(pool); compactHand.tick<64>(pool);
+        same(reference.state(), compact.state()); same(reference.state(), compactHand.state());
 #if defined(SUB0ECS_TEST_PIPELINE)
         bridged.tick(bridge); same(reference.state(), bridged.state());
+        compactBridged.tick<64>(bridge); same(reference.state(), compactBridged.state());
 #endif
     }
 }
@@ -83,6 +89,41 @@ TEST_CASE("nbody explicit grain exposes expensive small worlds to both pools")
             same(reference.state(), handPipeline.state());
             same(reference.state(), bridged.state());
 #endif
+        }
+    }
+}
+
+TEST_CASE("compact force snapshot preserves ordered state across pool widths")
+{
+    for (auto count : {0u, 1u, 17u, 257u})
+    {
+        for (auto width : {1u, 2u, 4u})
+        {
+            bench::nbody::Plain reference(count);
+            bench::nbody::CompactEcs sequential(count), native(count);
+            bench::nbody::CompactPlain hand(count), handNative(count);
+            sub0ecs::fusion::Parallel pool(width);
+#if defined(SUB0ECS_TEST_PIPELINE)
+            bench::nbody::CompactEcs bridged(count);
+            bench::nbody::CompactPlain handPipeline(count);
+            sub0pipeline::PriorityExecutor executor({.threadCount = width, .queueCapacity = width});
+            sub0ecs::adapters::PipelinePool bridge(executor);
+#endif
+            for (unsigned tick = 0; tick < 4; ++tick)
+            {
+                reference.tick(); sequential.tick(); native.tick<64>(pool);
+                hand.tick(); handNative.tick<64>(pool);
+                same(reference.state(), hand.state());
+                same(reference.state(), handNative.state());
+                same(reference.state(), sequential.state());
+                same(reference.state(), native.state());
+#if defined(SUB0ECS_TEST_PIPELINE)
+                bridged.tick<64>(bridge);
+                handPipeline.tick<64>(bridge);
+                same(reference.state(), handPipeline.state());
+                same(reference.state(), bridged.state());
+#endif
+            }
         }
     }
 }

@@ -1,0 +1,42 @@
+{
+  "base_commit": "671eedb3bf1b92a668692640fbf5bf50a50e1b74",
+  "pipeline_commit": "f730c4ec2973a449c45fbf9a74595414b9bf30e1",
+  "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "source_sha256": {
+    "bench/CMakeLists.txt": "7d08d7403e864f52e1db29a95a425754019554e1d366d57c91e7af608fee9372",
+    "bench/common/native_simulation.hpp": "8d1f6858d8c5131acfc96b8472d7c0a6f120577dc6e8103f8f9c5e6ea3eb0b16",
+    "bench/common/pipeline_simulation.hpp": "cc720817888495c192c93ba2b34ad46e597104d24e168c58118046d78d6d8070",
+    "bench/nbody/bench.cpp": "8b1a6205f33afc82949fbe34ad47a87826075a31c64dc1ebf60ba0b49d0623d6",
+    "bench/nbody/body.hpp": "4bed743e43ba472724bd7c22119ce9c391bc42ddb4ac40747d330fa8f5b257d4",
+    "bench/nbody/compact_sources.hpp": "e90a6a6315ee3473d153b42afa32a1519d9456bc12a06682ac3a7dfd7450e91a",
+    "bench/nbody/ecs.hpp": "fcf142f322186cab7990dbf3642286a1022533be109756318ae194252b025d4e",
+    "bench/nbody/plain.hpp": "6ce6b057a4ec74ac89d54407e8671207fc9a9020e97f1d2c2ecc1c61bcf29a57",
+    "bench/row_workloads/bench.cpp": "e495b8ecf4a7702704d3b668364a4f447310246597239acc7f3e307645c0186d",
+    "bench/row_workloads/ecs.hpp": "b6bd4f749bb8ad241e0778be007705b9d5dea108b5c12847a833860001102de9",
+    "bench/row_workloads/plain.hpp": "91d0688b58191cd6475a47782edeb05c529f6c9b0c81fc6a2ef1f27d5d5a1a4d",
+    "bench/row_workloads/point.hpp": "f1265c9b163180202e72413f7dbe6c6842931f4b8619bc4b5c1a3d9a887f64c7",
+    "bench/row_workloads/scenario.hpp": "0b5474327cf5362a683fa192eb8b927113ddda5d0d620aac1e7bf99ffa8b40a4",
+    "bench/row_workloads/state.hpp": "d689574f5fb9333a0278933218621cb68fe057492736e3721860297ae571e944",
+    "bench/tools/suites.json": "43a876cba9e6905fcd879119d9f32efba0b5c99787859d736ea12b43674c70bb",
+    "include/sub0ecs/store/world.hpp": "b5859d7d8f335e9b3171ae83a4d00ec583892e2288bc0dddf620d6734660bb23",
+    "tests/CMakeLists.txt": "09d0a7059087bce685fc018458a642aed689c0be52de8f8af0f3351a6c1c8ebc",
+    "tests/test_nbody.cpp": "ef218bcfd9f1b87fe912483826aefccb45083d1593220b2566c2801e6dfbb4df",
+    "tests/test_row_workloads.cpp": "acf787c837c402690e515171b641611c688ac54e6d04148fee21f0d1e7fec55d"
+  },
+  "binary_sha256": {
+    "sub0ecs_nbody_bench": "4898d10f718295647cc10ba62ab608f16b3ef62b845ec302953012d8350d55fd",
+    "sub0ecs_row_workloads_bench": "5e6dd4e587c4fd7ed49dfebf675e2db7639abd1f9f2b7a4b4a2456ca5d4aba74"
+  },
+  "pr19_ci": {
+    "head": "3b23c2966694eff880a0cc9b2090e43243ea9d45",
+    "run_id": 38040715547,
+    "conclusion": "success",
+    "jobs": [
+      "linux-gcc",
+      "linux-clang",
+      "windows-msvc",
+      "macos",
+      "sanitizers"
+    ]
+  }
+}

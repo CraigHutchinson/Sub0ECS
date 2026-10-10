@@ -1,0 +1,37 @@
+.no profile: version failed (rc=7); inspect /tmp/tmplpuky9yn/out/dfbfd71b265a/20261010-153639-153887-abc
+no profile: help failed (rc=7); inspect /tmp/tmpojyymj2u/out/dfbfd71b265a/20261010-153639-155572-abc
+no profile: target failed (rc=7); inspect /tmp/tmpidys_awx/out/dfbfd71b265a/20261010-153639-157618-abc
+no profile: summary failed (rc=7); inspect /tmp/tmpu1rowukr/out/dfbfd71b265a/20261010-153639-160380-abc
+no profile: hotspots failed (rc=7); inspect /tmp/tmpbe005h1n/out/dfbfd71b265a/20261010-153639-163637-abc
+.usage: profile.py [-h] --build-dir BUILD_DIR [--exe EXE] --filter FILTER
+                  [--collect {hotspots,uarch}] [--seconds SECONDS] [--pin PIN]
+                  [--label LABEL] [--out OUT] [--top TOP]
+profile.py: error: --seconds must be finite and positive; --top must be positive
+usage: profile.py [-h] --build-dir BUILD_DIR [--exe EXE] --filter FILTER
+                  [--collect {hotspots,uarch}] [--seconds SECONDS] [--pin PIN]
+                  [--label LABEL] [--out OUT] [--top TOP]
+profile.py: error: --seconds must be finite and positive; --top must be positive
+usage: profile.py [-h] --build-dir BUILD_DIR [--exe EXE] --filter FILTER
+                  [--collect {hotspots,uarch}] [--seconds SECONDS] [--pin PIN]
+                  [--label LABEL] [--out OUT] [--top TOP]
+profile.py: error: --seconds must be finite and positive; --top must be positive
+usage: profile.py [-h] --build-dir BUILD_DIR [--exe EXE] --filter FILTER
+                  [--collect {hotspots,uarch}] [--seconds SECONDS] [--pin PIN]
+                  [--label LABEL] [--out OUT] [--top TOP]
+profile.py: error: --seconds must be finite and positive; --top must be positive
+...no profile: hotspots export has no samples
+.
+----------------------------------------------------------------------
+Ran 6 tests in 0.029s
+
+OK
+profile dir: /tmp/tmpfdp20zrp/out/dfbfd71b265a/20261010-153639-149583-abc
+  top 1 functions by CPU time:
+      1.000 s 100.0%  useful  [app]
+done: /tmp/tmpfdp20zrp/out/dfbfd71b265a/20261010-153639-149583-abc
+profile dir: /tmp/tmplpuky9yn/out/dfbfd71b265a/20261010-153639-153887-abc
+profile dir: /tmp/tmpojyymj2u/out/dfbfd71b265a/20261010-153639-155572-abc
+profile dir: /tmp/tmpidys_awx/out/dfbfd71b265a/20261010-153639-157618-abc
+profile dir: /tmp/tmpu1rowukr/out/dfbfd71b265a/20261010-153639-160380-abc
+profile dir: /tmp/tmpbe005h1n/out/dfbfd71b265a/20261010-153639-163637-abc
+profile dir: /tmp/tmpy9ojbbm4/out/dfbfd71b265a/20261010-153639-174085-abc

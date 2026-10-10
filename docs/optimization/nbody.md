@@ -87,9 +87,9 @@ Pub arm should compare direct completion, fixed `Wiring`, and scoped `Domain`
 using Pub's own architectural types and a meaningful delivery workload. Avoid
 publishing borrowed asynchronous spans or adding a router inside ECS. No Pub API
 change or fabricated shared type layer is required by this n-body experiment.
-Other useful scenarios are fragmented/churning worlds, bounded command delivery,
-and staged neighbor/grid workloads. Each needs an oracle, declared work unit and
-end-to-end operation boundary before joining this benchmark suite.
+The [representative suite](representative.md) now supplies streaming,
+fragmented/churning worlds and staged fixed-neighbor work with bitwise oracles.
+Bounded command delivery and a real spatial grid remain future scenarios.
 
 ## Same-resource handwritten controls
 
@@ -100,3 +100,13 @@ include snapshot/gather in timing and join before returning. Their oracle and
 reduction order are unchanged. These ratios isolate storage/dispatch overhead
 from thread scaling; the original `Ordered` group remains for continuity. The
 shared arithmetic kernel is still not a claim of the fastest n-body algorithm.
+
+## Compact ordered kernel
+
+`CompactEcs` and `CompactPlain` stage only positions and pre-scaled masses, then
+split each ascending source reduction around self. `CompactMatchedNativeN` and
+`CompactMatchedPipelineN` use the same resource controls as above. The original
+scalar `advanceBody` oracle is unchanged. These are benchmark application kernels,
+not a new storage API or a Crucible implementation. See the
+[representative receipt](../../bench/results/reference/work-mode-representative/README.md)
+for current measurements, instruction attribution and memory tradeoffs.

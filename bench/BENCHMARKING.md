@@ -287,3 +287,10 @@ Use `--profile nbody` for the suite; `quick` includes a small smoke case.
 results isolate descriptor/traversal cost, not thread scaling. Use `nbody`
 separately for the native and Pipeline pools. See the
 [layered review](../docs/optimization/layered-review.md) for contracts and limits.
+
+## Representative workload spectrum
+
+`--profile representative` includes cheap streaming updates, fragmented membership
+churn with selected behaviors, staged eight-neighbor updates, and ordered n-body.
+See [the workload contracts and optimization pass](../docs/optimization/representative.md).
+The quick profile also receives both benchmark executables.
