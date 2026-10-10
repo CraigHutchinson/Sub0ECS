@@ -1,0 +1,150 @@
+Note: perf_event_open failed, so the ins/op, cyc/op, IPC, bra/op and miss% columns are missing.
+This is usually a container or VM without virtualized performance counters, or
+/proc/sys/kernel/perf_event_paranoid being too restrictive.
+
+
+| relative |              95% CI |            ns/batch |             batch/s |    err% |     total | Stack/Admission/1
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:------------------
+|   100.0% |                     |                4.78 |      209,145,054.86 |    0.6% |      0.00 | `Stack/Admission/HandWritten/1`
+|    22.6% |      20.6% .. 24.7% |               21.44 |       46,649,001.53 |    5.0% |      0.01 | `Stack/Admission/Domain/1`
+|   100.3% |     93.9% .. 108.2% |                4.76 |      210,116,503.03 |    0.5% |      0.00 | `Stack/Admission/Wiring/1`
+
+  Summary
+    `Stack/Admission/Wiring/1` and `Stack/Admission/HandWritten/1` are the two fastest of 3, and were not separated
+    95% CI [0.94 .. 1.08], intervals corrected for 2 comparisons, 12 paired rounds, interleaved
+
+| relative |              95% CI |            ns/batch |             batch/s |    err% |     total | Stack/Admission/8
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:------------------
+|   100.0% |                     |                9.02 |      110,858,845.27 |    5.7% |      0.00 | `Stack/Admission/HandWritten/8`
+|    35.1% |      31.5% .. 38.5% |               24.73 |       40,444,819.29 |    1.6% |      0.01 | `Stack/Admission/Domain/8`
+|    99.2% |     86.0% .. 106.8% |                9.28 |      107,744,568.65 |    2.9% |      0.00 | `Stack/Admission/Wiring/8`
+
+  Summary
+    `Stack/Admission/HandWritten/8` and `Stack/Admission/Wiring/8` are the two fastest of 3, and were not separated
+    95% CI [0.94 .. 1.16], intervals corrected for 2 comparisons, 12 paired rounds, interleaved
+
+| relative |              95% CI |         ns/boundary |          boundary/s |    err% |     total | Stack/Boundary1/64
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:-------------------
+|   100.0% |                     |              120.00 |        8,333,333.33 |    7.7% |      0.00 | `Stack/Boundary1/HandWritten/64`
+|    10.3% |       9.1% .. 11.8% |            1,146.50 |          872,219.80 |    3.6% |      0.00 | `Stack/Boundary1/DomainSearch/64`
+|    10.7% |       9.2% .. 11.9% |            1,167.00 |          856,898.03 |    4.5% |      0.00 | `Stack/Boundary1/WiringSearch/64`
+|    14.2% |      13.0% .. 15.6% |              846.00 |        1,182,033.10 |    5.0% |      0.00 | `Stack/Boundary1/DomainDense/64`
+|    15.4% |      13.7% .. 16.8% |              806.50 |        1,239,925.60 |    3.3% |      0.00 | `Stack/Boundary1/WiringDense/64`
+|    26.6% |      22.0% .. 30.4% |              456.00 |        2,192,982.46 |    7.1% |      0.00 | `Stack/Boundary1/DomainIndexed/64`
+|    30.7% |      28.1% .. 34.2% |              391.00 |        2,557,544.76 |    0.0% |      0.00 | `Stack/Boundary1/WiringIndexed/64`
+
+  Summary
+    `Stack/Boundary1/HandWritten/64` is fastest of 7, 3.25x ahead of `Stack/Boundary1/WiringIndexed/64`
+    95% CI [2.92 .. 3.55], intervals corrected for 6 comparisons, 14 paired rounds, interleaved
+
+| relative |              95% CI |         ns/boundary |          boundary/s |    err% |     total | Stack/Boundary2/64
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:-------------------
+|   100.0% |                     |              115.50 |        8,658,008.66 |    5.0% |      0.00 | `Stack/Boundary2/HandWritten/64`
+|    10.1% |       9.5% .. 11.4% |            1,151.50 |          868,432.48 |    1.3% |      0.00 | `Stack/Boundary2/DomainSearch/64`
+|    10.8% |      10.2% .. 11.6% |            1,072.00 |          932,835.82 |    0.9% |      0.00 | `Stack/Boundary2/WiringSearch/64`
+|    14.1% |      13.4% .. 16.6% |              821.00 |        1,218,026.80 |    1.3% |      0.00 | `Stack/Boundary2/DomainDense/64`
+|    14.6% |      13.7% .. 16.8% |              791.00 |        1,264,222.50 |    1.2% |      0.00 | `Stack/Boundary2/WiringDense/64`
+|    28.3% |      18.0% .. 34.1% |              410.50 |        2,436,053.59 |    4.8% |      0.00 | `Stack/Boundary2/DomainIndexed/64`
+|    29.4% |      27.4% .. 35.9% |              395.50 |        2,528,445.01 |    1.4% |      0.00 | `Stack/Boundary2/WiringIndexed/64`
+
+  Summary
+    `Stack/Boundary2/HandWritten/64` is fastest of 7, 3.40x ahead of `Stack/Boundary2/WiringIndexed/64`
+    95% CI [2.79 .. 3.65], intervals corrected for 6 comparisons, 14 paired rounds, interleaved
+
+| relative |              95% CI |         ns/boundary |          boundary/s |    err% |     total | Stack/Boundary4/64
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:-------------------
+|   100.0% |                     |              120.00 |        8,333,333.33 |    0.4% |      0.00 | `Stack/Boundary4/HandWritten/64`
+|    10.6% |       9.9% .. 11.6% |            1,141.50 |          876,040.30 |    1.8% |      0.00 | `Stack/Boundary4/DomainSearch/64`
+|    11.2% |      10.9% .. 12.2% |            1,077.00 |          928,505.11 |    0.6% |      0.00 | `Stack/Boundary4/WiringSearch/64`
+|    13.9% |      13.5% .. 15.8% |              871.00 |        1,148,105.63 |    1.7% |      0.00 | `Stack/Boundary4/DomainDense/64`
+|    15.3% |      14.9% .. 18.2% |              796.00 |        1,256,281.41 |    1.2% |      0.00 | `Stack/Boundary4/WiringDense/64`
+|    30.3% |      28.1% .. 32.0% |              405.00 |        2,469,135.80 |    3.8% |      0.00 | `Stack/Boundary4/DomainIndexed/64`
+|    31.0% |      29.9% .. 39.4% |              390.00 |        2,564,102.56 |    2.5% |      0.00 | `Stack/Boundary4/WiringIndexed/64`
+
+  Summary
+    `Stack/Boundary4/HandWritten/64` is fastest of 7, 3.23x ahead of `Stack/Boundary4/WiringIndexed/64`
+    95% CI [2.54 .. 3.34], intervals corrected for 6 comparisons, 14 paired rounds, interleaved
+
+| relative |              95% CI |         ns/boundary |          boundary/s |    err% |     total | Stack/Boundary1/4096
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:---------------------
+|   100.0% |                     |            5,634.00 |          177,493.79 |    2.6% |      0.00 | `Stack/Boundary1/HandWritten/4096`
+|     1.6% |        1.5% .. 1.7% |          357,822.00 |            2,794.69 |    2.6% |      0.01 | `Stack/Boundary1/DomainSearch/4096`
+|     1.7% |        1.6% .. 1.9% |          328,608.50 |            3,043.13 |    1.1% |      0.00 | `Stack/Boundary1/WiringSearch/4096`
+|     2.9% |        2.6% .. 3.0% |          197,667.00 |            5,059.01 |    1.0% |      0.00 | `Stack/Boundary1/DomainDense/4096`
+|     2.9% |        2.6% .. 3.2% |          196,590.00 |            5,086.73 |    1.2% |      0.00 | `Stack/Boundary1/WiringDense/4096`
+|    37.1% |      35.2% .. 41.4% |           15,348.00 |           65,155.07 |    1.7% |      0.00 | `Stack/Boundary1/DomainIndexed/4096`
+|    37.9% |      37.4% .. 42.6% |           14,847.00 |           67,353.67 |    1.8% |      0.00 | `Stack/Boundary1/WiringIndexed/4096`
+
+  Summary
+    `Stack/Boundary1/HandWritten/4096` is fastest of 7, 2.64x ahead of `Stack/Boundary1/WiringIndexed/4096`
+    95% CI [2.35 .. 2.67], intervals corrected for 6 comparisons, 14 paired rounds, interleaved
+
+| relative |              95% CI |         ns/boundary |          boundary/s |    err% |     total | Stack/Boundary2/4096
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:---------------------
+|   100.0% |                     |            5,624.00 |          177,809.39 |    2.0% |      0.00 | `Stack/Boundary2/HandWritten/4096`
+|     1.4% |        1.2% .. 1.6% |          394,968.50 |            2,531.85 |    4.3% |      0.01 | `Stack/Boundary2/DomainSearch/4096`
+|     1.5% |        1.4% .. 1.7% |          371,498.00 |            2,691.80 |    4.0% |      0.01 | `Stack/Boundary2/WiringSearch/4096`
+|     2.4% |        1.8% .. 2.7% |          235,819.50 |            4,240.53 |    2.0% |      0.00 | `Stack/Boundary2/DomainDense/4096`
+|     2.4% |        2.1% .. 2.7% |          228,733.50 |            4,371.90 |    2.6% |      0.00 | `Stack/Boundary2/WiringDense/4096`
+|    11.7% |       6.8% .. 13.5% |           49,699.50 |           20,120.93 |    9.9% |      0.00 | `Stack/Boundary2/DomainIndexed/4096`
+|    12.6% |      10.5% .. 14.6% |           46,900.50 |           21,321.73 |    6.4% |      0.00 | `Stack/Boundary2/WiringIndexed/4096`
+
+  Summary
+    `Stack/Boundary2/HandWritten/4096` is fastest of 7, 7.94x ahead of `Stack/Boundary2/WiringIndexed/4096`
+    95% CI [6.86 .. 9.50], intervals corrected for 6 comparisons, 14 paired rounds, interleaved
+
+| relative |              95% CI |         ns/boundary |          boundary/s |    err% |     total | Stack/Boundary4/4096
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:---------------------
+|   100.0% |                     |            5,859.00 |          170,677.59 |    4.7% |      0.00 | `Stack/Boundary4/HandWritten/4096`
+|     1.4% |        1.3% .. 1.6% |          398,168.50 |            2,511.50 |    3.4% |      0.01 | `Stack/Boundary4/DomainSearch/4096`
+|     1.6% |        1.5% .. 1.8% |          361,873.50 |            2,763.40 |    1.3% |      0.01 | `Stack/Boundary4/WiringSearch/4096`
+|     2.5% |        2.2% .. 2.6% |          233,806.50 |            4,277.04 |    2.8% |      0.00 | `Stack/Boundary4/DomainDense/4096`
+|     2.4% |        2.0% .. 2.8% |          230,846.50 |            4,331.88 |    2.8% |      0.00 | `Stack/Boundary4/WiringDense/4096`
+|    12.7% |      10.7% .. 13.9% |           46,430.00 |           21,537.80 |    3.4% |      0.00 | `Stack/Boundary4/DomainIndexed/4096`
+|    12.8% |       9.4% .. 15.6% |           45,598.50 |           21,930.55 |   10.2% |      0.00 | `Stack/Boundary4/WiringIndexed/4096`
+
+  Summary
+    `Stack/Boundary4/HandWritten/4096` is fastest of 7, 7.82x ahead of `Stack/Boundary4/WiringIndexed/4096`
+    95% CI [6.42 .. 10.59], intervals corrected for 6 comparisons, 14 paired rounds, interleaved
+
+| relative |              95% CI |         ns/boundary |          boundary/s |    err% |     total | Stack/Boundary1/65536
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:----------------------
+|   100.0% |                     |          144,537.50 |            6,918.62 |    3.3% |      0.00 | `Stack/Boundary1/HandWritten/65536`
+|     1.9% |        1.8% .. 2.3% |        7,649,818.00 |              130.72 |    3.9% |      0.11 | `Stack/Boundary1/DomainSearch/65536`
+|     2.0% |        1.7% .. 2.5% |        7,624,165.00 |              131.16 |    5.7% |      0.11 | `Stack/Boundary1/WiringSearch/65536`
+|     3.0% |        2.6% .. 3.9% |        4,848,790.00 |              206.24 |    4.6% |      0.07 | `Stack/Boundary1/DomainDense/65536`
+|     3.0% |        2.8% .. 3.9% |        4,852,365.00 |              206.09 |    3.1% |      0.07 | `Stack/Boundary1/WiringDense/65536`
+|    34.4% |      28.6% .. 40.8% |          447,397.00 |            2,235.15 |    6.7% |      0.01 | `Stack/Boundary1/DomainIndexed/65536`
+|    33.2% |      19.7% .. 48.7% |          459,185.00 |            2,177.77 |    9.8% |      0.01 | `Stack/Boundary1/WiringIndexed/65536`
+
+  Summary
+    `Stack/Boundary1/HandWritten/65536` is fastest of 7, 2.91x ahead of `Stack/Boundary1/DomainIndexed/65536`
+    95% CI [2.45 .. 3.50], intervals corrected for 6 comparisons, 14 paired rounds, interleaved
+
+| relative |              95% CI |         ns/boundary |          boundary/s |    err% |     total | Stack/Boundary2/65536
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:----------------------
+|   100.0% |                     |          140,906.50 |            7,096.90 |    2.4% |      0.00 | `Stack/Boundary2/HandWritten/65536`
+|     1.9% |        1.7% .. 2.4% |        7,683,258.50 |              130.15 |    3.8% |      0.11 | `Stack/Boundary2/DomainSearch/65536`
+|     1.9% |        1.6% .. 2.6% |        7,761,201.00 |              128.85 |    4.5% |      0.11 | `Stack/Boundary2/WiringSearch/65536`
+|     2.9% |        2.6% .. 4.1% |        4,904,148.00 |              203.91 |    3.6% |      0.07 | `Stack/Boundary2/DomainDense/65536`
+|     3.1% |        2.2% .. 4.0% |        4,890,092.50 |              204.50 |    3.6% |      0.07 | `Stack/Boundary2/WiringDense/65536`
+|    31.6% |      23.4% .. 40.7% |          462,870.00 |            2,160.43 |    7.5% |      0.01 | `Stack/Boundary2/DomainIndexed/65536`
+|    32.2% |      28.1% .. 47.6% |          451,123.00 |            2,216.69 |    6.5% |      0.01 | `Stack/Boundary2/WiringIndexed/65536`
+
+  Summary
+    `Stack/Boundary2/HandWritten/65536` is fastest of 7, 3.11x ahead of `Stack/Boundary2/WiringIndexed/65536`
+    95% CI [2.10 .. 3.56], intervals corrected for 6 comparisons, 14 paired rounds, interleaved
+
+| relative |              95% CI |         ns/boundary |          boundary/s |    err% |     total | Stack/Boundary4/65536
+|---------:|--------------------:|--------------------:|--------------------:|--------:|----------:|:----------------------
+|   100.0% |                     |          145,794.00 |            6,858.99 |    3.1% |      0.00 | `Stack/Boundary4/HandWritten/65536`
+|     2.0% |        1.8% .. 2.4% |        7,697,660.00 |              129.91 |    3.9% |      0.11 | `Stack/Boundary4/DomainSearch/65536`
+|     2.0% |        1.8% .. 2.7% |        7,543,889.00 |              132.56 |    4.1% |      0.11 | `Stack/Boundary4/WiringSearch/65536`
+|     3.1% |        2.0% .. 4.6% |        4,800,987.50 |              208.29 |    2.6% |      0.07 | `Stack/Boundary4/DomainDense/65536`
+|     3.1% |        2.1% .. 3.6% |        5,009,226.00 |              199.63 |    7.3% |      0.08 | `Stack/Boundary4/WiringDense/65536`
+|    32.5% |      27.8% .. 42.9% |          462,585.00 |            2,161.76 |    4.9% |      0.01 | `Stack/Boundary4/DomainIndexed/65536`
+|    30.8% |      28.3% .. 43.6% |          488,008.00 |            2,049.15 |    4.2% |      0.01 | `Stack/Boundary4/WiringIndexed/65536`
+
+  Summary
+    `Stack/Boundary4/HandWritten/65536` is fastest of 7, 3.08x ahead of `Stack/Boundary4/DomainIndexed/65536`
+    95% CI [2.33 .. 3.59], intervals corrected for 6 comparisons, 14 paired rounds, interleaved

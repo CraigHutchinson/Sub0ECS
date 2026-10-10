@@ -1,0 +1,17 @@
+{
+  "ecs_base": "185f5c6789b7f5222eddb29c0517f8ee8cd45554",
+  "binaries": {
+    "build/stack/bench/sub0ecs_stack_bench": "4a6a1f37e81d25a7677399e16d1b0956fa823b300edbec63e3c5bdb1fda7207b",
+    "build/stack/bench/sub0ecs_nbody_bench": "61dd7350c0747238aa2651b1ad1f6d0adfb85175d6793524799e45a4094b433d",
+    "build/stack/bench/sub0ecs_row_workloads_bench": "4a573bb98f324a89773ddc75c393a3f92b48fded862dc3fd470c764377c43bfc",
+    "build/stack-profile": "33df6eeab99e5da04c6a8e2dfd11564a48dd29fd2c0a934b963f6ed4ad1155ea"
+  },
+  "sources": {
+    "bench/stack/simulation.hpp": "818f24783146bc8c4b2d9006505f9f94647d43cf994dd1aaed042ae7607ea6b0",
+    "bench/stack/model.hpp": "51d8875b9b3830017a51d78f6e366d22cacd47653fa238b9e0c9c1644eda3026",
+    "bench/stack/delivery.hpp": "c8f337509ba7ef0203dee8f0e01f6318a1a23c2209e601325b815320e3a62ffb",
+    "bench/stack/bench.cpp": "90944baa966d05f73207319925e0258fd742209b4d345ae654653ffe6b182ff8",
+    "bench/tools/crucible.py": "acb9144116e74c335370339594b995d36e3286b654d1162a5432f25034c3c5c3",
+    "tests/test_stack.cpp": "cdb03d19fb847e506ca32064b87a5099d0729a1f9aea69c9aa48ef489a40b676"
+  }
+}

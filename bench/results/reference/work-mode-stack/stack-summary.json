@@ -1,0 +1,899 @@
+{
+  "Stack/Admission/HandWritten/1": {
+    "median_ns": 4.7968323,
+    "min_process_median_ns": 4.78137052,
+    "max_process_median_ns": 5.02457921,
+    "process_medians_ns": [
+      5.02457921,
+      4.7821639,
+      4.84339172,
+      4.7968323,
+      4.78137052
+    ],
+    "handwritten_throughput": 1
+  },
+  "Stack/Admission/Domain/1": {
+    "median_ns": 21.436686,
+    "min_process_median_ns": 20.9480805,
+    "max_process_median_ns": 25.2296576,
+    "process_medians_ns": [
+      23.0126236,
+      21.2622472,
+      25.2296576,
+      20.9480805,
+      21.436686
+    ],
+    "handwritten_throughput": 0.227930937
+  },
+  "Stack/Admission/Wiring/1": {
+    "median_ns": 4.78376302,
+    "min_process_median_ns": 4.75926443,
+    "max_process_median_ns": 5.68714172,
+    "process_medians_ns": [
+      4.78376302,
+      4.7804124,
+      5.68714172,
+      4.79322421,
+      4.75926443
+    ],
+    "handwritten_throughput": 1.00282366
+  },
+  "Stack/Admission/HandWritten/8": {
+    "median_ns": 9.10031348,
+    "min_process_median_ns": 8.78350088,
+    "max_process_median_ns": 9.50731956,
+    "process_medians_ns": [
+      9.10031348,
+      8.78350088,
+      9.43416453,
+      9.50731956,
+      9.02048003
+    ],
+    "handwritten_throughput": 1
+  },
+  "Stack/Admission/Domain/8": {
+    "median_ns": 25.0986758,
+    "min_process_median_ns": 24.7250456,
+    "max_process_median_ns": 25.417765,
+    "process_medians_ns": [
+      25.417765,
+      24.8181341,
+      25.2846888,
+      25.0986758,
+      24.7250456
+    ],
+    "handwritten_throughput": 0.360749541
+  },
+  "Stack/Admission/Wiring/8": {
+    "median_ns": 9.25445285,
+    "min_process_median_ns": 8.9507015,
+    "max_process_median_ns": 9.41389997,
+    "process_medians_ns": [
+      9.41389997,
+      8.9507015,
+      9.17378753,
+      9.25445285,
+      9.2812103
+    ],
+    "handwritten_throughput": 0.962877546
+  },
+  "Stack/Boundary1/HandWritten/64": {
+    "median_ns": 120,
+    "min_process_median_ns": 110,
+    "max_process_median_ns": 121,
+    "process_medians_ns": [
+      121,
+      110,
+      110.5,
+      120,
+      120
+    ],
+    "handwritten_throughput": 1
+  },
+  "Stack/Boundary1/DomainSearch/64": {
+    "median_ns": 1197,
+    "min_process_median_ns": 1146.5,
+    "max_process_median_ns": 1231.5,
+    "process_medians_ns": [
+      1231.5,
+      1197,
+      1207,
+      1191.5,
+      1146.5
+    ],
+    "handwritten_throughput": 0.0990819027
+  },
+  "Stack/Boundary1/WiringSearch/64": {
+    "median_ns": 1147,
+    "min_process_median_ns": 1102,
+    "max_process_median_ns": 1167,
+    "process_medians_ns": [
+      1112,
+      1152,
+      1147,
+      1102,
+      1167
+    ],
+    "handwritten_throughput": 0.107074696
+  },
+  "Stack/Boundary1/DomainDense/64": {
+    "median_ns": 841,
+    "min_process_median_ns": 811,
+    "max_process_median_ns": 846,
+    "process_medians_ns": [
+      841,
+      846,
+      836,
+      811,
+      846
+    ],
+    "handwritten_throughput": 0.14246181
+  },
+  "Stack/Boundary1/WiringDense/64": {
+    "median_ns": 801.5,
+    "min_process_median_ns": 781,
+    "max_process_median_ns": 831.5,
+    "process_medians_ns": [
+      796,
+      801.5,
+      831.5,
+      781,
+      806.5
+    ],
+    "handwritten_throughput": 0.153204669
+  },
+  "Stack/Boundary1/DomainIndexed/64": {
+    "median_ns": 411,
+    "min_process_median_ns": 401,
+    "max_process_median_ns": 456,
+    "process_medians_ns": [
+      411,
+      455,
+      401,
+      410,
+      456
+    ],
+    "handwritten_throughput": 0.278503326
+  },
+  "Stack/Boundary1/WiringIndexed/64": {
+    "median_ns": 395.5,
+    "min_process_median_ns": 390,
+    "max_process_median_ns": 415,
+    "process_medians_ns": [
+      400,
+      415,
+      390,
+      395.5,
+      391
+    ],
+    "handwritten_throughput": 0.304704465
+  },
+  "Stack/Boundary2/HandWritten/64": {
+    "median_ns": 120,
+    "min_process_median_ns": 115.5,
+    "max_process_median_ns": 130,
+    "process_medians_ns": [
+      120,
+      130,
+      120,
+      120,
+      115.5
+    ],
+    "handwritten_throughput": 1
+  },
+  "Stack/Boundary2/DomainSearch/64": {
+    "median_ns": 1167,
+    "min_process_median_ns": 1151.5,
+    "max_process_median_ns": 1222,
+    "process_medians_ns": [
+      1167,
+      1222,
+      1152,
+      1167,
+      1151.5
+    ],
+    "handwritten_throughput": 0.1015297
+  },
+  "Stack/Boundary2/WiringSearch/64": {
+    "median_ns": 1096.5,
+    "min_process_median_ns": 1067,
+    "max_process_median_ns": 1122,
+    "process_medians_ns": [
+      1122,
+      1102,
+      1067,
+      1096.5,
+      1072
+    ],
+    "handwritten_throughput": 0.107678083
+  },
+  "Stack/Boundary2/DomainDense/64": {
+    "median_ns": 841,
+    "min_process_median_ns": 816.5,
+    "max_process_median_ns": 846,
+    "process_medians_ns": [
+      846,
+      841,
+      816.5,
+      841.5,
+      821
+    ],
+    "handwritten_throughput": 0.14243625
+  },
+  "Stack/Boundary2/WiringDense/64": {
+    "median_ns": 791,
+    "min_process_median_ns": 776,
+    "max_process_median_ns": 821,
+    "process_medians_ns": [
+      791,
+      821,
+      791,
+      776,
+      791
+    ],
+    "handwritten_throughput": 0.152241297
+  },
+  "Stack/Boundary2/DomainIndexed/64": {
+    "median_ns": 420,
+    "min_process_median_ns": 410.5,
+    "max_process_median_ns": 435.5,
+    "process_medians_ns": [
+      420.5,
+      411,
+      420,
+      435.5,
+      410.5
+    ],
+    "handwritten_throughput": 0.291970803
+  },
+  "Stack/Boundary2/WiringIndexed/64": {
+    "median_ns": 395.5,
+    "min_process_median_ns": 391,
+    "max_process_median_ns": 405,
+    "process_medians_ns": [
+      395.5,
+      405,
+      401,
+      391,
+      395.5
+    ],
+    "handwritten_throughput": 0.29925187
+  },
+  "Stack/Boundary4/HandWritten/64": {
+    "median_ns": 120,
+    "min_process_median_ns": 120,
+    "max_process_median_ns": 120,
+    "process_medians_ns": [
+      120,
+      120,
+      120,
+      120,
+      120
+    ],
+    "handwritten_throughput": 1
+  },
+  "Stack/Boundary4/DomainSearch/64": {
+    "median_ns": 1152,
+    "min_process_median_ns": 1136.5,
+    "max_process_median_ns": 1201.5,
+    "process_medians_ns": [
+      1177,
+      1152,
+      1136.5,
+      1201.5,
+      1141.5
+    ],
+    "handwritten_throughput": 0.10260113
+  },
+  "Stack/Boundary4/WiringSearch/64": {
+    "median_ns": 1086.5,
+    "min_process_median_ns": 1071.5,
+    "max_process_median_ns": 1131.5,
+    "process_medians_ns": [
+      1092,
+      1131.5,
+      1086.5,
+      1071.5,
+      1077
+    ],
+    "handwritten_throughput": 0.10994046
+  },
+  "Stack/Boundary4/DomainDense/64": {
+    "median_ns": 837,
+    "min_process_median_ns": 816.5,
+    "max_process_median_ns": 871,
+    "process_medians_ns": [
+      837,
+      871,
+      816.5,
+      816.5,
+      871
+    ],
+    "handwritten_throughput": 0.138570439
+  },
+  "Stack/Boundary4/WiringDense/64": {
+    "median_ns": 796,
+    "min_process_median_ns": 786,
+    "max_process_median_ns": 841,
+    "process_medians_ns": [
+      796,
+      791,
+      786,
+      841,
+      796
+    ],
+    "handwritten_throughput": 0.146198703
+  },
+  "Stack/Boundary4/DomainIndexed/64": {
+    "median_ns": 405.5,
+    "min_process_median_ns": 395.5,
+    "max_process_median_ns": 420,
+    "process_medians_ns": [
+      420,
+      395.5,
+      405.5,
+      406,
+      405
+    ],
+    "handwritten_throughput": 0.293620569
+  },
+  "Stack/Boundary4/WiringIndexed/64": {
+    "median_ns": 391,
+    "min_process_median_ns": 390,
+    "max_process_median_ns": 405.5,
+    "process_medians_ns": [
+      405.5,
+      391,
+      390,
+      401,
+      390
+    ],
+    "handwritten_throughput": 0.304694724
+  },
+  "Stack/Boundary1/HandWritten/4096": {
+    "median_ns": 5979,
+    "min_process_median_ns": 5634,
+    "max_process_median_ns": 7516.5,
+    "process_medians_ns": [
+      5979,
+      5723.5,
+      7516.5,
+      6089.5,
+      5634
+    ],
+    "handwritten_throughput": 1
+  },
+  "Stack/Boundary1/DomainSearch/4096": {
+    "median_ns": 358624,
+    "min_process_median_ns": 354742.5,
+    "max_process_median_ns": 398634,
+    "process_medians_ns": [
+      398003,
+      354742.5,
+      358624,
+      398634,
+      357822
+    ],
+    "handwritten_throughput": 0.0158229674
+  },
+  "Stack/Boundary1/WiringSearch/4096": {
+    "median_ns": 360567,
+    "min_process_median_ns": 328608.5,
+    "max_process_median_ns": 395264,
+    "process_medians_ns": [
+      395264,
+      362965,
+      360567,
+      350406.5,
+      328608.5
+    ],
+    "handwritten_throughput": 0.0171045313
+  },
+  "Stack/Boundary1/DomainDense/4096": {
+    "median_ns": 200120.5,
+    "min_process_median_ns": 197667,
+    "max_process_median_ns": 215138.5,
+    "process_medians_ns": [
+      206866,
+      198252.5,
+      215138.5,
+      200120.5,
+      197667
+    ],
+    "handwritten_throughput": 0.0286881086
+  },
+  "Stack/Boundary1/WiringDense/4096": {
+    "median_ns": 196590,
+    "min_process_median_ns": 195603.5,
+    "max_process_median_ns": 202734.5,
+    "process_medians_ns": [
+      195603.5,
+      202734.5,
+      202474,
+      195603.5,
+      196590
+    ],
+    "handwritten_throughput": 0.0297741167
+  },
+  "Stack/Boundary1/DomainIndexed/4096": {
+    "median_ns": 15903.5,
+    "min_process_median_ns": 15348,
+    "max_process_median_ns": 19819.5,
+    "process_medians_ns": [
+      16059.5,
+      15903.5,
+      19819.5,
+      15788.5,
+      15348
+    ],
+    "handwritten_throughput": 0.376666269
+  },
+  "Stack/Boundary1/WiringIndexed/4096": {
+    "median_ns": 15132.5,
+    "min_process_median_ns": 14702,
+    "max_process_median_ns": 19344,
+    "process_medians_ns": [
+      14702,
+      15132.5,
+      19344,
+      15903.5,
+      14847
+    ],
+    "handwritten_throughput": 0.379465619
+  },
+  "Stack/Boundary2/HandWritten/4096": {
+    "median_ns": 6579.5,
+    "min_process_median_ns": 5624,
+    "max_process_median_ns": 6860,
+    "process_medians_ns": [
+      6579.5,
+      5749,
+      6860,
+      6755.5,
+      5624
+    ],
+    "handwritten_throughput": 1
+  },
+  "Stack/Boundary2/DomainSearch/4096": {
+    "median_ns": 409190,
+    "min_process_median_ns": 394968.5,
+    "max_process_median_ns": 435634.5,
+    "process_medians_ns": [
+      409190,
+      415219,
+      435634.5,
+      395354,
+      394968.5
+    ],
+    "handwritten_throughput": 0.0144356853
+  },
+  "Stack/Boundary2/WiringSearch/4096": {
+    "median_ns": 388378.5,
+    "min_process_median_ns": 371498,
+    "max_process_median_ns": 410366,
+    "process_medians_ns": [
+      388378.5,
+      384047,
+      410366,
+      395394,
+      371498
+    ],
+    "handwritten_throughput": 0.0160869641
+  },
+  "Stack/Boundary2/DomainDense/4096": {
+    "median_ns": 239449.5,
+    "min_process_median_ns": 235819.5,
+    "max_process_median_ns": 252940,
+    "process_medians_ns": [
+      251062,
+      238619,
+      239449.5,
+      252940,
+      235819.5
+    ],
+    "handwritten_throughput": 0.025209116
+  },
+  "Stack/Boundary2/WiringDense/4096": {
+    "median_ns": 232620,
+    "min_process_median_ns": 228733.5,
+    "max_process_median_ns": 277972.5,
+    "process_medians_ns": [
+      247817,
+      231408,
+      232620,
+      277972.5,
+      228733.5
+    ],
+    "handwritten_throughput": 0.025268066
+  },
+  "Stack/Boundary2/DomainIndexed/4096": {
+    "median_ns": 49699.5,
+    "min_process_median_ns": 42368.5,
+    "max_process_median_ns": 55548.5,
+    "process_medians_ns": [
+      52138,
+      42368.5,
+      43295,
+      55548.5,
+      49699.5
+    ],
+    "handwritten_throughput": 0.125787173
+  },
+  "Stack/Boundary2/WiringIndexed/4096": {
+    "median_ns": 47696.5,
+    "min_process_median_ns": 44422,
+    "max_process_median_ns": 57306,
+    "process_medians_ns": [
+      50711,
+      44422,
+      47696.5,
+      57306,
+      46900.5
+    ],
+    "handwritten_throughput": 0.126962092
+  },
+  "Stack/Boundary4/HandWritten/4096": {
+    "median_ns": 6189.5,
+    "min_process_median_ns": 5859,
+    "max_process_median_ns": 7436,
+    "process_medians_ns": [
+      6189.5,
+      6104,
+      7346,
+      7436,
+      5859
+    ],
+    "handwritten_throughput": 1
+  },
+  "Stack/Boundary4/DomainSearch/4096": {
+    "median_ns": 401784,
+    "min_process_median_ns": 394678,
+    "max_process_median_ns": 426245,
+    "process_medians_ns": [
+      426245,
+      401784,
+      394678,
+      426125.5,
+      398168.5
+    ],
+    "handwritten_throughput": 0.0154830896
+  },
+  "Stack/Boundary4/WiringSearch/4096": {
+    "median_ns": 382750,
+    "min_process_median_ns": 361873.5,
+    "max_process_median_ns": 423476.5,
+    "process_medians_ns": [
+      362900.5,
+      382750,
+      388323.5,
+      423476.5,
+      361873.5
+    ],
+    "handwritten_throughput": 0.0167316223
+  },
+  "Stack/Boundary4/DomainDense/4096": {
+    "median_ns": 238894,
+    "min_process_median_ns": 233806.5,
+    "max_process_median_ns": 264973,
+    "process_medians_ns": [
+      235604,
+      238894,
+      250360.5,
+      264973,
+      233806.5
+    ],
+    "handwritten_throughput": 0.0257188861
+  },
+  "Stack/Boundary4/WiringDense/4096": {
+    "median_ns": 235378.5,
+    "min_process_median_ns": 230846.5,
+    "max_process_median_ns": 250416.5,
+    "process_medians_ns": [
+      234427,
+      235378.5,
+      250416.5,
+      245874.5,
+      230846.5
+    ],
+    "handwritten_throughput": 0.0262923469
+  },
+  "Stack/Boundary4/DomainIndexed/4096": {
+    "median_ns": 50886.5,
+    "min_process_median_ns": 46144,
+    "max_process_median_ns": 55519,
+    "process_medians_ns": [
+      46144,
+      50886.5,
+      52874.5,
+      55519,
+      46430
+    ],
+    "handwritten_throughput": 0.130489107
+  },
+  "Stack/Boundary4/WiringIndexed/4096": {
+    "median_ns": 53505,
+    "min_process_median_ns": 45598.5,
+    "max_process_median_ns": 56404.5,
+    "process_medians_ns": [
+      46089,
+      53505,
+      55022,
+      56404.5,
+      45598.5
+    ],
+    "handwritten_throughput": 0.127964157
+  },
+  "Stack/Boundary1/HandWritten/65536": {
+    "median_ns": 144081,
+    "min_process_median_ns": 137556.5,
+    "max_process_median_ns": 146084.5,
+    "process_medians_ns": [
+      142674.5,
+      137556.5,
+      144081,
+      146084.5,
+      144537.5
+    ],
+    "handwritten_throughput": 1
+  },
+  "Stack/Boundary1/DomainSearch/65536": {
+    "median_ns": 7414064,
+    "min_process_median_ns": 7292181,
+    "max_process_median_ns": 7977371,
+    "process_medians_ns": [
+      7414064,
+      7292181,
+      7322662,
+      7977371,
+      7649818
+    ],
+    "handwritten_throughput": 0.0192872764
+  },
+  "Stack/Boundary1/WiringSearch/65536": {
+    "median_ns": 7238094.5,
+    "min_process_median_ns": 7117078,
+    "max_process_median_ns": 7624165,
+    "process_medians_ns": [
+      7237223.5,
+      7238094.5,
+      7117078,
+      7509237,
+      7624165
+    ],
+    "handwritten_throughput": 0.0196321655
+  },
+  "Stack/Boundary1/DomainDense/65536": {
+    "median_ns": 4763186,
+    "min_process_median_ns": 4561959.5,
+    "max_process_median_ns": 4848790,
+    "process_medians_ns": [
+      4710708,
+      4763186,
+      4561959.5,
+      4840808.5,
+      4848790
+    ],
+    "handwritten_throughput": 0.0309603115
+  },
+  "Stack/Boundary1/WiringDense/65536": {
+    "median_ns": 4634483,
+    "min_process_median_ns": 4550517,
+    "max_process_median_ns": 4884739,
+    "process_medians_ns": [
+      4634483,
+      4550517,
+      4580507,
+      4884739,
+      4852365
+    ],
+    "handwritten_throughput": 0.0303156738
+  },
+  "Stack/Boundary1/DomainIndexed/65536": {
+    "median_ns": 431197.5,
+    "min_process_median_ns": 424417.5,
+    "max_process_median_ns": 447397,
+    "process_medians_ns": [
+      424417.5,
+      431197.5,
+      425820,
+      435054,
+      447397
+    ],
+    "handwritten_throughput": 0.342493002
+  },
+  "Stack/Boundary1/WiringIndexed/65536": {
+    "median_ns": 448984.5,
+    "min_process_median_ns": 432209,
+    "max_process_median_ns": 467542.5,
+    "process_medians_ns": [
+      467542.5,
+      446220.5,
+      448984.5,
+      432209,
+      459185
+    ],
+    "handwritten_throughput": 0.323495771
+  },
+  "Stack/Boundary2/HandWritten/65536": {
+    "median_ns": 142043.5,
+    "min_process_median_ns": 140906.5,
+    "max_process_median_ns": 147006,
+    "process_medians_ns": [
+      142043.5,
+      141978.5,
+      143300.5,
+      147006,
+      140906.5
+    ],
+    "handwritten_throughput": 1
+  },
+  "Stack/Boundary2/DomainSearch/65536": {
+    "median_ns": 7930324.5,
+    "min_process_median_ns": 7522501.5,
+    "max_process_median_ns": 8351051.5,
+    "process_medians_ns": [
+      7522501.5,
+      8034281,
+      7930324.5,
+      8351051.5,
+      7683258.5
+    ],
+    "handwritten_throughput": 0.0190084699
+  },
+  "Stack/Boundary2/WiringSearch/65536": {
+    "median_ns": 7761201,
+    "min_process_median_ns": 7397629.5,
+    "max_process_median_ns": 8238984,
+    "process_medians_ns": [
+      7397629.5,
+      8238984,
+      7795938,
+      7662708,
+      7761201
+    ],
+    "handwritten_throughput": 0.0189762006
+  },
+  "Stack/Boundary2/DomainDense/65536": {
+    "median_ns": 4994323.5,
+    "min_process_median_ns": 4698309,
+    "max_process_median_ns": 5345967,
+    "process_medians_ns": [
+      4698309,
+      5178671,
+      4994323.5,
+      5345967,
+      4904148
+    ],
+    "handwritten_throughput": 0.0296984827
+  },
+  "Stack/Boundary2/WiringDense/65536": {
+    "median_ns": 4890092.5,
+    "min_process_median_ns": 4582895.5,
+    "max_process_median_ns": 5130916.5,
+    "process_medians_ns": [
+      4582895.5,
+      5028660,
+      4778594.5,
+      5130916.5,
+      4890092.5
+    ],
+    "handwritten_throughput": 0.0306878183
+  },
+  "Stack/Boundary2/DomainIndexed/65536": {
+    "median_ns": 511443.5,
+    "min_process_median_ns": 460487,
+    "max_process_median_ns": 579285.5,
+    "process_medians_ns": [
+      460487,
+      511443.5,
+      521799.5,
+      579285.5,
+      462870
+    ],
+    "handwritten_throughput": 0.315520218
+  },
+  "Stack/Boundary2/WiringIndexed/65536": {
+    "median_ns": 486050,
+    "min_process_median_ns": 449060,
+    "max_process_median_ns": 508564.5,
+    "process_medians_ns": [
+      486050,
+      492364.5,
+      449060,
+      508564.5,
+      451123
+    ],
+    "handwritten_throughput": 0.320002452
+  },
+  "Stack/Boundary4/HandWritten/65536": {
+    "median_ns": 152168.5,
+    "min_process_median_ns": 141993,
+    "max_process_median_ns": 188208,
+    "process_medians_ns": [
+      152168.5,
+      167081,
+      141993,
+      188208,
+      145794
+    ],
+    "handwritten_throughput": 1
+  },
+  "Stack/Boundary4/DomainSearch/65536": {
+    "median_ns": 7697660,
+    "min_process_median_ns": 7465531.5,
+    "max_process_median_ns": 8001066,
+    "process_medians_ns": [
+      7641180.5,
+      7985363,
+      7465531.5,
+      8001066,
+      7697660
+    ],
+    "handwritten_throughput": 0.0202988953
+  },
+  "Stack/Boundary4/WiringSearch/65536": {
+    "median_ns": 7543889,
+    "min_process_median_ns": 7477224.5,
+    "max_process_median_ns": 8128402.5,
+    "process_medians_ns": [
+      7482562,
+      7769673.5,
+      7477224.5,
+      8128402.5,
+      7543889
+    ],
+    "handwritten_throughput": 0.0201011277
+  },
+  "Stack/Boundary4/DomainDense/65536": {
+    "median_ns": 4965445.5,
+    "min_process_median_ns": 4778579.5,
+    "max_process_median_ns": 5298271,
+    "process_medians_ns": [
+      4968019.5,
+      4778579.5,
+      4965445.5,
+      5298271,
+      4800987.5
+    ],
+    "handwritten_throughput": 0.0309769283
+  },
+  "Stack/Boundary4/WiringDense/65536": {
+    "median_ns": 5009226,
+    "min_process_median_ns": 4675239.5,
+    "max_process_median_ns": 5309221.5,
+    "process_medians_ns": [
+      4901509,
+      5034093.5,
+      4675239.5,
+      5309221.5,
+      5009226
+    ],
+    "handwritten_throughput": 0.0311802648
+  },
+  "Stack/Boundary4/DomainIndexed/65536": {
+    "median_ns": 462585,
+    "min_process_median_ns": 447462,
+    "max_process_median_ns": 478869.5,
+    "process_medians_ns": [
+      455675,
+      478869.5,
+      447462,
+      470351.5,
+      462585
+    ],
+    "handwritten_throughput": 0.327992708
+  },
+  "Stack/Boundary4/WiringIndexed/65536": {
+    "median_ns": 481388.5,
+    "min_process_median_ns": 471102.5,
+    "max_process_median_ns": 518694,
+    "process_medians_ns": [
+      481388.5,
+      518694,
+      481358,
+      471102.5,
+      488008
+    ],
+    "handwritten_throughput": 0.328202743
+  }
+}

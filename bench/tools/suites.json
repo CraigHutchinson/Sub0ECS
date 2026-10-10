@@ -66,6 +66,12 @@
       "kind": "harness",
       "exe": "bench/sub0ecs_row_workloads_bench",
       "filter": "^RowWork/"
+    },
+    "stack": {
+      "description": "Synthetic complete Pub/Pipeline/ECS command, staged proposal, commit and snapshot boundary",
+      "kind": "harness",
+      "exe": "bench/sub0ecs_stack_bench",
+      "filter": "^Stack/"
     }
   },
   "profiles": {
@@ -162,6 +168,24 @@
         "ROW_SIZES": "1024,16384,65536",
         "ROW_THREADS": "1,2,4",
         "NBODY_SIZES": "64,1024,4096",
+        "NBODY_THREADS": "1,2,4"
+      }
+    },
+    "stack": {
+      "description": "Optional full-stack and existing representative workloads",
+      "suites": [
+        "stack",
+        "row-workloads",
+        "nbody"
+      ],
+      "epochs": 11,
+      "min_epoch_ms": 0,
+      "env": {
+        "STACK_SIZES": "64,4096,65536",
+        "STACK_THREADS": "1,2,4",
+        "ROW_SIZES": "1024,16384",
+        "ROW_THREADS": "1,2,4",
+        "NBODY_SIZES": "64,1024",
         "NBODY_THREADS": "1,2,4"
       }
     }

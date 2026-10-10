@@ -1,0 +1,37 @@
+......no profile: version failed (rc=7); inspect /tmp/tmpqhub6_ez/out/dc39180e7869/20261010-163400-694233-abc
+no profile: help failed (rc=7); inspect /tmp/tmpnj5av4gg/out/dc39180e7869/20261010-163400-696160-abc
+no profile: target failed (rc=7); inspect /tmp/tmpjm6qta1j/out/dc39180e7869/20261010-163400-698656-abc
+no profile: summary failed (rc=7); inspect /tmp/tmp6oopiapw/out/dc39180e7869/20261010-163400-701905-abc
+no profile: hotspots failed (rc=7); inspect /tmp/tmpeqcp_sb0/out/dc39180e7869/20261010-163400-705150-abc
+.usage: profile.py [-h] --build-dir BUILD_DIR [--exe EXE] --filter FILTER
+                  [--collect {hotspots,uarch}] [--seconds SECONDS] [--pin PIN]
+                  [--label LABEL] [--out OUT] [--top TOP]
+profile.py: error: --seconds must be finite and positive; --top must be positive
+usage: profile.py [-h] --build-dir BUILD_DIR [--exe EXE] --filter FILTER
+                  [--collect {hotspots,uarch}] [--seconds SECONDS] [--pin PIN]
+                  [--label LABEL] [--out OUT] [--top TOP]
+profile.py: error: --seconds must be finite and positive; --top must be positive
+usage: profile.py [-h] --build-dir BUILD_DIR [--exe EXE] --filter FILTER
+                  [--collect {hotspots,uarch}] [--seconds SECONDS] [--pin PIN]
+                  [--label LABEL] [--out OUT] [--top TOP]
+profile.py: error: --seconds must be finite and positive; --top must be positive
+usage: profile.py [-h] --build-dir BUILD_DIR [--exe EXE] --filter FILTER
+                  [--collect {hotspots,uarch}] [--seconds SECONDS] [--pin PIN]
+                  [--label LABEL] [--out OUT] [--top TOP]
+profile.py: error: --seconds must be finite and positive; --top must be positive
+...no profile: hotspots export has no samples
+.
+----------------------------------------------------------------------
+Ran 11 tests in 0.031s
+
+OK
+profile dir: /tmp/tmp8rlf6i8t/out/dc39180e7869/20261010-163400-688819-abc
+  top 1 functions by CPU time:
+      1.000 s 100.0%  useful  [app]
+done: /tmp/tmp8rlf6i8t/out/dc39180e7869/20261010-163400-688819-abc
+profile dir: /tmp/tmpqhub6_ez/out/dc39180e7869/20261010-163400-694233-abc
+profile dir: /tmp/tmpnj5av4gg/out/dc39180e7869/20261010-163400-696160-abc
+profile dir: /tmp/tmpjm6qta1j/out/dc39180e7869/20261010-163400-698656-abc
+profile dir: /tmp/tmp6oopiapw/out/dc39180e7869/20261010-163400-701905-abc
+profile dir: /tmp/tmpeqcp_sb0/out/dc39180e7869/20261010-163400-705150-abc
+profile dir: /tmp/tmp8fhdxmzh/out/dc39180e7869/20261010-163400-714822-abc

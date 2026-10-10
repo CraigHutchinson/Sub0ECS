@@ -494,3 +494,18 @@ bounded neighbor work can use two lanes. They do not choose a global grain/width
 or establish a real spatial-grid or production Crucible gain. Library-owned
 adapters remain the integration boundary; Pub types and delivery semantics remain
 owned by Pub, with C1/C2/C4/C5 receiving still open.
+
+## Full-stack boundary and actual consumer baseline (2026-10-10)
+
+The [full-stack experiment](optimization/full-stack.md) adds optional Pub/Pipeline/ECS
+composition and captures Crucible's actual headless direct/integrated routes. Five
+repeated 65,536-row/one-worker synthetic runs put sorted/binary-search commit at
+7.41 ms, dense commit at 4.76 ms and fixed-ID indexed staging at 0.431 ms; the
+handwritten floor is 0.144 ms. The remaining gap and stronger dense identity premise
+are explicit. Fixed Wiring approaches direct-call admission cost but does not
+establish a large-boundary win. Do not change broker defaults from this result.
+
+Both frozen/current-library Crucible builds complete all 20 captures with matching
+emitted state and traces. Timing ranges overlap, so no production speedup or pin
+promotion is claimed. The [receipt](../bench/results/reference/work-mode-stack/README.md)
+retains all samples, including busy runs, profiling, validation and reproducible commands.
