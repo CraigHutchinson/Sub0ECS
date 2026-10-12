@@ -1,0 +1,10 @@
+{
+  "command": [
+    "vtune",
+    "-help",
+    "collect",
+    "hotspots"
+  ],
+  "error": "[Errno 2] No such file or directory: 'vtune'",
+  "status": "no profile"
+}

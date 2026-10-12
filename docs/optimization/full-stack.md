@@ -100,6 +100,31 @@ binary starts threads, not external child processes. It is not a general profile
 supervisor. Run without competing builds; record affinity and uncontrolled host
 conditions. No native-frame, thermal, hardware-counter or 100K-at-60FPS claim follows.
 
+## Production-source optimization: 12 October 2026
+
+The separate [production coordinator receipt](../../bench/results/reference/work-mode-crucible-production/README.md)
+compares Crucible source changes with dependency pins held fixed. It receives
+100K/400×250 and 150K/500×300 evolving worlds, plus a 2048 regression workload,
+through the actual integrated pump, steering and snapshot publication. This is
+not the earlier current-library experiment above or a handwritten-game reference.
+
+`bench/tools/crucible.py --scale 100000 --workers 4 --warmup 120 --ticks 300
+--field-route gather --arms integrated` selects this workload; add the source,
+build, rounds and fresh output arguments shown in the linked reproduction recipe.
+The collector requires complete settings, matching initial/final state and trace
+digests, accepted/applied command counts, and zero observations, fallbacks or
+discarded work. Each build records its own clean source/tree and binary identity;
+scale comparisons require identical benchmark source and dependency pins.
+
+Pass A replaces binary-search commit with a checked compact-row map; B guards
+already-sorted gather/index/snapshot inputs while preserving sort fallback.
+Initial A timings overlap. A fresh complete 100K control/A/B/A+B cohort establishes
+an 11.18% median pump/capture improvement for A+B on the measured four-worker host,
+with mixed p99. Replacement 2048 and 150K combination qualification remain pending.
+The earlier 2048 A cohort lacks two raw receipts, and the earlier combined 2048
+cohort has three empty receipts; neither can close its regression gate.
+Headless timing excludes admission, native rendering, pacing and input latency.
+
 ## Crucible workload and exhaustive logic reference
 
 These requirements come from the frozen `docs/decisions/phase14-scale-contracts.md`,

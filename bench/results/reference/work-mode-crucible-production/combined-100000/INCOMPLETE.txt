@@ -1,0 +1,1 @@
+Session ended during round3 combined process. No summary. Preserve all partial raw evidence; replacement campaign uses a new output directory and all five rounds.

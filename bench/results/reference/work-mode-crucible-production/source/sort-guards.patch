@@ -1,0 +1,59 @@
+diff --git a/src/simulation.cpp b/src/simulation.cpp
+index cdb737f..ddc1143 100644
+--- a/src/simulation.cpp
++++ b/src/simulation.cpp
+@@ -168,7 +168,8 @@ void Simulation::tick() {
+             });
+             auto input = std::span{state.tick_input}.first(index);
+             auto output = std::span{state.next_state}.first(index);
+-            std::ranges::sort(input, {}, &SampleState::id);
++            if (!std::ranges::is_sorted(input, {}, &SampleState::id))
++                std::ranges::sort(input, {}, &SampleState::id);
+             for (std::size_t i = 0; i < index; ++i) {
+                 const auto id = state.tick_input[i].id.value;
+                 if (id == 0 || id > state.outputRowById_.size() ||
+@@ -399,7 +400,9 @@ std::optional<ScenarioStateInfo> Simulation::TryCopyState(StateCopyDestination d
+         destination.samples[index++] = {id, position, velocity, state.Activity(id)};
+     });
+     // Population and identities are private and fixed after construction.
+-    std::ranges::sort(destination.samples.first(count), {}, &SampleState::id);
++    const auto samples = destination.samples.first(count);
++    if (!std::ranges::is_sorted(samples, {}, &SampleState::id))
++        std::ranges::sort(samples, {}, &SampleState::id);
+     static_cast<void>(state.fields.TryCopyEdits(destination.fields));
+     for (std::size_t row = 0; row < state.options.grid.rows; ++row)
+         for (std::size_t column = 0; column < state.options.grid.columns; ++column)
+diff --git a/src/spatial/Grid.cpp b/src/spatial/Grid.cpp
+index 9f63dd2..546df35 100644
+--- a/src/spatial/Grid.cpp
++++ b/src/spatial/Grid.cpp
+@@ -124,7 +124,8 @@ bool Grid::TryRebuild(std::span<const SpatialSample> samples) noexcept {
+         })) return false;
+     std::copy(samples.begin(), samples.end(), m_Pending.begin());
+     auto pending = std::span{m_Pending}.first(samples.size());
+-    std::ranges::sort(pending, {}, &SpatialSample::id);
++    if (!std::ranges::is_sorted(pending, {}, &SpatialSample::id))
++        std::ranges::sort(pending, {}, &SpatialSample::id);
+     if (std::ranges::adjacent_find(pending, [](const auto& left, const auto& right) {
+             return left.id == right.id;
+         }) != pending.end()) return false;
+diff --git a/tests/spatial/Grid.cpp b/tests/spatial/Grid.cpp
+index 3340f46..2ab16e2 100644
+--- a/tests/spatial/Grid.cpp
++++ b/tests/spatial/Grid.cpp
+@@ -69,6 +69,15 @@ int main() {
+             Compare(grid, samples, center, radius);
+     const auto dense = grid.TryQuery({6, 4}, 0.0F);
+     Check(dense && dense->size() >= 1024, "dense coincident results truncated");
++    std::ranges::sort(samples, {}, &SpatialSample::id);
++    Check(grid.TryRebuild(samples), "sorted rebuild rejected");
++    Compare(grid, samples, {6, 4}, 5.3F);
++    auto sortedDuplicate = samples;
++    sortedDuplicate[1].id = sortedDuplicate[0].id;
++    const auto sortedOccupied = grid.GetOccupiedCellCount();
++    Check(!grid.TryRebuild(sortedDuplicate), "sorted duplicate ID accepted");
++    Check(grid.GetOccupiedCellCount() == sortedOccupied, "sorted duplicate damaged committed grid");
++    Compare(grid, samples, {6, 4}, 5.3F);
+     std::ranges::reverse(samples);
+     Check(grid.TryRebuild(samples), "shuffled rebuild rejected");
+     Compare(grid, samples, {6, 4}, 5.3F);

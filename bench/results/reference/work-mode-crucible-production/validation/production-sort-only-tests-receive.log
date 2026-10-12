@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "stage": "test",
+  "ok": true,
+  "checks": [
+    {
+      "name": "python",
+      "status": "pass",
+      "required": true,
+      "detail": "Python >=3.10 required",
+      "version": "3.12.14",
+      "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+    }
+  ],
+  "selected_tests": [
+    "runtime_inspector"
+  ],
+  "scope": "Capability preflight only; no performance, physical-console or suite acceptance claim",
+  "capacity": {
+    "cpu_count": 9,
+    "memory_bytes": null,
+    "requirement": "No invented CPU/RAM minimum"
+  },
+  "compiler": "/usr/bin/c++",
+  "sanitizers": false,
+  "gpu_required": false,
+  "elapsed_seconds": 0.0
+}
+Test project /workspace/scratch/df8f5a8b05e6/Crucible/build/production-sort-only
+    Start 19: runtime_inspector
+Process not started
+ /workspace/scratch/df8f5a8b05e6/Crucible/build/production-sort-only/tests/workstreams/runtime/crucible_inspector_tests
+[permission denied]
+1/1 Test #19: runtime_inspector ................***Not Run   0.00 sec
+
+0% tests passed, 1 tests failed out of 1
+
+Label Time Summary:
+presentation    =   0.00 sec*proc (1 test)
+runtime         =   0.00 sec*proc (1 test)
+
+Total Test time (real) =   0.00 sec
+
+The following tests FAILED:
+	 19 - runtime_inspector (BAD_COMMAND)                   presentation runtime
+Errors while running CTest

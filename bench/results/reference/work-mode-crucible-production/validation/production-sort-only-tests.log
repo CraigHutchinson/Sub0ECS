@@ -1,0 +1,215 @@
+{
+  "schema": 1,
+  "stage": "test",
+  "ok": true,
+  "checks": [
+    {
+      "name": "python",
+      "status": "pass",
+      "required": true,
+      "detail": "Python >=3.10 required",
+      "version": "3.12.14",
+      "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+    }
+  ],
+  "selected_tests": [
+    "workflow_permissions",
+    "workflow_prerequisites",
+    "gpu_packet_numeric",
+    "gpu_slot_retirement",
+    "simulation",
+    "stack_round_trip",
+    "scenario_integration",
+    "phase2_full_state",
+    "phase3_full_state",
+    "challenge_passive_cli",
+    "challenge_route_cli",
+    "structural_route_cli",
+    "contracts_values",
+    "runtime_scenario_settings",
+    "runtime_headless",
+    "runtime_ingress",
+    "runtime_session",
+    "runtime_clock",
+    "runtime_inspector",
+    "runtime_mission",
+    "runtime_reference_route",
+    "runtime_structural",
+    "runtime_intent_delivery",
+    "runtime_boundary_pipeline",
+    "runtime_backbone_parity",
+    "runtime_tick_observations",
+    "runtime_parallel_simulation",
+    "spatial_grid",
+    "spatial_hex_queries",
+    "spatial_allocation_reuse",
+    "spatial_caller_scratch",
+    "fields_sampling",
+    "blight_grid",
+    "swarm_steering",
+    "swarm_partition_rows",
+    "swarm_partition_allocations",
+    "swarm_dense_lookup",
+    "interactions_reclamation",
+    "interactions_reclamation_allocations",
+    "interactions_structural",
+    "scheduling_row_partitions",
+    "scheduling_row_floating_point",
+    "scheduling_row_allocations",
+    "camera_affine",
+    "field_tools",
+    "application_game_journey",
+    "application_profile_store",
+    "application_journey_passive_cli",
+    "application_journey_route_cli",
+    "application_journey_profile_cli"
+  ],
+  "scope": "Capability preflight only; no performance, physical-console or suite acceptance claim",
+  "capacity": {
+    "cpu_count": 9,
+    "memory_bytes": null,
+    "requirement": "No invented CPU/RAM minimum"
+  },
+  "compiler": "/usr/bin/c++",
+  "sanitizers": false,
+  "gpu_required": false,
+  "elapsed_seconds": 0.0
+}
+Test project /workspace/scratch/df8f5a8b05e6/Crucible/build/production-sort-only
+      Start  1: workflow_permissions
+ 1/50 Test  #1: workflow_permissions ...................   Passed    0.05 sec
+      Start  2: workflow_prerequisites
+ 2/50 Test  #2: workflow_prerequisites .................   Passed    0.11 sec
+      Start  3: gpu_packet_numeric
+ 3/50 Test  #3: gpu_packet_numeric .....................   Passed    0.00 sec
+      Start  4: gpu_slot_retirement
+ 4/50 Test  #4: gpu_slot_retirement ....................   Passed    0.00 sec
+      Start  5: simulation
+ 5/50 Test  #5: simulation .............................   Passed    0.00 sec
+      Start  6: stack_round_trip
+ 6/50 Test  #6: stack_round_trip .......................   Passed    0.03 sec
+      Start  7: scenario_integration
+ 7/50 Test  #7: scenario_integration ...................   Passed    0.00 sec
+      Start  8: phase2_full_state
+ 8/50 Test  #8: phase2_full_state ......................   Passed    0.51 sec
+      Start  9: phase3_full_state
+ 9/50 Test  #9: phase3_full_state ......................   Passed    0.54 sec
+      Start 10: challenge_passive_cli
+10/50 Test #10: challenge_passive_cli ..................   Passed    5.67 sec
+      Start 11: challenge_route_cli
+11/50 Test #11: challenge_route_cli ....................   Passed    1.69 sec
+      Start 12: structural_route_cli
+12/50 Test #12: structural_route_cli ...................   Passed    3.18 sec
+      Start 13: contracts_values
+13/50 Test #13: contracts_values .......................   Passed    0.00 sec
+      Start 14: runtime_scenario_settings
+14/50 Test #14: runtime_scenario_settings ..............   Passed    3.26 sec
+      Start 15: runtime_headless
+15/50 Test #15: runtime_headless .......................   Passed    0.00 sec
+      Start 16: runtime_ingress
+16/50 Test #16: runtime_ingress ........................   Passed    0.00 sec
+      Start 17: runtime_session
+17/50 Test #17: runtime_session ........................   Passed    0.00 sec
+      Start 18: runtime_clock
+18/50 Test #18: runtime_clock ..........................   Passed    0.00 sec
+      Start 19: runtime_inspector
+Process not started
+ /workspace/scratch/df8f5a8b05e6/Crucible/build/production-sort-only/tests/workstreams/runtime/crucible_inspector_tests
+[permission denied]
+19/50 Test #19: runtime_inspector ......................***Not Run   0.00 sec
+      Start 20: runtime_mission
+20/50 Test #20: runtime_mission ........................   Passed    0.02 sec
+      Start 21: runtime_reference_route
+21/50 Test #21: runtime_reference_route ................   Passed    0.01 sec
+      Start 22: runtime_structural
+22/50 Test #22: runtime_structural .....................   Passed    0.37 sec
+      Start 23: runtime_intent_delivery
+23/50 Test #23: runtime_intent_delivery ................   Passed    0.00 sec
+      Start 24: runtime_boundary_pipeline
+24/50 Test #24: runtime_boundary_pipeline ..............   Passed    0.34 sec
+      Start 25: runtime_backbone_parity
+25/50 Test #25: runtime_backbone_parity ................   Passed    4.98 sec
+      Start 26: runtime_tick_observations
+26/50 Test #26: runtime_tick_observations ..............   Passed    0.01 sec
+      Start 27: runtime_parallel_simulation
+27/50 Test #27: runtime_parallel_simulation ............   Passed    2.87 sec
+      Start 28: spatial_grid
+28/50 Test #28: spatial_grid ...........................   Passed    0.00 sec
+      Start 29: spatial_hex_queries
+29/50 Test #29: spatial_hex_queries ....................   Passed    0.28 sec
+      Start 30: spatial_allocation_reuse
+30/50 Test #30: spatial_allocation_reuse ...............   Passed    0.01 sec
+      Start 31: spatial_caller_scratch
+31/50 Test #31: spatial_caller_scratch .................   Passed    0.00 sec
+      Start 32: fields_sampling
+32/50 Test #32: fields_sampling ........................   Passed    0.00 sec
+      Start 33: blight_grid
+33/50 Test #33: blight_grid ............................   Passed    0.00 sec
+      Start 34: swarm_steering
+34/50 Test #34: swarm_steering .........................   Passed    0.24 sec
+      Start 35: swarm_partition_rows
+35/50 Test #35: swarm_partition_rows ...................   Passed    0.01 sec
+      Start 36: swarm_partition_allocations
+36/50 Test #36: swarm_partition_allocations ............   Passed    0.02 sec
+      Start 37: swarm_dense_lookup
+37/50 Test #37: swarm_dense_lookup .....................   Passed    0.38 sec
+      Start 38: interactions_reclamation
+38/50 Test #38: interactions_reclamation ...............   Passed    0.00 sec
+      Start 39: interactions_reclamation_allocations
+39/50 Test #39: interactions_reclamation_allocations ...   Passed    0.00 sec
+      Start 40: interactions_structural
+40/50 Test #40: interactions_structural ................   Passed    0.36 sec
+      Start 41: scheduling_row_partitions
+41/50 Test #41: scheduling_row_partitions ..............   Passed    0.01 sec
+      Start 42: scheduling_row_floating_point
+42/50 Test #42: scheduling_row_floating_point ..........   Passed    0.04 sec
+      Start 43: scheduling_row_allocations
+43/50 Test #43: scheduling_row_allocations .............   Passed    0.01 sec
+      Start 44: camera_affine
+44/50 Test #44: camera_affine ..........................   Passed    0.00 sec
+      Start 45: field_tools
+45/50 Test #45: field_tools ............................   Passed    0.00 sec
+      Start 46: application_game_journey
+46/50 Test #46: application_game_journey ...............   Passed    0.86 sec
+      Start 47: application_profile_store
+47/50 Test #47: application_profile_store ..............   Passed    0.00 sec
+      Start 48: application_journey_passive_cli
+48/50 Test #48: application_journey_passive_cli ........   Passed    3.03 sec
+      Start 49: application_journey_route_cli
+49/50 Test #49: application_journey_route_cli ..........   Passed    0.85 sec
+      Start 50: application_journey_profile_cli
+50/50 Test #50: application_journey_profile_cli ........   Passed    0.83 sec
+
+98% tests passed, 1 tests failed out of 50
+
+Label Time Summary:
+application     =   5.58 sec*proc (5 tests)
+blight          =   0.00 sec*proc (3 tests)
+contracts       =   0.00 sec*proc (1 test)
+fields          =   0.00 sec*proc (1 test)
+gpu             =   0.00 sec*proc (2 tests)
+input           =   0.00 sec*proc (2 tests)
+integration     =  16.33 sec*proc (11 tests)
+interactions    =   0.36 sec*proc (3 tests)
+lifetime        =   0.87 sec*proc (3 tests)
+mission         =  16.14 sec*proc (9 tests)
+numeric         =   0.00 sec*proc (1 test)
+pipeline        =   8.63 sec*proc (8 tests)
+presentation    =   4.71 sec*proc (11 tests)
+profile         =   0.84 sec*proc (2 tests)
+pub             =   4.98 sec*proc (2 tests)
+resources       =   4.09 sec*proc (3 tests)
+runtime         =  11.86 sec*proc (14 tests)
+scale           =   6.13 sec*proc (3 tests)
+scheduling      =   0.44 sec*proc (4 tests)
+simulation      =   0.36 sec*proc (1 test)
+spatial         =   0.34 sec*proc (5 tests)
+structural      =   3.23 sec*proc (2 tests)
+swarm           =   0.70 sec*proc (5 tests)
+workflow        =   0.16 sec*proc (2 tests)
+
+Total Test time (real) =  30.62 sec
+
+The following tests FAILED:
+	 19 - runtime_inspector (BAD_COMMAND)                   presentation runtime
+Errors while running CTest

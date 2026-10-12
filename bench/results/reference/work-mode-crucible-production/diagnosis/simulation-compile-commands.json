@@ -1,0 +1,14 @@
+{
+  "control": {
+    "directory": "/workspace/scratch/df8f5a8b05e6/Crucible/build/production-control-make",
+    "command": "/usr/bin/c++  -I/workspace/scratch/df8f5a8b05e6/Crucible-control/include -I/workspace/scratch/df8f5a8b05e6/Crucible/build/production-control-make/_deps/sub0ecs-src/include -I/workspace/scratch/df8f5a8b05e6/Crucible/build/production-control-make/_deps/sub0hexgrid-src/include -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -o CMakeFiles/crucible_core.dir/src/simulation.cpp.o -c /workspace/scratch/df8f5a8b05e6/Crucible-control/src/simulation.cpp",
+    "file": "/workspace/scratch/df8f5a8b05e6/Crucible-control/src/simulation.cpp",
+    "output": "CMakeFiles/crucible_core.dir/src/simulation.cpp.o"
+  },
+  "candidate": {
+    "directory": "/workspace/scratch/df8f5a8b05e6/Crucible/build/production-candidate",
+    "command": "/usr/bin/c++  -I/workspace/scratch/df8f5a8b05e6/Crucible/include -I/workspace/scratch/df8f5a8b05e6/Crucible/build/sub0-control/_deps/sub0ecs-src/include -I/workspace/scratch/df8f5a8b05e6/Crucible/build/sub0-control/_deps/sub0hexgrid-src/include -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -o CMakeFiles/crucible_core.dir/src/simulation.cpp.o -c /workspace/scratch/df8f5a8b05e6/Crucible/src/simulation.cpp",
+    "file": "/workspace/scratch/df8f5a8b05e6/Crucible/src/simulation.cpp",
+    "output": "CMakeFiles/crucible_core.dir/src/simulation.cpp.o"
+  }
+}

@@ -1,0 +1,1592 @@
+0000000000017000 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)>:
+   17000:	f3 0f 1e fa          	endbr64
+   17004:	41 57                	push   %r15
+   17006:	41 56                	push   %r14
+   17008:	41 55                	push   %r13
+   1700a:	41 54                	push   %r12
+   1700c:	55                   	push   %rbp
+   1700d:	48 89 fd             	mov    %rdi,%rbp
+   17010:	53                   	push   %rbx
+   17011:	48 81 ec 68 03 00 00 	sub    $0x368,%rsp
+   17018:	48 8b 9e 70 15 00 00 	mov    0x1570(%rsi),%rbx
+   1701f:	64 48 8b 04 25 28 00 	mov    %fs:0x28,%rax
+   17026:	00 00 
+   17028:	48 89 84 24 58 03 00 	mov    %rax,0x358(%rsp)
+   1702f:	00 
+   17030:	31 c0                	xor    %eax,%eax
+   17032:	4c 8b b4 24 a0 03 00 	mov    0x3a0(%rsp),%r14
+   17039:	00 
+   1703a:	48 85 db             	test   %rbx,%rbx
+   1703d:	74 1f                	je     1705e <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x5e>
+   1703f:	4c 8b a3 78 02 00 00 	mov    0x278(%rbx),%r12
+   17046:	4c 2b a3 70 02 00 00 	sub    0x270(%rbx),%r12
+   1704d:	4d 89 e3             	mov    %r12,%r11
+   17050:	49 c1 fb 04          	sar    $0x4,%r11
+   17054:	4c 39 9c 24 a8 03 00 	cmp    %r11,0x3a8(%rsp)
+   1705b:	00 
+   1705c:	73 3a                	jae    17098 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x98>
+   1705e:	c6 85 c0 02 00 00 00 	movb   $0x0,0x2c0(%rbp)
+   17065:	48 8b 84 24 58 03 00 	mov    0x358(%rsp),%rax
+   1706c:	00 
+   1706d:	64 48 2b 04 25 28 00 	sub    %fs:0x28,%rax
+   17074:	00 00 
+   17076:	0f 85 7c 07 00 00    	jne    177f8 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x7f8>
+   1707c:	48 81 c4 68 03 00 00 	add    $0x368,%rsp
+   17083:	48 89 e8             	mov    %rbp,%rax
+   17086:	5b                   	pop    %rbx
+   17087:	5d                   	pop    %rbp
+   17088:	41 5c                	pop    %r12
+   1708a:	41 5d                	pop    %r13
+   1708c:	41 5e                	pop    %r14
+   1708e:	41 5f                	pop    %r15
+   17090:	c3                   	ret
+   17091:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+   17098:	48 8b 43 18          	mov    0x18(%rbx),%rax
+   1709c:	48 39 84 24 b8 03 00 	cmp    %rax,0x3b8(%rsp)
+   170a3:	00 
+   170a4:	72 b8                	jb     1705e <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x5e>
+   170a6:	48 8b 83 98 00 00 00 	mov    0x98(%rbx),%rax
+   170ad:	48 39 84 24 c8 03 00 	cmp    %rax,0x3c8(%rsp)
+   170b4:	00 
+   170b5:	72 a7                	jb     1705e <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x5e>
+   170b7:	80 bb 20 07 00 00 00 	cmpb   $0x0,0x720(%rbx)
+   170be:	49 89 f5             	mov    %rsi,%r13
+   170c1:	74 0a                	je     170cd <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0xcd>
+   170c3:	48 39 84 24 d8 03 00 	cmp    %rax,0x3d8(%rsp)
+   170ca:	00 
+   170cb:	72 91                	jb     1705e <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x5e>
+   170cd:	48 8b b3 70 1c 00 00 	mov    0x1c70(%rbx),%rsi
+   170d4:	4c 8b 8b 68 1c 00 00 	mov    0x1c68(%rbx),%r9
+   170db:	45 31 e4             	xor    %r12d,%r12d
+   170de:	49 39 f1             	cmp    %rsi,%r9
+   170e1:	0f 84 e2 00 00 00    	je     171c9 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x1c9>
+   170e7:	48 89 2c 24          	mov    %rbp,(%rsp)
+   170eb:	4c 89 6c 24 10       	mov    %r13,0x10(%rsp)
+   170f0:	eb 13                	jmp    17105 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x105>
+   170f2:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+   170f8:	49 83 c1 08          	add    $0x8,%r9
+   170fc:	49 39 f1             	cmp    %rsi,%r9
+   170ff:	0f 84 bb 00 00 00    	je     171c0 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x1c0>
+   17105:	49 8b 01             	mov    (%r9),%rax
+   17108:	4c 8b 80 70 02 00 00 	mov    0x270(%rax),%r8
+   1710f:	48 8b b8 68 02 00 00 	mov    0x268(%rax),%rdi
+   17116:	4d 89 c2             	mov    %r8,%r10
+   17119:	49 29 fa             	sub    %rdi,%r10
+   1711c:	49 c1 fa 02          	sar    $0x2,%r10
+   17120:	74 d6                	je     170f8 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0xf8>
+   17122:	48 8b 50 68          	mov    0x68(%rax),%rdx
+   17126:	48 8b 48 70          	mov    0x70(%rax),%rcx
+   1712a:	48 8b 68 78          	mov    0x78(%rax),%rbp
+   1712e:	49 39 f8             	cmp    %rdi,%r8
+   17131:	74 c5                	je     170f8 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0xf8>
+   17133:	4c 8b ab a0 03 00 00 	mov    0x3a0(%rbx),%r13
+   1713a:	4c 39 ab a8 03 00 00 	cmp    %r13,0x3a8(%rbx)
+   17141:	0f 84 d1 04 00 00    	je     17618 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x618>
+   17147:	4d 89 e0             	mov    %r12,%r8
+   1714a:	4e 8d 3c d5 00 00 00 	lea    0x0(,%r10,8),%r15
+   17151:	00 
+   17152:	31 c0                	xor    %eax,%eax
+   17154:	49 c1 e0 05          	shl    $0x5,%r8
+   17158:	4d 01 f0             	add    %r14,%r8
+   1715b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+   17160:	f3 0f 10 44 01 04    	movss  0x4(%rcx,%rax,1),%xmm0
+   17166:	f3 0f 10 0c 01       	movss  (%rcx,%rax,1),%xmm1
+   1716b:	48 8b 7c 05 00       	mov    0x0(%rbp,%rax,1),%rdi
+   17170:	f3 0f 10 54 02 04    	movss  0x4(%rdx,%rax,1),%xmm2
+   17176:	0f 14 c8             	unpcklps %xmm0,%xmm1
+   17179:	f3 0f 10 04 02       	movss  (%rdx,%rax,1),%xmm0
+   1717e:	48 89 7c 24 40       	mov    %rdi,0x40(%rsp)
+   17183:	41 8b 7c bd fc       	mov    -0x4(%r13,%rdi,4),%edi
+   17188:	0f 14 c2             	unpcklps %xmm2,%xmm0
+   1718b:	0f 16 c1             	movlhps %xmm1,%xmm0
+   1718e:	89 7c 24 58          	mov    %edi,0x58(%rsp)
+   17192:	0f 11 44 24 48       	movups %xmm0,0x48(%rsp)
+   17197:	66 0f 6f 5c 24 40    	movdqa 0x40(%rsp),%xmm3
+   1719d:	f3 0f 6f 64 24 4c    	movdqu 0x4c(%rsp),%xmm4
+   171a3:	41 0f 11 1c 80       	movups %xmm3,(%r8,%rax,4)
+   171a8:	41 0f 11 64 80 0c    	movups %xmm4,0xc(%r8,%rax,4)
+   171ae:	48 83 c0 08          	add    $0x8,%rax
+   171b2:	4c 39 f8             	cmp    %r15,%rax
+   171b5:	75 a9                	jne    17160 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x160>
+   171b7:	4d 01 d4             	add    %r10,%r12
+   171ba:	e9 39 ff ff ff       	jmp    170f8 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0xf8>
+   171bf:	90                   	nop
+   171c0:	48 8b 2c 24          	mov    (%rsp),%rbp
+   171c4:	4c 8b 6c 24 10       	mov    0x10(%rsp),%r13
+   171c9:	4d 89 df             	mov    %r11,%r15
+   171cc:	49 c1 e7 05          	shl    $0x5,%r15
+   171d0:	4f 8d 14 3e          	lea    (%r14,%r15,1),%r10
+   171d4:	4d 39 f2             	cmp    %r14,%r10
+   171d7:	0f 84 f3 01 00 00    	je     173d0 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x3d0>
+   171dd:	4d 8d 4e 20          	lea    0x20(%r14),%r9
+   171e1:	4d 39 ca             	cmp    %r9,%r10
+   171e4:	0f 84 e6 01 00 00    	je     173d0 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x3d0>
+   171ea:	49 8b 16             	mov    (%r14),%rdx
+   171ed:	4c 89 c8             	mov    %r9,%rax
+   171f0:	eb 13                	jmp    17205 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x205>
+   171f2:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+   171f8:	48 83 c0 20          	add    $0x20,%rax
+   171fc:	49 39 c2             	cmp    %rax,%r10
+   171ff:	0f 84 cb 01 00 00    	je     173d0 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x3d0>
+   17205:	48 89 d1             	mov    %rdx,%rcx
+   17208:	48 8b 10             	mov    (%rax),%rdx
+   1720b:	48 39 ca             	cmp    %rcx,%rdx
+   1720e:	73 e8                	jae    171f8 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x1f8>
+   17210:	4c 89 fa             	mov    %r15,%rdx
+   17213:	4c 89 d6             	mov    %r10,%rsi
+   17216:	48 8d 4c 24 37       	lea    0x37(%rsp),%rcx
+   1721b:	4c 89 f7             	mov    %r14,%rdi
+   1721e:	48 c1 fa 05          	sar    $0x5,%rdx
+   17222:	4c 8d 44 24 38       	lea    0x38(%rsp),%r8
+   17227:	4c 89 4c 24 28       	mov    %r9,0x28(%rsp)
+   1722c:	48 0f bd d2          	bsr    %rdx,%rdx
+   17230:	4c 89 5c 24 10       	mov    %r11,0x10(%rsp)
+   17235:	48 63 d2             	movslq %edx,%rdx
+   17238:	4c 89 14 24          	mov    %r10,(%rsp)
+   1723c:	48 c7 44 24 38 00 00 	movq   $0x0,0x38(%rsp)
+   17243:	00 00 
+   17245:	48 01 d2             	add    %rdx,%rdx
+   17248:	e8 d3 8b 00 00       	call   1fe20 <void std::__introsort_loop<__gnu_cxx::__normal_iterator<crucible::SampleState*, std::span<crucible::SampleState, 18446744073709551615ul> >, long, __gnu_cxx::__ops::_Iter_comp_iter<std::ranges::__detail::__make_comp_proj<std::ranges::less, crucible::SampleId crucible::SampleState::*>(std::ranges::less&, crucible::SampleId crucible::SampleState::*&)::{lambda(auto:1&&, auto:2&&)#1}> >(__gnu_cxx::__normal_iterator<crucible::SampleState*, std::span<crucible::SampleState, 18446744073709551615ul> >, __gnu_cxx::__normal_iterator<crucible::SampleState*, std::span<crucible::SampleState, 18446744073709551615ul> >, long, __gnu_cxx::__ops::_Iter_comp_iter<std::ranges::__detail::__make_comp_proj<std::ranges::less, crucible::SampleId crucible::SampleState::*>(std::ranges::less&, crucible::SampleId crucible::SampleState::*&)::{lambda(auto:1&&, auto:2&&)#1}>)>
+   1724d:	49 81 ff 00 02 00 00 	cmp    $0x200,%r15
+   17254:	4c 8b 14 24          	mov    (%rsp),%r10
+   17258:	4c 8b 5c 24 10       	mov    0x10(%rsp),%r11
+   1725d:	4c 8b 4c 24 28       	mov    0x28(%rsp),%r9
+   17262:	0f 8e 6b 04 00 00    	jle    176d3 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x6d3>
+   17268:	4d 8d a6 00 02 00 00 	lea    0x200(%r14),%r12
+   1726f:	48 89 1c 24          	mov    %rbx,(%rsp)
+   17273:	4c 89 cb             	mov    %r9,%rbx
+   17276:	41 bf 20 00 00 00    	mov    $0x20,%r15d
+   1727c:	48 89 6c 24 28       	mov    %rbp,0x28(%rsp)
+   17281:	4c 89 e5             	mov    %r12,%rbp
+   17284:	4d 89 f4             	mov    %r14,%r12
+   17287:	4d 89 de             	mov    %r11,%r14
+   1728a:	4c 89 54 24 10       	mov    %r10,0x10(%rsp)
+   1728f:	eb 54                	jmp    172e5 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x2e5>
+   17291:	f3 0f 6f 2b          	movdqu (%rbx),%xmm5
+   17295:	f3 0f 6f 73 10       	movdqu 0x10(%rbx),%xmm6
+   1729a:	48 89 da             	mov    %rbx,%rdx
+   1729d:	4c 29 e2             	sub    %r12,%rdx
+   172a0:	0f 29 6c 24 40       	movaps %xmm5,0x40(%rsp)
+   172a5:	0f 29 74 24 50       	movaps %xmm6,0x50(%rsp)
+   172aa:	48 83 fa 20          	cmp    $0x20,%rdx
+   172ae:	0f 8e 25 05 00 00    	jle    177d9 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x7d9>
+   172b4:	4c 89 ff             	mov    %r15,%rdi
+   172b7:	4c 89 e6             	mov    %r12,%rsi
+   172ba:	48 29 d7             	sub    %rdx,%rdi
+   172bd:	48 01 df             	add    %rbx,%rdi
+   172c0:	e8 5b e7 fe ff       	call   5a20 <memmove@plt>
+   172c5:	66 0f 6f 6c 24 40    	movdqa 0x40(%rsp),%xmm5
+   172cb:	f3 0f 6f 7c 24 4c    	movdqu 0x4c(%rsp),%xmm7
+   172d1:	41 0f 11 2c 24       	movups %xmm5,(%r12)
+   172d6:	41 0f 11 7c 24 0c    	movups %xmm7,0xc(%r12)
+   172dc:	48 83 c3 20          	add    $0x20,%rbx
+   172e0:	48 39 dd             	cmp    %rbx,%rbp
+   172e3:	74 5d                	je     17342 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x342>
+   172e5:	48 8b 13             	mov    (%rbx),%rdx
+   172e8:	48 89 d9             	mov    %rbx,%rcx
+   172eb:	49 3b 14 24          	cmp    (%r12),%rdx
+   172ef:	72 a0                	jb     17291 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x291>
+   172f1:	f3 0f 6f 33          	movdqu (%rbx),%xmm6
+   172f5:	f3 0f 6f 6b 10       	movdqu 0x10(%rbx),%xmm5
+   172fa:	48 8d 43 e0          	lea    -0x20(%rbx),%rax
+   172fe:	0f 29 74 24 40       	movaps %xmm6,0x40(%rsp)
+   17303:	0f 29 6c 24 50       	movaps %xmm5,0x50(%rsp)
+   17308:	48 3b 53 e0          	cmp    -0x20(%rbx),%rdx
+   1730c:	73 1f                	jae    1732d <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x32d>
+   1730e:	66 90                	xchg   %ax,%ax
+   17310:	f3 0f 6f 28          	movdqu (%rax),%xmm5
+   17314:	f3 0f 6f 70 0c       	movdqu 0xc(%rax),%xmm6
+   17319:	48 89 c1             	mov    %rax,%rcx
+   1731c:	48 83 e8 20          	sub    $0x20,%rax
+   17320:	0f 11 68 40          	movups %xmm5,0x40(%rax)
+   17324:	0f 11 70 4c          	movups %xmm6,0x4c(%rax)
+   17328:	48 3b 10             	cmp    (%rax),%rdx
+   1732b:	72 e3                	jb     17310 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x310>
+   1732d:	66 0f 6f 7c 24 40    	movdqa 0x40(%rsp),%xmm7
+   17333:	f3 0f 6f 74 24 4c    	movdqu 0x4c(%rsp),%xmm6
+   17339:	0f 11 39             	movups %xmm7,(%rcx)
+   1733c:	0f 11 71 0c          	movups %xmm6,0xc(%rcx)
+   17340:	eb 9a                	jmp    172dc <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x2dc>
+   17342:	4c 8b 54 24 10       	mov    0x10(%rsp),%r10
+   17347:	49 89 ec             	mov    %rbp,%r12
+   1734a:	48 8b 1c 24          	mov    (%rsp),%rbx
+   1734e:	4d 89 f3             	mov    %r14,%r11
+   17351:	48 8b 6c 24 28       	mov    0x28(%rsp),%rbp
+   17356:	4d 39 e2             	cmp    %r12,%r10
+   17359:	74 75                	je     173d0 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x3d0>
+   1735b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+   17360:	f3 41 0f 6f 2c 24    	movdqu (%r12),%xmm5
+   17366:	49 8b 0c 24          	mov    (%r12),%rcx
+   1736a:	49 8d 44 24 e0       	lea    -0x20(%r12),%rax
+   1736f:	f3 41 0f 6f 74 24 10 	movdqu 0x10(%r12),%xmm6
+   17376:	0f 29 6c 24 40       	movaps %xmm5,0x40(%rsp)
+   1737b:	0f 29 74 24 50       	movaps %xmm6,0x50(%rsp)
+   17380:	49 3b 4c 24 e0       	cmp    -0x20(%r12),%rcx
+   17385:	0f 83 17 04 00 00    	jae    177a2 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x7a2>
+   1738b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+   17390:	f3 0f 6f 38          	movdqu (%rax),%xmm7
+   17394:	48 89 c2             	mov    %rax,%rdx
+   17397:	48 83 e8 20          	sub    $0x20,%rax
+   1739b:	0f 11 78 40          	movups %xmm7,0x40(%rax)
+   1739f:	f3 0f 6f 78 2c       	movdqu 0x2c(%rax),%xmm7
+   173a4:	0f 11 78 4c          	movups %xmm7,0x4c(%rax)
+   173a8:	48 3b 08             	cmp    (%rax),%rcx
+   173ab:	72 e3                	jb     17390 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x390>
+   173ad:	66 0f 6f 7c 24 40    	movdqa 0x40(%rsp),%xmm7
+   173b3:	f3 0f 6f 6c 24 4c    	movdqu 0x4c(%rsp),%xmm5
+   173b9:	49 83 c4 20          	add    $0x20,%r12
+   173bd:	0f 11 3a             	movups %xmm7,(%rdx)
+   173c0:	0f 11 6a 0c          	movups %xmm5,0xc(%rdx)
+   173c4:	4d 39 e2             	cmp    %r12,%r10
+   173c7:	75 97                	jne    17360 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x360>
+   173c9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+   173d0:	48 8b b4 24 b0 03 00 	mov    0x3b0(%rsp),%rsi
+   173d7:	00 
+   173d8:	48 8b 94 24 b8 03 00 	mov    0x3b8(%rsp),%rdx
+   173df:	00 
+   173e0:	48 8d bb f8 01 00 00 	lea    0x1f8(%rbx),%rdi
+   173e7:	4c 89 1c 24          	mov    %r11,(%rsp)
+   173eb:	e8 10 08 01 00       	call   27c00 <crucible::fields::FieldSet::TryCopyEdits(std::span<crucible::FieldEdit, 18446744073709551615ul>) const>
+   173f0:	48 83 7b 08 00       	cmpq   $0x0,0x8(%rbx)
+   173f5:	4c 8b 1c 24          	mov    (%rsp),%r11
+   173f9:	74 73                	je     1746e <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x46e>
+   173fb:	48 89 2c 24          	mov    %rbp,(%rsp)
+   173ff:	48 8b 03             	mov    (%rbx),%rax
+   17402:	45 31 e4             	xor    %r12d,%r12d
+   17405:	4c 8d bb 10 02 00 00 	lea    0x210(%rbx),%r15
+   1740c:	4c 89 5c 24 10       	mov    %r11,0x10(%rsp)
+   17411:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+   17418:	48 85 c0             	test   %rax,%rax
+   1741b:	74 48                	je     17465 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x465>
+   1741d:	4c 8b b4 24 c0 03 00 	mov    0x3c0(%rsp),%r14
+   17424:	00 
+   17425:	31 ed                	xor    %ebp,%ebp
+   17427:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+   1742e:	00 00 
+   17430:	48 89 ee             	mov    %rbp,%rsi
+   17433:	4c 89 e2             	mov    %r12,%rdx
+   17436:	4c 89 ff             	mov    %r15,%rdi
+   17439:	e8 72 29 01 00       	call   29db0 <crucible::blight::Grid::IsInfected(unsigned long, unsigned long) const>
+   1743e:	49 8d 14 2e          	lea    (%r14,%rbp,1),%rdx
+   17442:	48 83 c5 01          	add    $0x1,%rbp
+   17446:	89 c6                	mov    %eax,%esi
+   17448:	48 8b 03             	mov    (%rbx),%rax
+   1744b:	49 0f af c4          	imul   %r12,%rax
+   1744f:	40 88 34 02          	mov    %sil,(%rdx,%rax,1)
+   17453:	48 8b 03             	mov    (%rbx),%rax
+   17456:	48 39 c5             	cmp    %rax,%rbp
+   17459:	72 d5                	jb     17430 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x430>
+   1745b:	49 83 c4 01          	add    $0x1,%r12
+   1745f:	4c 3b 63 08          	cmp    0x8(%rbx),%r12
+   17463:	72 b3                	jb     17418 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x418>
+   17465:	48 8b 2c 24          	mov    (%rsp),%rbp
+   17469:	4c 8b 5c 24 10       	mov    0x10(%rsp),%r11
+   1746e:	66 0f ef c0          	pxor   %xmm0,%xmm0
+   17472:	45 31 f6             	xor    %r14d,%r14d
+   17475:	80 bb 20 07 00 00 00 	cmpb   $0x0,0x720(%rbx)
+   1747c:	48 c7 84 24 80 00 00 	movq   $0x0,0x80(%rsp)
+   17483:	00 00 00 00 00 
+   17488:	0f 29 44 24 40       	movaps %xmm0,0x40(%rsp)
+   1748d:	0f 29 44 24 50       	movaps %xmm0,0x50(%rsp)
+   17492:	0f 29 44 24 60       	movaps %xmm0,0x60(%rsp)
+   17497:	0f 29 44 24 70       	movaps %xmm0,0x70(%rsp)
+   1749c:	0f 84 90 00 00 00    	je     17532 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x532>
+   174a2:	48 8b 93 c0 06 00 00 	mov    0x6c0(%rbx),%rdx
+   174a9:	48 8b 8b c8 06 00 00 	mov    0x6c8(%rbx),%rcx
+   174b0:	48 8b bc 24 d0 03 00 	mov    0x3d0(%rsp),%rdi
+   174b7:	00 
+   174b8:	48 29 d1             	sub    %rdx,%rcx
+   174bb:	48 89 ce             	mov    %rcx,%rsi
+   174be:	48 c1 fe 03          	sar    $0x3,%rsi
+   174c2:	48 85 c9             	test   %rcx,%rcx
+   174c5:	7e 31                	jle    174f8 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x4f8>
+   174c7:	48 8d 46 ff          	lea    -0x1(%rsi),%rax
+   174cb:	48 83 f8 02          	cmp    $0x2,%rax
+   174cf:	76 0d                	jbe    174de <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x4de>
+   174d1:	48 8d 42 08          	lea    0x8(%rdx),%rax
+   174d5:	48 39 c7             	cmp    %rax,%rdi
+   174d8:	0f 85 ab 01 00 00    	jne    17689 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x689>
+   174de:	31 c0                	xor    %eax,%eax
+   174e0:	48 8b 34 02          	mov    (%rdx,%rax,1),%rsi
+   174e4:	48 89 34 07          	mov    %rsi,(%rdi,%rax,1)
+   174e8:	48 83 c0 08          	add    $0x8,%rax
+   174ec:	48 39 c1             	cmp    %rax,%rcx
+   174ef:	75 ef                	jne    174e0 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x4e0>
+   174f1:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+   174f8:	f3 0f 6f b3 80 06 00 	movdqu 0x680(%rbx),%xmm6
+   174ff:	00 
+   17500:	f3 0f 6f bb 90 06 00 	movdqu 0x690(%rbx),%xmm7
+   17507:	00 
+   17508:	41 be 01 00 00 00    	mov    $0x1,%r14d
+   1750e:	0f 29 74 24 40       	movaps %xmm6,0x40(%rsp)
+   17513:	f3 0f 6f b3 a0 06 00 	movdqu 0x6a0(%rbx),%xmm6
+   1751a:	00 
+   1751b:	0f 29 7c 24 50       	movaps %xmm7,0x50(%rsp)
+   17520:	f3 0f 6f bb b0 06 00 	movdqu 0x6b0(%rbx),%xmm7
+   17527:	00 
+   17528:	0f 29 74 24 60       	movaps %xmm6,0x60(%rsp)
+   1752d:	0f 29 7c 24 70       	movaps %xmm7,0x70(%rsp)
+   17532:	f3 0f 6f 2b          	movdqu (%rbx),%xmm5
+   17536:	48 8b 43 10          	mov    0x10(%rbx),%rax
+   1753a:	66 49 0f 6e f3       	movq   %r11,%xmm6
+   1753f:	4c 89 ee             	mov    %r13,%rsi
+   17542:	66 0f 6f 7c 24 40    	movdqa 0x40(%rsp),%xmm7
+   17548:	f3 0f 7e 43 18       	movq   0x18(%rbx),%xmm0
+   1754d:	44 88 b4 24 80 00 00 	mov    %r14b,0x80(%rsp)
+   17554:	00 
+   17555:	48 8d bc 24 10 01 00 	lea    0x110(%rsp),%rdi
+   1755c:	00 
+   1755d:	f3 41 0f 7e 8d 78 15 	movq   0x1578(%r13),%xmm1
+   17564:	00 00 
+   17566:	48 89 84 24 a0 00 00 	mov    %rax,0xa0(%rsp)
+   1756d:	00 
+   1756e:	0f 29 ac 24 90 00 00 	movaps %xmm5,0x90(%rsp)
+   17575:	00 
+   17576:	48 8b 84 24 80 00 00 	mov    0x80(%rsp),%rax
+   1757d:	00 
+   1757e:	66 0f 6f 6c 24 50    	movdqa 0x50(%rsp),%xmm5
+   17584:	0f 16 83 98 00 00 00 	movhps 0x98(%rbx),%xmm0
+   1758b:	66 0f 6c ce          	punpcklqdq %xmm6,%xmm1
+   1758f:	66 0f 6f 74 24 60    	movdqa 0x60(%rsp),%xmm6
+   17595:	0f 11 bc 24 c8 00 00 	movups %xmm7,0xc8(%rsp)
+   1759c:	00 
+   1759d:	66 0f 6f 7c 24 70    	movdqa 0x70(%rsp),%xmm7
+   175a3:	0f 29 4c 24 10       	movaps %xmm1,0x10(%rsp)
+   175a8:	0f 29 04 24          	movaps %xmm0,(%rsp)
+   175ac:	48 89 84 24 08 01 00 	mov    %rax,0x108(%rsp)
+   175b3:	00 
+   175b4:	0f 11 ac 24 d8 00 00 	movups %xmm5,0xd8(%rsp)
+   175bb:	00 
+   175bc:	0f 11 b4 24 e8 00 00 	movups %xmm6,0xe8(%rsp)
+   175c3:	00 
+   175c4:	0f 11 bc 24 f8 00 00 	movups %xmm7,0xf8(%rsp)
+   175cb:	00 
+   175cc:	e8 ff f1 ff ff       	call   167d0 <crucible::Simulation::GetStructuralState() const>
+   175d1:	66 0f 6f 4c 24 10    	movdqa 0x10(%rsp),%xmm1
+   175d7:	48 89 ef             	mov    %rbp,%rdi
+   175da:	66 0f 6f 04 24       	movdqa (%rsp),%xmm0
+   175df:	44 88 b4 24 08 01 00 	mov    %r14b,0x108(%rsp)
+   175e6:	00 
+   175e7:	48 8d b4 24 90 00 00 	lea    0x90(%rsp),%rsi
+   175ee:	00 
+   175ef:	b9 58 00 00 00       	mov    $0x58,%ecx
+   175f4:	0f 11 8c 24 a8 00 00 	movups %xmm1,0xa8(%rsp)
+   175fb:	00 
+   175fc:	0f 11 84 24 b8 00 00 	movups %xmm0,0xb8(%rsp)
+   17603:	00 
+   17604:	f3 48 a5             	rep movsq %ds:(%rsi),%es:(%rdi)
+   17607:	c6 85 c0 02 00 00 01 	movb   $0x1,0x2c0(%rbp)
+   1760e:	e9 52 fa ff ff       	jmp    17065 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x65>
+   17613:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+   17618:	4c 89 e7             	mov    %r12,%rdi
+   1761b:	4e 8d 04 d5 00 00 00 	lea    0x0(,%r10,8),%r8
+   17622:	00 
+   17623:	31 c0                	xor    %eax,%eax
+   17625:	48 c1 e7 05          	shl    $0x5,%rdi
+   17629:	4c 01 f7             	add    %r14,%rdi
+   1762c:	0f 1f 40 00          	nopl   0x0(%rax)
+   17630:	f3 0f 10 44 01 04    	movss  0x4(%rcx,%rax,1),%xmm0
+   17636:	f3 0f 10 0c 01       	movss  (%rcx,%rax,1),%xmm1
+   1763b:	c7 44 24 58 00 00 00 	movl   $0x0,0x58(%rsp)
+   17642:	00 
+   17643:	f3 0f 10 54 02 04    	movss  0x4(%rdx,%rax,1),%xmm2
+   17649:	4c 8b 6c 05 00       	mov    0x0(%rbp,%rax,1),%r13
+   1764e:	0f 14 c8             	unpcklps %xmm0,%xmm1
+   17651:	f3 0f 10 04 02       	movss  (%rdx,%rax,1),%xmm0
+   17656:	4c 89 6c 24 40       	mov    %r13,0x40(%rsp)
+   1765b:	0f 14 c2             	unpcklps %xmm2,%xmm0
+   1765e:	0f 16 c1             	movlhps %xmm1,%xmm0
+   17661:	0f 11 44 24 48       	movups %xmm0,0x48(%rsp)
+   17666:	66 0f 6f 6c 24 40    	movdqa 0x40(%rsp),%xmm5
+   1766c:	f3 0f 6f 74 24 4c    	movdqu 0x4c(%rsp),%xmm6
+   17672:	0f 11 2c 87          	movups %xmm5,(%rdi,%rax,4)
+   17676:	0f 11 74 87 0c       	movups %xmm6,0xc(%rdi,%rax,4)
+   1767b:	48 83 c0 08          	add    $0x8,%rax
+   1767f:	4c 39 c0             	cmp    %r8,%rax
+   17682:	75 ac                	jne    17630 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x630>
+   17684:	e9 2e fb ff ff       	jmp    171b7 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x1b7>
+   17689:	48 89 f1             	mov    %rsi,%rcx
+   1768c:	31 c0                	xor    %eax,%eax
+   1768e:	48 d1 e9             	shr    $1,%rcx
+   17691:	48 c1 e1 04          	shl    $0x4,%rcx
+   17695:	0f 1f 00             	nopl   (%rax)
+   17698:	f3 0f 6f 3c 02       	movdqu (%rdx,%rax,1),%xmm7
+   1769d:	0f 11 3c 07          	movups %xmm7,(%rdi,%rax,1)
+   176a1:	48 83 c0 10          	add    $0x10,%rax
+   176a5:	48 39 c8             	cmp    %rcx,%rax
+   176a8:	75 ee                	jne    17698 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x698>
+   176aa:	48 89 f0             	mov    %rsi,%rax
+   176ad:	48 83 e0 fe          	and    $0xfffffffffffffffe,%rax
+   176b1:	48 8d 0c c5 00 00 00 	lea    0x0(,%rax,8),%rcx
+   176b8:	00 
+   176b9:	48 01 ca             	add    %rcx,%rdx
+   176bc:	48 01 f9             	add    %rdi,%rcx
+   176bf:	48 39 f0             	cmp    %rsi,%rax
+   176c2:	0f 84 30 fe ff ff    	je     174f8 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x4f8>
+   176c8:	48 8b 02             	mov    (%rdx),%rax
+   176cb:	48 89 01             	mov    %rax,(%rcx)
+   176ce:	e9 25 fe ff ff       	jmp    174f8 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x4f8>
+   176d3:	48 89 1c 24          	mov    %rbx,(%rsp)
+   176d7:	41 bf 20 00 00 00    	mov    $0x20,%r15d
+   176dd:	4c 89 d3             	mov    %r10,%rbx
+   176e0:	4d 89 dc             	mov    %r11,%r12
+   176e3:	48 89 6c 24 10       	mov    %rbp,0x10(%rsp)
+   176e8:	4c 89 f5             	mov    %r14,%rbp
+   176eb:	4d 89 ce             	mov    %r9,%r14
+   176ee:	eb 53                	jmp    17743 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x743>
+   176f0:	f3 41 0f 6f 2e       	movdqu (%r14),%xmm5
+   176f5:	f3 41 0f 6f 7e 10    	movdqu 0x10(%r14),%xmm7
+   176fb:	4c 89 f2             	mov    %r14,%rdx
+   176fe:	48 29 ea             	sub    %rbp,%rdx
+   17701:	0f 29 6c 24 40       	movaps %xmm5,0x40(%rsp)
+   17706:	0f 29 7c 24 50       	movaps %xmm7,0x50(%rsp)
+   1770b:	48 83 fa 20          	cmp    $0x20,%rdx
+   1770f:	0f 8e a6 00 00 00    	jle    177bb <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x7bb>
+   17715:	4c 89 ff             	mov    %r15,%rdi
+   17718:	48 89 ee             	mov    %rbp,%rsi
+   1771b:	48 29 d7             	sub    %rdx,%rdi
+   1771e:	4c 01 f7             	add    %r14,%rdi
+   17721:	e8 fa e2 fe ff       	call   5a20 <memmove@plt>
+   17726:	66 0f 6f 74 24 40    	movdqa 0x40(%rsp),%xmm6
+   1772c:	f3 0f 6f 6c 24 4c    	movdqu 0x4c(%rsp),%xmm5
+   17732:	0f 11 75 00          	movups %xmm6,0x0(%rbp)
+   17736:	0f 11 6d 0c          	movups %xmm5,0xc(%rbp)
+   1773a:	49 83 c6 20          	add    $0x20,%r14
+   1773e:	49 39 de             	cmp    %rbx,%r14
+   17741:	74 67                	je     177aa <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x7aa>
+   17743:	49 8b 16             	mov    (%r14),%rdx
+   17746:	4c 89 f1             	mov    %r14,%rcx
+   17749:	48 3b 55 00          	cmp    0x0(%rbp),%rdx
+   1774d:	72 a1                	jb     176f0 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x6f0>
+   1774f:	f3 41 0f 6f 3e       	movdqu (%r14),%xmm7
+   17754:	f3 41 0f 6f 76 10    	movdqu 0x10(%r14),%xmm6
+   1775a:	49 8d 46 e0          	lea    -0x20(%r14),%rax
+   1775e:	0f 29 7c 24 40       	movaps %xmm7,0x40(%rsp)
+   17763:	0f 29 74 24 50       	movaps %xmm6,0x50(%rsp)
+   17768:	49 3b 56 e0          	cmp    -0x20(%r14),%rdx
+   1776c:	73 1f                	jae    1778d <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x78d>
+   1776e:	66 90                	xchg   %ax,%ax
+   17770:	f3 0f 6f 28          	movdqu (%rax),%xmm5
+   17774:	f3 0f 6f 70 0c       	movdqu 0xc(%rax),%xmm6
+   17779:	48 89 c1             	mov    %rax,%rcx
+   1777c:	48 83 e8 20          	sub    $0x20,%rax
+   17780:	0f 11 68 40          	movups %xmm5,0x40(%rax)
+   17784:	0f 11 70 4c          	movups %xmm6,0x4c(%rax)
+   17788:	48 3b 10             	cmp    (%rax),%rdx
+   1778b:	72 e3                	jb     17770 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x770>
+   1778d:	66 0f 6f 6c 24 40    	movdqa 0x40(%rsp),%xmm5
+   17793:	f3 0f 6f 7c 24 4c    	movdqu 0x4c(%rsp),%xmm7
+   17799:	0f 11 29             	movups %xmm5,(%rcx)
+   1779c:	0f 11 79 0c          	movups %xmm7,0xc(%rcx)
+   177a0:	eb 98                	jmp    1773a <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x73a>
+   177a2:	4c 89 e2             	mov    %r12,%rdx
+   177a5:	e9 03 fc ff ff       	jmp    173ad <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x3ad>
+   177aa:	48 8b 1c 24          	mov    (%rsp),%rbx
+   177ae:	48 8b 6c 24 10       	mov    0x10(%rsp),%rbp
+   177b3:	4d 89 e3             	mov    %r12,%r11
+   177b6:	e9 15 fc ff ff       	jmp    173d0 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x3d0>
+   177bb:	0f 85 65 ff ff ff    	jne    17726 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x726>
+   177c1:	f3 0f 6f 6d 00       	movdqu 0x0(%rbp),%xmm5
+   177c6:	41 0f 11 2e          	movups %xmm5,(%r14)
+   177ca:	f3 0f 6f 75 0c       	movdqu 0xc(%rbp),%xmm6
+   177cf:	41 0f 11 76 0c       	movups %xmm6,0xc(%r14)
+   177d4:	e9 4d ff ff ff       	jmp    17726 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x726>
+   177d9:	0f 85 e6 fa ff ff    	jne    172c5 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x2c5>
+   177df:	f3 41 0f 6f 34 24    	movdqu (%r12),%xmm6
+   177e5:	0f 11 33             	movups %xmm6,(%rbx)
+   177e8:	f3 41 0f 6f 74 24 0c 	movdqu 0xc(%r12),%xmm6
+   177ef:	0f 11 73 0c          	movups %xmm6,0xc(%rbx)
+   177f3:	e9 cd fa ff ff       	jmp    172c5 <crucible::Simulation::TryCopyState(crucible::StateCopyDestination)+0x2c5>
+   177f8:	e8 f3 e0 fe ff       	call   58f0 <__stack_chk_fail@plt>
+   177fd:	90                   	nop
+   177fe:	66 90                	xchg   %ax,%ax
+
+0000000000017800 <crucible::Simulation::tick()>:
+   17800:	f3 0f 1e fa          	endbr64
+   17804:	41 57                	push   %r15
+   17806:	41 56                	push   %r14
+   17808:	41 55                	push   %r13
+   1780a:	41 54                	push   %r12
+   1780c:	55                   	push   %rbp
+   1780d:	53                   	push   %rbx
+   1780e:	48 81 ec a8 00 00 00 	sub    $0xa8,%rsp
+   17815:	48 8b 9f 70 15 00 00 	mov    0x1570(%rdi),%rbx
+   1781c:	48 89 7c 24 10       	mov    %rdi,0x10(%rsp)
+   17821:	64 48 8b 04 25 28 00 	mov    %fs:0x28,%rax
+   17828:	00 00 
+   1782a:	48 89 84 24 98 00 00 	mov    %rax,0x98(%rsp)
+   17831:	00 
+   17832:	31 c0                	xor    %eax,%eax
+   17834:	48 85 db             	test   %rbx,%rbx
+   17837:	0f 84 53 0b 00 00    	je     18390 <crucible::Simulation::tick()+0xb90>
+   1783d:	80 bb 90 03 00 00 00 	cmpb   $0x0,0x390(%rbx)
+   17844:	0f 85 d6 02 00 00    	jne    17b20 <crucible::Simulation::tick()+0x320>
+   1784a:	48 83 bf 78 15 00 00 	cmpq   $0xffffffffffffffff,0x1578(%rdi)
+   17851:	ff 
+   17852:	0f 84 00 12 00 00    	je     18a58 <crucible::Simulation::tick()+0x1258>
+   17858:	48 c7 44 24 18 00 00 	movq   $0x0,0x18(%rsp)
+   1785f:	00 00 
+   17861:	0f b6 83 80 00 00 00 	movzbl 0x80(%rbx),%eax
+   17868:	88 44 24 2f          	mov    %al,0x2f(%rsp)
+   1786c:	84 c0                	test   %al,%al
+   1786e:	0f 85 1c 0c 00 00    	jne    18490 <crucible::Simulation::tick()+0xc90>
+   17874:	44 0f b6 b3 30 06 00 	movzbl 0x630(%rbx),%r14d
+   1787b:	00 
+   1787c:	48 8b 93 68 1c 00 00 	mov    0x1c68(%rbx),%rdx
+   17883:	4c 8b 9b 70 1c 00 00 	mov    0x1c70(%rbx),%r11
+   1788a:	45 84 f6             	test   %r14b,%r14b
+   1788d:	0f 84 ad 02 00 00    	je     17b40 <crucible::Simulation::tick()+0x340>
+   17893:	4c 8b ab 88 02 00 00 	mov    0x288(%rbx),%r13
+   1789a:	4c 8b a3 a0 02 00 00 	mov    0x2a0(%rbx),%r12
+   178a1:	4c 39 da             	cmp    %r11,%rdx
+   178a4:	0f 84 a2 11 00 00    	je     18a4c <crucible::Simulation::tick()+0x124c>
+   178aa:	31 ed                	xor    %ebp,%ebp
+   178ac:	eb 0f                	jmp    178bd <crucible::Simulation::tick()+0xbd>
+   178ae:	66 90                	xchg   %ax,%ax
+   178b0:	48 83 c2 08          	add    $0x8,%rdx
+   178b4:	49 39 d3             	cmp    %rdx,%r11
+   178b7:	0f 84 c6 00 00 00    	je     17983 <crucible::Simulation::tick()+0x183>
+   178bd:	48 8b 02             	mov    (%rdx),%rax
+   178c0:	4c 8b 90 70 02 00 00 	mov    0x270(%rax),%r10
+   178c7:	48 8b 88 68 02 00 00 	mov    0x268(%rax),%rcx
+   178ce:	4c 89 d6             	mov    %r10,%rsi
+   178d1:	48 29 ce             	sub    %rcx,%rsi
+   178d4:	48 c1 fe 02          	sar    $0x2,%rsi
+   178d8:	74 d6                	je     178b0 <crucible::Simulation::tick()+0xb0>
+   178da:	48 8b 78 68          	mov    0x68(%rax),%rdi
+   178de:	4c 8b 40 70          	mov    0x70(%rax),%r8
+   178e2:	4c 8b 48 78          	mov    0x78(%rax),%r9
+   178e6:	49 39 ca             	cmp    %rcx,%r10
+   178e9:	74 c5                	je     178b0 <crucible::Simulation::tick()+0xb0>
+   178eb:	4c 8b 93 a0 03 00 00 	mov    0x3a0(%rbx),%r10
+   178f2:	4c 39 93 a8 03 00 00 	cmp    %r10,0x3a8(%rbx)
+   178f9:	0f 84 39 06 00 00    	je     17f38 <crucible::Simulation::tick()+0x738>
+   178ff:	31 c0                	xor    %eax,%eax
+   17901:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+   17908:	49 8b 0c c1          	mov    (%r9,%rax,8),%rcx
+   1790c:	45 8b 74 8a fc       	mov    -0x4(%r10,%rcx,4),%r14d
+   17911:	45 85 f6             	test   %r14d,%r14d
+   17914:	75 57                	jne    1796d <crucible::Simulation::tick()+0x16d>
+   17916:	f3 41 0f 10 44 c0 04 	movss  0x4(%r8,%rax,8),%xmm0
+   1791d:	f3 41 0f 10 0c c0    	movss  (%r8,%rax,8),%xmm1
+   17923:	48 89 4c 24 70       	mov    %rcx,0x70(%rsp)
+   17928:	48 89 e9             	mov    %rbp,%rcx
+   1792b:	f3 0f 10 54 c7 04    	movss  0x4(%rdi,%rax,8),%xmm2
+   17931:	48 c1 e1 05          	shl    $0x5,%rcx
+   17935:	48 83 c5 01          	add    $0x1,%rbp
+   17939:	c7 84 24 88 00 00 00 	movl   $0x0,0x88(%rsp)
+   17940:	00 00 00 00 
+   17944:	0f 14 c8             	unpcklps %xmm0,%xmm1
+   17947:	f3 0f 10 04 c7       	movss  (%rdi,%rax,8),%xmm0
+   1794c:	4c 01 e9             	add    %r13,%rcx
+   1794f:	0f 14 c2             	unpcklps %xmm2,%xmm0
+   17952:	0f 16 c1             	movlhps %xmm1,%xmm0
+   17955:	0f 11 44 24 78       	movups %xmm0,0x78(%rsp)
+   1795a:	66 0f 6f 7c 24 70    	movdqa 0x70(%rsp),%xmm7
+   17960:	f3 0f 6f 64 24 7c    	movdqu 0x7c(%rsp),%xmm4
+   17966:	0f 11 39             	movups %xmm7,(%rcx)
+   17969:	0f 11 61 0c          	movups %xmm4,0xc(%rcx)
+   1796d:	48 83 c0 01          	add    $0x1,%rax
+   17971:	48 39 c6             	cmp    %rax,%rsi
+   17974:	75 92                	jne    17908 <crucible::Simulation::tick()+0x108>
+   17976:	48 83 c2 08          	add    $0x8,%rdx
+   1797a:	49 39 d3             	cmp    %rdx,%r11
+   1797d:	0f 85 3a ff ff ff    	jne    178bd <crucible::Simulation::tick()+0xbd>
+   17983:	49 89 ea             	mov    %rbp,%r10
+   17986:	49 c1 e2 05          	shl    $0x5,%r10
+   1798a:	4f 8d 4c 15 00       	lea    0x0(%r13,%r10,1),%r9
+   1798f:	4d 39 e9             	cmp    %r13,%r9
+   17992:	0f 84 b8 06 00 00    	je     18050 <crucible::Simulation::tick()+0x850>
+   17998:	4d 8d 7d 20          	lea    0x20(%r13),%r15
+   1799c:	4d 39 cf             	cmp    %r9,%r15
+   1799f:	0f 84 ab 06 00 00    	je     18050 <crucible::Simulation::tick()+0x850>
+   179a5:	49 8b 55 00          	mov    0x0(%r13),%rdx
+   179a9:	4c 89 f8             	mov    %r15,%rax
+   179ac:	eb 0f                	jmp    179bd <crucible::Simulation::tick()+0x1bd>
+   179ae:	66 90                	xchg   %ax,%ax
+   179b0:	48 83 c0 20          	add    $0x20,%rax
+   179b4:	49 39 c1             	cmp    %rax,%r9
+   179b7:	0f 84 93 06 00 00    	je     18050 <crucible::Simulation::tick()+0x850>
+   179bd:	48 89 d1             	mov    %rdx,%rcx
+   179c0:	48 8b 10             	mov    (%rax),%rdx
+   179c3:	48 39 ca             	cmp    %rcx,%rdx
+   179c6:	73 e8                	jae    179b0 <crucible::Simulation::tick()+0x1b0>
+   179c8:	4c 89 d0             	mov    %r10,%rax
+   179cb:	48 8d 4c 24 67       	lea    0x67(%rsp),%rcx
+   179d0:	4c 8d 44 24 68       	lea    0x68(%rsp),%r8
+   179d5:	48 c7 44 24 68 00 00 	movq   $0x0,0x68(%rsp)
+   179dc:	00 00 
+   179de:	48 c1 f8 05          	sar    $0x5,%rax
+   179e2:	0f 84 3c 0f 00 00    	je     18924 <crucible::Simulation::tick()+0x1124>
+   179e8:	48 0f bd d0          	bsr    %rax,%rdx
+   179ec:	4c 89 ce             	mov    %r9,%rsi
+   179ef:	4c 89 ef             	mov    %r13,%rdi
+   179f2:	4c 89 54 24 20       	mov    %r10,0x20(%rsp)
+   179f7:	48 63 d2             	movslq %edx,%rdx
+   179fa:	4c 89 4c 24 08       	mov    %r9,0x8(%rsp)
+   179ff:	4d 8d b5 00 02 00 00 	lea    0x200(%r13),%r14
+   17a06:	48 01 d2             	add    %rdx,%rdx
+   17a09:	e8 12 84 00 00       	call   1fe20 <void std::__introsort_loop<__gnu_cxx::__normal_iterator<crucible::SampleState*, std::span<crucible::SampleState, 18446744073709551615ul> >, long, __gnu_cxx::__ops::_Iter_comp_iter<std::ranges::__detail::__make_comp_proj<std::ranges::less, crucible::SampleId crucible::SampleState::*>(std::ranges::less&, crucible::SampleId crucible::SampleState::*&)::{lambda(auto:1&&, auto:2&&)#1}> >(__gnu_cxx::__normal_iterator<crucible::SampleState*, std::span<crucible::SampleState, 18446744073709551615ul> >, __gnu_cxx::__normal_iterator<crucible::SampleState*, std::span<crucible::SampleState, 18446744073709551615ul> >, long, __gnu_cxx::__ops::_Iter_comp_iter<std::ranges::__detail::__make_comp_proj<std::ranges::less, crucible::SampleId crucible::SampleState::*>(std::ranges::less&, crucible::SampleId crucible::SampleState::*&)::{lambda(auto:1&&, auto:2&&)#1}>)>
+   17a0e:	4c 8b 54 24 20       	mov    0x20(%rsp),%r10
+   17a13:	31 d2                	xor    %edx,%edx
+   17a15:	4c 8b 4c 24 08       	mov    0x8(%rsp),%r9
+   17a1a:	49 81 fa 00 02 00 00 	cmp    $0x200,%r10
+   17a21:	0f 8e 19 0f 00 00    	jle    18940 <crucible::Simulation::tick()+0x1140>
+   17a27:	4c 89 e0             	mov    %r12,%rax
+   17a2a:	4c 89 4c 24 08       	mov    %r9,0x8(%rsp)
+   17a2f:	49 89 ec             	mov    %rbp,%r12
+   17a32:	48 89 dd             	mov    %rbx,%rbp
+   17a35:	4c 89 f3             	mov    %r14,%rbx
+   17a38:	4d 89 ee             	mov    %r13,%r14
+   17a3b:	49 89 c5             	mov    %rax,%r13
+   17a3e:	eb 62                	jmp    17aa2 <crucible::Simulation::tick()+0x2a2>
+   17a40:	f3 41 0f 6f 3f       	movdqu (%r15),%xmm7
+   17a45:	f3 41 0f 6f 6f 10    	movdqu 0x10(%r15),%xmm5
+   17a4b:	4c 89 fa             	mov    %r15,%rdx
+   17a4e:	4c 29 f2             	sub    %r14,%rdx
+   17a51:	0f 29 7c 24 70       	movaps %xmm7,0x70(%rsp)
+   17a56:	0f 29 ac 24 80 00 00 	movaps %xmm5,0x80(%rsp)
+   17a5d:	00 
+   17a5e:	48 83 fa 20          	cmp    $0x20,%rdx
+   17a62:	0f 8e a5 0f 00 00    	jle    18a0d <crucible::Simulation::tick()+0x120d>
+   17a68:	bf 20 00 00 00       	mov    $0x20,%edi
+   17a6d:	4c 89 f6             	mov    %r14,%rsi
+   17a70:	48 29 d7             	sub    %rdx,%rdi
+   17a73:	4c 01 ff             	add    %r15,%rdi
+   17a76:	e8 a5 df fe ff       	call   5a20 <memmove@plt>
+   17a7b:	66 0f 6f 7c 24 70    	movdqa 0x70(%rsp),%xmm7
+   17a81:	f3 0f 6f 6c 24 7c    	movdqu 0x7c(%rsp),%xmm5
+   17a87:	41 0f 11 3e          	movups %xmm7,(%r14)
+   17a8b:	41 0f 11 6e 0c       	movups %xmm5,0xc(%r14)
+   17a90:	49 83 c7 20          	add    $0x20,%r15
+   17a94:	4c 39 fb             	cmp    %r15,%rbx
+   17a97:	0f 84 13 05 00 00    	je     17fb0 <crucible::Simulation::tick()+0x7b0>
+   17a9d:	48 8b 54 24 68       	mov    0x68(%rsp),%rdx
+   17aa2:	49 8b 04 16          	mov    (%r14,%rdx,1),%rax
+   17aa6:	4c 89 f9             	mov    %r15,%rcx
+   17aa9:	49 39 04 17          	cmp    %rax,(%r15,%rdx,1)
+   17aad:	72 91                	jb     17a40 <crucible::Simulation::tick()+0x240>
+   17aaf:	f3 41 0f 6f 27       	movdqu (%r15),%xmm4
+   17ab4:	f3 41 0f 6f 77 10    	movdqu 0x10(%r15),%xmm6
+   17aba:	49 8d 47 e0          	lea    -0x20(%r15),%rax
+   17abe:	0f 29 64 24 70       	movaps %xmm4,0x70(%rsp)
+   17ac3:	0f 29 b4 24 80 00 00 	movaps %xmm6,0x80(%rsp)
+   17aca:	00 
+   17acb:	48 8b 74 14 70       	mov    0x70(%rsp,%rdx,1),%rsi
+   17ad0:	49 3b 74 17 e0       	cmp    -0x20(%r15,%rdx,1),%rsi
+   17ad5:	73 27                	jae    17afe <crucible::Simulation::tick()+0x2fe>
+   17ad7:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+   17ade:	00 00 
+   17ae0:	f3 0f 6f 20          	movdqu (%rax),%xmm4
+   17ae4:	48 89 c1             	mov    %rax,%rcx
+   17ae7:	48 83 e8 20          	sub    $0x20,%rax
+   17aeb:	0f 11 60 40          	movups %xmm4,0x40(%rax)
+   17aef:	f3 0f 6f 60 2c       	movdqu 0x2c(%rax),%xmm4
+   17af4:	0f 11 60 4c          	movups %xmm4,0x4c(%rax)
+   17af8:	48 3b 34 10          	cmp    (%rax,%rdx,1),%rsi
+   17afc:	72 e2                	jb     17ae0 <crucible::Simulation::tick()+0x2e0>
+   17afe:	66 0f 6f 7c 24 70    	movdqa 0x70(%rsp),%xmm7
+   17b04:	f3 0f 6f 6c 24 7c    	movdqu 0x7c(%rsp),%xmm5
+   17b0a:	0f 11 39             	movups %xmm7,(%rcx)
+   17b0d:	0f 11 69 0c          	movups %xmm5,0xc(%rcx)
+   17b11:	e9 7a ff ff ff       	jmp    17a90 <crucible::Simulation::tick()+0x290>
+   17b16:	66 2e 0f 1f 84 00 00 	cs nopw 0x0(%rax,%rax,1)
+   17b1d:	00 00 00 
+   17b20:	48 83 bf 78 15 00 00 	cmpq   $0xffffffffffffffff,0x1578(%rdi)
+   17b27:	ff 
+   17b28:	c6 83 90 03 00 00 00 	movb   $0x0,0x390(%rbx)
+   17b2f:	0f 85 23 fd ff ff    	jne    17858 <crucible::Simulation::tick()+0x58>
+   17b35:	e9 46 f9 fe ff       	jmp    7480 <crucible::Simulation::tick() [clone .cold]+0x280>
+   17b3a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+   17b40:	4c 39 da             	cmp    %r11,%rdx
+   17b43:	0f 84 58 02 00 00    	je     17da1 <crucible::Simulation::tick()+0x5a1>
+   17b49:	44 88 74 24 30       	mov    %r14b,0x30(%rsp)
+   17b4e:	49 89 de             	mov    %rbx,%r14
+   17b51:	48 89 54 24 08       	mov    %rdx,0x8(%rsp)
+   17b56:	4c 89 5c 24 20       	mov    %r11,0x20(%rsp)
+   17b5b:	eb 19                	jmp    17b76 <crucible::Simulation::tick()+0x376>
+   17b5d:	0f 1f 00             	nopl   (%rax)
+   17b60:	48 83 44 24 08 08    	addq   $0x8,0x8(%rsp)
+   17b66:	48 8b 44 24 08       	mov    0x8(%rsp),%rax
+   17b6b:	48 39 44 24 20       	cmp    %rax,0x20(%rsp)
+   17b70:	0f 84 22 02 00 00    	je     17d98 <crucible::Simulation::tick()+0x598>
+   17b76:	48 8b 44 24 08       	mov    0x8(%rsp),%rax
+   17b7b:	48 8b 00             	mov    (%rax),%rax
+   17b7e:	4c 8b 80 70 02 00 00 	mov    0x270(%rax),%r8
+   17b85:	48 8b b8 68 02 00 00 	mov    0x268(%rax),%rdi
+   17b8c:	4d 89 c4             	mov    %r8,%r12
+   17b8f:	49 29 fc             	sub    %rdi,%r12
+   17b92:	49 c1 fc 02          	sar    $0x2,%r12
+   17b96:	74 c8                	je     17b60 <crucible::Simulation::tick()+0x360>
+   17b98:	48 8b 50 68          	mov    0x68(%rax),%rdx
+   17b9c:	4c 8b 68 70          	mov    0x70(%rax),%r13
+   17ba0:	4c 8b 78 78          	mov    0x78(%rax),%r15
+   17ba4:	49 39 f8             	cmp    %rdi,%r8
+   17ba7:	74 b7                	je     17b60 <crucible::Simulation::tick()+0x360>
+   17ba9:	48 89 d3             	mov    %rdx,%rbx
+   17bac:	31 ed                	xor    %ebp,%ebp
+   17bae:	e9 11 01 00 00       	jmp    17cc4 <crucible::Simulation::tick()+0x4c4>
+   17bb3:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+   17bb8:	66 0f 2f 05 00 9d 02 	comisd 0x29d00(%rip),%xmm0        # 418c0 <typeinfo name for std::bad_optional_access+0x70>
+   17bbf:	00 
+   17bc0:	0f 86 b2 01 00 00    	jbe    17d78 <crucible::Simulation::tick()+0x578>
+   17bc6:	f2 0f 10 1d d2 9c 02 	movsd  0x29cd2(%rip),%xmm3        # 418a0 <typeinfo name for std::bad_optional_access+0x50>
+   17bcd:	00 
+   17bce:	f3 0f 10 05 4e 84 02 	movss  0x2844e(%rip),%xmm0        # 40024 <_IO_stdin_used+0x24>
+   17bd5:	00 
+   17bd6:	66 0f 28 fd          	movapd %xmm5,%xmm7
+   17bda:	48 c1 e8 20          	shr    $0x20,%rax
+   17bde:	f3 41 0f 11 44 ed 00 	movss  %xmm0,0x0(%r13,%rbp,8)
+   17be5:	66 0f ef c0          	pxor   %xmm0,%xmm0
+   17be9:	66 0f ef c9          	pxor   %xmm1,%xmm1
+   17bed:	66 0f 6e f0          	movd   %eax,%xmm6
+   17bf1:	f3 41 0f 5a 4c ed 04 	cvtss2sd 0x4(%r13,%rbp,8),%xmm1
+   17bf8:	f3 0f 5a c6          	cvtss2sd %xmm6,%xmm0
+   17bfc:	f2 0f 59 05 ac 9c 02 	mulsd  0x29cac(%rip),%xmm0        # 418b0 <typeinfo name for std::bad_optional_access+0x60>
+   17c03:	00 
+   17c04:	f2 0f 58 c1          	addsd  %xmm1,%xmm0
+   17c08:	66 0f 2f f8          	comisd %xmm0,%xmm7
+   17c0c:	0f 87 2e 01 00 00    	ja     17d40 <crucible::Simulation::tick()+0x540>
+   17c12:	66 0f 2f 05 a6 9c 02 	comisd 0x29ca6(%rip),%xmm0        # 418c0 <typeinfo name for std::bad_optional_access+0x70>
+   17c19:	00 
+   17c1a:	0f 86 38 01 00 00    	jbe    17d58 <crucible::Simulation::tick()+0x558>
+   17c20:	f2 0f 10 15 78 9c 02 	movsd  0x29c78(%rip),%xmm2        # 418a0 <typeinfo name for std::bad_optional_access+0x50>
+   17c27:	00 
+   17c28:	f3 0f 10 05 f4 83 02 	movss  0x283f4(%rip),%xmm0        # 40024 <_IO_stdin_used+0x24>
+   17c2f:	00 
+   17c30:	f3 41 0f 11 44 ed 04 	movss  %xmm0,0x4(%r13,%rbp,8)
+   17c37:	66 0f ef c0          	pxor   %xmm0,%xmm0
+   17c3b:	66 0f ef e4          	pxor   %xmm4,%xmm4
+   17c3f:	f3 41 0f 10 8e a0 00 	movss  0xa0(%r14),%xmm1
+   17c46:	00 00 
+   17c48:	f3 0f 5a 03          	cvtss2sd (%rbx),%xmm0
+   17c4c:	f2 0f 58 c3          	addsd  %xmm3,%xmm0
+   17c50:	66 0f ef db          	pxor   %xmm3,%xmm3
+   17c54:	f3 0f 5a e1          	cvtss2sd %xmm1,%xmm4
+   17c58:	66 0f 2f d8          	comisd %xmm0,%xmm3
+   17c5c:	76 04                	jbe    17c62 <crucible::Simulation::tick()+0x462>
+   17c5e:	66 0f 28 c3          	movapd %xmm3,%xmm0
+   17c62:	66 0f 2f c4          	comisd %xmm4,%xmm0
+   17c66:	77 08                	ja     17c70 <crucible::Simulation::tick()+0x470>
+   17c68:	66 0f ef c9          	pxor   %xmm1,%xmm1
+   17c6c:	f2 0f 5a c8          	cvtsd2ss %xmm0,%xmm1
+   17c70:	66 0f ef c0          	pxor   %xmm0,%xmm0
+   17c74:	f3 0f 11 0b          	movss  %xmm1,(%rbx)
+   17c78:	66 0f ef db          	pxor   %xmm3,%xmm3
+   17c7c:	f3 41 0f 10 8e a4 00 	movss  0xa4(%r14),%xmm1
+   17c83:	00 00 
+   17c85:	f3 0f 5a 43 04       	cvtss2sd 0x4(%rbx),%xmm0
+   17c8a:	f2 0f 58 c2          	addsd  %xmm2,%xmm0
+   17c8e:	66 0f ef d2          	pxor   %xmm2,%xmm2
+   17c92:	f3 0f 5a d9          	cvtss2sd %xmm1,%xmm3
+   17c96:	66 0f 2f d0          	comisd %xmm0,%xmm2
+   17c9a:	76 04                	jbe    17ca0 <crucible::Simulation::tick()+0x4a0>
+   17c9c:	66 0f 28 c2          	movapd %xmm2,%xmm0
+   17ca0:	66 0f 2f c3          	comisd %xmm3,%xmm0
+   17ca4:	77 08                	ja     17cae <crucible::Simulation::tick()+0x4ae>
+   17ca6:	66 0f ef c9          	pxor   %xmm1,%xmm1
+   17caa:	f2 0f 5a c8          	cvtsd2ss %xmm0,%xmm1
+   17cae:	f3 0f 11 4b 04       	movss  %xmm1,0x4(%rbx)
+   17cb3:	48 83 c5 01          	add    $0x1,%rbp
+   17cb7:	48 83 c3 08          	add    $0x8,%rbx
+   17cbb:	49 39 ec             	cmp    %rbp,%r12
+   17cbe:	0f 84 9c fe ff ff    	je     17b60 <crucible::Simulation::tick()+0x360>
+   17cc4:	49 8b 3c ef          	mov    (%r15,%rbp,8),%rdi
+   17cc8:	49 8b 86 a0 03 00 00 	mov    0x3a0(%r14),%rax
+   17ccf:	49 39 86 a8 03 00 00 	cmp    %rax,0x3a8(%r14)
+   17cd6:	74 08                	je     17ce0 <crucible::Simulation::tick()+0x4e0>
+   17cd8:	8b 44 b8 fc          	mov    -0x4(%rax,%rdi,4),%eax
+   17cdc:	85 c0                	test   %eax,%eax
+   17cde:	75 d3                	jne    17cb3 <crucible::Simulation::tick()+0x4b3>
+   17ce0:	f3 0f 7e 03          	movq   (%rbx),%xmm0
+   17ce4:	49 8d be f8 01 00 00 	lea    0x1f8(%r14),%rdi
+   17ceb:	e8 e0 fa 00 00       	call   277d0 <crucible::fields::FieldSet::Sample(crucible::Position) const>
+   17cf0:	66 0f ef c9          	pxor   %xmm1,%xmm1
+   17cf4:	f2 0f 10 2d bc 9b 02 	movsd  0x29bbc(%rip),%xmm5        # 418b8 <typeinfo name for std::bad_optional_access+0x68>
+   17cfb:	00 
+   17cfc:	66 48 0f 7e c0       	movq   %xmm0,%rax
+   17d01:	f3 0f 5a c0          	cvtss2sd %xmm0,%xmm0
+   17d05:	f3 41 0f 5a 4c ed 00 	cvtss2sd 0x0(%r13,%rbp,8),%xmm1
+   17d0c:	f2 0f 59 05 9c 9b 02 	mulsd  0x29b9c(%rip),%xmm0        # 418b0 <typeinfo name for std::bad_optional_access+0x60>
+   17d13:	00 
+   17d14:	f2 0f 58 c1          	addsd  %xmm1,%xmm0
+   17d18:	66 0f 2f e8          	comisd %xmm0,%xmm5
+   17d1c:	0f 86 96 fe ff ff    	jbe    17bb8 <crucible::Simulation::tick()+0x3b8>
+   17d22:	f2 0f 10 1d 7e 9b 02 	movsd  0x29b7e(%rip),%xmm3        # 418a8 <typeinfo name for std::bad_optional_access+0x58>
+   17d29:	00 
+   17d2a:	f3 0f 10 05 f6 82 02 	movss  0x282f6(%rip),%xmm0        # 40028 <_IO_stdin_used+0x28>
+   17d31:	00 
+   17d32:	66 0f 28 fd          	movapd %xmm5,%xmm7
+   17d36:	e9 9f fe ff ff       	jmp    17bda <crucible::Simulation::tick()+0x3da>
+   17d3b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+   17d40:	f2 0f 10 15 60 9b 02 	movsd  0x29b60(%rip),%xmm2        # 418a8 <typeinfo name for std::bad_optional_access+0x58>
+   17d47:	00 
+   17d48:	f3 0f 10 05 d8 82 02 	movss  0x282d8(%rip),%xmm0        # 40028 <_IO_stdin_used+0x28>
+   17d4f:	00 
+   17d50:	e9 db fe ff ff       	jmp    17c30 <crucible::Simulation::tick()+0x430>
+   17d55:	0f 1f 00             	nopl   (%rax)
+   17d58:	66 0f ef d2          	pxor   %xmm2,%xmm2
+   17d5c:	f2 0f 5a c0          	cvtsd2ss %xmm0,%xmm0
+   17d60:	f3 0f 5a d0          	cvtss2sd %xmm0,%xmm2
+   17d64:	f2 0f 59 15 44 9b 02 	mulsd  0x29b44(%rip),%xmm2        # 418b0 <typeinfo name for std::bad_optional_access+0x60>
+   17d6b:	00 
+   17d6c:	e9 bf fe ff ff       	jmp    17c30 <crucible::Simulation::tick()+0x430>
+   17d71:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+   17d78:	66 0f ef db          	pxor   %xmm3,%xmm3
+   17d7c:	f2 0f 5a c0          	cvtsd2ss %xmm0,%xmm0
+   17d80:	66 0f 28 fd          	movapd %xmm5,%xmm7
+   17d84:	f3 0f 5a d8          	cvtss2sd %xmm0,%xmm3
+   17d88:	f2 0f 59 1d 20 9b 02 	mulsd  0x29b20(%rip),%xmm3        # 418b0 <typeinfo name for std::bad_optional_access+0x60>
+   17d8f:	00 
+   17d90:	e9 45 fe ff ff       	jmp    17bda <crucible::Simulation::tick()+0x3da>
+   17d95:	0f 1f 00             	nopl   (%rax)
+   17d98:	4c 89 f3             	mov    %r14,%rbx
+   17d9b:	44 0f b6 74 24 30    	movzbl 0x30(%rsp),%r14d
+   17da1:	80 7c 24 2f 00       	cmpb   $0x0,0x2f(%rsp)
+   17da6:	0f 85 84 07 00 00    	jne    18530 <crucible::Simulation::tick()+0xd30>
+   17dac:	80 bb 20 07 00 00 00 	cmpb   $0x0,0x720(%rbx)
+   17db3:	0f 85 00 08 00 00    	jne    185b9 <crucible::Simulation::tick()+0xdb9>
+   17db9:	48 8d bb 10 02 00 00 	lea    0x210(%rbx),%rdi
+   17dc0:	45 31 e4             	xor    %r12d,%r12d
+   17dc3:	45 31 ed             	xor    %r13d,%r13d
+   17dc6:	31 ed                	xor    %ebp,%ebp
+   17dc8:	e8 f3 1d 01 00       	call   29bc0 <crucible::blight::Grid::Step()>
+   17dcd:	4c 8b 7c 24 10       	mov    0x10(%rsp),%r15
+   17dd2:	4c 89 ff             	mov    %r15,%rdi
+   17dd5:	e8 16 e1 ff ff       	call   15ef0 <crucible::Simulation::RebuildSpatial()>
+   17dda:	49 83 87 78 15 00 00 	addq   $0x1,0x1578(%r15)
+   17de1:	01 
+   17de2:	45 31 ff             	xor    %r15d,%r15d
+   17de5:	48 c7 44 24 08 00 00 	movq   $0x0,0x8(%rsp)
+   17dec:	00 00 
+   17dee:	48 c7 44 24 48 00 00 	movq   $0x0,0x48(%rsp)
+   17df5:	00 00 
+   17df7:	48 c7 44 24 40 00 00 	movq   $0x0,0x40(%rsp)
+   17dfe:	00 00 
+   17e00:	48 c7 44 24 20 00 00 	movq   $0x0,0x20(%rsp)
+   17e07:	00 00 
+   17e09:	48 c7 44 24 30 01 00 	movq   $0x1,0x30(%rsp)
+   17e10:	00 00 
+   17e12:	48 c7 44 24 38 01 00 	movq   $0x1,0x38(%rsp)
+   17e19:	00 00 
+   17e1b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+   17e20:	80 bb f0 05 00 00 00 	cmpb   $0x0,0x5f0(%rbx)
+   17e27:	74 27                	je     17e50 <crucible::Simulation::tick()+0x650>
+   17e29:	80 bb d0 03 00 00 00 	cmpb   $0x0,0x3d0(%rbx)
+   17e30:	74 1e                	je     17e50 <crucible::Simulation::tick()+0x650>
+   17e32:	48 8b 83 e0 03 00 00 	mov    0x3e0(%rbx),%rax
+   17e39:	48 83 f8 ff          	cmp    $0xffffffffffffffff,%rax
+   17e3d:	74 11                	je     17e50 <crucible::Simulation::tick()+0x650>
+   17e3f:	48 83 c0 01          	add    $0x1,%rax
+   17e43:	48 89 83 e0 03 00 00 	mov    %rax,0x3e0(%rbx)
+   17e4a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+   17e50:	80 7c 24 2f 00       	cmpb   $0x0,0x2f(%rsp)
+   17e55:	0f 84 b0 00 00 00    	je     17f0b <crucible::Simulation::tick()+0x70b>
+   17e5b:	e8 f0 da fe ff       	call   5950 <std::chrono::_V2::steady_clock::now()@plt>
+   17e60:	48 8b 74 24 18       	mov    0x18(%rsp),%rsi
+   17e65:	48 8b 93 f0 01 00 00 	mov    0x1f0(%rbx),%rdx
+   17e6c:	48 29 f0             	sub    %rsi,%rax
+   17e6f:	48 8b 74 24 10       	mov    0x10(%rsp),%rsi
+   17e74:	80 bb 90 03 00 00 00 	cmpb   $0x0,0x390(%rbx)
+   17e7b:	48 8b 8e 78 15 00 00 	mov    0x1578(%rsi),%rcx
+   17e82:	48 8b 74 24 20       	mov    0x20(%rsp),%rsi
+   17e87:	48 89 83 50 03 00 00 	mov    %rax,0x350(%rbx)
+   17e8e:	48 8b 44 24 40       	mov    0x40(%rsp),%rax
+   17e93:	4c 89 ab 40 03 00 00 	mov    %r13,0x340(%rbx)
+   17e9a:	48 89 b3 28 03 00 00 	mov    %rsi,0x328(%rbx)
+   17ea1:	48 8b 74 24 48       	mov    0x48(%rsp),%rsi
+   17ea6:	48 89 83 70 03 00 00 	mov    %rax,0x370(%rbx)
+   17ead:	48 8b 44 24 38       	mov    0x38(%rsp),%rax
+   17eb2:	48 89 b3 30 03 00 00 	mov    %rsi,0x330(%rbx)
+   17eb9:	48 8b 74 24 08       	mov    0x8(%rsp),%rsi
+   17ebe:	48 89 83 78 03 00 00 	mov    %rax,0x378(%rbx)
+   17ec5:	48 8b 44 24 30       	mov    0x30(%rsp),%rax
+   17eca:	48 89 8b 20 03 00 00 	mov    %rcx,0x320(%rbx)
+   17ed1:	48 89 b3 38 03 00 00 	mov    %rsi,0x338(%rbx)
+   17ed8:	4c 89 a3 48 03 00 00 	mov    %r12,0x348(%rbx)
+   17edf:	48 89 ab 58 03 00 00 	mov    %rbp,0x358(%rbx)
+   17ee6:	48 89 ab 60 03 00 00 	mov    %rbp,0x360(%rbx)
+   17eed:	48 89 93 68 03 00 00 	mov    %rdx,0x368(%rbx)
+   17ef4:	48 89 83 80 03 00 00 	mov    %rax,0x380(%rbx)
+   17efb:	4c 89 bb 88 03 00 00 	mov    %r15,0x388(%rbx)
+   17f02:	75 07                	jne    17f0b <crucible::Simulation::tick()+0x70b>
+   17f04:	c6 83 90 03 00 00 01 	movb   $0x1,0x390(%rbx)
+   17f0b:	48 8b 84 24 98 00 00 	mov    0x98(%rsp),%rax
+   17f12:	00 
+   17f13:	64 48 2b 04 25 28 00 	sub    %fs:0x28,%rax
+   17f1a:	00 00 
+   17f1c:	0f 85 31 0b 00 00    	jne    18a53 <crucible::Simulation::tick()+0x1253>
+   17f22:	48 81 c4 a8 00 00 00 	add    $0xa8,%rsp
+   17f29:	5b                   	pop    %rbx
+   17f2a:	5d                   	pop    %rbp
+   17f2b:	41 5c                	pop    %r12
+   17f2d:	41 5d                	pop    %r13
+   17f2f:	41 5e                	pop    %r14
+   17f31:	41 5f                	pop    %r15
+   17f33:	c3                   	ret
+   17f34:	0f 1f 40 00          	nopl   0x0(%rax)
+   17f38:	48 89 e9             	mov    %rbp,%rcx
+   17f3b:	4c 8d 34 f5 00 00 00 	lea    0x0(,%rsi,8),%r14
+   17f42:	00 
+   17f43:	31 c0                	xor    %eax,%eax
+   17f45:	48 c1 e1 05          	shl    $0x5,%rcx
+   17f49:	4c 01 e9             	add    %r13,%rcx
+   17f4c:	0f 1f 40 00          	nopl   0x0(%rax)
+   17f50:	f3 41 0f 10 44 00 04 	movss  0x4(%r8,%rax,1),%xmm0
+   17f57:	f3 41 0f 10 0c 00    	movss  (%r8,%rax,1),%xmm1
+   17f5d:	c7 84 24 88 00 00 00 	movl   $0x0,0x88(%rsp)
+   17f64:	00 00 00 00 
+   17f68:	f3 0f 10 54 07 04    	movss  0x4(%rdi,%rax,1),%xmm2
+   17f6e:	4d 8b 14 01          	mov    (%r9,%rax,1),%r10
+   17f72:	0f 14 c8             	unpcklps %xmm0,%xmm1
+   17f75:	f3 0f 10 04 07       	movss  (%rdi,%rax,1),%xmm0
+   17f7a:	4c 89 54 24 70       	mov    %r10,0x70(%rsp)
+   17f7f:	0f 14 c2             	unpcklps %xmm2,%xmm0
+   17f82:	0f 16 c1             	movlhps %xmm1,%xmm0
+   17f85:	0f 11 44 24 78       	movups %xmm0,0x78(%rsp)
+   17f8a:	66 0f 6f 7c 24 70    	movdqa 0x70(%rsp),%xmm7
+   17f90:	f3 0f 6f 6c 24 7c    	movdqu 0x7c(%rsp),%xmm5
+   17f96:	0f 11 3c 81          	movups %xmm7,(%rcx,%rax,4)
+   17f9a:	0f 11 6c 81 0c       	movups %xmm5,0xc(%rcx,%rax,4)
+   17f9f:	48 83 c0 08          	add    $0x8,%rax
+   17fa3:	49 39 c6             	cmp    %rax,%r14
+   17fa6:	75 a8                	jne    17f50 <crucible::Simulation::tick()+0x750>
+   17fa8:	48 01 f5             	add    %rsi,%rbp
+   17fab:	e9 00 f9 ff ff       	jmp    178b0 <crucible::Simulation::tick()+0xb0>
+   17fb0:	4c 8b 4c 24 08       	mov    0x8(%rsp),%r9
+   17fb5:	4c 89 e8             	mov    %r13,%rax
+   17fb8:	4d 89 f5             	mov    %r14,%r13
+   17fbb:	49 89 de             	mov    %rbx,%r14
+   17fbe:	48 89 eb             	mov    %rbp,%rbx
+   17fc1:	4c 89 e5             	mov    %r12,%rbp
+   17fc4:	49 89 c4             	mov    %rax,%r12
+   17fc7:	4d 39 f1             	cmp    %r14,%r9
+   17fca:	0f 84 80 00 00 00    	je     18050 <crucible::Simulation::tick()+0x850>
+   17fd0:	48 8b 74 24 68       	mov    0x68(%rsp),%rsi
+   17fd5:	4c 89 f7             	mov    %r14,%rdi
+   17fd8:	4c 8d 44 34 70       	lea    0x70(%rsp,%rsi,1),%r8
+   17fdd:	0f 1f 00             	nopl   (%rax)
+   17fe0:	f3 0f 6f 3f          	movdqu (%rdi),%xmm7
+   17fe4:	f3 0f 6f 6f 10       	movdqu 0x10(%rdi),%xmm5
+   17fe9:	48 89 fa             	mov    %rdi,%rdx
+   17fec:	48 8d 47 e0          	lea    -0x20(%rdi),%rax
+   17ff0:	0f 29 7c 24 70       	movaps %xmm7,0x70(%rsp)
+   17ff5:	0f 29 ac 24 80 00 00 	movaps %xmm5,0x80(%rsp)
+   17ffc:	00 
+   17ffd:	49 8b 08             	mov    (%r8),%rcx
+   18000:	48 3b 4c 37 e0       	cmp    -0x20(%rdi,%rsi,1),%rcx
+   18005:	73 27                	jae    1802e <crucible::Simulation::tick()+0x82e>
+   18007:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+   1800e:	00 00 
+   18010:	f3 0f 6f 38          	movdqu (%rax),%xmm7
+   18014:	f3 0f 6f 68 0c       	movdqu 0xc(%rax),%xmm5
+   18019:	48 89 c2             	mov    %rax,%rdx
+   1801c:	48 83 e8 20          	sub    $0x20,%rax
+   18020:	0f 11 78 40          	movups %xmm7,0x40(%rax)
+   18024:	0f 11 68 4c          	movups %xmm5,0x4c(%rax)
+   18028:	48 3b 0c 30          	cmp    (%rax,%rsi,1),%rcx
+   1802c:	72 e2                	jb     18010 <crucible::Simulation::tick()+0x810>
+   1802e:	66 0f 6f 7c 24 70    	movdqa 0x70(%rsp),%xmm7
+   18034:	f3 0f 6f 6c 24 7c    	movdqu 0x7c(%rsp),%xmm5
+   1803a:	48 83 c7 20          	add    $0x20,%rdi
+   1803e:	0f 11 3a             	movups %xmm7,(%rdx)
+   18041:	0f 11 6a 0c          	movups %xmm5,0xc(%rdx)
+   18045:	49 39 f9             	cmp    %rdi,%r9
+   18048:	75 96                	jne    17fe0 <crucible::Simulation::tick()+0x7e0>
+   1804a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+   18050:	48 85 ed             	test   %rbp,%rbp
+   18053:	0f 84 f3 09 00 00    	je     18a4c <crucible::Simulation::tick()+0x124c>
+   18059:	48 8b 8b 88 02 00 00 	mov    0x288(%rbx),%rcx
+   18060:	31 c0                	xor    %eax,%eax
+   18062:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+   18068:	48 8b 31             	mov    (%rcx),%rsi
+   1806b:	48 85 f6             	test   %rsi,%rsi
+   1806e:	0f 84 0a f3 fe ff    	je     737e <crucible::Simulation::tick() [clone .cold]+0x17e>
+   18074:	48 8b bb b8 02 00 00 	mov    0x2b8(%rbx),%rdi
+   1807b:	48 8b 93 c0 02 00 00 	mov    0x2c0(%rbx),%rdx
+   18082:	48 29 fa             	sub    %rdi,%rdx
+   18085:	48 c1 fa 03          	sar    $0x3,%rdx
+   18089:	48 39 f2             	cmp    %rsi,%rdx
+   1808c:	0f 82 ec f2 fe ff    	jb     737e <crucible::Simulation::tick() [clone .cold]+0x17e>
+   18092:	48 85 c0             	test   %rax,%rax
+   18095:	74 0a                	je     180a1 <crucible::Simulation::tick()+0x8a1>
+   18097:	48 39 71 e0          	cmp    %rsi,-0x20(%rcx)
+   1809b:	0f 83 dd f2 fe ff    	jae    737e <crucible::Simulation::tick() [clone .cold]+0x17e>
+   180a1:	48 89 44 f7 f8       	mov    %rax,-0x8(%rdi,%rsi,8)
+   180a6:	48 89 c2             	mov    %rax,%rdx
+   180a9:	48 8b 39             	mov    (%rcx),%rdi
+   180ac:	48 83 c0 01          	add    $0x1,%rax
+   180b0:	48 8b 71 08          	mov    0x8(%rcx),%rsi
+   180b4:	48 c1 e2 04          	shl    $0x4,%rdx
+   180b8:	48 03 93 70 02 00 00 	add    0x270(%rbx),%rdx
+   180bf:	48 83 c1 20          	add    $0x20,%rcx
+   180c3:	48 89 3a             	mov    %rdi,(%rdx)
+   180c6:	48 89 72 08          	mov    %rsi,0x8(%rdx)
+   180ca:	48 39 e8             	cmp    %rbp,%rax
+   180cd:	75 99                	jne    18068 <crucible::Simulation::tick()+0x868>
+   180cf:	80 7c 24 2f 00       	cmpb   $0x0,0x2f(%rsp)
+   180d4:	0f 85 c6 03 00 00    	jne    184a0 <crucible::Simulation::tick()+0xca0>
+   180da:	4c 8d bb a8 00 00 00 	lea    0xa8(%rbx),%r15
+   180e1:	48 8b b3 70 02 00 00 	mov    0x270(%rbx),%rsi
+   180e8:	48 89 ea             	mov    %rbp,%rdx
+   180eb:	4c 89 ff             	mov    %r15,%rdi
+   180ee:	e8 dd cb 00 00       	call   24cd0 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)>
+   180f3:	84 c0                	test   %al,%al
+   180f5:	0f 84 62 09 00 00    	je     18a5d <crucible::Simulation::tick()+0x125d>
+   180fb:	48 c7 44 24 20 00 00 	movq   $0x0,0x20(%rsp)
+   18102:	00 00 
+   18104:	48 c7 44 24 48 00 00 	movq   $0x0,0x48(%rsp)
+   1810b:	00 00 
+   1810d:	4c 89 ab 00 03 00 00 	mov    %r13,0x300(%rbx)
+   18114:	48 8b bb 98 1c 00 00 	mov    0x1c98(%rbx),%rdi
+   1811b:	48 89 ee             	mov    %rbp,%rsi
+   1811e:	48 89 ab 08 03 00 00 	mov    %rbp,0x308(%rbx)
+   18125:	4c 89 a3 10 03 00 00 	mov    %r12,0x310(%rbx)
+   1812c:	48 89 ab 18 03 00 00 	mov    %rbp,0x318(%rbx)
+   18133:	e8 b8 22 01 00       	call   2a3f0 <crucible::scheduling::RowPartitions::tryRun(unsigned long)>
+   18138:	83 f8 02             	cmp    $0x2,%eax
+   1813b:	0f 84 6b 07 00 00    	je     188ac <crucible::Simulation::tick()+0x10ac>
+   18141:	85 c0                	test   %eax,%eax
+   18143:	0f 85 b7 f0 fe ff    	jne    7200 <crucible::Simulation::tick() [clone .cold]>
+   18149:	48 8b 83 88 00 00 00 	mov    0x88(%rbx),%rax
+   18150:	4c 8b bb 90 00 00 00 	mov    0x90(%rbx),%r15
+   18157:	48 89 44 24 38       	mov    %rax,0x38(%rsp)
+   1815c:	4c 39 fd             	cmp    %r15,%rbp
+   1815f:	4c 89 f8             	mov    %r15,%rax
+   18162:	48 0f 46 c5          	cmovbe %rbp,%rax
+   18166:	45 31 f6             	xor    %r14d,%r14d
+   18169:	48 89 44 24 30       	mov    %rax,0x30(%rsp)
+   1816e:	48 8b 93 f0 02 00 00 	mov    0x2f0(%rbx),%rdx
+   18175:	48 8b 83 d8 02 00 00 	mov    0x2d8(%rbx),%rax
+   1817c:	48 c7 83 00 03 00 00 	movq   $0x0,0x300(%rbx)
+   18183:	00 00 00 00 
+   18187:	48 2b 93 e8 02 00 00 	sub    0x2e8(%rbx),%rdx
+   1818e:	48 2b 83 d0 02 00 00 	sub    0x2d0(%rbx),%rax
+   18195:	48 c7 83 08 03 00 00 	movq   $0x0,0x308(%rbx)
+   1819c:	00 00 00 00 
+   181a0:	48 c1 fa 03          	sar    $0x3,%rdx
+   181a4:	48 c1 f8 03          	sar    $0x3,%rax
+   181a8:	48 c7 83 10 03 00 00 	movq   $0x0,0x310(%rbx)
+   181af:	00 00 00 00 
+   181b3:	48 c7 83 18 03 00 00 	movq   $0x0,0x318(%rbx)
+   181ba:	00 00 00 00 
+   181be:	48 01 d0             	add    %rdx,%rax
+   181c1:	80 7c 24 2f 00       	cmpb   $0x0,0x2f(%rsp)
+   181c6:	48 89 44 24 40       	mov    %rax,0x40(%rsp)
+   181cb:	48 c7 44 24 08 00 00 	movq   $0x0,0x8(%rsp)
+   181d2:	00 00 
+   181d4:	74 1a                	je     181f0 <crucible::Simulation::tick()+0x9f0>
+   181d6:	e8 75 d7 fe ff       	call   5950 <std::chrono::_V2::steady_clock::now()@plt>
+   181db:	48 8b 4c 24 18       	mov    0x18(%rsp),%rcx
+   181e0:	48 89 c6             	mov    %rax,%rsi
+   181e3:	48 89 44 24 18       	mov    %rax,0x18(%rsp)
+   181e8:	48 29 ce             	sub    %rcx,%rsi
+   181eb:	48 89 74 24 08       	mov    %rsi,0x8(%rsp)
+   181f0:	31 c0                	xor    %eax,%eax
+   181f2:	31 d2                	xor    %edx,%edx
+   181f4:	48 85 ed             	test   %rbp,%rbp
+   181f7:	74 23                	je     1821c <crucible::Simulation::tick()+0xa1c>
+   181f9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+   18200:	49 8b 74 05 00       	mov    0x0(%r13,%rax,1),%rsi
+   18205:	49 39 34 04          	cmp    %rsi,(%r12,%rax,1)
+   18209:	0f 85 18 f1 fe ff    	jne    7327 <crucible::Simulation::tick() [clone .cold]+0x127>
+   1820f:	48 83 c2 01          	add    $0x1,%rdx
+   18213:	48 83 c0 20          	add    $0x20,%rax
+   18217:	48 39 d5             	cmp    %rdx,%rbp
+   1821a:	75 e4                	jne    18200 <crucible::Simulation::tick()+0xa00>
+   1821c:	48 8b 8b 68 1c 00 00 	mov    0x1c68(%rbx),%rcx
+   18223:	4c 8b 9b 70 1c 00 00 	mov    0x1c70(%rbx),%r11
+   1822a:	48 89 ce             	mov    %rcx,%rsi
+   1822d:	4c 39 d9             	cmp    %r11,%rcx
+   18230:	0f 84 b2 00 00 00    	je     182e8 <crucible::Simulation::tick()+0xae8>
+   18236:	44 88 74 24 50       	mov    %r14b,0x50(%rsp)
+   1823b:	eb 10                	jmp    1824d <crucible::Simulation::tick()+0xa4d>
+   1823d:	0f 1f 00             	nopl   (%rax)
+   18240:	48 83 c6 08          	add    $0x8,%rsi
+   18244:	4c 39 de             	cmp    %r11,%rsi
+   18247:	0f 84 95 00 00 00    	je     182e2 <crucible::Simulation::tick()+0xae2>
+   1824d:	48 8b 06             	mov    (%rsi),%rax
+   18250:	4c 8b b0 70 02 00 00 	mov    0x270(%rax),%r14
+   18257:	48 8b b8 68 02 00 00 	mov    0x268(%rax),%rdi
+   1825e:	4c 89 f2             	mov    %r14,%rdx
+   18261:	48 29 fa             	sub    %rdi,%rdx
+   18264:	48 c1 fa 02          	sar    $0x2,%rdx
+   18268:	74 d6                	je     18240 <crucible::Simulation::tick()+0xa40>
+   1826a:	4c 8b 50 68          	mov    0x68(%rax),%r10
+   1826e:	4c 8b 68 70          	mov    0x70(%rax),%r13
+   18272:	4c 8b 48 78          	mov    0x78(%rax),%r9
+   18276:	49 39 fe             	cmp    %rdi,%r14
+   18279:	74 c5                	je     18240 <crucible::Simulation::tick()+0xa40>
+   1827b:	4c 8b b3 a0 03 00 00 	mov    0x3a0(%rbx),%r14
+   18282:	4c 39 b3 a8 03 00 00 	cmp    %r14,0x3a8(%rbx)
+   18289:	0f 84 b9 00 00 00    	je     18348 <crucible::Simulation::tick()+0xb48>
+   1828f:	31 c0                	xor    %eax,%eax
+   18291:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+   18298:	49 8b 3c c1          	mov    (%r9,%rax,8),%rdi
+   1829c:	4c 8d 47 ff          	lea    -0x1(%rdi),%r8
+   182a0:	41 8b 7c be fc       	mov    -0x4(%r14,%rdi,4),%edi
+   182a5:	85 ff                	test   %edi,%edi
+   182a7:	75 23                	jne    182cc <crucible::Simulation::tick()+0xacc>
+   182a9:	48 8b bb b8 02 00 00 	mov    0x2b8(%rbx),%rdi
+   182b0:	4a 8b 3c c7          	mov    (%rdi,%r8,8),%rdi
+   182b4:	48 c1 e7 05          	shl    $0x5,%rdi
+   182b8:	4c 01 e7             	add    %r12,%rdi
+   182bb:	4c 8b 47 08          	mov    0x8(%rdi),%r8
+   182bf:	48 8b 7f 10          	mov    0x10(%rdi),%rdi
+   182c3:	4d 89 04 c2          	mov    %r8,(%r10,%rax,8)
+   182c7:	49 89 7c c5 00       	mov    %rdi,0x0(%r13,%rax,8)
+   182cc:	48 83 c0 01          	add    $0x1,%rax
+   182d0:	48 39 c2             	cmp    %rax,%rdx
+   182d3:	75 c3                	jne    18298 <crucible::Simulation::tick()+0xa98>
+   182d5:	48 83 c6 08          	add    $0x8,%rsi
+   182d9:	4c 39 de             	cmp    %r11,%rsi
+   182dc:	0f 85 6b ff ff ff    	jne    1824d <crucible::Simulation::tick()+0xa4d>
+   182e2:	44 0f b6 74 24 50    	movzbl 0x50(%rsp),%r14d
+   182e8:	80 7c 24 2f 00       	cmpb   $0x0,0x2f(%rsp)
+   182ed:	0f 85 fd 01 00 00    	jne    184f0 <crucible::Simulation::tick()+0xcf0>
+   182f3:	80 bb 20 07 00 00 00 	cmpb   $0x0,0x720(%rbx)
+   182fa:	0f 85 7a 04 00 00    	jne    1877a <crucible::Simulation::tick()+0xf7a>
+   18300:	48 8d bb 10 02 00 00 	lea    0x210(%rbx),%rdi
+   18307:	45 31 e4             	xor    %r12d,%r12d
+   1830a:	45 31 ed             	xor    %r13d,%r13d
+   1830d:	e8 ae 18 01 00       	call   29bc0 <crucible::blight::Grid::Step()>
+   18312:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+   18318:	48 8b 7c 24 10       	mov    0x10(%rsp),%rdi
+   1831d:	e8 ce db ff ff       	call   15ef0 <crucible::Simulation::RebuildSpatial()>
+   18322:	48 8b 44 24 10       	mov    0x10(%rsp),%rax
+   18327:	48 83 80 78 15 00 00 	addq   $0x1,0x1578(%rax)
+   1832e:	01 
+   1832f:	45 84 f6             	test   %r14b,%r14b
+   18332:	0f 84 e8 fa ff ff    	je     17e20 <crucible::Simulation::tick()+0x620>
+   18338:	48 83 83 98 03 00 00 	addq   $0x1,0x398(%rbx)
+   1833f:	01 
+   18340:	e9 db fa ff ff       	jmp    17e20 <crucible::Simulation::tick()+0x620>
+   18345:	0f 1f 00             	nopl   (%rax)
+   18348:	4c 8b b3 b8 02 00 00 	mov    0x2b8(%rbx),%r14
+   1834f:	31 ff                	xor    %edi,%edi
+   18351:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+   18358:	49 8b 04 f9          	mov    (%r9,%rdi,8),%rax
+   1835c:	49 8b 44 c6 f8       	mov    -0x8(%r14,%rax,8),%rax
+   18361:	48 c1 e0 05          	shl    $0x5,%rax
+   18365:	4c 01 e0             	add    %r12,%rax
+   18368:	4c 8b 40 08          	mov    0x8(%rax),%r8
+   1836c:	48 8b 40 10          	mov    0x10(%rax),%rax
+   18370:	4d 89 04 fa          	mov    %r8,(%r10,%rdi,8)
+   18374:	49 89 44 fd 00       	mov    %rax,0x0(%r13,%rdi,8)
+   18379:	48 83 c7 01          	add    $0x1,%rdi
+   1837d:	48 39 fa             	cmp    %rdi,%rdx
+   18380:	75 d6                	jne    18358 <crucible::Simulation::tick()+0xb58>
+   18382:	e9 b9 fe ff ff       	jmp    18240 <crucible::Simulation::tick()+0xa40>
+   18387:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+   1838e:	00 00 
+   18390:	48 8b 87 78 15 00 00 	mov    0x1578(%rdi),%rax
+   18397:	48 83 f8 ff          	cmp    $0xffffffffffffffff,%rax
+   1839b:	0f 84 df f0 fe ff    	je     7480 <crucible::Simulation::tick() [clone .cold]+0x280>
+   183a1:	f3 0f 10 0d 1f 95 02 	movss  0x2951f(%rip),%xmm1        # 418c8 <typeinfo name for std::bad_optional_access+0x78>
+   183a8:	00 
+   183a9:	4c 8b 87 48 15 00 00 	mov    0x1548(%rdi),%r8
+   183b0:	f3 0f 7e 25 10 95 02 	movq   0x29510(%rip),%xmm4        # 418c8 <typeinfo name for std::bad_optional_access+0x78>
+   183b7:	00 
+   183b8:	48 8b b7 40 15 00 00 	mov    0x1540(%rdi),%rsi
+   183bf:	0f c6 c9 00          	shufps $0x0,%xmm1,%xmm1
+   183c3:	4c 39 c6             	cmp    %r8,%rsi
+   183c6:	0f 85 9e 00 00 00    	jne    1846a <crucible::Simulation::tick()+0xc6a>
+   183cc:	0f 1f 40 00          	nopl   0x0(%rax)
+   183d0:	48 8b 74 24 10       	mov    0x10(%rsp),%rsi
+   183d5:	48 83 c0 01          	add    $0x1,%rax
+   183d9:	48 89 86 78 15 00 00 	mov    %rax,0x1578(%rsi)
+   183e0:	e9 26 fb ff ff       	jmp    17f0b <crucible::Simulation::tick()+0x70b>
+   183e5:	0f 1f 00             	nopl   (%rax)
+   183e8:	48 8b 4a 68          	mov    0x68(%rdx),%rcx
+   183ec:	48 8b 7a 70          	mov    0x70(%rdx),%rdi
+   183f0:	4d 39 d3             	cmp    %r10,%r11
+   183f3:	74 68                	je     1845d <crucible::Simulation::tick()+0xc5d>
+   183f5:	48 8d 51 0f          	lea    0xf(%rcx),%rdx
+   183f9:	48 29 fa             	sub    %rdi,%rdx
+   183fc:	48 83 fa 1e          	cmp    $0x1e,%rdx
+   18400:	0f 86 6f 04 00 00    	jbe    18875 <crucible::Simulation::tick()+0x1075>
+   18406:	49 83 f9 04          	cmp    $0x4,%r9
+   1840a:	0f 84 0d 05 00 00    	je     1891d <crucible::Simulation::tick()+0x111d>
+   18410:	49 89 d9             	mov    %rbx,%r9
+   18413:	31 d2                	xor    %edx,%edx
+   18415:	49 d1 e9             	shr    $1,%r9
+   18418:	49 c1 e1 04          	shl    $0x4,%r9
+   1841c:	0f 1f 40 00          	nopl   0x0(%rax)
+   18420:	0f 10 04 17          	movups (%rdi,%rdx,1),%xmm0
+   18424:	0f 10 34 11          	movups (%rcx,%rdx,1),%xmm6
+   18428:	0f 59 c1             	mulps  %xmm1,%xmm0
+   1842b:	0f 58 c6             	addps  %xmm6,%xmm0
+   1842e:	0f 11 04 11          	movups %xmm0,(%rcx,%rdx,1)
+   18432:	48 83 c2 10          	add    $0x10,%rdx
+   18436:	49 39 d1             	cmp    %rdx,%r9
+   18439:	75 e5                	jne    18420 <crucible::Simulation::tick()+0xc20>
+   1843b:	48 89 da             	mov    %rbx,%rdx
+   1843e:	48 83 e2 fe          	and    $0xfffffffffffffffe,%rdx
+   18442:	83 e3 01             	and    $0x1,%ebx
+   18445:	74 16                	je     1845d <crucible::Simulation::tick()+0xc5d>
+   18447:	f3 0f 7e 04 d7       	movq   (%rdi,%rdx,8),%xmm0
+   1844c:	48 8d 0c d1          	lea    (%rcx,%rdx,8),%rcx
+   18450:	f3 0f 7e 11          	movq   (%rcx),%xmm2
+   18454:	0f 59 c4             	mulps  %xmm4,%xmm0
+   18457:	0f 58 c2             	addps  %xmm2,%xmm0
+   1845a:	0f 13 01             	movlps %xmm0,(%rcx)
+   1845d:	48 83 c6 08          	add    $0x8,%rsi
+   18461:	49 39 f0             	cmp    %rsi,%r8
+   18464:	0f 84 66 ff ff ff    	je     183d0 <crucible::Simulation::tick()+0xbd0>
+   1846a:	48 8b 16             	mov    (%rsi),%rdx
+   1846d:	4c 8b 9a 70 02 00 00 	mov    0x270(%rdx),%r11
+   18474:	4c 8b 92 68 02 00 00 	mov    0x268(%rdx),%r10
+   1847b:	4d 89 d9             	mov    %r11,%r9
+   1847e:	4d 29 d1             	sub    %r10,%r9
+   18481:	4c 89 cb             	mov    %r9,%rbx
+   18484:	48 c1 fb 02          	sar    $0x2,%rbx
+   18488:	74 d3                	je     1845d <crucible::Simulation::tick()+0xc5d>
+   1848a:	e9 59 ff ff ff       	jmp    183e8 <crucible::Simulation::tick()+0xbe8>
+   1848f:	90                   	nop
+   18490:	e8 bb d4 fe ff       	call   5950 <std::chrono::_V2::steady_clock::now()@plt>
+   18495:	48 89 44 24 18       	mov    %rax,0x18(%rsp)
+   1849a:	e9 d5 f3 ff ff       	jmp    17874 <crucible::Simulation::tick()+0x74>
+   1849f:	90                   	nop
+   184a0:	e8 ab d4 fe ff       	call   5950 <std::chrono::_V2::steady_clock::now()@plt>
+   184a5:	48 8b 74 24 18       	mov    0x18(%rsp),%rsi
+   184aa:	4c 8d bb a8 00 00 00 	lea    0xa8(%rbx),%r15
+   184b1:	48 89 ea             	mov    %rbp,%rdx
+   184b4:	49 89 c6             	mov    %rax,%r14
+   184b7:	4c 89 ff             	mov    %r15,%rdi
+   184ba:	48 29 f0             	sub    %rsi,%rax
+   184bd:	48 8b b3 70 02 00 00 	mov    0x270(%rbx),%rsi
+   184c4:	48 89 44 24 20       	mov    %rax,0x20(%rsp)
+   184c9:	e8 02 c8 00 00       	call   24cd0 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)>
+   184ce:	84 c0                	test   %al,%al
+   184d0:	0f 84 20 ef fe ff    	je     73f6 <crucible::Simulation::tick() [clone .cold]+0x1f6>
+   184d6:	e8 75 d4 fe ff       	call   5950 <std::chrono::_V2::steady_clock::now()@plt>
+   184db:	48 89 44 24 18       	mov    %rax,0x18(%rsp)
+   184e0:	4c 29 f0             	sub    %r14,%rax
+   184e3:	48 89 44 24 48       	mov    %rax,0x48(%rsp)
+   184e8:	e9 20 fc ff ff       	jmp    1810d <crucible::Simulation::tick()+0x90d>
+   184ed:	0f 1f 00             	nopl   (%rax)
+   184f0:	e8 5b d4 fe ff       	call   5950 <std::chrono::_V2::steady_clock::now()@plt>
+   184f5:	49 89 c5             	mov    %rax,%r13
+   184f8:	49 89 c4             	mov    %rax,%r12
+   184fb:	48 8b 44 24 18       	mov    0x18(%rsp),%rax
+   18500:	49 29 c5             	sub    %rax,%r13
+   18503:	80 bb 20 07 00 00 00 	cmpb   $0x0,0x720(%rbx)
+   1850a:	0f 84 c5 02 00 00    	je     187d5 <crucible::Simulation::tick()+0xfd5>
+   18510:	4c 89 64 24 18       	mov    %r12,0x18(%rsp)
+   18515:	48 8b 8b 68 1c 00 00 	mov    0x1c68(%rbx),%rcx
+   1851c:	4c 8b 9b 70 1c 00 00 	mov    0x1c70(%rbx),%r11
+   18523:	e9 e0 00 00 00       	jmp    18608 <crucible::Simulation::tick()+0xe08>
+   18528:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+   1852f:	00 
+   18530:	e8 1b d4 fe ff       	call   5950 <std::chrono::_V2::steady_clock::now()@plt>
+   18535:	49 89 c5             	mov    %rax,%r13
+   18538:	48 89 c5             	mov    %rax,%rbp
+   1853b:	48 8b 44 24 18       	mov    0x18(%rsp),%rax
+   18540:	49 29 c5             	sub    %rax,%r13
+   18543:	80 bb 20 07 00 00 00 	cmpb   $0x0,0x720(%rbx)
+   1854a:	0f 85 32 02 00 00    	jne    18782 <crucible::Simulation::tick()+0xf82>
+   18550:	48 8d bb 10 02 00 00 	lea    0x210(%rbx),%rdi
+   18557:	45 31 f6             	xor    %r14d,%r14d
+   1855a:	45 31 ff             	xor    %r15d,%r15d
+   1855d:	e8 5e 16 01 00       	call   29bc0 <crucible::blight::Grid::Step()>
+   18562:	48 89 6c 24 18       	mov    %rbp,0x18(%rsp)
+   18567:	31 ed                	xor    %ebp,%ebp
+   18569:	48 c7 44 24 30 01 00 	movq   $0x1,0x30(%rsp)
+   18570:	00 00 
+   18572:	48 c7 44 24 38 01 00 	movq   $0x1,0x38(%rsp)
+   18579:	00 00 
+   1857b:	48 c7 44 24 40 00 00 	movq   $0x0,0x40(%rsp)
+   18582:	00 00 
+   18584:	48 c7 44 24 08 00 00 	movq   $0x0,0x8(%rsp)
+   1858b:	00 00 
+   1858d:	48 c7 44 24 48 00 00 	movq   $0x0,0x48(%rsp)
+   18594:	00 00 
+   18596:	48 c7 44 24 20 00 00 	movq   $0x0,0x20(%rsp)
+   1859d:	00 00 
+   1859f:	e8 ac d3 fe ff       	call   5950 <std::chrono::_V2::steady_clock::now()@plt>
+   185a4:	48 8b 74 24 18       	mov    0x18(%rsp),%rsi
+   185a9:	49 89 c4             	mov    %rax,%r12
+   185ac:	48 89 44 24 18       	mov    %rax,0x18(%rsp)
+   185b1:	49 29 f4             	sub    %rsi,%r12
+   185b4:	e9 5f fd ff ff       	jmp    18318 <crucible::Simulation::tick()+0xb18>
+   185b9:	48 c7 44 24 30 01 00 	movq   $0x1,0x30(%rsp)
+   185c0:	00 00 
+   185c2:	45 31 f6             	xor    %r14d,%r14d
+   185c5:	45 31 ff             	xor    %r15d,%r15d
+   185c8:	48 8b 8b 68 1c 00 00 	mov    0x1c68(%rbx),%rcx
+   185cf:	48 c7 44 24 38 01 00 	movq   $0x1,0x38(%rsp)
+   185d6:	00 00 
+   185d8:	31 ed                	xor    %ebp,%ebp
+   185da:	45 31 ed             	xor    %r13d,%r13d
+   185dd:	4c 8b 9b 70 1c 00 00 	mov    0x1c70(%rbx),%r11
+   185e4:	48 c7 44 24 40 00 00 	movq   $0x0,0x40(%rsp)
+   185eb:	00 00 
+   185ed:	48 c7 44 24 08 00 00 	movq   $0x0,0x8(%rsp)
+   185f4:	00 00 
+   185f6:	48 c7 44 24 48 00 00 	movq   $0x0,0x48(%rsp)
+   185fd:	00 00 
+   185ff:	48 c7 44 24 20 00 00 	movq   $0x0,0x20(%rsp)
+   18606:	00 00 
+   18608:	4c 8b 8b 88 02 00 00 	mov    0x288(%rbx),%r9
+   1860f:	4c 39 d9             	cmp    %r11,%rcx
+   18612:	0f 84 fe 02 00 00    	je     18916 <crucible::Simulation::tick()+0x1116>
+   18618:	49 89 ca             	mov    %rcx,%r10
+   1861b:	4c 89 6c 24 58       	mov    %r13,0x58(%rsp)
+   18620:	31 c9                	xor    %ecx,%ecx
+   18622:	eb 11                	jmp    18635 <crucible::Simulation::tick()+0xe35>
+   18624:	0f 1f 40 00          	nopl   0x0(%rax)
+   18628:	49 83 c2 08          	add    $0x8,%r10
+   1862c:	4d 39 d3             	cmp    %r10,%r11
+   1862f:	0f 84 c4 00 00 00    	je     186f9 <crucible::Simulation::tick()+0xef9>
+   18635:	4d 8b 22             	mov    (%r10),%r12
+   18638:	49 8b 94 24 70 02 00 	mov    0x270(%r12),%rdx
+   1863f:	00 
+   18640:	49 8b 84 24 68 02 00 	mov    0x268(%r12),%rax
+   18647:	00 
+   18648:	48 89 d6             	mov    %rdx,%rsi
+   1864b:	48 29 c6             	sub    %rax,%rsi
+   1864e:	48 c1 fe 02          	sar    $0x2,%rsi
+   18652:	74 d4                	je     18628 <crucible::Simulation::tick()+0xe28>
+   18654:	49 8b 7c 24 68       	mov    0x68(%r12),%rdi
+   18659:	4d 8b 44 24 70       	mov    0x70(%r12),%r8
+   1865e:	4d 8b 64 24 78       	mov    0x78(%r12),%r12
+   18663:	48 39 c2             	cmp    %rax,%rdx
+   18666:	74 c0                	je     18628 <crucible::Simulation::tick()+0xe28>
+   18668:	4c 8b ab a0 03 00 00 	mov    0x3a0(%rbx),%r13
+   1866f:	4c 39 ab a8 03 00 00 	cmp    %r13,0x3a8(%rbx)
+   18676:	0f 84 74 01 00 00    	je     187f0 <crucible::Simulation::tick()+0xff0>
+   1867c:	31 c0                	xor    %eax,%eax
+   1867e:	66 90                	xchg   %ax,%ax
+   18680:	49 8b 14 c4          	mov    (%r12,%rax,8),%rdx
+   18684:	41 83 7c 95 fc 00    	cmpl   $0x0,-0x4(%r13,%rdx,4)
+   1868a:	75 57                	jne    186e3 <crucible::Simulation::tick()+0xee3>
+   1868c:	f3 41 0f 10 44 c0 04 	movss  0x4(%r8,%rax,8),%xmm0
+   18693:	f3 41 0f 10 0c c0    	movss  (%r8,%rax,8),%xmm1
+   18699:	48 89 54 24 70       	mov    %rdx,0x70(%rsp)
+   1869e:	48 89 ca             	mov    %rcx,%rdx
+   186a1:	f3 0f 10 54 c7 04    	movss  0x4(%rdi,%rax,8),%xmm2
+   186a7:	48 c1 e2 05          	shl    $0x5,%rdx
+   186ab:	48 83 c1 01          	add    $0x1,%rcx
+   186af:	c7 84 24 88 00 00 00 	movl   $0x0,0x88(%rsp)
+   186b6:	00 00 00 00 
+   186ba:	0f 14 c8             	unpcklps %xmm0,%xmm1
+   186bd:	f3 0f 10 04 c7       	movss  (%rdi,%rax,8),%xmm0
+   186c2:	4c 01 ca             	add    %r9,%rdx
+   186c5:	0f 14 c2             	unpcklps %xmm2,%xmm0
+   186c8:	0f 16 c1             	movlhps %xmm1,%xmm0
+   186cb:	0f 11 44 24 78       	movups %xmm0,0x78(%rsp)
+   186d0:	66 0f 6f 6c 24 70    	movdqa 0x70(%rsp),%xmm5
+   186d6:	f3 0f 6f 74 24 7c    	movdqu 0x7c(%rsp),%xmm6
+   186dc:	0f 11 2a             	movups %xmm5,(%rdx)
+   186df:	0f 11 72 0c          	movups %xmm6,0xc(%rdx)
+   186e3:	48 83 c0 01          	add    $0x1,%rax
+   186e7:	48 39 c6             	cmp    %rax,%rsi
+   186ea:	75 94                	jne    18680 <crucible::Simulation::tick()+0xe80>
+   186ec:	49 83 c2 08          	add    $0x8,%r10
+   186f0:	4d 39 d3             	cmp    %r10,%r11
+   186f3:	0f 85 3c ff ff ff    	jne    18635 <crucible::Simulation::tick()+0xe35>
+   186f9:	4c 8b 6c 24 58       	mov    0x58(%rsp),%r13
+   186fe:	66 0f ef c0          	pxor   %xmm0,%xmm0
+   18702:	31 c0                	xor    %eax,%eax
+   18704:	80 bb f0 05 00 00 00 	cmpb   $0x0,0x5f0(%rbx)
+   1870b:	0f 29 44 24 70       	movaps %xmm0,0x70(%rsp)
+   18710:	74 28                	je     1873a <crucible::Simulation::tick()+0xf3a>
+   18712:	80 bb d0 03 00 00 00 	cmpb   $0x0,0x3d0(%rbx)
+   18719:	74 1f                	je     1873a <crucible::Simulation::tick()+0xf3a>
+   1871b:	48 8b 83 b8 03 00 00 	mov    0x3b8(%rbx),%rax
+   18722:	f3 0f 10 83 c4 03 00 	movss  0x3c4(%rbx),%xmm0
+   18729:	00 
+   1872a:	48 89 44 24 70       	mov    %rax,0x70(%rsp)
+   1872f:	b8 01 00 00 00       	mov    $0x1,%eax
+   18734:	f3 0f 11 44 24 78    	movss  %xmm0,0x78(%rsp)
+   1873a:	88 44 24 7c          	mov    %al,0x7c(%rsp)
+   1873e:	4c 8b 44 24 78       	mov    0x78(%rsp),%r8
+   18743:	48 8d b3 10 02 00 00 	lea    0x210(%rbx),%rsi
+   1874a:	48 8d bb 38 06 00 00 	lea    0x638(%rbx),%rdi
+   18751:	f3 0f 7e 44 24 70    	movq   0x70(%rsp),%xmm0
+   18757:	4c 89 ca             	mov    %r9,%rdx
+   1875a:	e8 11 02 01 00       	call   28970 <crucible::interactions::Reclamation::TryStep(crucible::blight::Grid&, std::span<crucible::SampleState const, 18446744073709551615ul>, std::optional<crucible::interactions::Reclamation::ProtectedArea>)>
+   1875f:	84 c0                	test   %al,%al
+   18761:	0f 84 2b eb fe ff    	je     7292 <crucible::Simulation::tick() [clone .cold]+0x92>
+   18767:	45 31 e4             	xor    %r12d,%r12d
+   1876a:	80 7c 24 2f 00       	cmpb   $0x0,0x2f(%rsp)
+   1876f:	0f 84 a3 fb ff ff    	je     18318 <crucible::Simulation::tick()+0xb18>
+   18775:	e9 25 fe ff ff       	jmp    1859f <crucible::Simulation::tick()+0xd9f>
+   1877a:	45 31 ed             	xor    %r13d,%r13d
+   1877d:	e9 86 fe ff ff       	jmp    18608 <crucible::Simulation::tick()+0xe08>
+   18782:	48 89 6c 24 18       	mov    %rbp,0x18(%rsp)
+   18787:	45 31 ff             	xor    %r15d,%r15d
+   1878a:	31 ed                	xor    %ebp,%ebp
+   1878c:	48 8b 8b 68 1c 00 00 	mov    0x1c68(%rbx),%rcx
+   18793:	48 c7 44 24 30 01 00 	movq   $0x1,0x30(%rsp)
+   1879a:	00 00 
+   1879c:	4c 8b 9b 70 1c 00 00 	mov    0x1c70(%rbx),%r11
+   187a3:	48 c7 44 24 38 01 00 	movq   $0x1,0x38(%rsp)
+   187aa:	00 00 
+   187ac:	48 c7 44 24 40 00 00 	movq   $0x0,0x40(%rsp)
+   187b3:	00 00 
+   187b5:	48 c7 44 24 08 00 00 	movq   $0x0,0x8(%rsp)
+   187bc:	00 00 
+   187be:	48 c7 44 24 48 00 00 	movq   $0x0,0x48(%rsp)
+   187c5:	00 00 
+   187c7:	48 c7 44 24 20 00 00 	movq   $0x0,0x20(%rsp)
+   187ce:	00 00 
+   187d0:	e9 33 fe ff ff       	jmp    18608 <crucible::Simulation::tick()+0xe08>
+   187d5:	48 8d bb 10 02 00 00 	lea    0x210(%rbx),%rdi
+   187dc:	e8 df 13 01 00       	call   29bc0 <crucible::blight::Grid::Step()>
+   187e1:	4c 89 64 24 18       	mov    %r12,0x18(%rsp)
+   187e6:	e9 b4 fd ff ff       	jmp    1859f <crucible::Simulation::tick()+0xd9f>
+   187eb:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+   187f0:	48 89 ca             	mov    %rcx,%rdx
+   187f3:	48 89 4c 24 50       	mov    %rcx,0x50(%rsp)
+   187f8:	4c 8d 2c f5 00 00 00 	lea    0x0(,%rsi,8),%r13
+   187ff:	00 
+   18800:	31 c0                	xor    %eax,%eax
+   18802:	48 c1 e2 05          	shl    $0x5,%rdx
+   18806:	4c 01 ca             	add    %r9,%rdx
+   18809:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+   18810:	f3 41 0f 10 44 00 04 	movss  0x4(%r8,%rax,1),%xmm0
+   18817:	f3 41 0f 10 0c 00    	movss  (%r8,%rax,1),%xmm1
+   1881d:	c7 84 24 88 00 00 00 	movl   $0x0,0x88(%rsp)
+   18824:	00 00 00 00 
+   18828:	f3 0f 10 54 07 04    	movss  0x4(%rdi,%rax,1),%xmm2
+   1882e:	49 8b 0c 04          	mov    (%r12,%rax,1),%rcx
+   18832:	0f 14 c8             	unpcklps %xmm0,%xmm1
+   18835:	f3 0f 10 04 07       	movss  (%rdi,%rax,1),%xmm0
+   1883a:	48 89 4c 24 70       	mov    %rcx,0x70(%rsp)
+   1883f:	0f 14 c2             	unpcklps %xmm2,%xmm0
+   18842:	0f 16 c1             	movlhps %xmm1,%xmm0
+   18845:	0f 11 44 24 78       	movups %xmm0,0x78(%rsp)
+   1884a:	66 0f 6f 74 24 70    	movdqa 0x70(%rsp),%xmm6
+   18850:	f3 0f 6f 64 24 7c    	movdqu 0x7c(%rsp),%xmm4
+   18856:	0f 11 34 82          	movups %xmm6,(%rdx,%rax,4)
+   1885a:	0f 11 64 82 0c       	movups %xmm4,0xc(%rdx,%rax,4)
+   1885f:	48 83 c0 08          	add    $0x8,%rax
+   18863:	4c 39 e8             	cmp    %r13,%rax
+   18866:	75 a8                	jne    18810 <crucible::Simulation::tick()+0x1010>
+   18868:	48 8b 4c 24 50       	mov    0x50(%rsp),%rcx
+   1886d:	48 01 f1             	add    %rsi,%rcx
+   18870:	e9 b3 fd ff ff       	jmp    18628 <crucible::Simulation::tick()+0xe28>
+   18875:	f3 0f 7e 1d 4b 90 02 	movq   0x2904b(%rip),%xmm3        # 418c8 <typeinfo name for std::bad_optional_access+0x78>
+   1887c:	00 
+   1887d:	48 8d 14 d9          	lea    (%rcx,%rbx,8),%rdx
+   18881:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+   18888:	f3 0f 7e 07          	movq   (%rdi),%xmm0
+   1888c:	f3 0f 7e 11          	movq   (%rcx),%xmm2
+   18890:	48 83 c1 08          	add    $0x8,%rcx
+   18894:	48 83 c7 08          	add    $0x8,%rdi
+   18898:	0f 59 c3             	mulps  %xmm3,%xmm0
+   1889b:	0f 58 c2             	addps  %xmm2,%xmm0
+   1889e:	0f 13 41 f8          	movlps %xmm0,-0x8(%rcx)
+   188a2:	48 39 ca             	cmp    %rcx,%rdx
+   188a5:	75 e1                	jne    18888 <crucible::Simulation::tick()+0x1088>
+   188a7:	e9 b1 fb ff ff       	jmp    1845d <crucible::Simulation::tick()+0xc5d>
+   188ac:	48 8b 93 d0 02 00 00 	mov    0x2d0(%rbx),%rdx
+   188b3:	45 31 c9             	xor    %r9d,%r9d
+   188b6:	4c 89 ee             	mov    %r13,%rsi
+   188b9:	48 8b 83 d8 02 00 00 	mov    0x2d8(%rbx),%rax
+   188c0:	48 8d 8b f8 01 00 00 	lea    0x1f8(%rbx),%rcx
+   188c7:	48 8d bb f8 05 00 00 	lea    0x5f8(%rbx),%rdi
+   188ce:	48 29 d0             	sub    %rdx,%rax
+   188d1:	49 89 d0             	mov    %rdx,%r8
+   188d4:	48 89 ea             	mov    %rbp,%rdx
+   188d7:	48 c1 f8 03          	sar    $0x3,%rax
+   188db:	50                   	push   %rax
+   188dc:	41 50                	push   %r8
+   188de:	4d 89 f8             	mov    %r15,%r8
+   188e1:	55                   	push   %rbp
+   188e2:	41 54                	push   %r12
+   188e4:	e8 c7 9d 00 00       	call   226b0 <crucible::swarm::Steering::tryComputeRows(std::span<crucible::SampleState const, 18446744073709551615ul>, crucible::fields::FieldSet const&, crucible::spatial::Grid const&, unsigned long, std::span<crucible::SampleState, 18446744073709551615ul>, std::span<crucible::SampleId, 18446744073709551615ul>) const>
+   188e9:	48 83 c4 20          	add    $0x20,%rsp
+   188ed:	41 89 c6             	mov    %eax,%r14d
+   188f0:	84 c0                	test   %al,%al
+   188f2:	0f 84 51 e9 fe ff    	je     7249 <crucible::Simulation::tick() [clone .cold]+0x49>
+   188f8:	48 c7 44 24 38 01 00 	movq   $0x1,0x38(%rsp)
+   188ff:	00 00 
+   18901:	4c 8b bb 90 00 00 00 	mov    0x90(%rbx),%r15
+   18908:	48 c7 44 24 30 01 00 	movq   $0x1,0x30(%rsp)
+   1890f:	00 00 
+   18911:	e9 58 f8 ff ff       	jmp    1816e <crucible::Simulation::tick()+0x96e>
+   18916:	31 c9                	xor    %ecx,%ecx
+   18918:	e9 e1 fd ff ff       	jmp    186fe <crucible::Simulation::tick()+0xefe>
+   1891d:	31 d2                	xor    %edx,%edx
+   1891f:	e9 23 fb ff ff       	jmp    18447 <crucible::Simulation::tick()+0xc47>
+   18924:	4c 89 ce             	mov    %r9,%rsi
+   18927:	48 c7 c2 fe ff ff ff 	mov    $0xfffffffffffffffe,%rdx
+   1892e:	4c 89 ef             	mov    %r13,%rdi
+   18931:	4c 89 4c 24 08       	mov    %r9,0x8(%rsp)
+   18936:	e8 e5 74 00 00       	call   1fe20 <void std::__introsort_loop<__gnu_cxx::__normal_iterator<crucible::SampleState*, std::span<crucible::SampleState, 18446744073709551615ul> >, long, __gnu_cxx::__ops::_Iter_comp_iter<std::ranges::__detail::__make_comp_proj<std::ranges::less, crucible::SampleId crucible::SampleState::*>(std::ranges::less&, crucible::SampleId crucible::SampleState::*&)::{lambda(auto:1&&, auto:2&&)#1}> >(__gnu_cxx::__normal_iterator<crucible::SampleState*, std::span<crucible::SampleState, 18446744073709551615ul> >, __gnu_cxx::__normal_iterator<crucible::SampleState*, std::span<crucible::SampleState, 18446744073709551615ul> >, long, __gnu_cxx::__ops::_Iter_comp_iter<std::ranges::__detail::__make_comp_proj<std::ranges::less, crucible::SampleId crucible::SampleState::*>(std::ranges::less&, crucible::SampleId crucible::SampleState::*&)::{lambda(auto:1&&, auto:2&&)#1}>)>
+   1893b:	4c 8b 4c 24 08       	mov    0x8(%rsp),%r9
+   18940:	48 89 5c 24 08       	mov    %rbx,0x8(%rsp)
+   18945:	31 d2                	xor    %edx,%edx
+   18947:	41 be 20 00 00 00    	mov    $0x20,%r14d
+   1894d:	4c 89 cb             	mov    %r9,%rbx
+   18950:	eb 45                	jmp    18997 <crucible::Simulation::tick()+0x1197>
+   18952:	4c 89 fa             	mov    %r15,%rdx
+   18955:	4c 29 ea             	sub    %r13,%rdx
+   18958:	48 83 fa 20          	cmp    $0x20,%rdx
+   1895c:	0f 8e ca 00 00 00    	jle    18a2c <crucible::Simulation::tick()+0x122c>
+   18962:	4c 89 f7             	mov    %r14,%rdi
+   18965:	4c 89 ee             	mov    %r13,%rsi
+   18968:	48 29 d7             	sub    %rdx,%rdi
+   1896b:	4c 01 ff             	add    %r15,%rdi
+   1896e:	e8 ad d0 fe ff       	call   5a20 <memmove@plt>
+   18973:	66 0f 6f 7c 24 70    	movdqa 0x70(%rsp),%xmm7
+   18979:	f3 0f 6f 6c 24 7c    	movdqu 0x7c(%rsp),%xmm5
+   1897f:	41 0f 11 7d 00       	movups %xmm7,0x0(%r13)
+   18984:	41 0f 11 6d 0c       	movups %xmm5,0xc(%r13)
+   18989:	49 83 c7 20          	add    $0x20,%r15
+   1898d:	49 39 df             	cmp    %rbx,%r15
+   18990:	74 71                	je     18a03 <crucible::Simulation::tick()+0x1203>
+   18992:	48 8b 54 24 68       	mov    0x68(%rsp),%rdx
+   18997:	f3 41 0f 6f 27       	movdqu (%r15),%xmm4
+   1899c:	f3 41 0f 6f 77 10    	movdqu 0x10(%r15),%xmm6
+   189a2:	4c 89 f9             	mov    %r15,%rcx
+   189a5:	49 8b 44 15 00       	mov    0x0(%r13,%rdx,1),%rax
+   189aa:	49 39 04 17          	cmp    %rax,(%r15,%rdx,1)
+   189ae:	0f 29 64 24 70       	movaps %xmm4,0x70(%rsp)
+   189b3:	0f 29 b4 24 80 00 00 	movaps %xmm6,0x80(%rsp)
+   189ba:	00 
+   189bb:	72 95                	jb     18952 <crucible::Simulation::tick()+0x1152>
+   189bd:	48 8b 74 14 70       	mov    0x70(%rsp,%rdx,1),%rsi
+   189c2:	49 8d 47 e0          	lea    -0x20(%r15),%rax
+   189c6:	49 3b 74 17 e0       	cmp    -0x20(%r15,%rdx,1),%rsi
+   189cb:	73 21                	jae    189ee <crucible::Simulation::tick()+0x11ee>
+   189cd:	0f 1f 00             	nopl   (%rax)
+   189d0:	f3 0f 6f 20          	movdqu (%rax),%xmm4
+   189d4:	f3 0f 6f 70 0c       	movdqu 0xc(%rax),%xmm6
+   189d9:	48 89 c1             	mov    %rax,%rcx
+   189dc:	48 83 e8 20          	sub    $0x20,%rax
+   189e0:	0f 11 60 40          	movups %xmm4,0x40(%rax)
+   189e4:	0f 11 70 4c          	movups %xmm6,0x4c(%rax)
+   189e8:	48 3b 34 10          	cmp    (%rax,%rdx,1),%rsi
+   189ec:	72 e2                	jb     189d0 <crucible::Simulation::tick()+0x11d0>
+   189ee:	66 0f 6f 7c 24 70    	movdqa 0x70(%rsp),%xmm7
+   189f4:	f3 0f 6f 6c 24 7c    	movdqu 0x7c(%rsp),%xmm5
+   189fa:	0f 11 39             	movups %xmm7,(%rcx)
+   189fd:	0f 11 69 0c          	movups %xmm5,0xc(%rcx)
+   18a01:	eb 86                	jmp    18989 <crucible::Simulation::tick()+0x1189>
+   18a03:	48 8b 5c 24 08       	mov    0x8(%rsp),%rbx
+   18a08:	e9 43 f6 ff ff       	jmp    18050 <crucible::Simulation::tick()+0x850>
+   18a0d:	0f 85 68 f0 ff ff    	jne    17a7b <crucible::Simulation::tick()+0x27b>
+   18a13:	f3 41 0f 6f 26       	movdqu (%r14),%xmm4
+   18a18:	41 0f 11 27          	movups %xmm4,(%r15)
+   18a1c:	f3 41 0f 6f 66 0c    	movdqu 0xc(%r14),%xmm4
+   18a22:	41 0f 11 67 0c       	movups %xmm4,0xc(%r15)
+   18a27:	e9 4f f0 ff ff       	jmp    17a7b <crucible::Simulation::tick()+0x27b>
+   18a2c:	0f 85 41 ff ff ff    	jne    18973 <crucible::Simulation::tick()+0x1173>
+   18a32:	f3 41 0f 6f 75 00    	movdqu 0x0(%r13),%xmm6
+   18a38:	41 0f 11 37          	movups %xmm6,(%r15)
+   18a3c:	f3 41 0f 6f 65 0c    	movdqu 0xc(%r13),%xmm4
+   18a42:	41 0f 11 67 0c       	movups %xmm4,0xc(%r15)
+   18a47:	e9 27 ff ff ff       	jmp    18973 <crucible::Simulation::tick()+0x1173>
+   18a4c:	31 ed                	xor    %ebp,%ebp
+   18a4e:	e9 7c f6 ff ff       	jmp    180cf <crucible::Simulation::tick()+0x8cf>
+   18a53:	e8 98 ce fe ff       	call   58f0 <__stack_chk_fail@plt>
+   18a58:	e9 23 ea fe ff       	jmp    7480 <crucible::Simulation::tick() [clone .cold]+0x280>
+   18a5d:	e9 94 e9 fe ff       	jmp    73f6 <crucible::Simulation::tick() [clone .cold]+0x1f6>
+   18a62:	f3 0f 1e fa          	endbr64
+   18a66:	e9 d4 e9 fe ff       	jmp    743f <crucible::Simulation::tick() [clone .cold]+0x23f>
+   18a6b:	90                   	nop
+   18a6c:	0f 1f 40 00          	nopl   0x0(%rax)
+

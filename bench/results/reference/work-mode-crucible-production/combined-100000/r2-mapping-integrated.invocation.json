@@ -1,0 +1,29 @@
+{
+  "command": [
+    "/workspace/scratch/df8f5a8b05e6/Crucible/build/production-candidate/benchmarks/crucible_runtime_backbone_bench",
+    "--arm",
+    "integrated",
+    "--scale",
+    "100000",
+    "--workers",
+    "4",
+    "--warmup",
+    "120",
+    "--ticks",
+    "300",
+    "--route",
+    "gather"
+  ],
+  "load_before": [
+    2.29248046875,
+    1.53125,
+    0.72998046875
+  ],
+  "returncode": 0,
+  "wall_seconds": 25.31492352400005,
+  "load_after": [
+    2.40673828125,
+    1.63720703125,
+    0.79248046875
+  ]
+}

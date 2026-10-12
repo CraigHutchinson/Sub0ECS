@@ -1,0 +1,1 @@
+Two raw JSONL files were found empty after resume: r3-control-integrated.jsonl and r5-candidate-integrated.jsonl. Summary and invocation receipts retained as observed; this campaign cannot qualify small-workload performance. Fresh comparisons are required.
