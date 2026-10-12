@@ -91,9 +91,10 @@ for profiling, metadata, result interpretation and noise checks.
   sparse/mobile-only sets without additional mapping and lifecycle checks.
 - The October 10 Crucible library-version comparison remains inconclusive. The
   [production coordinator campaign](../../bench/results/reference/work-mode-crucible-production/README.md)
-  holds pins fixed: the complete 100K four-worker combined cohort improves median
-  pump/capture by 11.18%, with mixed p99. Replacement 2048 and 150K combinations
-  await qualification. Semantic digests do not replace independent per-field
+  holds pins fixed: complete four-worker combined cohorts improve median
+  pump/capture by 11.18% at 100K and 13.23% at 150K. The 100K p99 is mixed;
+  fresh 2048 and complete missions pass the small-workload median gate. Promote
+  A+B without new dependency pins or public APIs. Semantic digests do not replace independent per-field
   bitwise conformance or native rendering/latency tests.
 
 Continue from the [consumer optimization campaign](crucible.md),

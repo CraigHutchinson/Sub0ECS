@@ -120,9 +120,17 @@ Pass A replaces binary-search commit with a checked compact-row map; B guards
 already-sorted gather/index/snapshot inputs while preserving sort fallback.
 Initial A timings overlap. A fresh complete 100K control/A/B/A+B cohort establishes
 an 11.18% median pump/capture improvement for A+B on the measured four-worker host,
-with mixed p99. Replacement 2048 and 150K combination qualification remain pending.
+with mixed p99. A complete five-pair 150K control/combined cohort improves median
+pump/capture by 13.23%, with improved median process p95/p99. The fresh 2048
+four-arm cohort improves the combined median 2.2548→2.0553 ms. Complete reference
+and structural mission medians improve 924.046→866.696 ms and
+2063.604→1922.829 ms; all three comparisons win in every paired round.
+The small-workload median gate passes, supporting promotion of A+B with unchanged
+pins and public APIs. Legacy ordinary 64/2048-row p99 rises 0.253→0.543 ms and
+4.049→4.361 ms: there is no blanket tail-latency claim.
 The earlier 2048 A cohort lacks two raw receipts, and the earlier combined 2048
-cohort has three empty receipts; neither can close its regression gate.
+cohort has three empty receipts; neither qualifies. The complete fresh cohorts
+supersede these attempts.
 Headless timing excludes admission, native rendering, pacing and input latency.
 
 ## Crucible workload and exhaustive logic reference

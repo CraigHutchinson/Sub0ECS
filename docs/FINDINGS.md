@@ -526,7 +526,15 @@ A fresh complete 100K four-arm cohort then measures control/A/B/A+B medians of
 63.603/60.787/59.041/56.493 ms. Combined improvement is 11.18%, all five paired
 comparisons improve and process-median ranges do not overlap. Median process p95
 improves 70.331→64.478 ms; p99 rises 74.365→75.687 ms, so tails are mixed.
-Replacement 2048 and 150K combinations remain under qualification. The older
+A complete five-pair 150K control/combined cohort reduces median pump/capture
+94.563→82.051 ms (13.23%), with nonoverlapping process-median ranges and five paired
+wins. Median process p95 improves 104.561→93.287 ms and p99 126.453→100.356 ms.
+Fresh 2048 pump/capture improves 2.2548→2.0553 ms. Complete reference and structural
+mission medians improve 924.046→866.696 ms and 2063.604→1922.829 ms, respectively.
+All three comparisons win in all five pairs, closing the small-workload median
+gate and supporting A+B promotion without new pins or public APIs. Legacy ordinary
+64/2048-row p99 rises 0.253→0.543 ms and 4.049→4.361 ms; no universal tail
+improvement is claimed. The older
 2048 A cohort has two missing raw receipts and the earlier combined 2048 cohort
 has three empty receipts; neither saved summary qualifies.
 

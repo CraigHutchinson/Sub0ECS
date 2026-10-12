@@ -110,9 +110,10 @@ contract, but remains above the handwritten floor. The October 10 Crucible
 [full-stack receipt](bench/results/reference/work-mode-stack/README.md) remains
 unchanged. The separate [production coordinator campaign](bench/results/reference/work-mode-crucible-production/README.md)
 holds library pins fixed and compares checked commit mapping and guarded sorting.
-Its complete 100K four-worker cohort shows an 11.18% median pump/capture
-improvement from combined mapping and sort guards; p99 is mixed. Replacement
-2048 and 150K combination qualification remain pending. The following tables describe the
+Its complete four-worker cohorts show median pump/capture improvements of
+11.18% at 100K and 13.23% at 150K from combined mapping and sort guards. The
+100K p99 is mixed. Fresh 2048 and complete reference/structural missions pass the
+small-workload median gate; tail improvements are not universal. The following tables describe the
 original storage comparison on its named machine, not full-stack performance.
 
 

@@ -69,9 +69,51 @@ native FPS or universal performance. Tails are mixed: median process p95 improve
 this as an across-the-board tail-latency improvement.
 
 The old combined 2048 cohort also remains incomplete: three raw receipts are empty.
-Its summary cannot qualify. Replacement 2048 and complete 150K combination results
-are pending, so the small-regression and broader-scale gates remain open.
+Its summary cannot qualify. The complete fresh cohorts below supersede it and
+close the small-workload median regression gate.
 Dependency pins are unchanged; this gain belongs to production source optimization.
+
+## Received 150K control/combined cohort
+
+The [fresh 150K cohort](combined-150000-received/summary.json) contains all ten raw
+process receipts from five alternating control/A+B pairs. With the same four-worker
+GCC 13.3 O3 policy, 120 warmup and 300 measured advancing gather-route ticks:
+
+| Arm | Median [process-median range], ms |
+|---|---:|
+| Control | 94.563 [91.512–98.268] |
+| A+B | 82.051 [81.425–84.195] |
+
+The median reduces **13.23%**, all five paired comparisons improve, and observed
+process-median ranges do not overlap. Median process p95 improves
+104.561→93.287 ms and p99 improves 126.453→100.356 ms. This cohort confirms the
+combined effect at 150K; four-arm mechanism comparisons cover 2048 and 100K.
+The separate 100K p99 result remains mixed and is not overwritten by this result.
+
+## Final small-world and complete-mission receiving
+
+The [fresh 2048 four-arm cohort](final-2048/summary.json) retains all 20 raw
+process receipts. The [complete-mission cohort](final-missions/summary.json)
+retains all ten control/A+B receipts. State, traces and completed work match.
+Values are medians across five independent processes, in milliseconds:
+
+| Workload | Control | A+B | Paired median wins |
+|---|---:|---:|---:|
+| 2048 production scale pump/capture | 2.2548 | 2.0553 | 5/5 |
+| Complete reference mission | 924.0456 | 866.6965 | 5/5 |
+| Complete structural mission | 2063.6036 | 1922.8286 | 5/5 |
+
+The fresh 2048 A and B medians are 2.1660 and 2.1478 ms, respectively. The
+small-workload median gate passes. Tail results are mixed:
+legacy ordinary 64-row median process p99 rises 0.253→0.543 ms, and ordinary
+2048-row p99 rises 4.049→4.361 ms. Together with the mixed 100K p99, these prevent
+any blanket tail-latency claim.
+
+**Disposition: promote A+B** for the measured production headless median gains,
+with unchanged dependency pins and public APIs. Final delivery follows passing
+checks. Native G3/G4 frame, pacing and input-latency acceptance and G5 useful
+parallelism remain open; this evidence does not establish FPS or handwritten-game
+equivalence.
 
 ## Source and reproduction
 

@@ -309,6 +309,9 @@ See [full-stack contracts and commands](../docs/optimization/full-stack.md) for 
 For actual production-source changes, use the [Crucible scale reproduction](results/reference/work-mode-crucible-production/README.md#source-and-reproduction).
 It captures complete headless pump/capture at 2048, 100K and 150K with fixed pins,
 matching benchmark source, initial/final semantic digests and full command traces.
+The completed cohorts support combined median gains at all three scales and in
+complete reference/structural missions; ordinary small-world and 100K tails are
+mixed. Native frame and input-latency gates remain separate.
 Compare control, checked mapping, sort guards and their combination; retain all
 raw process receipts. Stage-clock diagnostics and incomplete raw cohorts cannot
 qualify a speedup. This scope excludes admission and native frame/input latency.

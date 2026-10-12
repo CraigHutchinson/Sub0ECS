@@ -8,3 +8,11 @@
 - Local sanitizer capability probe failed under the host ptrace/proc restriction; leak checks were not disabled. Hosted sanitizer is the supported receiving gate.
 
 Independent C++ source review covers mapping/oracle and all three sortedness guards. Numeric behavior, arbitrary-order fallback, duplicate rejection and all-or-nothing spatial commit are preserved. Semantic benchmark hashes are drift detectors; the per-sample independent steering oracle is the stronger correctness test.
+
+Final independent raw receiving accepted all20 fresh100K,10 fresh150K,20 fresh2048
+and10 complete mission receipts. Settings/state/work/traces and timing summaries
+were checked against raw outputs. Complete mission receipts retain the legacy
+checksum/trace checks; scale receipts additionally use full semantic state digests.
+All five combined/control median pairs improve in each qualified cohort.
+Promotion is scoped to median pump/mission performance; 100K and legacy tiny-loop
+p99 regressions remain explicit. No blanket startup, admission or tail guarantee.
