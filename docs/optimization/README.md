@@ -15,6 +15,7 @@ and publication can dominate a complete tick.
 | Ordered all-pairs forces and compact snapshots | `nbody` | [Numeric and scheduling contract](nbody.md), [compact-kernel comparison](../../bench/results/reference/work-mode-representative/README.md) |
 | Stateful game testbed and thread scaling | `skirmish`, `threads` | [Skirmish model](../../bench/skirmish/README.md), [original captures](../../bench/results/reference/README.md) |
 | Pub admission → Pipeline → ECS → publication | Optional `stack` | [Full-stack contract](full-stack.md), [synthetic and consumer receipt](../../bench/results/reference/work-mode-stack/README.md) |
+| Production Crucible 100K/150K ticks and snapshots | `bench/tools/crucible.py --scale` | [Source optimization, combinations and receipts](../../bench/results/reference/work-mode-crucible-production/README.md) |
 | Actual Crucible direct/integrated routes and complete missions | `bench/tools/crucible.py` | [Frozen sources and build/capture instructions](full-stack.md#reproduction), [future workload and exhaustive logic requirements](full-stack.md#crucible-workload-and-exhaustive-logic-reference) |
 
 The first storage bars are a plain handwritten loop and an explicitly tuned SIMD
@@ -88,9 +89,13 @@ for profiling, metadata, result interpretation and noise checks.
 - Indexed synthetic staging needs a complete fixed dense-ID population. It
   remains slower than its handwritten floor and is not valid for arbitrary
   sparse/mobile-only sets without additional mapping and lifecycle checks.
-- Actual Crucible timing ranges overlap. The current capture establishes a
-  reproducible baseline, **not a qualified production speedup**. Checksums do
-  not replace per-field bitwise conformance or native rendering/latency tests.
+- The October 10 Crucible library-version comparison remains inconclusive. The
+  [production coordinator campaign](../../bench/results/reference/work-mode-crucible-production/README.md)
+  holds pins fixed: complete four-worker combined cohorts improve median
+  pump/capture by 11.18% at 100K and 13.23% at 150K. The 100K p99 is mixed;
+  fresh 2048 and complete missions pass the small-workload median gate. Promote
+  A+B without new dependency pins or public APIs. Semantic digests do not replace independent per-field
+  bitwise conformance or native rendering/latency tests.
 
 Continue from the [consumer optimization campaign](crucible.md),
 [future Crucible workload matrix](full-stack.md#crucible-workload-and-exhaustive-logic-reference)

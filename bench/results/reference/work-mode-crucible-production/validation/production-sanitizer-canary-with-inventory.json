@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "stage": "test",
+  "ok": false,
+  "checks": [
+    {
+      "name": "python",
+      "status": "pass",
+      "required": true,
+      "detail": "Python >=3.10 required",
+      "version": "3.12.14",
+      "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+    },
+    {
+      "name": "cxx23_expected",
+      "status": "pass",
+      "required": true,
+      "detail": "",
+      "returncode": 0,
+      "command": [
+        "/usr/bin/g++",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++23",
+        "-pthread",
+        "/tmp/crucible-prerequisites-nlm3ci6s/capability.cpp",
+        "-o",
+        "/tmp/crucible-prerequisites-nlm3ci6s/canary",
+        "-fsanitize=address,undefined",
+        "-fno-omit-frame-pointer"
+      ],
+      "elapsed_seconds": 0.917,
+      "process_scope": "POSIX process group",
+      "output_truncated": false,
+      "compiler": "/usr/bin/g++"
+    },
+    {
+      "name": "sanitizer_canary",
+      "status": "fail",
+      "required": true,
+      "detail": "==16==Can't open /proc/13/task for reading.\n==13==LeakSanitizer has encountered a fatal error.\n==13==HINT: For debugging, try setting environment variable LSAN_OPTIONS=verbosity=1:log_threads=1\n==13==HINT: LeakSanitizer does not work under ptrace (strace, gdb, etc)",
+      "returncode": 1,
+      "command": [
+        "/tmp/crucible-prerequisites-nlm3ci6s/canary"
+      ],
+      "elapsed_seconds": 0.008,
+      "process_scope": "POSIX process group",
+      "output_truncated": false,
+      "leak_checking": true
+    }
+  ],
+  "selected_tests": [
+    "runtime_parallel_simulation"
+  ],
+  "scope": "Capability preflight only; no performance, physical-console or suite acceptance claim",
+  "capacity": {
+    "cpu_count": 9,
+    "memory_bytes": null,
+    "requirement": "No invented CPU/RAM minimum"
+  },
+  "compiler": "/usr/bin/g++",
+  "sanitizers": true,
+  "gpu_required": false,
+  "elapsed_seconds": 0.926
+}

@@ -512,3 +512,33 @@ Both frozen/current-library Crucible builds complete all 20 captures with matchi
 emitted state and traces. Timing ranges overlap, so no production speedup or pin
 promotion is claimed. The [receipt](../bench/results/reference/work-mode-stack/README.md)
 retains all samples, including busy runs, profiling, validation and reproducible commands.
+
+
+## Production coordinator source optimization (2026-10-12)
+
+The [Crucible production receipt](../bench/results/reference/work-mode-crucible-production/README.md)
+holds all dependency pins fixed and measures actual integrated pump/capture at
+100K/400×250 and 150K/500×300, four workers, five alternating process pairs.
+Checked compact-row commit reduces median pump time from 62.785 to 59.868 ms
+at 100K and 90.824 to 87.330 ms at 150K. Both observed ranges overlap: this initial
+pass does not establish a robust whole-consumer gain beyond host variation.
+A fresh complete 100K four-arm cohort then measures control/A/B/A+B medians of
+63.603/60.787/59.041/56.493 ms. Combined improvement is 11.18%, all five paired
+comparisons improve and process-median ranges do not overlap. Median process p95
+improves 70.331→64.478 ms; p99 rises 74.365→75.687 ms, so tails are mixed.
+A complete five-pair 150K control/combined cohort reduces median pump/capture
+94.563→82.051 ms (13.23%), with nonoverlapping process-median ranges and five paired
+wins. Median process p95 improves 104.561→93.287 ms and p99 126.453→100.356 ms.
+Fresh 2048 pump/capture improves 2.2548→2.0553 ms. Complete reference and structural
+mission medians improve 924.046→866.696 ms and 2063.604→1922.829 ms, respectively.
+All three comparisons win in all five pairs, closing the small-workload median
+gate and supporting A+B promotion without new pins or public APIs. Legacy ordinary
+64/2048-row p99 rises 0.253→0.543 ms and 4.049→4.361 ms; no universal tail
+improvement is claimed. The older
+2048 A cohort has two missing raw receipts and the earlier combined 2048 cohort
+has three empty receipts; neither saved summary qualifies.
+
+An independent snapshot-based all-row oracle checks bitwise sample state across
+mobile holes, fusion/shatter and worker counts; campaign digests additionally
+check semantic state and trace drift. This consumer-source comparison does not
+attribute a gain to a newer Sub0 library or establish native frame/FPS acceptance.

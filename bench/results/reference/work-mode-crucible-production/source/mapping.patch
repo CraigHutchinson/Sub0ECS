@@ -1,0 +1,294 @@
+diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
+index 2f1ae29..54ec8fe 100644
+--- a/.github/workflows/build.yml
++++ b/.github/workflows/build.yml
+@@ -37,6 +37,14 @@ jobs:
+       - run: cmake --preset ${{ env.BUILD_PRESET }} -DCRUCIBLE_BUILD_RENDER_SPIKE=ON -DCRUCIBLE_BUILD_RULE_SPIKE=ON -DCRUCIBLE_ENABLE_DIAGNOSTICS=ON
+       - run: cmake --build --preset ${{ env.BUILD_PRESET }} --parallel 4
+       - run: python scripts/run_tests.py --preset ${{ env.BUILD_PRESET }}
++      - name: Headless production benchmark receiving
++        if: matrix.os == 'ubuntu-24.04' && matrix.preset == 'release'
++        run: |
++          cmake --preset desktop-release -DCRUCIBLE_BUILD_BENCHMARKS=ON
++          cmake --build build/desktop-release --target crucible_runtime_backbone_bench --parallel 4
++          build/desktop-release/benchmarks/crucible_runtime_backbone_bench --arm integrated --scale 2048 --workers 2 --warmup 2 --ticks 6
++          build/desktop-release/benchmarks/crucible_runtime_backbone_bench --arm direct --scale 2048 --workers 1 --warmup 2 --ticks 6
++          build/desktop-release/benchmarks/crucible_runtime_backbone_bench --arm integrated --scale 2048 --workers 2 --warmup 2 --ticks 6 --profile-stages
+       - name: Native X11 window event smoke
+         if: runner.os == 'Linux'
+         env:
+diff --git a/docs/ACTIVE_WORK_LOG.md b/docs/ACTIVE_WORK_LOG.md
+index fc30270..d8cbf4c 100644
+--- a/docs/ACTIVE_WORK_LOG.md
++++ b/docs/ACTIVE_WORK_LOG.md
+@@ -624,3 +624,22 @@ review. No shared runtime/pin edit, heavy CPU run or concurrent worker dispatch.
+ PR33's mission work is preserved. Source review and documentation are complete;
+ actual profiling, adapter implementation and combined receiving remain pending
+ as recorded in the campaign. No speedup or new API is claimed.
++
++
++## Production gather/commit optimization, 2026-10-10
++
++Root owns branch `perf/production-gather-commit` from
++`118ce62a75c8e6f1c325cc915cbc539c558a4c11`, all serial configure/build/profile/
++measurement CPU, capture tooling, shared manifests and documentation. A detached
++`../Crucible-control` worktree preserves that baseline. No other worktrees removed.
++
++- `production_mapping`: `src/simulation.cpp` and focused simulation receiving tests;
++  proposal first, implementation after production attribution.
++- `production_bench`: `benchmarks/runtime_backbone.cpp`, opt-in headless scale/stage
++  receiving through the existing actual InspectorSession, no replacement simulation.
++- Root: independently review both changes, paired capture and publication.
++
++Scope: complete production headless boundary, fixed identity and mobile subsets,
++unchanged numerical/resource rules and dependency pins. Native frame/pacing/GPU
++acceptance stays open. Skills recovered from CraigHutchinson/Agentic-CPP; Sub0
++profile with no overlay. See `docs/optimization/production-gather-commit.md`.
+diff --git a/docs/optimization/production-gather-commit.md b/docs/optimization/production-gather-commit.md
+new file mode 100644
+index 0000000..bf82a3a
+--- /dev/null
++++ b/docs/optimization/production-gather-commit.md
+@@ -0,0 +1,64 @@
++# Production gather/commit optimization
++
++Status: implementing and receiving pass A. Owner: Integration. Date: 2026-10-11.
++
++## Frozen question and control
++
++Control is Crucible `118ce62a75c8e6f1c325cc915cbc539c558a4c11` with committed
++dependency pins. Candidate must retain those pins so consumer changes are
++attributable. Actual caller is InspectorSession → HeadlessSession → Simulation;
++timing includes complete pump/capture/publication. Existing reference and structural
++missions remain regression workloads. Larger headless cases use the production
++100K/400x250 and 150K/500x300 geometry, with an explicit small control.
++
++Hypothesis: repeated gather sorting and per-mobile-row binary-search commit are
++material coordinator costs. A checked per-tick identity mapping can remove those
++costs without changing ordered steering, mobile membership or assignments. Reject
++if whole-boundary savings disappear into repeated-control noise or correctness
++changes. No native rendering/FPS claim follows from a headless measurement.
++
++Before timing, require bitwise state/reference behavior, structural lifecycle,
++joined worker/FP behavior and complete Debug/Release plus supported sanitizer gates.
++At least five alternating independent process pairs, same toolchain/flags/pins and
++identical benchmark source in each arm. Keep all slower/failed/time-out raw results;
++report per-process medians, p95/p99 and ranges with exact source/binary hashes.
++No timing exclusions except failed receipts, which invalidate qualification.
++Stage-observed and instrumented profiles are separate diagnostic arms. Host power,
++thermal state and external contention are uncontrolled and reported.
++
++## Diagnosis and passes
++
++Actual baseline diagnostics: GCC13.3, Release O3 C++23, portable x86-64,
++CPU affinity0–3,100K/400x250,30 warmup+60 advancing diagnostic ticks, gather route.
++Stage means (ms), collected separately from qualification:
++
++| Workers | Boundary | Gather | Index | Propose | Commit | Resources | Rebuild |
++|---|---:|---:|---:|---:|---:|---:|---:|
++| 1 | 121.299 | 2.664 | 4.144 | 97.180 | 5.583 | 4.149 | 4.567 |
++| 4 | 63.023 | 2.496 | 3.664 | 41.170 | 5.409 | 3.756 | 4.065 |
++
++These diagnose an8.6% serial commit share in the four-worker boundary, not a
++speedup. Proposal work remains dominant. VTune is unavailable (`ENOENT`); both
++version/help failed receipts are retained. No cache/PMU claims. Existing production
++stage clocks provide narrower source attribution; compiler/disassembly checks follow.
++
++Pass A retains sorting and replaces binary-search commit with a startup-reserved
++ID→compact-row map, filled alongside existing spatial staging. Private population
++IDs remain1..count; mobile subsets may have holes. Workers do not mutate membership.
++Gather validates ID range/uniqueness and all proposal IDs are validated after join
++before any world write. No stale entry is consumed: every mobile ID is remapped in
++that epoch. Storage cost is sizeof(size_t)×population (1.2MB at150K on this host);
++no steady allocation is added. Arithmetic/reduction order is unchanged.
++
++Independent oracle tests receive empty/single/odd worlds, non-prefix anchored
++holes, a fully anchored epoch, two fuse/shatter cycles and permanent lost identities
++at1/2/4 workers. The oracle calls public all-row steering from a pre-tick snapshot,
++bypassing Simulation gather/commit. Worker parity alone would share the changed map.
++
++The qualifying campaign selects integrated four-worker whole pump/capture at
++2048,100K,150K,120 warmup+300 evolving ticks, gather route, five alternating pairs.
++Small regressions above5% block blanket promotion; improvements must exceed paired
++noise and be reported individually, including any overlap. One-worker and direct
++routes receive correctness and diagnostic comparisons; native acceptance remains
++separate. Complete reference/structural mission pairs remain regression controls.
++
+diff --git a/src/simulation.cpp b/src/simulation.cpp
+index 89d4577..cdb737f 100644
+--- a/src/simulation.cpp
++++ b/src/simulation.cpp
+@@ -51,6 +51,7 @@ struct Simulation::ScenarioState {
+         : options(validateExecution(options, count)), extent(RequireExtent(options.grid)), grid(options.grid, count),
+           fields(options.field_capacity), blight(options.grid), samples(count),
+           tick_input(options.steering || options.resources ? count : 0), next_state(options.steering ? count : 0),
++          outputRowById_(options.steering ? count : 0),
+           queryScratch(options.steering ? count : 0),
+           partitionScratch(options.steering ? count * (options.rowExecution.partitions - 1) : 0),
+           activities(options.structural ? count : 0, SampleActivity::mobile) {
+@@ -88,6 +89,7 @@ struct Simulation::ScenarioState {
+     blight::Grid blight;
+     std::vector<spatial::SpatialSample> samples;
+     std::vector<SampleState> tick_input, next_state;
++    std::vector<std::size_t> outputRowById_; ///< Tick-local compact rows indexed by immutable ID minus one.
+     std::vector<SampleId> queryScratch; ///< Coordinator-owned complete-result scratch for the immutable row seam.
+     std::vector<SampleId> partitionScratch; ///< Remaining disjoint complete-result buffers, fixed at startup.
+     std::span<const SampleState> epochInput{};
+@@ -167,8 +169,14 @@ void Simulation::tick() {
+             auto input = std::span{state.tick_input}.first(index);
+             auto output = std::span{state.next_state}.first(index);
+             std::ranges::sort(input, {}, &SampleState::id);
+-            for (std::size_t i = 0; i < index; ++i)
++            for (std::size_t i = 0; i < index; ++i) {
++                const auto id = state.tick_input[i].id.value;
++                if (id == 0 || id > state.outputRowById_.size() ||
++                    (i != 0 && state.tick_input[i - 1].id.value >= id))
++                    throw std::logic_error("Scenario gather violated fixed identity population");
++                state.outputRowById_[static_cast<std::size_t>(id - 1)] = i;
+                 state.samples[i] = {state.tick_input[i].id, state.tick_input[i].position};
++            }
+             statistics.inputRows = index;
+             finishPhase(statistics.gather);
+             if (!state.grid.TryRebuild(std::span{state.samples}.first(index)))
+@@ -198,11 +206,15 @@ void Simulation::tick() {
+             statistics.queryRows = index;
+             statistics.queryScratchCapacity = state.queryScratch.size() + state.partitionScratch.size();
+             finishPhase(statistics.propose);
++            for (std::size_t i = 0; i < index; ++i)
++                if (output[i].id != input[i].id)
++                    throw std::logic_error("Scenario row proposal changed identity before commit");
+             state.world.each<Position, Velocity, SampleId>([&](Position& position, Velocity& velocity, const SampleId& id) {
+                 if (state.Activity(id) != SampleActivity::mobile) return;
+-                const auto sample = std::ranges::lower_bound(output, id, {}, &SampleState::id);
+-                position = sample->position;
+-                velocity = sample->velocity;
++                // Every mobile ID was mapped in this epoch; workers cannot change membership.
++                const auto& sample = output[state.outputRowById_[static_cast<std::size_t>(id.value - 1)]];
++                position = sample.position;
++                velocity = sample.velocity;
+             });
+             finishPhase(statistics.commit);
+         } else {
+diff --git a/tests/runtime/CMakeLists.txt b/tests/runtime/CMakeLists.txt
+index b769c6e..8edcfdc 100644
+--- a/tests/runtime/CMakeLists.txt
++++ b/tests/runtime/CMakeLists.txt
+@@ -72,6 +72,7 @@ target_link_libraries(crucible_tick_observations_test PRIVATE Crucible::Runtime
+ add_test(NAME runtime_tick_observations COMMAND crucible_tick_observations_test)
+ set_tests_properties(runtime_tick_observations PROPERTIES LABELS "runtime;pipeline;scale")
+ add_executable(crucible_parallel_simulation_test test_parallel_simulation.cpp)
+-target_link_libraries(crucible_parallel_simulation_test PRIVATE Crucible::Runtime Crucible::Presentation)
++target_link_libraries(crucible_parallel_simulation_test PRIVATE Crucible::Runtime Crucible::Presentation
++    Crucible::Spatial Crucible::Fields Crucible::Swarm)
+ add_test(NAME runtime_parallel_simulation COMMAND crucible_parallel_simulation_test)
+ set_tests_properties(runtime_parallel_simulation PROPERTIES LABELS "runtime;pipeline;scale;structural" TIMEOUT 180)
+diff --git a/tests/runtime/test_parallel_simulation.cpp b/tests/runtime/test_parallel_simulation.cpp
+index 3449572..f30f3cb 100644
+--- a/tests/runtime/test_parallel_simulation.cpp
++++ b/tests/runtime/test_parallel_simulation.cpp
+@@ -1,13 +1,18 @@
++#include <algorithm>
+ #include <array>
+ #include <bit>
+ #include <cfenv>
+ #include <chrono>
+ #include <cstdint>
+ #include <stdexcept>
++#include <vector>
+ 
++#include "crucible/fields/FieldSet.hpp"
+ #include "crucible/presentation/ScenarioSnapshot.hpp"
+ #include "crucible/runtime/InspectorSession.hpp"
+ #include "crucible/simulation.hpp"
++#include "crucible/spatial/Grid.hpp"
++#include "crucible/swarm/Steering.hpp"
+ 
+ namespace {
+ using namespace crucible;
+@@ -31,6 +36,73 @@ void requireSame(const presentation::ScenarioSnapshot& first, const presentation
+     }
+ }
+ 
++void receiveCommitOracle(std::size_t population, ExecutionSettings execution, bool structural)
++{
++    const GridConfig config{32, 16, 1};
++    Simulation::ScenarioOptions options{config, 2, SteeringSettings{}, ResourceSettings{}};
++    options.rowExecution = execution;
++    if (structural) {
++        options.structural = StructuralSettings{};
++        options.structural->relay_center = population == 64 ? Position{16, 1} : Position{16, 4};
++        options.structural->eligibility_radius = population == 64 ? 32 : 6;
++    }
++    Simulation simulation{population, options};
++    presentation::ScenarioSnapshot before{population, 2, 512}, after{population, 2, 512};
++    fields::FieldSet fields{2};
++    spatial::Grid grid{config, population};
++    swarm::Steering steering{config, *options.steering, population};
++    const FieldEdit flow{FieldEditKind::set_flow, 0, {1, 4}, 12, 4, {30, 10}};
++    require(simulation.TryApplyFieldEdit(flow));
++    require(fields.TryApplyEdit(flow) == fields::EditResult::applied);
++    const auto boundary = [&] {
++        require(before.TryCapture(simulation));
++        std::vector<SampleState> input;
++        std::vector<spatial::SpatialSample> positions;
++        for (const auto& sample : before.GetSamples()) {
++            if (sample.activity != SampleActivity::mobile) continue;
++            input.push_back(sample);
++            positions.push_back({sample.id, sample.position});
++        }
++        require(std::ranges::is_sorted(input, {}, &SampleState::id));
++        require(grid.TryRebuild(positions));
++        std::vector<SampleState> expected(input.size());
++        // The public all-row reference bypasses Simulation's gather, row mapping and commit.
++        require(steering.TryCompute(input, fields, grid, expected));
++        simulation.tick();
++        require(after.TryCapture(simulation));
++        require(after.GetInfo()->completed_tick == before.GetInfo()->completed_tick + 1);
++        for (const auto& actual : after.GetSamples()) {
++            const auto previous = std::ranges::find(before.GetSamples(), actual.id, &SampleState::id);
++            require(previous != before.GetSamples().end());
++            const auto oracle = actual.activity == SampleActivity::mobile
++                ? std::ranges::find(expected, actual.id, &SampleState::id) : expected.end();
++            require(actual.activity == previous->activity);
++            if (actual.activity == SampleActivity::mobile) require(oracle != expected.end());
++            const auto& wanted = oracle == expected.end() ? *previous : *oracle;
++            const std::array observed{actual.position.x, actual.position.y, actual.velocity.x, actual.velocity.y};
++            const std::array reference{wanted.position.x, wanted.position.y, wanted.velocity.x, wanted.velocity.y};
++            for (std::size_t component = 0; component < observed.size(); ++component)
++                require(std::bit_cast<std::uint32_t>(observed[component]) ==
++                    std::bit_cast<std::uint32_t>(reference[component]));
++        }
++    };
++    boundary();
++    boundary();
++    if (!structural) return;
++    for (int cycle = 0; cycle < (population == 64 ? 1 : 2); ++cycle) {
++        require(simulation.TryFuseRelay() == StructuralCommandResult::applied);
++        const auto structure = simulation.GetStructuralState().value();
++        if (population != 64) require(structure.members.front().value > 1);
++        boundary();
++        boundary();
++        require(simulation.TryShatterRelay(structure.generation) == StructuralCommandResult::applied);
++        boundary();
++        require(std::ranges::count(after.GetSamples(), SampleActivity::lost, &SampleState::activity) ==
++            (cycle + 1) * static_cast<int>(StructuralSettings::cost - StructuralSettings::refund));
++        boundary();
++    }
++}
++
+ void receiveScenario(ScenarioSettings settings, bool structural) {
+     Session sequential{settings};
+     Session pair{settings, {64, 4096}, std::nullopt, Session::ExecutionPath::integrated,
+@@ -133,6 +205,12 @@ int main() {
+         receiveScenario(ScenarioSettings{.population = 257}, false);
+     }
+     require(std::fesetround(FE_TONEAREST) == 0);
++    for (const auto population : {0U, 1U, 257U})
++        receiveCommitOracle(population, {1, 1}, false);
++    for (const auto execution : {ExecutionSettings{1, 1}, ExecutionSettings{2, 4}, ExecutionSettings{4, 7}}) {
++        receiveCommitOracle(257, execution, true);
++        receiveCommitOracle(64, execution, true);
++    }
+     ScenarioSettings structural;
+     structural.structural = StructuralSettings{};
+     structural.structural->eligibility_radius = 80;

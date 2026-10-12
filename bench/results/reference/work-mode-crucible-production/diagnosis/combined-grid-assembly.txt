@@ -1,0 +1,523 @@
+0000000000024cd0 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)>:
+   24cd0:	f3 0f 1e fa          	endbr64
+   24cd4:	41 57                	push   %r15
+   24cd6:	41 56                	push   %r14
+   24cd8:	41 55                	push   %r13
+   24cda:	41 54                	push   %r12
+   24cdc:	55                   	push   %rbp
+   24cdd:	53                   	push   %rbx
+   24cde:	48 83 ec 58          	sub    $0x58,%rsp
+   24ce2:	64 48 8b 04 25 28 00 	mov    %fs:0x28,%rax
+   24ce9:	00 00 
+   24ceb:	48 89 44 24 48       	mov    %rax,0x48(%rsp)
+   24cf0:	48 8b 87 88 00 00 00 	mov    0x88(%rdi),%rax
+   24cf7:	48 2b 87 80 00 00 00 	sub    0x80(%rdi),%rax
+   24cfe:	48 c1 f8 04          	sar    $0x4,%rax
+   24d02:	48 39 d0             	cmp    %rdx,%rax
+   24d05:	72 3d                	jb     24d44 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x74>
+   24d07:	49 89 d7             	mov    %rdx,%r15
+   24d0a:	49 89 d4             	mov    %rdx,%r12
+   24d0d:	49 89 d5             	mov    %rdx,%r13
+   24d10:	48 89 fb             	mov    %rdi,%rbx
+   24d13:	49 c1 e7 04          	shl    $0x4,%r15
+   24d17:	4a 8d 14 3e          	lea    (%rsi,%r15,1),%rdx
+   24d1b:	48 39 f2             	cmp    %rsi,%rdx
+   24d1e:	0f 84 25 07 00 00    	je     25449 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x779>
+   24d24:	f3 0f 10 0d f8 b2 01 	movss  0x1b2f8(%rip),%xmm1        # 40024 <_IO_stdin_used+0x24>
+   24d2b:	00 
+   24d2c:	48 89 f0             	mov    %rsi,%rax
+   24d2f:	f3 0f 10 15 e9 cc 01 	movss  0x1cce9(%rip),%xmm2        # 41a20 <typeinfo name for std::bad_optional_access+0x1d0>
+   24d36:	00 
+   24d37:	f3 0f 10 40 08       	movss  0x8(%rax),%xmm0
+   24d3c:	0f 54 c2             	andps  %xmm2,%xmm0
+   24d3f:	0f 2e c8             	ucomiss %xmm0,%xmm1
+   24d42:	73 2c                	jae    24d70 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0xa0>
+   24d44:	31 c0                	xor    %eax,%eax
+   24d46:	48 8b 54 24 48       	mov    0x48(%rsp),%rdx
+   24d4b:	64 48 2b 14 25 28 00 	sub    %fs:0x28,%rdx
+   24d52:	00 00 
+   24d54:	0f 85 6c 07 00 00    	jne    254c6 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x7f6>
+   24d5a:	48 83 c4 58          	add    $0x58,%rsp
+   24d5e:	5b                   	pop    %rbx
+   24d5f:	5d                   	pop    %rbp
+   24d60:	41 5c                	pop    %r12
+   24d62:	41 5d                	pop    %r13
+   24d64:	41 5e                	pop    %r14
+   24d66:	41 5f                	pop    %r15
+   24d68:	c3                   	ret
+   24d69:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+   24d70:	f3 0f 10 40 0c       	movss  0xc(%rax),%xmm0
+   24d75:	0f 54 c2             	andps  %xmm2,%xmm0
+   24d78:	0f 2e c8             	ucomiss %xmm0,%xmm1
+   24d7b:	72 c7                	jb     24d44 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x74>
+   24d7d:	48 83 c0 10          	add    $0x10,%rax
+   24d81:	48 39 c2             	cmp    %rax,%rdx
+   24d84:	75 b1                	jne    24d37 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x67>
+   24d86:	4c 8b 93 98 00 00 00 	mov    0x98(%rbx),%r10
+   24d8d:	4d 89 fe             	mov    %r15,%r14
+   24d90:	49 83 ff 10          	cmp    $0x10,%r15
+   24d94:	0f 8e 0f 07 00 00    	jle    254a9 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x7d9>
+   24d9a:	4c 89 d7             	mov    %r10,%rdi
+   24d9d:	4c 89 fa             	mov    %r15,%rdx
+   24da0:	e8 7b 0c fe ff       	call   5a20 <memmove@plt>
+   24da5:	4c 8b 93 98 00 00 00 	mov    0x98(%rbx),%r10
+   24dac:	4f 8d 0c 3a          	lea    (%r10,%r15,1),%r9
+   24db0:	4d 39 d1             	cmp    %r10,%r9
+   24db3:	0f 84 4d 02 00 00    	je     25006 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x336>
+   24db9:	49 8d 6a 10          	lea    0x10(%r10),%rbp
+   24dbd:	4c 39 cd             	cmp    %r9,%rbp
+   24dc0:	0f 84 9a 01 00 00    	je     24f60 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x290>
+   24dc6:	49 8b 12             	mov    (%r10),%rdx
+   24dc9:	48 89 e8             	mov    %rbp,%rax
+   24dcc:	eb 0f                	jmp    24ddd <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x10d>
+   24dce:	66 90                	xchg   %ax,%ax
+   24dd0:	48 83 c0 10          	add    $0x10,%rax
+   24dd4:	49 39 c1             	cmp    %rax,%r9
+   24dd7:	0f 84 83 01 00 00    	je     24f60 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x290>
+   24ddd:	48 89 d1             	mov    %rdx,%rcx
+   24de0:	48 8b 10             	mov    (%rax),%rdx
+   24de3:	48 39 ca             	cmp    %rcx,%rdx
+   24de6:	73 e8                	jae    24dd0 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x100>
+   24de8:	4c 89 f0             	mov    %r14,%rax
+   24deb:	48 8d 4c 24 27       	lea    0x27(%rsp),%rcx
+   24df0:	4c 8d 44 24 28       	lea    0x28(%rsp),%r8
+   24df5:	48 c7 44 24 28 00 00 	movq   $0x0,0x28(%rsp)
+   24dfc:	00 00 
+   24dfe:	48 c1 f8 04          	sar    $0x4,%rax
+   24e02:	0f 84 50 06 00 00    	je     25458 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x788>
+   24e08:	48 0f bd d0          	bsr    %rax,%rdx
+   24e0c:	4c 89 ce             	mov    %r9,%rsi
+   24e0f:	4c 89 d7             	mov    %r10,%rdi
+   24e12:	4c 89 4c 24 08       	mov    %r9,0x8(%rsp)
+   24e17:	48 63 d2             	movslq %edx,%rdx
+   24e1a:	4c 89 14 24          	mov    %r10,(%rsp)
+   24e1e:	48 01 d2             	add    %rdx,%rdx
+   24e21:	e8 2a 11 00 00       	call   25f50 <void std::__introsort_loop<__gnu_cxx::__normal_iterator<crucible::spatial::SpatialSample*, std::span<crucible::spatial::SpatialSample, 18446744073709551615ul> >, long, __gnu_cxx::__ops::_Iter_comp_iter<std::ranges::__detail::__make_comp_proj<std::ranges::less, crucible::SampleId crucible::spatial::SpatialSample::*>(std::ranges::less&, crucible::SampleId crucible::spatial::SpatialSample::*&)::{lambda(auto:1&&, auto:2&&)#1}> >(__gnu_cxx::__normal_iterator<crucible::spatial::SpatialSample*, std::span<crucible::spatial::SpatialSample, 18446744073709551615ul> >, __gnu_cxx::__normal_iterator<crucible::spatial::SpatialSample*, std::span<crucible::spatial::SpatialSample, 18446744073709551615ul> >, long, __gnu_cxx::__ops::_Iter_comp_iter<std::ranges::__detail::__make_comp_proj<std::ranges::less, crucible::SampleId crucible::spatial::SpatialSample::*>(std::ranges::less&, crucible::SampleId crucible::spatial::SpatialSample::*&)::{lambda(auto:1&&, auto:2&&)#1}>)>
+   24e26:	4c 8b 14 24          	mov    (%rsp),%r10
+   24e2a:	31 d2                	xor    %edx,%edx
+   24e2c:	4c 8b 4c 24 08       	mov    0x8(%rsp),%r9
+   24e31:	49 81 fe 00 01 00 00 	cmp    $0x100,%r14
+   24e38:	49 8d 8a 00 01 00 00 	lea    0x100(%r10),%rcx
+   24e3f:	0f 8f 95 03 00 00    	jg     251da <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x50a>
+   24e45:	31 d2                	xor    %edx,%edx
+   24e47:	eb 67                	jmp    24eb0 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x1e0>
+   24e49:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+   24e50:	48 89 ea             	mov    %rbp,%rdx
+   24e53:	48 8b 4d 00          	mov    0x0(%rbp),%rcx
+   24e57:	4c 8b 75 08          	mov    0x8(%rbp),%r14
+   24e5b:	4c 29 d2             	sub    %r10,%rdx
+   24e5e:	48 83 fa 10          	cmp    $0x10,%rdx
+   24e62:	0f 8e 19 06 00 00    	jle    25481 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x7b1>
+   24e68:	bf 10 00 00 00       	mov    $0x10,%edi
+   24e6d:	4c 89 d6             	mov    %r10,%rsi
+   24e70:	48 89 4c 24 10       	mov    %rcx,0x10(%rsp)
+   24e75:	48 29 d7             	sub    %rdx,%rdi
+   24e78:	4c 89 4c 24 08       	mov    %r9,0x8(%rsp)
+   24e7d:	48 01 ef             	add    %rbp,%rdi
+   24e80:	4c 89 14 24          	mov    %r10,(%rsp)
+   24e84:	e8 97 0b fe ff       	call   5a20 <memmove@plt>
+   24e89:	4c 8b 14 24          	mov    (%rsp),%r10
+   24e8d:	4c 8b 4c 24 08       	mov    0x8(%rsp),%r9
+   24e92:	48 8b 4c 24 10       	mov    0x10(%rsp),%rcx
+   24e97:	49 89 0a             	mov    %rcx,(%r10)
+   24e9a:	4d 89 72 08          	mov    %r14,0x8(%r10)
+   24e9e:	48 83 c5 10          	add    $0x10,%rbp
+   24ea2:	4c 39 cd             	cmp    %r9,%rbp
+   24ea5:	0f 84 b5 00 00 00    	je     24f60 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x290>
+   24eab:	48 8b 54 24 28       	mov    0x28(%rsp),%rdx
+   24eb0:	49 8b 04 12          	mov    (%r10,%rdx,1),%rax
+   24eb4:	48 89 e9             	mov    %rbp,%rcx
+   24eb7:	48 39 44 15 00       	cmp    %rax,0x0(%rbp,%rdx,1)
+   24ebc:	72 92                	jb     24e50 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x180>
+   24ebe:	f3 0f 6f 5d 00       	movdqu 0x0(%rbp),%xmm3
+   24ec3:	48 8d 45 f0          	lea    -0x10(%rbp),%rax
+   24ec7:	0f 29 5c 24 30       	movaps %xmm3,0x30(%rsp)
+   24ecc:	48 8b 74 14 30       	mov    0x30(%rsp,%rdx,1),%rsi
+   24ed1:	48 3b 74 15 f0       	cmp    -0x10(%rbp,%rdx,1),%rsi
+   24ed6:	73 1d                	jae    24ef5 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x225>
+   24ed8:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+   24edf:	00 
+   24ee0:	f3 0f 6f 20          	movdqu (%rax),%xmm4
+   24ee4:	48 89 c1             	mov    %rax,%rcx
+   24ee7:	48 83 e8 10          	sub    $0x10,%rax
+   24eeb:	0f 11 60 20          	movups %xmm4,0x20(%rax)
+   24eef:	48 3b 34 10          	cmp    (%rax,%rdx,1),%rsi
+   24ef3:	72 eb                	jb     24ee0 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x210>
+   24ef5:	66 0f 6f 64 24 30    	movdqa 0x30(%rsp),%xmm4
+   24efb:	0f 11 21             	movups %xmm4,(%rcx)
+   24efe:	eb 9e                	jmp    24e9e <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x1ce>
+   24f00:	49 39 e9             	cmp    %rbp,%r9
+   24f03:	74 5b                	je     24f60 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x290>
+   24f05:	48 8b 74 24 28       	mov    0x28(%rsp),%rsi
+   24f0a:	48 8d 7c 34 30       	lea    0x30(%rsp,%rsi,1),%rdi
+   24f0f:	90                   	nop
+   24f10:	f3 0f 6f 5d 00       	movdqu 0x0(%rbp),%xmm3
+   24f15:	48 89 ea             	mov    %rbp,%rdx
+   24f18:	48 8d 45 f0          	lea    -0x10(%rbp),%rax
+   24f1c:	0f 29 5c 24 30       	movaps %xmm3,0x30(%rsp)
+   24f21:	48 8b 0f             	mov    (%rdi),%rcx
+   24f24:	48 3b 4c 35 f0       	cmp    -0x10(%rbp,%rsi,1),%rcx
+   24f29:	73 1a                	jae    24f45 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x275>
+   24f2b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+   24f30:	f3 0f 6f 38          	movdqu (%rax),%xmm7
+   24f34:	48 89 c2             	mov    %rax,%rdx
+   24f37:	48 83 e8 10          	sub    $0x10,%rax
+   24f3b:	0f 11 78 20          	movups %xmm7,0x20(%rax)
+   24f3f:	48 3b 0c 30          	cmp    (%rax,%rsi,1),%rcx
+   24f43:	72 eb                	jb     24f30 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x260>
+   24f45:	66 0f 6f 5c 24 30    	movdqa 0x30(%rsp),%xmm3
+   24f4b:	48 83 c5 10          	add    $0x10,%rbp
+   24f4f:	0f 11 1a             	movups %xmm3,(%rdx)
+   24f52:	49 39 e9             	cmp    %rbp,%r9
+   24f55:	75 b9                	jne    24f10 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x240>
+   24f57:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+   24f5e:	00 00 
+   24f60:	4c 89 d0             	mov    %r10,%rax
+   24f63:	48 8d 50 10          	lea    0x10(%rax),%rdx
+   24f67:	49 39 d1             	cmp    %rdx,%r9
+   24f6a:	74 24                	je     24f90 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x2c0>
+   24f6c:	48 8b 78 10          	mov    0x10(%rax),%rdi
+   24f70:	48 39 7a f0          	cmp    %rdi,-0x10(%rdx)
+   24f74:	0f 84 e6 01 00 00    	je     25160 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x490>
+   24f7a:	48 89 d0             	mov    %rdx,%rax
+   24f7d:	48 8d 50 10          	lea    0x10(%rax),%rdx
+   24f81:	49 39 d1             	cmp    %rdx,%r9
+   24f84:	75 e6                	jne    24f6c <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x29c>
+   24f86:	66 2e 0f 1f 84 00 00 	cs nopw 0x0(%rax,%rax,1)
+   24f8d:	00 00 00 
+   24f90:	49 8d 57 f0          	lea    -0x10(%r15),%rdx
+   24f94:	4c 89 d0             	mov    %r10,%rax
+   24f97:	48 83 fa 10          	cmp    $0x10,%rdx
+   24f9b:	76 21                	jbe    24fbe <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x2ee>
+   24f9d:	49 8d 4a 08          	lea    0x8(%r10),%rcx
+   24fa1:	48 8d 43 28          	lea    0x28(%rbx),%rax
+   24fa5:	48 39 c1             	cmp    %rax,%rcx
+   24fa8:	0f 83 92 02 00 00    	jae    25240 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x570>
+   24fae:	48 8d 4b 20          	lea    0x20(%rbx),%rcx
+   24fb2:	4c 89 d0             	mov    %r10,%rax
+   24fb5:	4c 39 c9             	cmp    %r9,%rcx
+   24fb8:	0f 83 82 02 00 00    	jae    25240 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x570>
+   24fbe:	66 0f ef db          	pxor   %xmm3,%xmm3
+   24fc2:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+   24fc8:	f3 0f 10 48 08       	movss  0x8(%rax),%xmm1
+   24fcd:	f3 0f 10 50 0c       	movss  0xc(%rax),%xmm2
+   24fd2:	0f 2f d9             	comiss %xmm1,%xmm3
+   24fd5:	76 04                	jbe    24fdb <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x30b>
+   24fd7:	66 0f ef c9          	pxor   %xmm1,%xmm1
+   24fdb:	0f 2f da             	comiss %xmm2,%xmm3
+   24fde:	f3 0f 10 43 20       	movss  0x20(%rbx),%xmm0
+   24fe3:	f3 0f 5d c1          	minss  %xmm1,%xmm0
+   24fe7:	76 04                	jbe    24fed <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x31d>
+   24fe9:	66 0f ef d2          	pxor   %xmm2,%xmm2
+   24fed:	f3 0f 10 4b 24       	movss  0x24(%rbx),%xmm1
+   24ff2:	48 83 c0 10          	add    $0x10,%rax
+   24ff6:	f3 0f 5d ca          	minss  %xmm2,%xmm1
+   24ffa:	0f 14 c1             	unpcklps %xmm1,%xmm0
+   24ffd:	0f 13 40 f8          	movlps %xmm0,-0x8(%rax)
+   25001:	49 39 c1             	cmp    %rax,%r9
+   25004:	75 c2                	jne    24fc8 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x2f8>
+   25006:	4c 89 e2             	mov    %r12,%rdx
+   25009:	4c 89 d6             	mov    %r10,%rsi
+   2500c:	48 89 df             	mov    %rbx,%rdi
+   2500f:	e8 5c f9 ff ff       	call   24970 <crucible::spatial::Grid::PrepareCellIndices(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)>
+   25014:	f3 0f 6f 93 90 00 00 	movdqu 0x90(%rbx),%xmm2
+   2501b:	00 
+   2501c:	f3 0f 6f a3 a0 00 00 	movdqu 0xa0(%rbx),%xmm4
+   25023:	00 
+   25024:	4c 89 a3 40 01 00 00 	mov    %r12,0x140(%rbx)
+   2502b:	48 8b 8b c8 00 00 00 	mov    0xc8(%rbx),%rcx
+   25032:	48 8b 93 d0 00 00 00 	mov    0xd0(%rbx),%rdx
+   25039:	f3 0f 6f 83 80 00 00 	movdqu 0x80(%rbx),%xmm0
+   25040:	00 
+   25041:	66 0f 6f ca          	movdqa %xmm2,%xmm1
+   25045:	66 0f c6 cc 01       	shufpd $0x1,%xmm4,%xmm1
+   2504a:	48 29 ca             	sub    %rcx,%rdx
+   2504d:	0f 11 8b 80 00 00 00 	movups %xmm1,0x80(%rbx)
+   25054:	66 0f 6f cc          	movdqa %xmm4,%xmm1
+   25058:	66 0f c6 c8 01       	shufpd $0x1,%xmm0,%xmm1
+   2505d:	66 0f c6 c2 01       	shufpd $0x1,%xmm2,%xmm0
+   25062:	0f 11 8b 90 00 00 00 	movups %xmm1,0x90(%rbx)
+   25069:	0f 11 83 a0 00 00 00 	movups %xmm0,0xa0(%rbx)
+   25070:	48 85 d2             	test   %rdx,%rdx
+   25073:	7e 14                	jle    25089 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x3b9>
+   25075:	48 89 cf             	mov    %rcx,%rdi
+   25078:	31 f6                	xor    %esi,%esi
+   2507a:	e8 01 07 fe ff       	call   5780 <memset@plt>
+   2507f:	4c 8b ab 40 01 00 00 	mov    0x140(%rbx),%r13
+   25086:	48 89 c1             	mov    %rax,%rcx
+   25089:	48 8b bb b0 00 00 00 	mov    0xb0(%rbx),%rdi
+   25090:	4a 8d 34 ef          	lea    (%rdi,%r13,8),%rsi
+   25094:	48 89 f8             	mov    %rdi,%rax
+   25097:	48 39 fe             	cmp    %rdi,%rsi
+   2509a:	74 15                	je     250b1 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x3e1>
+   2509c:	0f 1f 40 00          	nopl   0x0(%rax)
+   250a0:	48 8b 10             	mov    (%rax),%rdx
+   250a3:	48 83 c0 08          	add    $0x8,%rax
+   250a7:	48 83 04 d1 01       	addq   $0x1,(%rcx,%rdx,8)
+   250ac:	48 39 f0             	cmp    %rsi,%rax
+   250af:	75 ef                	jne    250a0 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x3d0>
+   250b1:	48 8b b3 e0 00 00 00 	mov    0xe0(%rbx),%rsi
+   250b8:	48 c7 06 00 00 00 00 	movq   $0x0,(%rsi)
+   250bf:	48 83 7b 70 00       	cmpq   $0x0,0x70(%rbx)
+   250c4:	48 c7 83 48 01 00 00 	movq   $0x0,0x148(%rbx)
+   250cb:	00 00 00 00 
+   250cf:	74 43                	je     25114 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x444>
+   250d1:	4c 8b 83 f8 00 00 00 	mov    0xf8(%rbx),%r8
+   250d8:	31 c0                	xor    %eax,%eax
+   250da:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+   250e0:	48 8b 14 c1          	mov    (%rcx,%rax,8),%rdx
+   250e4:	48 03 14 c6          	add    (%rsi,%rax,8),%rdx
+   250e8:	48 83 c0 01          	add    $0x1,%rax
+   250ec:	48 89 14 c6          	mov    %rdx,(%rsi,%rax,8)
+   250f0:	48 8b 54 c6 f8       	mov    -0x8(%rsi,%rax,8),%rdx
+   250f5:	49 89 54 c0 f8       	mov    %rdx,-0x8(%r8,%rax,8)
+   250fa:	48 83 7c c1 f8 00    	cmpq   $0x0,-0x8(%rcx,%rax,8)
+   25100:	0f 84 2a 01 00 00    	je     25230 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x560>
+   25106:	48 83 83 48 01 00 00 	addq   $0x1,0x148(%rbx)
+   2510d:	01 
+   2510e:	48 3b 43 70          	cmp    0x70(%rbx),%rax
+   25112:	72 cc                	jb     250e0 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x410>
+   25114:	48 83 bb 40 01 00 00 	cmpq   $0x0,0x140(%rbx)
+   2511b:	00 
+   2511c:	74 35                	je     25153 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x483>
+   2511e:	4c 8b 8b f8 00 00 00 	mov    0xf8(%rbx),%r9
+   25125:	4c 8b 83 10 01 00 00 	mov    0x110(%rbx),%r8
+   2512c:	31 c0                	xor    %eax,%eax
+   2512e:	66 90                	xchg   %ax,%ax
+   25130:	48 8b 14 c7          	mov    (%rdi,%rax,8),%rdx
+   25134:	49 8d 0c d1          	lea    (%r9,%rdx,8),%rcx
+   25138:	48 8b 11             	mov    (%rcx),%rdx
+   2513b:	48 8d 72 01          	lea    0x1(%rdx),%rsi
+   2513f:	48 89 31             	mov    %rsi,(%rcx)
+   25142:	49 89 04 d0          	mov    %rax,(%r8,%rdx,8)
+   25146:	48 83 c0 01          	add    $0x1,%rax
+   2514a:	48 3b 83 40 01 00 00 	cmp    0x140(%rbx),%rax
+   25151:	72 dd                	jb     25130 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x460>
+   25153:	b8 01 00 00 00       	mov    $0x1,%eax
+   25158:	e9 e9 fb ff ff       	jmp    24d46 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x76>
+   2515d:	0f 1f 00             	nopl   (%rax)
+   25160:	49 39 c1             	cmp    %rax,%r9
+   25163:	0f 85 db fb ff ff    	jne    24d44 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x74>
+   25169:	e9 22 fe ff ff       	jmp    24f90 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x2c0>
+   2516e:	66 90                	xchg   %ax,%ax
+   25170:	48 89 ea             	mov    %rbp,%rdx
+   25173:	4c 8b 75 00          	mov    0x0(%rbp),%r14
+   25177:	4c 8b 45 08          	mov    0x8(%rbp),%r8
+   2517b:	4c 29 d2             	sub    %r10,%rdx
+   2517e:	48 83 fa 10          	cmp    $0x10,%rdx
+   25182:	0f 8e 0d 03 00 00    	jle    25495 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x7c5>
+   25188:	bf 10 00 00 00       	mov    $0x10,%edi
+   2518d:	4c 89 d6             	mov    %r10,%rsi
+   25190:	4c 89 44 24 18       	mov    %r8,0x18(%rsp)
+   25195:	48 29 d7             	sub    %rdx,%rdi
+   25198:	48 89 4c 24 10       	mov    %rcx,0x10(%rsp)
+   2519d:	48 01 ef             	add    %rbp,%rdi
+   251a0:	4c 89 4c 24 08       	mov    %r9,0x8(%rsp)
+   251a5:	4c 89 14 24          	mov    %r10,(%rsp)
+   251a9:	e8 72 08 fe ff       	call   5a20 <memmove@plt>
+   251ae:	4c 8b 14 24          	mov    (%rsp),%r10
+   251b2:	4c 8b 4c 24 08       	mov    0x8(%rsp),%r9
+   251b7:	48 8b 4c 24 10       	mov    0x10(%rsp),%rcx
+   251bc:	4c 8b 44 24 18       	mov    0x18(%rsp),%r8
+   251c1:	4d 89 32             	mov    %r14,(%r10)
+   251c4:	4d 89 42 08          	mov    %r8,0x8(%r10)
+   251c8:	48 83 c5 10          	add    $0x10,%rbp
+   251cc:	48 39 cd             	cmp    %rcx,%rbp
+   251cf:	0f 84 2b fd ff ff    	je     24f00 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x230>
+   251d5:	48 8b 54 24 28       	mov    0x28(%rsp),%rdx
+   251da:	49 8b 04 12          	mov    (%r10,%rdx,1),%rax
+   251de:	48 89 ee             	mov    %rbp,%rsi
+   251e1:	48 39 44 15 00       	cmp    %rax,0x0(%rbp,%rdx,1)
+   251e6:	72 88                	jb     25170 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x4a0>
+   251e8:	f3 0f 6f 5d 00       	movdqu 0x0(%rbp),%xmm3
+   251ed:	48 8d 45 f0          	lea    -0x10(%rbp),%rax
+   251f1:	0f 29 5c 24 30       	movaps %xmm3,0x30(%rsp)
+   251f6:	48 8b 7c 14 30       	mov    0x30(%rsp,%rdx,1),%rdi
+   251fb:	48 3b 7c 15 f0       	cmp    -0x10(%rbp,%rdx,1),%rdi
+   25200:	73 1b                	jae    2521d <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x54d>
+   25202:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+   25208:	f3 0f 6f 20          	movdqu (%rax),%xmm4
+   2520c:	48 89 c6             	mov    %rax,%rsi
+   2520f:	48 83 e8 10          	sub    $0x10,%rax
+   25213:	0f 11 60 20          	movups %xmm4,0x20(%rax)
+   25217:	48 3b 3c 10          	cmp    (%rax,%rdx,1),%rdi
+   2521b:	72 eb                	jb     25208 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x538>
+   2521d:	66 0f 6f 64 24 30    	movdqa 0x30(%rsp),%xmm4
+   25223:	0f 11 26             	movups %xmm4,(%rsi)
+   25226:	eb a0                	jmp    251c8 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x4f8>
+   25228:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+   2522f:	00 
+   25230:	48 3b 43 70          	cmp    0x70(%rbx),%rax
+   25234:	0f 82 a6 fe ff ff    	jb     250e0 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x410>
+   2523a:	e9 d5 fe ff ff       	jmp    25114 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x444>
+   2523f:	90                   	nop
+   25240:	48 89 d1             	mov    %rdx,%rcx
+   25243:	48 c1 e9 04          	shr    $0x4,%rcx
+   25247:	48 83 fa 30          	cmp    $0x30,%rdx
+   2524b:	0f 86 6b 02 00 00    	jbe    254bc <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x7ec>
+   25251:	f3 0f 10 63 20       	movss  0x20(%rbx),%xmm4
+   25256:	48 83 e2 c0          	and    $0xffffffffffffffc0,%rdx
+   2525a:	4c 89 d0             	mov    %r10,%rax
+   2525d:	66 0f ef d2          	pxor   %xmm2,%xmm2
+   25261:	f3 0f 10 5b 24       	movss  0x24(%rbx),%xmm3
+   25266:	4c 01 d2             	add    %r10,%rdx
+   25269:	0f c6 e4 00          	shufps $0x0,%xmm4,%xmm4
+   2526d:	0f c6 db 00          	shufps $0x0,%xmm3,%xmm3
+   25271:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+   25278:	0f 10 48 08          	movups 0x8(%rax),%xmm1
+   2527c:	0f 10 78 18          	movups 0x18(%rax),%xmm7
+   25280:	48 83 c0 40          	add    $0x40,%rax
+   25284:	0f 10 68 e8          	movups -0x18(%rax),%xmm5
+   25288:	0f 28 c1             	movaps %xmm1,%xmm0
+   2528b:	0f c6 c7 88          	shufps $0x88,%xmm7,%xmm0
+   2528f:	0f 10 78 f8          	movups -0x8(%rax),%xmm7
+   25293:	0f 28 f5             	movaps %xmm5,%xmm6
+   25296:	0f c6 f7 88          	shufps $0x88,%xmm7,%xmm6
+   2529a:	0f 10 78 d8          	movups -0x28(%rax),%xmm7
+   2529e:	0f c6 c6 88          	shufps $0x88,%xmm6,%xmm0
+   252a2:	0f 10 70 f8          	movups -0x8(%rax),%xmm6
+   252a6:	0f c6 cf dd          	shufps $0xdd,%xmm7,%xmm1
+   252aa:	0f c6 ee dd          	shufps $0xdd,%xmm6,%xmm5
+   252ae:	0f c6 cd 88          	shufps $0x88,%xmm5,%xmm1
+   252b2:	0f 28 e8             	movaps %xmm0,%xmm5
+   252b5:	0f 28 f1             	movaps %xmm1,%xmm6
+   252b8:	0f c2 ea 01          	cmpltps %xmm2,%xmm5
+   252bc:	0f c2 f2 01          	cmpltps %xmm2,%xmm6
+   252c0:	0f 55 e8             	andnps %xmm0,%xmm5
+   252c3:	0f 28 c4             	movaps %xmm4,%xmm0
+   252c6:	0f 5d c5             	minps  %xmm5,%xmm0
+   252c9:	0f 55 f1             	andnps %xmm1,%xmm6
+   252cc:	0f 28 eb             	movaps %xmm3,%xmm5
+   252cf:	0f 5d ee             	minps  %xmm6,%xmm5
+   252d2:	0f 28 cd             	movaps %xmm5,%xmm1
+   252d5:	0f c6 c8 00          	shufps $0x0,%xmm0,%xmm1
+   252d9:	0f c6 c8 e2          	shufps $0xe2,%xmm0,%xmm1
+   252dd:	0f 13 48 c8          	movlps %xmm1,-0x38(%rax)
+   252e1:	0f 28 c8             	movaps %xmm0,%xmm1
+   252e4:	0f 15 c5             	unpckhps %xmm5,%xmm0
+   252e7:	0f c6 cd 55          	shufps $0x55,%xmm5,%xmm1
+   252eb:	0f c6 cd e8          	shufps $0xe8,%xmm5,%xmm1
+   252ef:	0f 13 48 d8          	movlps %xmm1,-0x28(%rax)
+   252f3:	0f 28 c8             	movaps %xmm0,%xmm1
+   252f6:	0f c6 c8 d4          	shufps $0xd4,%xmm0,%xmm1
+   252fa:	0f c6 c0 de          	shufps $0xde,%xmm0,%xmm0
+   252fe:	0f 13 48 e8          	movlps %xmm1,-0x18(%rax)
+   25302:	0f 13 40 f8          	movlps %xmm0,-0x8(%rax)
+   25306:	48 39 d0             	cmp    %rdx,%rax
+   25309:	0f 85 69 ff ff ff    	jne    25278 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x5a8>
+   2530f:	48 89 ce             	mov    %rcx,%rsi
+   25312:	48 83 e6 fc          	and    $0xfffffffffffffffc,%rsi
+   25316:	48 89 f2             	mov    %rsi,%rdx
+   25319:	48 c1 e2 04          	shl    $0x4,%rdx
+   2531d:	4c 01 d2             	add    %r10,%rdx
+   25320:	48 89 c8             	mov    %rcx,%rax
+   25323:	48 29 f0             	sub    %rsi,%rax
+   25326:	48 83 f8 01          	cmp    $0x1,%rax
+   2532a:	0f 86 90 00 00 00    	jbe    253c0 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x6f0>
+   25330:	f3 0f 10 4b 24       	movss  0x24(%rbx),%xmm1
+   25335:	48 c1 e6 04          	shl    $0x4,%rsi
+   25339:	f3 0f 10 43 20       	movss  0x20(%rbx),%xmm0
+   2533e:	48 83 e0 fe          	and    $0xfffffffffffffffe,%rax
+   25342:	49 8d 4c 32 08       	lea    0x8(%r10,%rsi,1),%rcx
+   25347:	48 c1 e0 04          	shl    $0x4,%rax
+   2534b:	f3 0f 7e 61 10       	movq   0x10(%rcx),%xmm4
+   25350:	0f 28 d1             	movaps %xmm1,%xmm2
+   25353:	f3 0f 7e 09          	movq   (%rcx),%xmm1
+   25357:	0f c6 c0 e0          	shufps $0xe0,%xmm0,%xmm0
+   2535b:	f3 0f 7e 69 18       	movq   0x18(%rcx),%xmm5
+   25360:	f3 0f 7e 71 08       	movq   0x8(%rcx),%xmm6
+   25365:	0f c6 d2 e0          	shufps $0xe0,%xmm2,%xmm2
+   25369:	48 01 c2             	add    %rax,%rdx
+   2536c:	0f 28 d9             	movaps %xmm1,%xmm3
+   2536f:	0f 28 fc             	movaps %xmm4,%xmm7
+   25372:	0f 14 fd             	unpcklps %xmm5,%xmm7
+   25375:	0f 14 de             	unpcklps %xmm6,%xmm3
+   25378:	0f 14 e5             	unpcklps %xmm5,%xmm4
+   2537b:	0f 14 df             	unpcklps %xmm7,%xmm3
+   2537e:	0f 14 ce             	unpcklps %xmm6,%xmm1
+   25381:	0f 57 ed             	xorps  %xmm5,%xmm5
+   25384:	0f c6 e4 4e          	shufps $0x4e,%xmm4,%xmm4
+   25388:	0f c6 c9 4e          	shufps $0x4e,%xmm1,%xmm1
+   2538c:	0f 14 cc             	unpcklps %xmm4,%xmm1
+   2538f:	0f 28 e3             	movaps %xmm3,%xmm4
+   25392:	0f c2 e5 01          	cmpltps %xmm5,%xmm4
+   25396:	0f 55 e3             	andnps %xmm3,%xmm4
+   25399:	0f 28 d9             	movaps %xmm1,%xmm3
+   2539c:	0f c2 dd 01          	cmpltps %xmm5,%xmm3
+   253a0:	0f 5d c4             	minps  %xmm4,%xmm0
+   253a3:	0f 55 d9             	andnps %xmm1,%xmm3
+   253a6:	0f 5d d3             	minps  %xmm3,%xmm2
+   253a9:	0f 28 ca             	movaps %xmm2,%xmm1
+   253ac:	0f 28 d0             	movaps %xmm0,%xmm2
+   253af:	0f 14 d1             	unpcklps %xmm1,%xmm2
+   253b2:	0f 14 c1             	unpcklps %xmm1,%xmm0
+   253b5:	0f c6 c0 4e          	shufps $0x4e,%xmm0,%xmm0
+   253b9:	0f 13 11             	movlps %xmm2,(%rcx)
+   253bc:	0f 13 41 10          	movlps %xmm0,0x10(%rcx)
+   253c0:	f3 0f 10 4a 08       	movss  0x8(%rdx),%xmm1
+   253c5:	66 0f ef c0          	pxor   %xmm0,%xmm0
+   253c9:	f3 0f 10 52 0c       	movss  0xc(%rdx),%xmm2
+   253ce:	0f 2f c1             	comiss %xmm1,%xmm0
+   253d1:	76 03                	jbe    253d6 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x706>
+   253d3:	0f 28 c8             	movaps %xmm0,%xmm1
+   253d6:	f3 0f 10 43 20       	movss  0x20(%rbx),%xmm0
+   253db:	f3 0f 5d c1          	minss  %xmm1,%xmm0
+   253df:	66 0f ef c9          	pxor   %xmm1,%xmm1
+   253e3:	0f 2f ca             	comiss %xmm2,%xmm1
+   253e6:	76 03                	jbe    253eb <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x71b>
+   253e8:	0f 28 d1             	movaps %xmm1,%xmm2
+   253eb:	f3 0f 10 4b 24       	movss  0x24(%rbx),%xmm1
+   253f0:	48 8d 42 10          	lea    0x10(%rdx),%rax
+   253f4:	f3 0f 5d ca          	minss  %xmm2,%xmm1
+   253f8:	0f 14 c1             	unpcklps %xmm1,%xmm0
+   253fb:	0f 13 42 08          	movlps %xmm0,0x8(%rdx)
+   253ff:	49 39 c1             	cmp    %rax,%r9
+   25402:	0f 84 fe fb ff ff    	je     25006 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x336>
+   25408:	f3 0f 10 4a 18       	movss  0x18(%rdx),%xmm1
+   2540d:	66 0f ef c0          	pxor   %xmm0,%xmm0
+   25411:	f3 0f 10 52 1c       	movss  0x1c(%rdx),%xmm2
+   25416:	0f 2f c1             	comiss %xmm1,%xmm0
+   25419:	76 03                	jbe    2541e <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x74e>
+   2541b:	0f 28 c8             	movaps %xmm0,%xmm1
+   2541e:	f3 0f 10 43 20       	movss  0x20(%rbx),%xmm0
+   25423:	f3 0f 5d c1          	minss  %xmm1,%xmm0
+   25427:	66 0f ef c9          	pxor   %xmm1,%xmm1
+   2542b:	0f 2f ca             	comiss %xmm2,%xmm1
+   2542e:	76 04                	jbe    25434 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x764>
+   25430:	66 0f ef d2          	pxor   %xmm2,%xmm2
+   25434:	f3 0f 10 4b 24       	movss  0x24(%rbx),%xmm1
+   25439:	f3 0f 5d ca          	minss  %xmm2,%xmm1
+   2543d:	0f 14 c1             	unpcklps %xmm1,%xmm0
+   25440:	0f 13 42 18          	movlps %xmm0,0x18(%rdx)
+   25444:	e9 bd fb ff ff       	jmp    25006 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x336>
+   25449:	4c 8b 97 98 00 00 00 	mov    0x98(%rdi),%r10
+   25450:	45 31 f6             	xor    %r14d,%r14d
+   25453:	e9 54 f9 ff ff       	jmp    24dac <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0xdc>
+   25458:	4c 89 ce             	mov    %r9,%rsi
+   2545b:	4c 89 d7             	mov    %r10,%rdi
+   2545e:	48 c7 c2 fe ff ff ff 	mov    $0xfffffffffffffffe,%rdx
+   25465:	4c 89 4c 24 08       	mov    %r9,0x8(%rsp)
+   2546a:	4c 89 14 24          	mov    %r10,(%rsp)
+   2546e:	e8 dd 0a 00 00       	call   25f50 <void std::__introsort_loop<__gnu_cxx::__normal_iterator<crucible::spatial::SpatialSample*, std::span<crucible::spatial::SpatialSample, 18446744073709551615ul> >, long, __gnu_cxx::__ops::_Iter_comp_iter<std::ranges::__detail::__make_comp_proj<std::ranges::less, crucible::SampleId crucible::spatial::SpatialSample::*>(std::ranges::less&, crucible::SampleId crucible::spatial::SpatialSample::*&)::{lambda(auto:1&&, auto:2&&)#1}> >(__gnu_cxx::__normal_iterator<crucible::spatial::SpatialSample*, std::span<crucible::spatial::SpatialSample, 18446744073709551615ul> >, __gnu_cxx::__normal_iterator<crucible::spatial::SpatialSample*, std::span<crucible::spatial::SpatialSample, 18446744073709551615ul> >, long, __gnu_cxx::__ops::_Iter_comp_iter<std::ranges::__detail::__make_comp_proj<std::ranges::less, crucible::SampleId crucible::spatial::SpatialSample::*>(std::ranges::less&, crucible::SampleId crucible::spatial::SpatialSample::*&)::{lambda(auto:1&&, auto:2&&)#1}>)>
+   25473:	4c 8b 14 24          	mov    (%rsp),%r10
+   25477:	4c 8b 4c 24 08       	mov    0x8(%rsp),%r9
+   2547c:	e9 c4 f9 ff ff       	jmp    24e45 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x175>
+   25481:	0f 85 10 fa ff ff    	jne    24e97 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x1c7>
+   25487:	f3 41 0f 6f 1a       	movdqu (%r10),%xmm3
+   2548c:	0f 11 5d 00          	movups %xmm3,0x0(%rbp)
+   25490:	e9 02 fa ff ff       	jmp    24e97 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x1c7>
+   25495:	0f 85 26 fd ff ff    	jne    251c1 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x4f1>
+   2549b:	f3 41 0f 6f 1a       	movdqu (%r10),%xmm3
+   254a0:	0f 11 5d 00          	movups %xmm3,0x0(%rbp)
+   254a4:	e9 18 fd ff ff       	jmp    251c1 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x4f1>
+   254a9:	0f 85 fd f8 ff ff    	jne    24dac <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0xdc>
+   254af:	f3 0f 6f 1e          	movdqu (%rsi),%xmm3
+   254b3:	41 0f 11 1a          	movups %xmm3,(%r10)
+   254b7:	e9 f0 f8 ff ff       	jmp    24dac <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0xdc>
+   254bc:	4c 89 d2             	mov    %r10,%rdx
+   254bf:	31 f6                	xor    %esi,%esi
+   254c1:	e9 5a fe ff ff       	jmp    25320 <crucible::spatial::Grid::TryRebuild(std::span<crucible::spatial::SpatialSample const, 18446744073709551615ul>)+0x650>
+   254c6:	e8 25 04 fe ff       	call   58f0 <__stack_chk_fail@plt>
+   254cb:	90                   	nop
+   254cc:	0f 1f 40 00          	nopl   0x0(%rax)
+

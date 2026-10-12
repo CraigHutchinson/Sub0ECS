@@ -1,0 +1,1 @@
+Three raw JSONL files were found empty after resume: r1-mapping-integrated.jsonl, r2-mapping-integrated.jsonl, r4-control-integrated.jsonl. Retained summary cannot qualify small-workload regression. Preserve this cohort and receive a fresh complete cohort.

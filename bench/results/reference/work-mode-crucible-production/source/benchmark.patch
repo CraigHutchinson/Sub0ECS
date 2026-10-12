@@ -1,0 +1,302 @@
+diff --git a/benchmarks/runtime_backbone.cpp b/benchmarks/runtime_backbone.cpp
+index b17f8f9..0ce1c65 100644
+--- a/benchmarks/runtime_backbone.cpp
++++ b/benchmarks/runtime_backbone.cpp
+@@ -1,24 +1,38 @@
+-#include <crucible/runtime/InspectorSession.hpp>
+-#include <crucible/runtime/IntentDelivery.hpp>
+-#include <crucible/runtime/ReferenceMissionRoute.hpp>
+-#include <crucible/presentation/ScenarioSnapshot.hpp>
+-#if CRUCIBLE_ENABLE_DIAGNOSTICS
+-#include <crucible/runtime/RuntimeDiagnostics.hpp>
+-#endif
++/** Receives headless production boundaries and the existing reference missions.
++ * Scale mode freezes geometry, execution and evolving field input, timing complete
++ * InspectorSession pumps while reporting replay state outside the measured region.
++ */
+ #include <algorithm>
+ #include <array>
++#include <bit>
++#include <charconv>
+ #include <chrono>
++#include <cstddef>
++#include <cstdint>
+ #include <cstdlib>
+ #include <iomanip>
+ #include <iostream>
+ #include <memory>
+ #include <new>
++#include <optional>
++#include <span>
+ #include <stdexcept>
+ #include <string_view>
++#include <system_error>
++#include <vector>
+ #ifdef _WIN32
+ #include <malloc.h>
+ #endif
+ 
++#include "crucible/presentation/FieldTool.hpp"
++#include "crucible/presentation/ScenarioSnapshot.hpp"
++#include "crucible/runtime/InspectorSession.hpp"
++#include "crucible/runtime/IntentDelivery.hpp"
++#include "crucible/runtime/ReferenceMissionRoute.hpp"
++#if CRUCIBLE_ENABLE_DIAGNOSTICS
++#include "crucible/runtime/RuntimeDiagnostics.hpp"
++#endif
++
+ namespace allocation_probe {
+ /// Only successful replaceable C++ new calls on the coordinator thread are counted.
+ struct Counts { std::uint64_t calls{}, bytes{}; };
+@@ -159,6 +173,189 @@ void EmitState(std::string_view arm, std::string_view workload, std::size_t popu
+     }
+     std::cout << "]}\n";
+ }
++/// Explicit opt-in headless workload; ordinary measurements disable stage clocks.
++struct ScaleSettings
++{
++    std::size_t population{}, workers{1}, partitions{}, warmup{120}, ticks{300};
++    std::string_view route{"gather"};
++    bool profileStages{};
++};
++
++/** Hashes semantic words in fixed low-byte-first order, never object padding.
++ * Float payloads retain every bit including signed zero. This replay digest is
++ * a compact drift detector, not a collision-free proof or cryptographic hash.
++ */
++class StateDigest
++{
++public:
++    constexpr void append(std::uint64_t word) noexcept
++    {
++        for (unsigned byte = 0; byte != 8; ++byte) {
++            value_ ^= word & 255U;
++            value_ *= 1099511628211ULL;
++            word >>= 8;
++        }
++    }
++    constexpr void appendFloat(float value) noexcept
++    {
++        append(std::bit_cast<std::uint32_t>(value));
++    }
++    void appendField(const FieldEdit& field) noexcept
++    {
++        append(static_cast<std::uint64_t>(field.kind)); append(field.slot);
++        appendFloat(field.center.x); appendFloat(field.center.y);
++        appendFloat(field.radius); appendFloat(field.strength);
++        appendFloat(field.end.x); appendFloat(field.end.y);
++    }
++    [[nodiscard]] constexpr std::uint64_t value() const noexcept { return value_; }
++private:
++    std::uint64_t value_{14695981039346656037ULL};
++};
++
++[[nodiscard]] std::uint64_t digestState(const presentation::ScenarioSnapshot& frame)
++{
++    StateDigest digest;
++    const auto info = frame.GetInfo().value();
++    digest.append(info.grid.columns); digest.append(info.grid.rows); digest.appendFloat(info.grid.cell_size);
++    digest.append(info.completed_tick); digest.append(info.samples); digest.append(info.fields); digest.append(info.cells);
++    for (const auto& sample : frame.GetSamples()) {
++        digest.append(sample.id.value); digest.append(static_cast<std::uint64_t>(sample.activity));
++        digest.appendFloat(sample.position.x); digest.appendFloat(sample.position.y);
++        digest.appendFloat(sample.velocity.x); digest.appendFloat(sample.velocity.y);
++    }
++    for (const auto& field : frame.GetFields()) digest.appendField(field);
++    for (const auto cell : frame.GetBlight()) digest.append(cell);
++    for (const auto stock : frame.GetStocks()) digest.append(stock);
++    digest.append(info.biomass.has_value());
++    if (info.biomass) {
++        const auto& ledger = *info.biomass;
++        for (const auto word : {ledger.initial_total, ledger.remaining_stock, ledger.mobile_mass,
++                ledger.reserve, ledger.harvested, ledger.work_actions, ledger.structure_mass, ledger.lost_mass})
++            digest.append(word);
++    }
++    digest.append(info.structural.has_value());
++    if (info.structural) {
++        const auto& state = *info.structural;
++        digest.appendFloat(state.settings.relay_center.x); digest.appendFloat(state.settings.relay_center.y);
++        digest.appendFloat(state.settings.eligibility_radius); digest.appendFloat(state.settings.protection_radius);
++        digest.append(state.settings.hold_ticks); digest.append(state.occupied); digest.append(state.generation);
++        digest.append(state.hold_ticks); digest.append(state.eligible_mobile);
++        for (const auto id : state.members) digest.append(id.value);
++    }
++    return digest.value();
++}
++
++void scaleBenchmark(Arm arm, std::string_view name, const ScaleSettings& settings)
++{
++    ScenarioSettings scenario;
++    scenario.population = settings.population;
++    if (settings.population == 100000) scenario.grid = {400, 250, 1};
++    else if (settings.population == 150000) scenario.grid = {500, 300, 1};
++    const auto observationCapacity = settings.profileStages ? settings.warmup + settings.ticks : 0;
++    std::unique_ptr<InspectorSession> run;
++    const auto startup = Measure([&] {
++        run = std::make_unique<InspectorSession>(scenario, HeadlessSession::Limits{64, 4096},
++            std::nullopt, arm, InspectorSession::Diagnostics::disabled,
++            InspectorSession::ObservationSettings{observationCapacity, settings.profileStages},
++            ExecutionSettings{settings.workers, settings.partitions});
++    });
++    const auto execution = run->getRowExecution();
++    const auto storage = run->getRowExecutionStorage();
++    std::cout << "{\"arm\":\"" << name << "\",\"workload\":\"scale_settings\",\"entities\":" << settings.population
++        << ",\"schema\":1,\"columns\":" << scenario.grid.columns << ",\"rows\":" << scenario.grid.rows
++        << ",\"cell_size\":" << scenario.grid.cell_size << ",\"field_capacity\":" << scenario.fieldCapacity
++        << ",\"neighbor_radius\":" << scenario.steering.neighbor_radius
++        << ",\"separation_strength\":" << scenario.steering.separation_strength
++        << ",\"maximum_acceleration\":" << scenario.steering.maximum_acceleration
++        << ",\"maximum_speed\":" << scenario.steering.maximum_speed
++        << ",\"initial_stock_per_cell\":" << scenario.resources.initial_stock_per_cell
++        << ",\"mass_per_sample\":" << scenario.resources.mass_per_sample
++        << ",\"initial_reserve\":" << scenario.resources.initial_reserve
++        << ",\"actions_per_tick\":" << scenario.resources.actions_per_tick
++        << ",\"mission\":false,\"structural\":false,\"diagnostics\":false"
++        << ",\"requested_workers\":" << settings.workers << ",\"requested_partitions\":" << settings.partitions
++        << ",\"resolved_workers\":" << execution.workers << ",\"resolved_partitions\":" << execution.partitions
++        << ",\"query_scratch_capacity\":" << storage.queryScratchCapacity
++        << ",\"task_capacity\":" << storage.taskCapacity << ",\"queue_capacity\":" << storage.queueCapacity
++        << ",\"warmup_ticks\":" << settings.warmup << ",\"measured_ticks\":" << settings.ticks
++        << ",\"tick_ns\":" << tick_time.count() << ",\"route\":\"" << settings.route
++        << "\",\"mutation_interval\":6,\"tool_radius\":16,\"tool_magnitude\":4"
++        << ",\"command_capacity\":64,\"trace_capacity\":4096,\"observation_capacity\":" << observationCapacity
++        << ",\"profile_stages\":" << (settings.profileStages ? "true" : "false") << "}\n";
++    EmitOne(name, "scale_startup", settings.population, startup);
++    const auto pump = [&] {
++        const auto result = run->TryPump(tick_time);
++        Require(result.status == ClockDriver::Status::running && result.advanced_ticks == 1,
++            "scale pump did not complete one evolving boundary");
++    };
++    for (std::size_t tick = 0; tick < settings.warmup; ++tick) pump();
++    const auto initialDigest = digestState(run->GetSnapshot());
++    const auto fallbackStart = run->getRowFallbackCount();
++    std::vector<Measurement> measurements(settings.ticks);
++    const float width = static_cast<float>(scenario.grid.columns) * scenario.grid.cell_size;
++    const float height = static_cast<float>(scenario.grid.rows) * scenario.grid.cell_size;
++    std::size_t mutations{};
++    for (std::size_t tick = 0; tick < settings.ticks; ++tick) {
++        if (tick % 6 == 0) {
++            // Match Phase14's world-space route through the shared field intent builder.
++            const auto kind = settings.route == "gather" ? mutations % 3 : 0;
++            const auto tool = kind == 0 ? presentation::FieldTool::flow :
++                kind == 1 ? presentation::FieldTool::repel : presentation::FieldTool::attract;
++            const float y = (mutations % 2 == 0 ? 0.49F : 0.51F) * height;
++            const Position center = kind == 0 ? Position{0.02F * width, y} :
++                Position{(kind == 1 ? 0.25F : 0.85F) * width, 0.5F * height};
++            const auto edit = presentation::TryBuildFieldEdit({tool, kind, 16, 4}, center,
++                scenario.fieldCapacity, {0.98F * width, y});
++            Require(edit.has_value(), "scale route could not build field intent");
++            Accepted(run->TryAdmitFieldEdit(*edit));
++            ++mutations;
++        }
++        measurements[tick] = Measure(pump);
++    }
++    Emit(name, settings.profileStages ? "scale_tick_capture_diagnostic" : "scale_tick_capture_steady",
++        settings.population, measurements);
++    EmitState(name, "scale_state", settings.population, *run);
++    const auto info = run->GetSnapshot().GetInfo().value();
++    const auto summary = run->GetSummary();
++    Require(info.completed_tick == settings.warmup + settings.ticks && summary.applied_commands == mutations &&
++        summary.ingress_accepted == mutations && summary.ingress_pending == 0 && summary.ingress_rejected == 0,
++        "scale completion or command accounting changed");
++    StateDigest traceDigest;
++    for (const auto& item : run->GetTrace()) {
++        traceDigest.append(item.tick); traceDigest.append(item.sequence);
++        traceDigest.append(static_cast<std::uint64_t>(item.command.action)); traceDigest.append(item.command.generation);
++        traceDigest.append(static_cast<std::uint64_t>(item.result)); traceDigest.appendField(item.command.field);
++    }
++    std::cout << "{\"arm\":\"" << name << "\",\"workload\":\"scale_receipt\",\"entities\":" << settings.population
++        << ",\"digest_schema\":1,\"state_digest\":\"" << std::hex << digestState(run->GetSnapshot())
++        << "\",\"initial_digest\":\"" << initialDigest << "\",\"trace_digest\":\"" << traceDigest.value() << std::dec
++        << "\",\"completed_tick\":" << info.completed_tick << ",\"applied_commands\":" << summary.applied_commands
++        << ",\"accepted_commands\":" << summary.ingress_accepted << ",\"pending_commands\":" << summary.ingress_pending
++        << ",\"rejected_commands\":" << summary.ingress_rejected
++        << ",\"discarded_scaled_nanoseconds\":" << summary.discarded_scaled_nanoseconds
++        << ",\"work_actions\":" << info.biomass->work_actions << ",\"harvested\":" << info.biomass->harvested
++        << ",\"row_fallbacks_start\":" << fallbackStart << ",\"row_fallbacks_end\":" << run->getRowFallbackCount()
++        << ",\"tick_observation_count\":" << run->getTickObservations().size()
++        << ",\"dropped_tick_observations\":" << run->getDroppedTickObservations() << "}\n";
++    if (settings.profileStages) {
++        Require(run->getTickObservations().size() == observationCapacity && run->getDroppedTickObservations() == 0,
++            "scale stage observations incomplete");
++        for (const auto& observation : run->getTickObservations().subspan(settings.warmup)) {
++            Require(observation.simulation.has_value(), "scale stage statistics missing");
++            const auto& stages = *observation.simulation;
++            std::cout << "{\"arm\":\"" << name << "\",\"workload\":\"scale_stages\",\"entities\":" << settings.population
++                << ",\"tick\":" << observation.completedTick << ",\"boundary_ns\":" << observation.boundary.count()
++                << ",\"gather_ns\":" << stages.gather.count() << ",\"index_ns\":" << stages.index.count()
++                << ",\"propose_ns\":" << stages.propose.count() << ",\"commit_ns\":" << stages.commit.count()
++                << ",\"resources_ns\":" << stages.resources.count() << ",\"rebuild_ns\":" << stages.rebuild.count()
++                << ",\"input_rows\":" << stages.inputRows << ",\"query_rows\":" << stages.queryRows
++                << ",\"occupied_cells\":" << stages.occupiedCells << ",\"query_scratch_capacity\":" << stages.queryScratchCapacity
++                << ",\"workers\":" << stages.workers << ",\"partitions\":" << stages.partitions
++                << ",\"task_capacity\":" << stages.taskCapacity << "}\n";
++        }
++    }
++}
++
+ void AdmissionBenchmark(Arm arm, std::string_view name) {
+     CommandIngress ingress{{1,4}};
+     std::unique_ptr<IntentDelivery> delivery;
+@@ -271,18 +468,55 @@ void DiagnosticsBenchmark(Arm arm, std::string_view name) {
+ }
+ int main(int argc,char** argv) {
+     try {
+-        Require((argc==3 || argc==4) && std::string_view{argv[1]}=="--arm",
+-            "usage: crucible_runtime_bench --arm integrated|direct [--skip-missions]");
++        Require(argc >= 3 && std::string_view{argv[1]} == "--arm",
++            "usage: crucible_runtime_bench --arm integrated|direct [--skip-missions] "
++            "[--scale 2048|100000|150000 --workers N --partitions N --warmup N --ticks N "
++            "--route flow|gather --profile-stages]");
+         const std::string_view name{argv[2]};
+-        Require(name=="integrated" || name=="direct","unknown execution arm");
+-        Require(argc==3 || std::string_view{argv[3]}=="--skip-missions","unknown benchmark option");
+-        const auto arm=name=="integrated" ? Arm::integrated : Arm::direct;
++        Require(name == "integrated" || name == "direct", "unknown execution arm");
++        const auto arm = name == "integrated" ? Arm::integrated : Arm::direct;
++        bool skipMissions{}, scaleOptions{};
++        ScaleSettings settings;
++        for (int index = 3; index < argc; ++index) {
++            const std::string_view option{argv[index]};
++            if (option == "--skip-missions") { skipMissions = true; continue; }
++            scaleOptions = true;
++            if (option == "--profile-stages") { settings.profileStages = true; continue; }
++            Require(index + 1 < argc, "benchmark option requires a value");
++            const std::string_view value{argv[++index]};
++            if (option == "--route") {
++                Require(value == "flow" || value == "gather", "unknown scale route");
++                settings.route = value;
++                continue;
++            }
++            std::size_t number{};
++            const auto parsed = std::from_chars(value.data(), value.data() + value.size(), number);
++            Require(parsed.ec == std::errc{} && parsed.ptr == value.data() + value.size(), "invalid benchmark integer");
++            if (option == "--scale") settings.population = number;
++            else if (option == "--workers") settings.workers = number;
++            else if (option == "--partitions") settings.partitions = number;
++            else if (option == "--warmup") settings.warmup = number;
++            else if (option == "--ticks") settings.ticks = number;
++            else throw std::invalid_argument("unknown benchmark option");
++        }
+         std::cout << std::setprecision(17);
++        if (scaleOptions) {
++            Require(settings.population == 2048 || settings.population == 100000 || settings.population == 150000,
++                "scale must be 2048, 100000 or 150000");
++            Require(settings.workers >= 1 && settings.workers <= 32 && settings.partitions <= 128,
++                "scale worker or partition bound exceeded");
++            Require(settings.warmup <= 10000 && settings.ticks >= 1 && settings.ticks <= 10000,
++                "scale warmup/tick bound exceeded");
++            Require(!settings.profileStages || arm == Arm::integrated, "stage diagnostics require integrated execution");
++            Require(!skipMissions, "scale is a separate workload; --skip-missions is not a scale option");
++            scaleBenchmark(arm, name, settings);
++            return 0;
++        }
+         AdmissionBenchmark(arm,name);
+         for (const auto population : {64U,2048U}) OrdinaryBenchmark(arm,name,population);
+ #if CRUCIBLE_ENABLE_DIAGNOSTICS
+         DiagnosticsBenchmark(arm,name);
+ #endif
+-        if (argc==3) { MissionBenchmark(arm,name,false); MissionBenchmark(arm,name,true); }
++        if (!skipMissions) { MissionBenchmark(arm,name,false); MissionBenchmark(arm,name,true); }
+     } catch (const std::exception& error) { std::cerr << error.what() << '\n'; return 1; }
+ }

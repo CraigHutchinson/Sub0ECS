@@ -100,6 +100,39 @@ binary starts threads, not external child processes. It is not a general profile
 supervisor. Run without competing builds; record affinity and uncontrolled host
 conditions. No native-frame, thermal, hardware-counter or 100K-at-60FPS claim follows.
 
+## Production-source optimization: 12 October 2026
+
+The separate [production coordinator receipt](../../bench/results/reference/work-mode-crucible-production/README.md)
+compares Crucible source changes with dependency pins held fixed. It receives
+100K/400×250 and 150K/500×300 evolving worlds, plus a 2048 regression workload,
+through the actual integrated pump, steering and snapshot publication. This is
+not the earlier current-library experiment above or a handwritten-game reference.
+
+`bench/tools/crucible.py --scale 100000 --workers 4 --warmup 120 --ticks 300
+--field-route gather --arms integrated` selects this workload; add the source,
+build, rounds and fresh output arguments shown in the linked reproduction recipe.
+The collector requires complete settings, matching initial/final state and trace
+digests, accepted/applied command counts, and zero observations, fallbacks or
+discarded work. Each build records its own clean source/tree and binary identity;
+scale comparisons require identical benchmark source and dependency pins.
+
+Pass A replaces binary-search commit with a checked compact-row map; B guards
+already-sorted gather/index/snapshot inputs while preserving sort fallback.
+Initial A timings overlap. A fresh complete 100K control/A/B/A+B cohort establishes
+an 11.18% median pump/capture improvement for A+B on the measured four-worker host,
+with mixed p99. A complete five-pair 150K control/combined cohort improves median
+pump/capture by 13.23%, with improved median process p95/p99. The fresh 2048
+four-arm cohort improves the combined median 2.2548→2.0553 ms. Complete reference
+and structural mission medians improve 924.046→866.696 ms and
+2063.604→1922.829 ms; all three comparisons win in every paired round.
+The small-workload median gate passes, supporting promotion of A+B with unchanged
+pins and public APIs. Legacy ordinary 64/2048-row p99 rises 0.253→0.543 ms and
+4.049→4.361 ms: there is no blanket tail-latency claim.
+The earlier 2048 A cohort lacks two raw receipts, and the earlier combined 2048
+cohort has three empty receipts; neither qualifies. The complete fresh cohorts
+supersede these attempts.
+Headless timing excludes admission, native rendering, pacing and input latency.
+
 ## Crucible workload and exhaustive logic reference
 
 These requirements come from the frozen `docs/decisions/phase14-scale-contracts.md`,

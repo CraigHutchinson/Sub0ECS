@@ -99,15 +99,21 @@ workload, reproduce a result, or follow the architecture-to-function review.
 |---|---|
 | How close is iteration to handwritten code? | Tables below and [reference captures](bench/results/reference/README.md) |
 | What about complete ticks, n-body, streaming and churn? | [Representative workloads](docs/optimization/representative.md) and [n-body contract](docs/optimization/nbody.md) |
+| What improves the actual production consumer? | [Crucible headless optimization and paired receipts](bench/results/reference/work-mode-crucible-production/README.md) |
 | Where does Pub/Pipeline/ECS composition spend time? | [Full-stack workloads and actual Crucible reproduction](docs/optimization/full-stack.md) |
 | How do I measure or profile my own change? | [Benchmarking method](bench/BENCHMARKING.md) |
 | What remains unproven or needs future coverage? | [Crucible workload requirements](docs/optimization/full-stack.md#crucible-workload-and-exhaustive-logic-reference) and [backlog](docs/BACKLOG.md) |
 
 Synthetic indexed staging improves substantially under a fixed dense-identity
-contract, but remains above the handwritten floor. Actual Crucible timing ranges
-overlap: **no production speedup is established** by that capture. See the
-[full-stack receipt](bench/results/reference/work-mode-stack/README.md) for
-medians, spreads, source pins and raw evidence. The following tables describe the
+contract, but remains above the handwritten floor. The October 10 Crucible
+**library-version** capture has overlapping ranges and establishes no speedup; its
+[full-stack receipt](bench/results/reference/work-mode-stack/README.md) remains
+unchanged. The separate [production coordinator campaign](bench/results/reference/work-mode-crucible-production/README.md)
+holds library pins fixed and compares checked commit mapping and guarded sorting.
+Its complete four-worker cohorts show median pump/capture improvements of
+11.18% at 100K and 13.23% at 150K from combined mapping and sort guards. The
+100K p99 is mixed. Fresh 2048 and complete reference/structural missions pass the
+small-workload median gate; tail improvements are not universal. The following tables describe the
 original storage comparison on its named machine, not full-stack performance.
 
 
